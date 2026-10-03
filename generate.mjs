@@ -152,9 +152,30 @@ function buildDevices(rows){
   const devRows=await fetchRows(MM_DEVICE_FID,8)
   const simonly=buildSimonly(telcoRows)
   const devices=buildDevices(devRows)
+
+  // 3 okt: hier stond geen controle, en dat is gevaarlijk. Bij een verlopen of
+  // verkeerd token geeft Tradedoubler 403 op elke pagina, kwam dit script met
+  // nul rijen hier aan, schreef lege JSON weg en meldde "OK: simonly 0". De
+  // sim-only vergelijker zou dan leeg op de site staan, zonder foutmelding.
+  // Precies hoe het prijslogboek van de zorgpremies twee weken stil stond.
+  const BODEM_SIMONLY=800
+  const BODEM_DEVICES=250
+  if(simonly.length<BODEM_SIMONLY||devices.length<BODEM_DEVICES){
+    let vorige=null
+    try{vorige=JSON.parse(fs.readFileSync('mm-meta.json','utf8'))}catch(e){}
+    console.error('')
+    console.error('!! Te weinig resultaat: '+simonly.length+' sim-only (ondergrens '+BODEM_SIMONLY+') en '+
+      devices.length+' toestellen (ondergrens '+BODEM_DEVICES+').')
+    if(vorige)console.error('!! De vorige run had '+vorige.simonly+' en '+vorige.devices+'.')
+    console.error('!! Er wordt NIETS weggeschreven, want lege bestanden zouden de')
+    console.error('!! sim-only vergelijker leeghalen. Kijk eerst of MM_TOKEN nog geldig is:')
+    console.error('!! staat er HTTP 403 of 401 hierboven, dan is het token verlopen of gedraaid.')
+    process.exit(1)
+  }
+
   fs.writeFileSync('mm-simonly.json',JSON.stringify(simonly))
   fs.writeFileSync('mm-devices.json',JSON.stringify(devices))
   const meta={updated:new Date().toISOString(),simonly:simonly.length,devices:devices.length}
   fs.writeFileSync('mm-meta.json',JSON.stringify(meta,null,2))
   console.log('OK:',JSON.stringify(meta))
-})()
+})().catch(e=>{console.error('Onverwachte fout:',e&&e.stack||e);process.exit(1)})

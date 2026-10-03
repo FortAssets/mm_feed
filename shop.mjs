@@ -550,7 +550,13 @@ function uitAwin (r) {
   if (!(prijs > 0)) return null
   const naam = (r.product_name || '').trim()
   if (!naam) return null
-  const merchant = (r.merchant_name || '').replace(/\s+(NL|NL-BE|BE)$/i, '').trim()
+  // Awin zet het land achter de winkelnaam, soms met een streepje ervoor
+  // ("Dutch-Plaza - NL"). Zonder dat laatste op te ruimen stond er "Dutch-Plaza -"
+  // als winkelnaam op de kaarten.
+  const merchant = (r.merchant_name || '')
+    .replace(/[\s-]+(NL|NL-BE|BE|NL\/BE)$/i, '')
+    .replace(/[\s-]+$/, '')
+    .trim()
   const cat = bepaalCat(r.product_type, naam, r.merchant_name, r.merchant_category || r.merchant_product_category_path)
   if (!GELDIG.has(cat)) return null
   // "van"-prijs: alleen als hij echt hoger is. rrp_price is in deze feed in
@@ -876,15 +882,29 @@ async function main () {
   const awin = await haalAwin()
   for (const r of awin) { const it = uitAwin(r); if (it) rauw.push(it) }
 
-  if (MM_TOKEN) {
-    for (const feed of MM_FEEDS) {
-      const ps = await haalMmFeed(feed.fid)
-      let n = 0
-      for (const q of ps) { const it = uitMm(q, feed); if (it) { rauw.push(it); n++ } }
-      console.log('MediaMarkt', feed.naam, '(' + feed.fid + '):', ps.length, 'op', n, 'bruikbaar')
-    }
-  } else {
-    console.error('MM_TOKEN ontbreekt, MediaMarkt wordt overgeslagen')
+  if (!MM_TOKEN) {
+    throw new Error('MM_TOKEN ontbreekt. Zet die als repository secret ' +
+      '(Settings -> Secrets and variables -> Actions).')
+  }
+  let mmAantal = 0
+  for (const feed of MM_FEEDS) {
+    const ps = await haalMmFeed(feed.fid)
+    let n = 0
+    for (const q of ps) { const it = uitMm(q, feed); if (it) { rauw.push(it); n++ } }
+    mmAantal += n
+    console.log('MediaMarkt', feed.naam, '(' + feed.fid + '):', ps.length, 'op', n, 'bruikbaar')
+  }
+
+  // Zonder MediaMarkt is er niets om Coolblue mee te vergelijken: de koppeling
+  // op EAN heeft twee winkels nodig. De run van 3 oktober 10:38 liep zo: hij
+  // leverde 47.727 producten op en nul die bij meer dan een winkel lagen, omdat
+  // MM_TOKEN niet als secret stond. De controle in de workflow keek alleen naar
+  // het totaal en liet dat dus door. Daarom hier een eigen ondergrens.
+  const MM_ONDERGRENS = 3000
+  if (mmAantal < MM_ONDERGRENS) {
+    throw new Error('Maar ' + mmAantal + ' bruikbare producten van MediaMarkt (ondergrens ' +
+      MM_ONDERGRENS + '). Staat er HTTP 403 of 401 hierboven, dan is MM_TOKEN verlopen of ' +
+      'gedraaid. Zonder MediaMarkt valt er niets te vergelijken, dus hier stoppen.')
   }
 
   console.log('Totaal bruikbaar:', rauw.length)

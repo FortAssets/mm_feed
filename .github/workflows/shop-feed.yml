@@ -37,7 +37,6 @@ jobs:
         env:
           AWIN_KEY: ${{ secrets.AWIN_KEY }}
           MM_TOKEN: ${{ secrets.MM_TOKEN }}
-          GITHUB_SHA: ${{ github.sha }}
         run: node --max-old-space-size=4096 shop.mjs
 
       # Zekerheid voor het prijslogboek: als de generator halverwege stukloopt
@@ -46,16 +45,56 @@ jobs:
       - name: Controleer de uitvoer
         run: |
           test -s data/shop/index.json || { echo "index.json ontbreekt of is leeg"; exit 1; }
-          n=$(node -e "console.log(JSON.parse(require('fs').readFileSync('data/shop/index.json')).totaal||0)")
-          echo "producten: $n"
-          test "$n" -gt 10000 || { echo "te weinig producten ($n), niet pushen"; exit 1; }
+          node -e "
+            const d = JSON.parse(require('fs').readFileSync('data/shop/index.json', 'utf8'))
+            const multi = (d.categorieen || []).reduce((s, c) => s + (c.multi || 0), 0)
+            const winkels = Object.keys(d.winkels || {}).length
+            console.log('producten: ' + d.totaal + ' | winkels: ' + winkels + ' | bij meer dan een winkel: ' + multi)
+            if (!(d.totaal > 10000)) { console.error('te weinig producten, niet pushen'); process.exit(1) }
+            // Zonder producten bij twee winkels valt er niets te vergelijken, en
+            // dan is er een feed weggevallen. Zo liep de run van 3 oktober 10:38:
+            // 47.727 producten en nul vergelijkingen, want MediaMarkt deed niet mee.
+            if (!(multi > 300)) { console.error('nul of bijna nul vergelijkingen, er mist een feed'); process.exit(1) }
+            if (!(winkels >= 3)) { console.error('maar ' + winkels + ' winkels, er mist een feed'); process.exit(1) }
+          "
           ls -1 data/shop/hist/*.json.gz | wc -l
 
+      # Twee commits, en dat is geen slordigheid.
+      #
+      # De worker haalt index.json bij raw.githubusercontent (korte cache, dus
+      # altijd vers) en leest daar de commit uit, om de grote bestanden bij
+      # jsDelivr op precies die versie op te vragen. Een jsDelivr-URL met een
+      # commit erin mag voor altijd gecachet worden en is dus razendsnel.
+      #
+      # Maar GITHUB_SHA is de commit die je hebt uitgecheckt, niet de commit die
+      # deze run straks maakt. Zette ik die erin, dan wees de pin naar de data
+      # van de vorige run en liep de pagina permanent een run achter. Dat deed
+      # hij ook: 3 oktober stond de verse index op 47.727 producten terwijl de
+      # categoriebestanden nog uit de run daarvoor kwamen.
+      #
+      # Dus: eerst de data committen, dan die commit-sha in index.json zetten en
+      # dat als tweede commit erbij. De pin wijst naar commit 1, en die bevat de
+      # data waar de index bij hoort.
       - name: Commit en push
         run: |
           git config user.name "mm-feed-bot"
           git config user.email "bot@users.noreply.github.com"
           git add -A data/shop
-          git diff --staged --quiet || git commit -m "Shop feed $(date -u +%FT%TZ)"
+          if git diff --staged --quiet; then
+            echo "niets veranderd, geen commit"
+            exit 0
+          fi
+          git commit -q -m "Shop feed $(date -u +%FT%TZ)"
+          sha=$(git rev-parse HEAD)
+          echo "datacommit: $sha"
+          node -e "
+            const fs = require('fs')
+            const p = 'data/shop/index.json'
+            const d = JSON.parse(fs.readFileSync(p, 'utf8'))
+            d.commit = process.argv[1]
+            fs.writeFileSync(p, JSON.stringify(d))
+          " "$sha"
+          git add data/shop/index.json
+          git commit -q -m "Shop feed: commit $sha in de index"
           git pull --rebase --autostash || true
           git push

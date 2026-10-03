@@ -1,0 +1,117 @@
+{
+  "sections": {
+    "kop": {
+      "type": "dpv-gaming",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "vgl_url": "/pages/vergelijken",
+        "label": "Gaming",
+        "kop": "Consoles, games en gaming-pc's vergelijken",
+        "tegels_kop": "Waar wil je naar kijken?",
+        "knop_tekst": "Alles in gaming vergelijken",
+        "knop_url": "/pages/vergelijken?cat=gaming"
+      }
+    },
+    "rij_consoles": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "label": "Consoles",
+        "kop": "Spelcomputers waar de prijzen uiteenlopen",
+        "sub": "Dezelfde console kost bij Coolblue en MediaMarkt vaak niet hetzelfde. Hier staan de grootste verschillen bovenaan.",
+        "link_tekst": "Alle consoles",
+        "link_url": "/pages/vergelijken?cat=gaming&type=consoles",
+        "cat": "gaming",
+        "types": "consoles",
+        "sort": "verschil",
+        "aantal": 12,
+        "alleen_multi": true
+      }
+    },
+    "rij_games": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "label": "Games",
+        "kop": "Games voor PS5, Xbox en Switch",
+        "sub": "",
+        "link_tekst": "Alle games",
+        "link_url": "/pages/vergelijken?cat=gaming&type=games",
+        "cat": "gaming",
+        "types": "games",
+        "sort": "verschil",
+        "aantal": 14,
+        "alleen_multi": true
+      }
+    },
+    "rij_laptops": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "label": "PC gaming",
+        "kop": "Gaming laptops",
+        "sub": "",
+        "link_tekst": "Alle gaming laptops",
+        "link_url": "/pages/vergelijken?cat=gaming&type=gaming%20laptops%20qwerty",
+        "cat": "gaming",
+        "types": "gaming laptops qwerty,gaming laptops azerty",
+        "sort": "prijs",
+        "aantal": 12,
+        "alleen_multi": false
+      }
+    },
+    "rij_randspul": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "label": "Je opstelling",
+        "kop": "Monitoren, schijven, toetsenborden",
+        "sub": "Hier zitten de grootste prijsverschillen tussen winkels, omdat niemand deze spullen vergelijkt.",
+        "link_tekst": "Alle randapparatuur",
+        "link_url": "/pages/vergelijken?cat=randapparatuur",
+        "cat": "randapparatuur",
+        "types": "monitoren,solid state drives (ssd),externe ssd's,externe harde schijven hdd,toetsenborden,muizen",
+        "sort": "verschil",
+        "aantal": 14,
+        "alleen_multi": true
+      }
+    },
+    "rij_headsets": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "label": "Erbij",
+        "kop": "Headsets, controllers en stoelen",
+        "sub": "",
+        "link_tekst": "Alles in gaming",
+        "link_url": "/pages/vergelijken?cat=gaming",
+        "cat": "gaming",
+        "types": "gaming headsets,controllers,gaming stoelen,racesturen,vr brillen",
+        "sort": "verschil",
+        "aantal": 14,
+        "alleen_multi": true
+      }
+    },
+    "aanmelden": {
+      "type": "dpv-prijsalarm",
+      "settings": {
+        "vorm": "blok",
+        "oog": "Gratis",
+        "kop": "Seintje als een console of game zakt",
+        "tekst": "Wij houden de prijzen van consoles, games en gaming-pc's elke nacht bij. Zakt er iets onder de laagste prijs die wij gemeten hebben, dan sturen wij je een bericht. Voor Black Friday is dat het verschil tussen een echte korting en een hoger doorgestreept bedrag.",
+        "knop": "Hou mij op de hoogte",
+        "bron": "gaming",
+        "fijn": "Hoogstens een mail per week. Afmelden kan met een klik in elke mail."
+      }
+    }
+  },
+  "order": [
+    "kop",
+    "rij_consoles",
+    "rij_games",
+    "rij_laptops",
+    "rij_randspul",
+    "rij_headsets",
+    "aanmelden"
+  ]
+}

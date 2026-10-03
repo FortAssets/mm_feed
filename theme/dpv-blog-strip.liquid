@@ -1,0 +1,405 @@
+{%- comment -%}
+  DPV Blogstrip met afbeeldingen.
+
+  image_fit: 'cover' voor sfeer- en reisfoto's (liggend), 'contain' voor
+  productfoto's (toestelrenders op witte achtergrond) zodat die niet worden
+  bijgesneden.
+
+  FIX 4 aug: de contain-regel stond op width:auto + height:100%. Dat dwingt de
+  hoogte af en laat de breedte vrij, waardoor de afbeelding bij sommige
+  verhoudingen alsnog buiten de kader viel en werd afgesneden. De juiste manier
+  is width EN height op 100% met object-fit:contain.
+
+  18 aug: aanmelding direct onder de aftelling. Stond eerst alleen in het blok
+  onderaan de pagina; wie op de titel afkomt moest dan eerst scrollen.
+
+  FIX 26 aug: dit veld werkte niet. Het postte naar /contact van Shopify,
+  precies de route die op 19 aug bij het pre-orderblok al is vervangen omdat
+  hij niets opsloeg. Inmiddels geeft die route zelfs 403, dus de bezoeker zag
+  "Gelukt" terwijl er niets gebeurde. Dat verklaart waarom de homepage nul
+  aanmeldingen opleverde en de artikelen eenentwintig.
+
+  Nu naar dezelfde worker als het pre-orderblok, met een eigen bron zodat je
+  op /mc/aanmeldingen kunt zien wat dit veld oplevert naast het blok verderop
+  op de pagina. De twee velden vragen hetzelfde en staan dicht bij elkaar; met
+  aparte bronnen weet je binnen een week welk van de twee werkt.
+
+  De id's waren al uniek per sectie ({{ section.id }}), dus twee velden op een
+  pagina botsen niet met elkaar.
+
+  22 sep: de strips op Sim only, Internet & TV en Telefoon met abonnement
+  toonden de drie nieuwste artikelen van de hele blog (zonnepanelen, eigen
+  risico) onder een kop als "Slimmer kiezen met sim only". Die pagina's
+  filteren nu op hun onderwerptag. Het tagfilter zette tot nu toe ook de groene
+  campagnestreep aan; die hoort alleen bij een tijdelijke campagne met aftelling
+  of einddatum, dus die hangt nu daaraan.
+{%- endcomment -%}
+<style>
+.dbs{padding:42px 0 10px;font-family:'Inter',system-ui,sans-serif;color:#0D1B2A}
+.dbs *{box-sizing:border-box}
+.dbs-wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.dbs-eyebrow{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#2563eb;margin-bottom:6px}
+.dbs-label{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.dbs-label h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:23px;margin:0;white-space:normal;overflow-wrap:anywhere}
+.dbs-rule{flex:1;height:1px;background:#e8edf5}
+.dbs-note{font-size:13px;color:#64748b;margin-bottom:20px;max-width:70ch;line-height:1.55}
+.dbs-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dbs-card{background:#fff;border:1px solid #e8edf5;border-radius:18px;overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:border-color .13s,transform .13s,box-shadow .13s}
+.dbs-card:hover{border-color:#dbe4ff;transform:translateY(-2px);box-shadow:0 16px 40px -20px rgba(13,27,42,.18)}
+
+.dbs-cover{height:180px;background:#eff4ff;position:relative;overflow:hidden;display:block}
+.dbs-cover img{width:100%;height:100%;object-fit:cover;display:block}
+
+.dbs-contain .dbs-cover{background:linear-gradient(180deg,#f6f9ff,#fff);padding:10px;border-bottom:1px solid #f1f5f9}
+.dbs-contain .dbs-cover img{width:100%;height:100%;object-fit:contain}
+
+.dbs-cover.geen{background:linear-gradient(135deg,#eff4ff,#f0fdf4);display:flex;align-items:center;justify-content:center}
+.dbs-cover.geen span{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:40px;color:#2563eb;opacity:.4}
+.dbs-body{padding:15px 17px 18px;display:flex;flex-direction:column;flex:1}
+.dbs-date{font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#94a3b8;margin-bottom:5px}
+.dbs-title{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15.5px;line-height:1.3;margin-bottom:7px}
+.dbs-exc{font-size:13px;color:#64748b;line-height:1.5}
+.dbs-more{display:inline-block;margin-top:14px;font-size:13.5px;font-weight:700;color:#1e3a8a;text-decoration:none}
+
+.dbs.dbs-tijdelijk{position:relative;background:#fff}
+.dbs.dbs-tijdelijk::before{content:"";position:absolute;left:0;right:0;top:0;height:3px;
+  background:linear-gradient(90deg,#059669,#6ee7b7,transparent)}
+.dbs-aftel{display:inline-flex;align-items:center;gap:8px;background:#f0fdf4;border:1px solid #a7f3d0;
+  border-radius:999px;padding:7px 14px;font-size:12.5px;font-weight:700;color:#047857;margin-bottom:16px}
+.dbs-aftel i{width:7px;height:7px;border-radius:50%;background:#059669;display:block;flex:0 0 7px}
+
+.dbs-melding{margin:-4px 0 18px;max-width:470px}
+.dbs-mrij{display:flex;gap:7px}
+.dbs-mrij input{flex:1;min-width:0;padding:11px 12px;border-radius:10px;border:1px solid #e8edf5;font:inherit;font-size:13.5px;color:#0D1B2A}
+.dbs-mrij input:focus{outline:2px solid #a7f3d0;outline-offset:1px}
+.dbs-mrij button{background:#059669;color:#fff;border:0;border-radius:10px;padding:11px 15px;font:inherit;font-weight:700;font-size:13px;white-space:nowrap;cursor:pointer}
+.dbs-mrij button:hover{background:#047857}
+.dbs-mrij button:disabled{opacity:.6;cursor:default}
+.dbs-mfijn{font-size:11.5px;color:#94a3b8;margin:7px 0 0;line-height:1.45}
+.dbs-muit{font-size:12.5px;margin:7px 0 0;display:none;font-weight:600}
+.dbs-mna{display:inline-flex;align-items:center;gap:7px;background:#EEF2FB;border:1px solid #dbe4ff;
+  border-radius:10px;padding:9px 14px;font-size:13px;font-weight:700;color:#1e3a8a;text-decoration:none;margin:-4px 0 18px}
+
+@media(max-width:900px){.dbs-grid{grid-template-columns:1fr}.dbs-cover{height:200px}}
+</style>
+
+{%- assign blog = blogs[section.settings.blog_handle] -%}
+{%- assign limiet = section.settings.max_items | default: 3 -%}
+
+{%- assign toon = true -%}
+{%- if section.settings.verberg_na != blank -%}
+  {%- assign nu_ts = 'now' | date: '%s' | times: 1 -%}
+  {%- assign eind_ts = section.settings.verberg_na | append: ' 23:59:59' | date: '%s' | times: 1 -%}
+  {%- if nu_ts > eind_ts -%}{%- assign toon = false -%}{%- endif -%}
+{%- endif -%}
+
+{%- assign melding_open = true -%}
+{%- if section.settings.melding_tot != blank -%}
+  {%- assign nu_m = 'now' | date: '%s' | times: 1 -%}
+  {%- assign tot_m = section.settings.melding_tot | append: ' 23:59:59' | date: '%s' | times: 1 -%}
+  {%- if nu_m > tot_m -%}{%- assign melding_open = false -%}{%- endif -%}
+{%- endif -%}
+
+{%- assign dagen = 0 -%}
+{%- if section.settings.aftel_datum != blank -%}
+  {%- assign nu2 = 'now' | date: '%s' | times: 1 -%}
+  {%- assign doel = section.settings.aftel_datum | date: '%s' | times: 1 -%}
+  {%- assign verschil = doel | minus: nu2 -%}
+  {%- if verschil > 0 -%}{%- assign dagen = verschil | divided_by: 86400 -%}{%- endif -%}
+{%- endif -%}
+{%- if section.settings.image_fit == 'contain' -%}
+  {%- assign fitclass = ' dbs-contain' -%}
+{%- else -%}
+  {%- assign fitclass = '' -%}
+{%- endif -%}
+
+{%- if toon -%}
+{%- comment -%} Groene campagnestreep alleen bij een tijdelijke campagne (aftelling of einddatum), niet bij een gewoon onderwerpfilter. {%- endcomment -%}
+{%- if section.settings.aftel_datum != blank or section.settings.verberg_na != blank -%}{%- assign tijdklasse = ' dbs-tijdelijk' -%}{%- else -%}{%- assign tijdklasse = '' -%}{%- endif -%}
+<div class="dbs{{ fitclass }}{{ tijdklasse }}">
+  <div class="dbs-wrap">
+    {% if section.settings.eyebrow != blank %}<span class="dbs-eyebrow">{{ section.settings.eyebrow }}</span>{% endif %}
+    <div class="dbs-label"><h2>{{ section.settings.heading }}</h2><div class="dbs-rule"></div></div>
+    {% if section.settings.subheading != blank %}<div class="dbs-note">{{ section.settings.subheading }}</div>{% endif %}
+    {% if dagen > 0 %}<div class="dbs-aftel"><i></i>Nog {{ dagen }} {% if dagen == 1 %}dag{% else %}dagen{% endif %} tot de aankondiging</div>{% endif %}
+
+    {% if section.settings.melding_aan and melding_open %}
+    <div class="dbs-melding">
+      <div class="dbs-mrij">
+        <input id="dbsm-mail-{{ section.id }}" type="email" placeholder="{{ section.settings.melding_hint }}" autocomplete="email">
+        <button id="dbsm-knop-{{ section.id }}" type="button">{{ section.settings.melding_knop }}</button>
+      </div>
+      <p class="dbs-muit" id="dbsm-uit-{{ section.id }}"></p>
+      <p class="dbs-mfijn">{{ section.settings.melding_fijn }}</p>
+    </div>
+    <script>
+    (function () {
+      var knop = document.getElementById('dbsm-knop-{{ section.id }}');
+      if (!knop) return;
+      var veld = document.getElementById('dbsm-mail-{{ section.id }}');
+      var uit  = document.getElementById('dbsm-uit-{{ section.id }}');
+      var LIJST = {{ section.settings.melding_lijst | default: 'iphone18-alert' | json }};
+      var BRON  = {{ section.settings.melding_bron | default: 'preorder-strip' | json }};
+      var ONDERWERPEN = {{ section.settings.melding_onderwerpen | default: '' | json }}
+        .split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+
+      function zeg(t, goed) {
+        uit.textContent = t;
+        uit.style.color = goed ? '#047857' : '#b91c1c';
+        uit.style.display = 'block';
+      }
+      function stuur() {
+        var adres = (veld.value || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) { zeg('Vul een geldig e-mailadres in.', false); veld.focus(); return; }
+        knop.disabled = true;
+        var oud = knop.textContent;
+        knop.textContent = 'Bezig\u2026';
+
+        /* 3 okt: ook dit veld ging naar de mc-lijst en zette een adres er
+           zonder bevestiging op. Nu naar dezelfde nieuwsbrieflijst als de rest
+           van de site, met dubbele opt-in. LIJST is daarmee overbodig geworden
+           en gaat mee als bron, zodat je in de database nog ziet waar iemand
+           vandaan kwam. */
+        fetch('https://dpv-boodschappen.business-347.workers.dev/sm/api/aanmelden', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: adres, bron: BRON || LIJST, onderwerpen: ONDERWERPEN })
+        })
+          .then(function (r) { return r.json(); })
+          .then(function (res) {
+            if (res && res.ok && res.status === 'al-actief') {
+              zeg('Je stond al op de lijst.', true);
+              veld.value = '';
+            } else if (res && res.ok) {
+              zeg('Bijna klaar: kijk in je mail en klik op de link erin.', true);
+              veld.value = '';
+            } else {
+              zeg('Er ging iets mis. Probeer het later nog eens.', false);
+            }
+          })
+          .catch(function () { zeg('Er ging iets mis. Probeer het later nog eens.', false); })
+          .then(function () { knop.disabled = false; knop.textContent = oud; });
+      }
+      knop.addEventListener('click', stuur);
+      veld.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); stuur(); } });
+    })();
+    </script>
+    {% elsif section.settings.melding_aan and section.settings.melding_na_tekst != blank %}
+    <a class="dbs-mna" href="{{ section.settings.melding_na_url | default: '/pages/telefoonabonnement' }}">{{ section.settings.melding_na_tekst }}</a>
+    {% endif %}
+
+    {%- comment -%} Zonder paginate geeft Shopify alleen de nieuwste artikelen door; dan vindt een onderwerpfilter de oudere artikelen nooit. {%- endcomment -%}
+    {%- paginate blog.articles by 250 -%}
+    <div class="dbs-grid">
+      {%- assign lijst = blog.articles -%}
+      {%- if section.settings.blog_handle_2 != blank -%}
+        {%- assign blog2 = blogs[section.settings.blog_handle_2] -%}
+        {%- if blog2 != blank -%}
+          {%- assign lijst = lijst | concat: blog2.articles | sort: 'published_at' | reverse -%}
+        {%- endif -%}
+      {%- endif -%}
+      {%- assign geteld = 0 -%}
+      {%- for article in lijst -%}
+        {%- if geteld >= limiet -%}{%- break -%}{%- endif -%}
+        {%- if section.settings.tag_filter != blank -%}
+          {%- unless article.tags contains section.settings.tag_filter -%}{%- continue -%}{%- endunless -%}
+        {%- endif -%}
+        {%- if section.settings.tag_uitsluiten != blank -%}
+          {%- if article.tags contains section.settings.tag_uitsluiten -%}{%- continue -%}{%- endif -%}
+        {%- endif -%}
+        {%- assign geteld = geteld | plus: 1 -%}
+        <a class="dbs-card" href="{{ article.url }}">
+          {% if article.image %}
+            <div class="dbs-cover"><img src="{{ article.image | image_url: width: 720 }}" alt="{{ article.image.alt | default: article.title | escape }}" loading="lazy" width="720" height="360"></div>
+          {% else %}
+            <div class="dbs-cover geen"><span>{{ article.title | slice: 0 }}</span></div>
+          {% endif %}
+          <div class="dbs-body">
+            <div class="dbs-date">{{ article.published_at | date: "%-d %B %Y" }}</div>
+            <div class="dbs-title">{{ article.title }}</div>
+            <div class="dbs-exc">{{ article.excerpt_or_content | strip_html | truncate: 110 }}</div>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+    {%- endpaginate -%}
+
+    {% if blog != blank %}<a class="dbs-more" href="{{ section.settings.more_url | default: blog.url }}">{{ section.settings.more_label }} &rsaquo;</a>{% endif %}
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "DPV Blogstrip",
+  "settings": [
+    {
+      "type": "text",
+      "id": "blog_handle",
+      "label": "Blog handle",
+      "default": "advies"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Advies & Kennisbank"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Kop",
+      "default": "Lees je in voordat je kiest"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subtekst"
+    },
+    {
+      "type": "text",
+      "id": "more_label",
+      "label": "Link onderaan",
+      "default": "Alle artikelen"
+    },
+    {
+      "type": "select",
+      "id": "image_fit",
+      "label": "Afbeeldingen",
+      "default": "cover",
+      "options": [
+        {
+          "value": "cover",
+          "label": "Vullend (sfeer- en reisfoto's)"
+        },
+        {
+          "value": "contain",
+          "label": "Volledig tonen (productfoto's)"
+        }
+      ]
+    },
+    {
+      "type": "range",
+      "id": "max_items",
+      "label": "Aantal artikelen",
+      "min": 3,
+      "max": 9,
+      "step": 3,
+      "default": 3
+    },
+    {
+      "type": "header",
+      "content": "Onderwerp en tijdelijke campagne"
+    },
+    {
+      "type": "text",
+      "id": "tag_filter",
+      "label": "Toon alleen artikelen met deze tag",
+      "info": "Het onderwerp van de pagina, bijvoorbeeld sim only, internet of telefoon. Leeg = alle artikelen uit de blog."
+    },
+    {
+      "type": "text",
+      "id": "aftel_datum",
+      "label": "Aftellen naar (JJJJ-MM-DD)",
+      "info": "Toont 'Nog X dagen tot de aankondiging' en de groene campagnestreep. Leeg = geen aftelling."
+    },
+    {
+      "type": "text",
+      "id": "verberg_na",
+      "label": "Verberg deze sectie na (JJJJ-MM-DD)",
+      "info": "De sectie verdwijnt vanzelf na deze datum. Leeg = altijd tonen."
+    },
+    {
+      "type": "url",
+      "id": "more_url",
+      "label": "Link onderaan",
+      "info": "Leeg = link naar de blog zelf."
+    },
+    {
+      "type": "text",
+      "id": "tag_uitsluiten",
+      "label": "Sla artikelen met deze tag over"
+    },
+    {
+      "type": "text",
+      "id": "blog_handle_2",
+      "label": "Tweede blog erbij (optioneel)"
+    },
+    {
+      "type": "header",
+      "content": "Aanmelding onder de aftelling"
+    },
+    {
+      "type": "paragraph",
+      "content": "Dit veld ging eerst naar /contact van Shopify en sloeg niets op, daarna naar de mc-lijst zonder bevestigingsmail. Sinds 3 oktober gaat het naar de nieuwsbrieflijst met dubbele opt-in, dezelfde lijst als de rest van de site. Kies hieronder een eigen bron, dan zie je in de database wat dit veld oplevert."
+    },
+    {
+      "type": "checkbox",
+      "id": "melding_aan",
+      "label": "E-mailveld tonen",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "melding_hint",
+      "label": "Hint in het veld",
+      "default": "jouw@email.nl"
+    },
+    {
+      "type": "text",
+      "id": "melding_knop",
+      "label": "Knoptekst",
+      "default": "Mail me"
+    },
+    {
+      "type": "textarea",
+      "id": "melding_fijn",
+      "label": "Kleine regel",
+      "default": "Eén bericht op de dag dat de pre-orders opengaan, met de prijzen per aanbieder. Afmelden kan altijd."
+    },
+    {
+      "type": "text",
+      "id": "melding_lijst",
+      "label": "Lijst",
+      "default": "iphone18-alert",
+      "info": "Wordt nu alleen nog als bron gebruikt; de lijst is overal dezelfde."
+    },
+    {
+      "type": "text",
+      "id": "melding_bron",
+      "label": "Bron",
+      "default": "preorder-strip",
+      "info": "Verschijnt in de kolom Bron op /mc/aanmeldingen. Houd hem anders dan die van het pre-orderblok."
+    },
+    {
+      "type": "text",
+      "id": "melding_tot",
+      "label": "Aanmelding stopt na (JJJJ-MM-DD)",
+      "info": "Na deze datum verdwijnt het e-mailveld vanzelf."
+    },
+    {
+      "type": "text",
+      "id": "melding_na_tekst",
+      "label": "Tekst na die datum",
+      "default": "De pre-orders zijn open, bekijk het aanbod →"
+    },
+    {
+      "type": "url",
+      "id": "melding_na_url",
+      "label": "Link na die datum"
+    },
+    {
+      "type": "text",
+      "id": "melding_onderwerpen",
+      "label": "Onderwerpen",
+      "default": "",
+      "info": "Komma gescheiden, bijvoorbeeld black-friday. Leeg laten zet alles aan."
+    }
+  ],
+  "presets": [
+    {
+      "name": "DPV Blogstrip"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,202 @@
+{%- comment -%}
+  dpv-gaming — kop van de gamingpagina.
+
+  Alleen de hero en de tegels naar de onderdelen. De productrijen eronder zet je
+  met de sectie "Productrij" neer, zo veel als je wilt, elk met een eigen
+  categorie of soort. Zo kun je de pagina in het thema herschikken zonder dat er
+  code aan te pas komt.
+
+  De tegels linken naar de vergelijker met de filters al in de url: dat werkt
+  omdat dpv-shop zijn toestand uit de querystring leest. /pages/vergelijken?cat=
+  gaming&type=consoles opent dus direct op consoles.
+
+  De aantallen in de tegels komen uit de API en niet uit het thema, want anders
+  staat er over twee weken iets dat niet meer klopt.
+{%- endcomment -%}
+
+<section class="dg" id="dg" data-api="{{ section.settings.api }}" data-vgl="{{ section.settings.vgl_url }}">
+
+  <div class="dg-hero">
+    <p class="dg-eyebrow">{{ section.settings.label }}</p>
+    <h1>{{ section.settings.kop }}</h1>
+    <div class="dg-sub">{{ section.settings.sub }}</div>
+    <div class="dg-cijfers" data-cijfers>
+      <div class="dg-c"><b data-c-aantal>&nbsp;</b><span>producten in gaming</span></div>
+      <div class="dg-c"><b data-c-multi>&nbsp;</b><span>bij meer dan een winkel</span></div>
+      <div class="dg-c"><b data-c-vanaf>&nbsp;</b><span>goedkoopste game</span></div>
+    </div>
+    {%- if section.settings.knop_url != blank -%}
+      <a class="dg-knop" href="{{ section.settings.knop_url }}">{{ section.settings.knop_tekst }}</a>
+    {%- endif -%}
+  </div>
+
+  <h2 class="dg-kop2">{{ section.settings.tegels_kop }}</h2>
+  <div class="dg-tegels" data-tegels></div>
+
+  {%- if section.settings.uitleg != blank -%}
+    <div class="dg-uitleg">{{ section.settings.uitleg }}</div>
+  {%- endif -%}
+
+</section>
+
+<style>
+.dg{--pa:#5b3b8c;--pa2:#F6F4FB;--rd:#E2DCF2;--gr:#10b981;--ink:#0D1B2A;--mut:#5B6B80;
+ max-width:1180px;margin:0 auto;padding:12px 16px 6px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
+.dg *{box-sizing:border-box}
+.dg-hero{background:linear-gradient(135deg,#1b1033 0%,#2d1b52 55%,#3d2370 100%);border-radius:18px;
+ padding:24px 20px;color:#fff;position:relative;overflow:hidden}
+.dg-hero:after{content:'';position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;
+ background:radial-gradient(circle,rgba(145,106,228,.45),transparent 70%)}
+.dg-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#c3aef0;font-weight:800;margin:0 0 7px;position:relative}
+.dg h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:28px;line-height:1.12;
+ letter-spacing:-.03em;font-weight:800;margin:0 0 10px;position:relative}
+@media(min-width:680px){.dg h1{font-size:34px}}
+.dg-sub{font-size:15px;line-height:1.6;color:#ddd3f5;max-width:62ch;position:relative}
+.dg-sub p{margin:0 0 9px}.dg-sub p:last-child{margin:0}
+.dg-cijfers{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:18px 0 0;position:relative}
+.dg-c{background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.16);border-radius:12px;padding:10px 11px}
+.dg-c b{display:block;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:20px;
+ font-weight:800;letter-spacing:-.02em;color:#fff}
+.dg-c span{display:block;font-size:11px;color:#c3aef0;margin-top:2px;line-height:1.3;font-weight:600}
+.dg a.dg-knop,.dg a.dg-knop:visited{display:flex;align-items:center;justify-content:center;min-height:48px;
+ margin:18px 0 0;background:var(--gr);color:#fff !important;border-radius:12px;font-size:15px;font-weight:800;
+ text-decoration:none !important;position:relative}
+.dg a.dg-knop:hover{background:#0fa876}
+@media(min-width:680px){.dg a.dg-knop{max-width:320px}}
+
+.dg-kop2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;letter-spacing:-.025em;
+ font-weight:800;margin:26px 0 12px}
+.dg-tegels{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}
+@media(min-width:560px){.dg-tegels{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:860px){.dg-tegels{grid-template-columns:repeat(4,1fr)}}
+.dg-t,.dg-t:visited{display:flex;flex-direction:column;gap:3px;padding:14px 13px;border-radius:14px;
+ border:1px solid var(--rd);background:#fff;text-decoration:none;color:var(--ink);transition:border-color .14s,box-shadow .14s}
+.dg-t:hover{border-color:var(--pa);box-shadow:0 6px 18px rgba(13,27,42,.07)}
+.dg-t b{font-size:14.5px;font-weight:800;letter-spacing:-.01em}
+.dg-t span{font-size:12px;color:var(--mut);font-weight:600}
+.dg-t em{font-size:12px;color:var(--pa);font-weight:800;font-style:normal;margin-top:auto;padding-top:6px}
+.dg-tsk{height:78px;border-radius:14px;background:linear-gradient(90deg,#f4f1fa,#faf9fd,#f4f1fa);
+ background-size:200% 100%;animation:dg-golf 1.2s linear infinite}
+@keyframes dg-golf{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+.dg-uitleg{margin:26px 0 0;font-size:14.5px;line-height:1.7;color:var(--ink)}
+.dg-uitleg h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;
+ letter-spacing:-.02em;margin:18px 0 7px}
+.dg-uitleg p{margin:0 0 11px}
+.dg-uitleg ul{margin:0 0 11px;padding-left:19px}
+.dg-uitleg li{margin:0 0 5px}
+.dg-uitleg a{color:var(--pa);font-weight:700}
+</style>
+
+<script>
+(function () {
+  var w = document.getElementById('dg');
+  if (!w) return;
+  var API = (w.getAttribute('data-api') || '').replace(/\/+$/, '');
+  var VGL = w.getAttribute('data-vgl') || '/pages/vergelijken';
+  var tegels = w.querySelector('[data-tegels]');
+  if (!API || !tegels) return;
+
+  // soort uit de feed -> wat er op de tegel staat. De sleutels zijn de waarden
+  // van product_type zoals Coolblue ze levert; die staan ook in de API-facetten.
+  var GROEPEN = [
+    { t: 'Consoles', u: 'consoles', o: 'PlayStation, Xbox, Nintendo Switch' },
+    { t: 'Games', u: 'games', o: 'PS5, Xbox en Switch' },
+    { t: 'Gaming headsets', u: 'gaming headsets', o: 'met microfoon, draadloos' },
+    { t: 'Controllers', u: 'controllers,opladers voor controllers', o: 'en oplaadstations' },
+    { t: 'Gaming laptops', u: 'gaming laptops qwerty,gaming laptops azerty', o: 'met losse videokaart' },
+    { t: 'Racesturen', u: 'racesturen,flightsticks', o: 'stuur, pedalen, flightstick' },
+    { t: 'Gaming stoelen', u: 'gaming stoelen', o: 'voor lange sessies' },
+    { t: 'VR-brillen', u: 'vr brillen', o: 'Meta Quest en meer' }
+  ];
+
+  // deze staan in andere categorieen, maar horen wel bij een gamingopstelling
+  var ERBIJ = [
+    { t: 'Monitoren', c: 'laptops', u: 'monitoren', o: 'hoge verversingssnelheid' },
+    { t: "SSD's en schijven", c: 'randapparatuur', u: "solid state drives (ssd),externe ssd's,externe harde schijven hdd", o: 'meer ruimte voor games' },
+    { t: 'Toetsenbord en muis', c: 'randapparatuur', u: 'toetsenborden,muizen,toetsenbord en muis sets', o: 'mechanisch, draadloos' },
+    { t: 'Routers', c: 'randapparatuur', u: 'routers,netwerk switches,access points', o: 'minder vertraging online' }
+  ];
+
+  function eur(n) {
+    if (n == null || isNaN(n)) return '';
+    var v = Math.round(n * 100) / 100;
+    return '€' + (v % 1 === 0 ? String(v) : v.toFixed(2).replace('.', ','));
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  tegels.innerHTML = '<div class="dg-tsk"></div><div class="dg-tsk"></div><div class="dg-tsk"></div>' +
+    '<div class="dg-tsk"></div><div class="dg-tsk"></div><div class="dg-tsk"></div>';
+
+  fetch(API + '/api/shop/index')
+    .then(function (r) { return r.json(); })
+    .then(function (idx) {
+      var cats = {};
+      (idx.categorieen || []).forEach(function (c) { cats[c.slug] = c; });
+      var g = cats.gaming;
+
+      if (g) {
+        var ca = w.querySelector('[data-c-aantal]');
+        var cm = w.querySelector('[data-c-multi]');
+        var cv = w.querySelector('[data-c-vanaf]');
+        if (ca) ca.textContent = g.aantal;
+        if (cm) cm.textContent = g.multi;
+        if (cv) cv.textContent = eur(g.vanaf);
+      }
+
+      // aantallen per soort uit de facetten van de index
+      function telling(cat, soorten) {
+        var c = cats[cat];
+        if (!c || !c.types) return 0;
+        var map = {};
+        c.types.forEach(function (r) { map[String(r[0]).toLowerCase()] = r[1]; });
+        var n = 0;
+        soorten.split(',').forEach(function (s) { n += (map[s.trim().toLowerCase()] || 0); });
+        return n;
+      }
+
+      var h = '';
+      GROEPEN.forEach(function (x) {
+        var n = telling('gaming', x.u);
+        if (!n) return;
+        h += '<a class="dg-t" href="' + esc(VGL) + '?cat=gaming&type=' + encodeURIComponent(x.u) + '">' +
+          '<b>' + esc(x.t) + '</b><span>' + esc(x.o) + '</span><em>' + n + ' producten</em></a>';
+      });
+      ERBIJ.forEach(function (x) {
+        var n = telling(x.c, x.u);
+        if (!n) return;
+        h += '<a class="dg-t" href="' + esc(VGL) + '?cat=' + encodeURIComponent(x.c) +
+          '&type=' + encodeURIComponent(x.u) + '">' +
+          '<b>' + esc(x.t) + '</b><span>' + esc(x.o) + '</span><em>' + n + ' producten</em></a>';
+      });
+
+      if (!h) { tegels.innerHTML = ''; tegels.hidden = true; return; }
+      tegels.innerHTML = h;
+    })
+    .catch(function () { tegels.innerHTML = ''; tegels.hidden = true; });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Gaming kop",
+  "settings": [
+    { "type": "text", "id": "api", "label": "API", "default": "https://shop.deprijsvergelijker.com" },
+    { "type": "url", "id": "vgl_url", "label": "Link naar de vergelijker", "info": "De tegels openen deze pagina met de filters al ingesteld." },
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "label", "label": "Label", "default": "Gaming" },
+    { "type": "text", "id": "kop", "label": "Kop (h1)", "default": "Consoles, games en gaming-pc's vergelijken" },
+    { "type": "richtext", "id": "sub", "label": "Tekst", "default": "<p>Hetzelfde spel of dezelfde console kost bij Coolblue en MediaMarkt vaak niet hetzelfde. Wij zetten de prijzen naast elkaar en houden elke dag bij of ze stijgen of dalen, zodat je bij een aanbieding kunt zien of de prijs echt gedaald is.</p>" },
+    { "type": "text", "id": "knop_tekst", "label": "Knoptekst", "default": "Alles in gaming vergelijken" },
+    { "type": "url", "id": "knop_url", "label": "Knoplink" },
+    { "type": "header", "content": "Tegels" },
+    { "type": "text", "id": "tegels_kop", "label": "Kop boven de tegels", "default": "Waar wil je naar kijken?" },
+    { "type": "header", "content": "Uitleg onderaan" },
+    { "type": "richtext", "id": "uitleg", "label": "Tekst", "default": "<p>Wij vergelijken de prijzen die onze partners in hun productfeed zetten en werken die elke nacht bij. Daarnaast bewaren wij per product wanneer de prijs veranderde. Dat is het verschil tussen \"nu in de aanbieding\" en een prijs die werkelijk lager is dan hij maanden geweest is.</p>" }
+  ],
+  "presets": [ { "name": "Gaming kop" } ]
+}
+{% endschema %}

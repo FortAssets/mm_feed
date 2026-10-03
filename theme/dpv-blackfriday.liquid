@@ -1,0 +1,330 @@
+{%- comment -%}
+  Black Friday-pagina, 27 november 2026.
+
+  Opzet is dezelfde als bij de iPhone-lancering, en om dezelfde reden: tot de
+  dag zelf valt er niets te vergelijken, dus het enige wat je die weken kunt
+  oogsten is een e-mailadres. Bij de iPhone 18 leverde dat 353 aanmeldingen op
+  en ruim 240 klikken op de dag zelf.
+
+  Daarom staat het aanmeldblok bovenaan en niet halverwege.
+
+  Na 27 november 00:00 schakelt de pagina zichzelf om: het aanmeldblok
+  verdwijnt en de status wordt "Nu bezig". Dat gebeurt in de browser en niet in
+  Liquid, omdat Shopify pagina's in de cache houdt en de omslag anders uren te
+  laat komt.
+
+  De aanbieders en winkels staan als tekstregels in de instellingen, in de vorm
+  naam|detail|link. Zo kun je er in november zelf bedragen bij zetten zonder aan
+  de code te komen. Blokken werkten hier niet: Shopify weigert secties met
+  blokken in dit thema, dat is bij de Duo-pagina uitgezocht.
+{%- endcomment -%}
+
+{%- assign start = section.settings.start_iso -%}
+
+<div class="bfr" id="bfr" data-start="{{ start }}"
+     data-api="{{ section.settings.api }}"
+     data-bron="{{ section.settings.bron }}"
+     data-onderwerpen="{{ section.settings.onderwerpen }}">
+
+  <header class="bfr-top">
+    <span class="bfr-pil"><i></i><span id="bfr-status">{{ section.settings.status_voor }}</span></span>
+    <h1>{{ section.settings.kop }}</h1>
+    <p class="bfr-sub">{{ section.settings.sub }}</p>
+  </header>
+
+  <section class="bfr-aanmeld" id="bfr-aanmeld">
+    <p class="bfr-eyebrow">Vrijdag 27 november</p>
+    <p class="bfr-akop">{{ section.settings.aanmeld_kop }}</p>
+    <p class="bfr-asub">{{ section.settings.aanmeld_sub }}</p>
+    <div class="bfr-rij">
+      <input id="bfr-mail" type="email" inputmode="email" autocomplete="email"
+             placeholder="{{ section.settings.aanmeld_hint | escape }}" aria-label="Je e-mailadres">
+      <button type="button" id="bfr-knop">Houd me op de hoogte</button>
+    </div>
+    <p class="bfr-uit" id="bfr-uit" role="status"></p>
+    <p class="bfr-fijn">{{ section.settings.aanmeld_fijn }}</p>
+  </section>
+
+  <section class="bfr-blok">
+    <h2>Welke korting is echt korting?</h2>
+    <div class="bfr-tekst"><p><strong>Kijk naar het totaal over de looptijd.</strong> Bij abonnementen is de truc bijna altijd hetzelfde: een lager maandbedrag met een hogere aanbetaling, of andersom. Reken aanbetaling plus maandbedrag maal de maanden en vergelijk dat.</p><p><strong>Let op de van-prijs.</strong> Een winkel mag alleen de laagste prijs van de afgelopen dertig dagen als vergelijkingsprijs gebruiken. Zie je een van-prijs die maanden niet is gevraagd, dan is de korting op papier groter dan in werkelijkheid.</p><p><strong>Een toestel van vorig jaar is vaak de echte deal.</strong> De iPhone 17 Pro kost sinds de komst van de 18-serie ruim 400 euro minder, en dat is geen tijdelijke actie.</p><p><strong>Sim only is het eerlijkst te vergelijken.</strong> Daar zit geen toestel in dat het beeld vertroebelt: je ziet gewoon wat je per maand betaalt voor je bundel.</p></div>
+  </section>
+
+  <section class="bfr-blok">
+    <h2>Waar vallen de deals?</h2>
+    <p class="bfr-tekst">De aanbiedingen zijn er nog niet; die beginnen in de week voor 27 november. Hieronder staan de plekken waar ze verschijnen, zodat je alvast kunt kijken wat iets nu kost.</p>
+
+    <p class="bfr-kopje">Met abonnement</p>
+    <div class="bfr-kaarten">
+      {%- assign prov = section.settings.providers | newline_to_br | split: '<br />' -%}
+      {%- for r in prov -%}
+        {%- assign d = r | strip | split: '|' -%}
+        {%- if d.size >= 3 -%}
+          <a class="bfr-kaart" href="{{ d[2] | strip }}" rel="nofollow sponsored noopener" target="_blank">
+            <span class="bfr-naam">{{ d[0] | strip }}</span>
+            <span class="bfr-detail">{{ d[1] | strip }}</span>
+            <span class="bfr-cta">Bekijk bij {{ d[0] | strip }}</span>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <p class="bfr-kopje">Losse toestellen en sim only</p>
+    <div class="bfr-kaarten">
+      {%- assign win = section.settings.winkels | newline_to_br | split: '<br />' -%}
+      {%- for r in win -%}
+        {%- assign d = r | strip | split: '|' -%}
+        {%- if d.size >= 3 -%}
+          <a class="bfr-kaart" href="{{ d[2] | strip }}" rel="nofollow sponsored noopener" target="_blank">
+            <span class="bfr-naam">{{ d[0] | strip }}</span>
+            <span class="bfr-detail">{{ d[1] | strip }}</span>
+            <span class="bfr-cta">Bekijk bij {{ d[0] | strip }}</span>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <p class="bfr-fijn">Klik je door en sluit je iets af, dan ontvangen wij een vergoeding. Jij betaalt hetzelfde.</p>
+  </section>
+
+  <section class="bfr-blok">
+    <h2>Vijf dingen om te doen vóór 27 november</h2>
+    <div class="bfr-tekst"><p><strong>1. Kijk wat je nu betaalt.</strong> Zonder dat cijfer weet je niet of een aanbieding iets scheelt. Pak je laatste factuur erbij.</p><p><strong>2. Controleer wanneer je contract afloopt.</strong> Loopt het nog een jaar, dan koop je jezelf mogelijk af tegen kosten die de korting opeten.</p><p><strong>3. Bepaal welke bundel je nodig hebt.</strong> Onbeperkt klinkt aantrekkelijk, maar de meeste mensen komen niet boven de 10 GB.</p><p><strong>4. Noteer de prijs van het toestel dat je wilt.</strong> Nu, niet op 27 november. Dan zie je meteen of die van-prijs klopt.</p><p><strong>5. Zet een grens.</strong> Beslis vooraf wat je maximaal wilt uitgeven, anders bepaalt de korting dat voor je.</p></div>
+  </section>
+
+  <section class="bfr-blok">
+    <h2>Veelgestelde vragen</h2>
+    <div class="bfr-vragen">
+      <details><summary>Wanneer is Black Friday 2026?</summary><div class="bfr-tekst"><p>Vrijdag 27 november 2026. Veel winkels beginnen al eerder in die week, en Cyber Monday valt op 30 november.</p></div></details>
+      <details><summary>Zijn de kortingen met Black Friday echt?</summary><div class="bfr-tekst"><p>Soms wel, soms niet. Een winkel mag alleen de laagste prijs van de afgelopen dertig dagen als vergelijkingsprijs tonen. Noteer de prijs van wat je wilt kopen nu al, dan zie je op de dag zelf of het klopt.</p></div></details>
+      <details><summary>Is een telefoon met abonnement voordeliger tijdens Black Friday?</summary><div class="bfr-tekst"><p>Dat hangt af van het totaal over de looptijd. Een lage maandprijs met een hoge aanbetaling kan duurder uitvallen dan een gewone aanbieding. Reken altijd aanbetaling plus maandbedrag maal de maanden.</p></div></details>
+      <details><summary>Kan ik mijn abonnement tussentijds opzeggen voor een deal?</summary><div class="bfr-tekst"><p>Loopt je contract nog, dan betaal je meestal een afkoopsom voor de resterende maanden. Reken die mee voordat je overstapt; vaak eet die de korting op.</p></div></details>
+      <details><summary>Wat is het verschil met Cyber Monday?</summary><div class="bfr-tekst"><p>Cyber Monday valt op maandag 30 november en is oorspronkelijk gericht op online aanbiedingen. In de praktijk lopen de acties in Nederland van maandag 23 tot en met maandag 30 november door.</p></div></details>
+      <details><summary>Zijn oudere iPhones met Black Friday goedkoper?</summary><div class="bfr-tekst"><p>Vaak wel, maar de grootste prijsdaling kwam al bij de introductie van het nieuwe model. De iPhone 17 Pro werd in september ruim 400 euro goedkoper, los van welke actie dan ook.</p></div></details>
+    </div>
+  </section>
+
+  <p class="bfr-fijn">Wij vergelijken op prijs en productkenmerken en geven geen advies. Prijzen en acties controleren wij bij de aanbieders zelf; controleer het bedrag altijd op hun site voordat je bestelt.</p>
+</div>
+
+<script type="application/ld+json">
+{"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Wanneer is Black Friday 2026?", "acceptedAnswer": {"@type": "Answer", "text": "Vrijdag 27 november 2026. Veel winkels beginnen al eerder in die week, en Cyber Monday valt op 30 november."}}, {"@type": "Question", "name": "Zijn de kortingen met Black Friday echt?", "acceptedAnswer": {"@type": "Answer", "text": "Soms wel, soms niet. Een winkel mag alleen de laagste prijs van de afgelopen dertig dagen als vergelijkingsprijs tonen. Noteer de prijs van wat je wilt kopen nu al, dan zie je op de dag zelf of het klopt."}}, {"@type": "Question", "name": "Is een telefoon met abonnement voordeliger tijdens Black Friday?", "acceptedAnswer": {"@type": "Answer", "text": "Dat hangt af van het totaal over de looptijd. Een lage maandprijs met een hoge aanbetaling kan duurder uitvallen dan een gewone aanbieding. Reken altijd aanbetaling plus maandbedrag maal de maanden."}}, {"@type": "Question", "name": "Kan ik mijn abonnement tussentijds opzeggen voor een deal?", "acceptedAnswer": {"@type": "Answer", "text": "Loopt je contract nog, dan betaal je meestal een afkoopsom voor de resterende maanden. Reken die mee voordat je overstapt; vaak eet die de korting op."}}, {"@type": "Question", "name": "Wat is het verschil met Cyber Monday?", "acceptedAnswer": {"@type": "Answer", "text": "Cyber Monday valt op maandag 30 november en is oorspronkelijk gericht op online aanbiedingen. In de praktijk lopen de acties in Nederland van maandag 23 tot en met maandag 30 november door."}}, {"@type": "Question", "name": "Zijn oudere iPhones met Black Friday goedkoper?", "acceptedAnswer": {"@type": "Answer", "text": "Vaak wel, maar de grootste prijsdaling kwam al bij de introductie van het nieuwe model. De iPhone 17 Pro werd in september ruim 400 euro goedkoper, los van welke actie dan ook."}}]}
+</script>
+
+<style>
+.bfr{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#10b981;--groen-d:#0b7d5c;--diep:#0B0F17;
+ font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);max-width:880px;margin:0 auto;padding:10px 16px 50px}
+.bfr *{box-sizing:border-box}
+.bfr :focus-visible{outline:3px solid var(--groen);outline-offset:2px}
+.bfr-pil{display:inline-flex;align-items:center;gap:9px;background:#111827;color:#fff;border-radius:99px;padding:7px 16px;font-size:13.5px;font-weight:800}
+.bfr-pil i{width:8px;height:8px;border-radius:50%;background:#FBBF24;display:block}
+.bfr h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:32px;line-height:1.05;letter-spacing:-.03em;font-weight:800;margin:14px 0 8px}
+.bfr-sub{font-size:16px;line-height:1.6;color:var(--soft);margin:0 0 22px;max-width:62ch}
+.bfr h2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;letter-spacing:-.02em;font-weight:800;margin:0 0 10px}
+.bfr-blok{padding:24px 0;border-top:1px solid var(--line)}
+.bfr-tekst{font-size:15.5px;line-height:1.65}
+.bfr-tekst p{margin:0 0 12px}
+.bfr-tekst p:last-child{margin:0}
+
+.bfr-aanmeld{background:var(--diep);color:#fff;border-radius:18px;padding:22px;
+ background-image:radial-gradient(520px 300px at 88% 0%, rgba(251,191,36,.18), transparent 70%)}
+.bfr-eyebrow{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#FBBF24;font-weight:800;margin:0 0 8px}
+.bfr-akop{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:25px;line-height:1.15;letter-spacing:-.025em;font-weight:800;margin:0 0 8px}
+.bfr-asub{font-size:15px;line-height:1.6;color:#B9C6D6;margin:0 0 16px;max-width:52ch}
+.bfr-rij{display:flex;gap:9px;flex-wrap:wrap}
+.bfr-rij input{flex:1 1 230px;min-height:50px;padding:0 15px;border:1px solid rgba(255,255,255,.22);border-radius:12px;background:rgba(255,255,255,.07);color:#fff;font:inherit;font-size:16px}
+.bfr-rij input::placeholder{color:#8FA0B4}
+.bfr-rij button{min-height:50px;padding:0 22px;border:0;border-radius:12px;background:var(--groen);color:#fff;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.bfr-rij button:hover{background:#0fa876}
+.bfr-rij button:disabled{opacity:.6;cursor:default}
+.bfr-uit{display:none;font-size:14px;font-weight:700;margin:11px 0 0}
+.bfr-aanmeld .bfr-fijn{color:#8FA0B4;margin:12px 0 0}
+.bfr-fijn{font-size:12.5px;color:var(--soft);line-height:1.55;margin:14px 0 0}
+
+.bfr-kopje{font-size:13px;font-weight:800;color:var(--soft);margin:18px 0 9px}
+.bfr-kaarten{display:grid;gap:10px}
+@media(min-width:680px){.bfr-kaarten{grid-template-columns:1fr 1fr}}
+.bfr a.bfr-kaart,.bfr a.bfr-kaart:visited{display:block;background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px 16px;text-decoration:none;color:var(--ink)}
+.bfr a.bfr-kaart:hover{border-color:var(--groen)}
+.bfr-naam{display:block;font-size:16px;font-weight:800}
+.bfr-detail{display:block;font-size:13px;color:var(--soft);margin-top:2px;line-height:1.4}
+.bfr-cta{display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:12px;background:var(--groen);color:#fff;border-radius:11px;font-size:14.5px;font-weight:800}
+
+.bfr-vragen details{border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin:0 0 9px;background:#fff}
+.bfr-vragen summary{cursor:pointer;font-size:15.5px;font-weight:700;list-style:none}
+.bfr-vragen summary::-webkit-details-marker{display:none}
+.bfr-vragen summary::after{content:'+';float:right;color:var(--soft);font-weight:800}
+.bfr-vragen details[open] summary::after{content:'\2212'}
+.bfr-vragen details[open] summary{margin-bottom:9px}
+</style>
+
+<script>
+(function () {
+  var wortel = document.getElementById('bfr');
+  if (!wortel) return;
+
+  var startTijd = Date.parse(wortel.getAttribute('data-start') || '');
+  if (!isNaN(startTijd) && Date.now() >= startTijd) {
+    var st = document.getElementById('bfr-status');
+    if (st) st.textContent = {{ section.settings.status_na | json }};
+    var blok = document.getElementById('bfr-aanmeld');
+    if (blok) blok.hidden = true;
+  }
+
+  var knop = document.getElementById('bfr-knop');
+  var veld = document.getElementById('bfr-mail');
+  var uit = document.getElementById('bfr-uit');
+  /* 3 okt: dit veld ging naar de mc-lijst en was enkele opt-in: het postte een
+     adres en zei "Gelukt", zonder bevestigingsmail. Dat is wat artikel 11.7
+     Telecomwet van je vraagt, en het betekende ook dat iemand dit formulier kon
+     gebruiken om andermans adres op de lijst te zetten.
+
+     Nu naar dezelfde lijst als de rest van de site, met dubbele opt-in: er gaat
+     eerst een mail met één link naartoe en pas na die klik staat iemand erop.
+     De oude mc-adressen zijn met /sm/api/import-mc naar dezelfde lijst gehaald,
+     dus het blijft één lijst. */
+  var API = (wortel.getAttribute('data-api') || 'https://dpv-boodschappen.business-347.workers.dev')
+    .replace(/\/+$/, '') + '/sm/api/aanmelden';
+  var BRON = wortel.getAttribute('data-bron') || 'blackfriday-pagina';
+  var ONDERWERPEN = (wortel.getAttribute('data-onderwerpen') || '')
+    .split(',').map(function (x) { return x.trim(); }).filter(Boolean);
+
+  function zeg(tekst, goed) {
+    uit.textContent = tekst;
+    uit.style.color = goed ? '#7FE3BC' : '#FFB4A8';
+    uit.style.display = 'block';
+  }
+
+  function stuur() {
+    var adres = (veld.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) { zeg('Vul een geldig e-mailadres in.', false); veld.focus(); return; }
+    knop.disabled = true;
+    var oud = knop.textContent;
+    knop.textContent = 'Bezig\u2026';
+    fetch(API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: adres, bron: BRON, onderwerpen: ONDERWERPEN })
+    }).then(function (r) { return r.json(); }).then(function (res) {
+      if (res && res.ok && res.status === 'al-actief') {
+        zeg('Je stond al op de lijst. Je hoort van ons op 27 november.', true);
+        veld.value = '';
+        knop.textContent = 'Je staat op de lijst';
+      } else if (res && res.ok) {
+        zeg('Bijna klaar: kijk in je mail en klik op de link erin. Zonder die klik sturen wij je niets.', true);
+        veld.value = '';
+        knop.textContent = 'Kijk in je mail';
+      } else {
+        zeg('Dat lukte niet. Probeer het over een minuut opnieuw.', false);
+        knop.disabled = false; knop.textContent = oud;
+      }
+    }).catch(function () {
+      zeg('Dat lukte niet. Probeer het over een minuut opnieuw.', false);
+      knop.disabled = false; knop.textContent = oud;
+    });
+  }
+
+  knop.addEventListener('click', stuur);
+  veld.addEventListener('keydown', function (e) { if (e.key === 'Enter') stuur(); });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Black Friday",
+  "settings": [
+    {
+      "type": "text",
+      "id": "start_iso",
+      "label": "Begint (ISO)",
+      "default": "2026-11-27T00:00:00+01:00"
+    },
+    {
+      "type": "text",
+      "id": "status_voor",
+      "label": "Status voor",
+      "default": "Black Friday: vrijdag 27 november"
+    },
+    {
+      "type": "text",
+      "id": "status_na",
+      "label": "Status na",
+      "default": "Black Friday is bezig"
+    },
+    {
+      "type": "text",
+      "id": "kop",
+      "label": "Kop",
+      "default": "Black Friday 2026: telefoons, sim only en abonnementen"
+    },
+    {
+      "type": "textarea",
+      "id": "sub",
+      "label": "Inleiding",
+      "default": "Black Friday valt dit jaar op vrijdag 27 november. Wij zetten die dag de aanbiedingen van providers en winkels naast elkaar, en zeggen er eerlijk bij welke korting echt korting is."
+    },
+    {
+      "type": "text",
+      "id": "aanmeld_kop",
+      "label": "Kop aanmeldblok",
+      "default": "Wij mailen je de deals die de moeite waard zijn"
+    },
+    {
+      "type": "textarea",
+      "id": "aanmeld_sub",
+      "label": "Tekst aanmeldblok",
+      "default": "Eén bericht op de dag zelf, met de aanbiedingen die we hebben nagerekend. Geen lijst van honderd items, alleen wat echt scheelt."
+    },
+    {
+      "type": "textarea",
+      "id": "providers",
+      "label": "Met abonnement",
+      "info": "naam|detail|link",
+      "default": "KPN|eigen netwerk, acties op toestel en abonnement|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fglp8.net%2Fc%2F%3Fsi%3D19860%26li%3D1858644%26wi%3D394405%26pid%3Dd1d6f433a9c489039b8db2f1150961d1%26ws%3Dblackfriday%26cat%3Dtelefoon%26dl%3Dacties&cat=telefoon&p=KPN\nOdido|vaak extra inruilvoordeel tijdens acties|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8389%26awinaffid%3D1528789%26clickref%3Dblackfriday%26ued%3Dhttps%253A%252F%252Fwww.odido.nl%252Fshop%252Falle-telefoons&cat=telefoon&p=Odido\nVodafone|onbeperkte bundels, korting op toestellen|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8411%26awinaffid%3D1528789%26clickref%3Dblackfriday%26ued%3Dhttps%253A%252F%252Fwww.vodafone.nl%252Facties&cat=telefoon&p=Vodafone\nMobiel.nl|alle netwerken naast elkaar|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8373%26awinaffid%3D1528789%26clickref%3Dblackfriday%26ued%3Dhttps%253A%252F%252Fwww.mobiel.nl%252Fabonnement&cat=telefoon&p=Mobiel.nl"
+    },
+    {
+      "type": "textarea",
+      "id": "winkels",
+      "label": "Winkels en sim only",
+      "info": "naam|detail|link",
+      "default": "Coolblue|losse toestellen, levering de volgende dag|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D85161%26awinaffid%3D1528789%26clickref%3Dblackfriday%26ued%3Dhttps%253A%252F%252Fwww.coolblue.nl%252Fblack-friday&cat=telefoon&p=Coolblue\nMediaMarkt|losse toestellen, ook af te halen|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fpdt.tradedoubler.com%2Fclick%3Fa%283489171%29p%28262336%29ttid%2819%29url%28https%253A%252F%252Fwww.mediamarkt.nl%252Fnl%252Fcampaign%252Fblack-friday%29&cat=telefoon&p=MediaMarkt\nBol.com|breed aanbod, let op verkoop door derden|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fpartner.bol.com%2Fclick%2Fclick%3Fp%3D1%26t%3Durl%26s%3D1528494%26url%3Dhttps%253A%252F%252Fwww.bol.com%252Fnl%252Fnl%252Fl%252Fblack-friday%252F%26f%3DTXL%26name%3Dblackfriday&cat=telefoon&p=Bol.com\nSimyo via Mobiel.nl|sim only zonder toestel|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8373%26awinaffid%3D1528789%26clickref%3Dblackfriday-simonly%26ued%3Dhttps%253A%252F%252Fwww.mobiel.nl%252Fsim-only&cat=telefoon&p=Simyo%20via%20Mobiel.nl"
+    },
+    {
+      "type": "header",
+      "content": "Aanmelden"
+    },
+    {
+      "type": "text",
+      "id": "api",
+      "label": "API",
+      "default": "https://dpv-boodschappen.business-347.workers.dev",
+      "info": "De nieuwsbrieflijst met dubbele opt-in. Hier gaan alle aanmeldingen van de site naartoe."
+    },
+    {
+      "type": "text",
+      "id": "bron",
+      "label": "Bron",
+      "default": "blackfriday-pagina",
+      "info": "Zo zie je in de database waar iemand zich aanmeldde."
+    },
+    {
+      "type": "text",
+      "id": "onderwerpen",
+      "label": "Onderwerpen",
+      "default": "black-friday",
+      "info": "Komma gescheiden. Leeg laten zet alles aan. Geldig: black-friday, gaming, telefoons, laptops, tv-beeld, audio, huishoudelijk, keuken, boodschappen, telecom, energie, zorg."
+    },
+    {
+      "type": "textarea",
+      "id": "aanmeld_fijn",
+      "label": "Kleine regel",
+      "default": "Je krijgt eerst een mail met één link erin; pas na die klik sta je erop. Afmelden kan met één klik in elke mail."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Black Friday"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,98 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-article",
+      "blocks": {
+        "title": {
+          "type": "title",
+          "settings": {
+            "blog_show_date": true,
+            "blog_show_author": false
+          }
+        },
+        "featured_image": {
+          "type": "featured_image",
+          "settings": {
+            "image_height": "adapt"
+          }
+        },
+        "content": {
+          "type": "content",
+          "settings": {}
+        }
+      },
+      "block_order": [
+        "title",
+        "featured_image",
+        "content"
+      ],
+      "settings": {}
+    },
+    "dpv-gta6-rij": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "alleen_tag": "gta6",
+        "label": "Nu in de winkel",
+        "kop": "GTA 6 en de rest van Rockstar, prijzen vergeleken",
+        "sub": "Elke nacht opnieuw opgehaald bij de winkels die hem in hun feed hebben.",
+        "link_tekst": "Alles in gaming",
+        "link_url": "/pages/vergelijken?cat=gaming&type=games",
+        "cat": "gaming",
+        "types": "games",
+        "sort": "prijs-af",
+        "aantal": 12,
+        "alleen_multi": false,
+        "alleen_echt": false,
+        "alleen_deal": false,
+        "min": "25",
+        "max": ""
+      }
+    },
+    "dpv-gta6-aanmelden": {
+      "type": "dpv-prijsalarm",
+      "settings": {
+        "alleen_tag": "gta6",
+        "vorm": "blok",
+        "oog": "Gratis",
+        "kop": "Seintje als GTA 6 in prijs zakt",
+        "tekst": "Wij meten elke nacht wat GTA 6 bij elke winkel kost en bewaren wanneer die prijs veranderde. Zakt hij onder de laagste prijs die wij gemeten hebben, dan sturen wij je een bericht. Niet eerder, en niet elke week iets anders.",
+        "knop": "Hou mij op de hoogte",
+        "bron": "gta6",
+        "chips": true,
+        "chips_kop": "Waar wil je nog bericht over?",
+        "chips_voor": "gaming,black-friday",
+        "chips_fijn": "Gaming en Black Friday staan aan. Vink erbij wat je ook wilt volgen, of laat het zo.",
+        "fijn": "Dubbele opt-in: je krijgt eerst een mail met een link. Afmelden kan met een klik in elke mail."
+      }
+    },
+    "dpv-prijskaart": { "type": "dpv-prijskaart", "settings": {} },
+    "dpv-aanbod": { "type": "dpv-artikel-aanbod", "settings": {} },
+    "dpv-merklinks": { "type": "dpv-merklinks", "settings": {} },
+    "dpv-delen": { "type": "dpv-artikel-delen", "settings": {} },
+    "dpv-nieuws": { "type": "dpv-artikel-nieuws", "settings": {} },
+    "dpv-credit": { "type": "dpv-photo-credit", "settings": {} },
+    "dpv-drawer": { "type": "dpv-save-drawer", "settings": {} }
+  },
+  "order": [
+    "main",
+    "dpv-gta6-rij",
+    "dpv-gta6-aanmelden",
+    "dpv-prijskaart",
+    "dpv-aanbod",
+    "dpv-merklinks",
+    "dpv-delen",
+    "dpv-nieuws",
+    "dpv-credit",
+    "dpv-drawer"
+  ]
+}

@@ -1,0 +1,1022 @@
+{%- comment -%}
+  BOODSCHAPPEN, VISUELE OPZET (concept A)
+  Eén raster met gelijke productkaarten, zoals een supermarktwebsite. Per kaart
+  de goedkoopste aanbieding groot, en daaronder uitklapbaar alle andere winkels
+  die hetzelfde merk deze week in de aanbieding hebben. Filteren gebeurt in één
+  balk bovenaan die meescrollt. Data komt uit dezelfde worker als de huidige
+  pagina (/sm/api/deals), er is dus geen aanpassing aan de worker nodig.
+{%- endcomment -%}
+<div class="bv" id="bv" data-api="{{ section.settings.api }}">
+
+  <div class="bv-top">
+    <div class="bv-tl">
+      <p class="bv-e">Boodschappen</p>
+      <h1>{{ section.settings.titel }}</h1>
+      {%- if section.settings.intro != blank -%}<p class="bv-sub">{{ section.settings.intro }}</p>{%- endif -%}
+      <p class="bv-wk" id="bv-wk">De aanbiedingen van deze week worden geladen…</p>
+    </div>
+    <div class="bv-tr" id="bv-cijfers"></div>
+  </div>
+
+  <div class="bv-barhouder" id="bv-barhouder">
+    <div class="bv-bar" id="bv-bar">
+      <div class="bv-weken" id="bv-weken" hidden>
+        <button type="button" class="bv-wkt aan" data-w="deze">Deze week<small id="bv-wk1"></small></button>
+        <button type="button" class="bv-wkt" data-w="volgende">Volgende week<small id="bv-wk2"></small></button>
+      </div>
+      <form class="bv-zoek" id="bv-zoekform" role="search">
+        <label for="bv-q" class="bv-weg">Zoek een product</label>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M9 2a7 7 0 1 0 4.2 12.6l3.1 3.1 1.4-1.4-3.1-3.1A7 7 0 0 0 9 2Zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 9 4Z"/></svg>
+        <input id="bv-q" type="search" placeholder="Zoek op merk of product, bijvoorbeeld kwark of luiers" autocomplete="off">
+        <button type="button" id="bv-wis" hidden aria-label="Zoekopdracht wissen">&times;</button>
+      </form>
+      <div class="bv-rijen">
+        <div class="bv-rij"><span class="bv-rl">Winkel</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-cw"></div></div></div>
+        <div class="bv-rij"><span class="bv-rl">Actie</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-ca"></div></div></div>
+        <div class="bv-rij bv-soortrij"><span class="bv-rl">Soort</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-cs"></div></div></div>
+      </div>
+      <div class="bv-onder">
+        <p class="bv-telling" id="bv-telling" aria-live="polite"></p>
+        <label class="bv-kies"><span>Schap</span><select id="bv-cc"></select></label>
+        <span class="bv-nuschap" id="bv-nuschap" aria-live="polite" hidden></span>
+        <label class="bv-kies"><span>Sorteer</span>
+          <select id="bv-sort">
+            <option value="schap">Per schap</option>
+            <option value="korting">Hoogste korting</option>
+            <option value="winkels">Meeste winkels</option>
+            <option value="eenheid">Laagste prijs per liter of kilo</option>
+            <option value="prijs">Laagste prijs</option>
+            <option value="naam">Naam A tot Z</option>
+          </select>
+        </label>
+        <button type="button" class="bv-reset" id="bv-reset" hidden>Filters wissen</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="bv-vooruit" id="bv-vooruit" hidden></p>
+
+  <section class="bv-sec" id="bv-zoekextra" hidden>
+    <h2 class="bv-h2">Ook gevonden in de folders</h2>
+    <p class="bv-uit">Aanbiedingen die bij dit zoekwoord passen maar niet bij een merk horen dat wij per winkel volgen.</p>
+    <div class="bv-wgrid" id="bv-zl"></div>
+  </section>
+
+  <section class="bv-sec" id="bv-dag" hidden>
+    <h2 class="bv-h2">Dagdeals</h2>
+    <p class="bv-uit">Acties die maar één dag of alleen in het weekend gelden.</p>
+    <div class="bv-chipswrap"><div class="bv-chips" id="bv-dt" role="tablist"></div></div>
+    <div class="bv-dgrid" id="bv-dl"></div>
+  </section>
+
+  <div class="bv-grid" id="bv-grid"><p class="bv-leeg">Laden…</p></div>
+  <p class="bv-meerp"><button type="button" id="bv-meer" hidden></button></p>
+
+  <section class="bv-sec" id="bv-alles" hidden>
+    <h2 class="bv-h2">Alles uit de folder</h2>
+    <p class="bv-uit">Alle aanbiedingen die wij deze week van die winkel binnenkregen, goedkoopste eerst. Staat een merk ook bij andere winkels in de aanbieding, dan kun je doorklikken naar de vergelijking.</p>
+    <div class="bv-chipswrap"><div class="bv-chips" id="bv-at" role="tablist"></div></div>
+    <p class="bv-folder" id="bv-af"></p>
+    <div class="bv-agrid" id="bv-al"></div>
+    <p class="bv-meerp"><button type="button" id="bv-ameer" hidden></button></p>
+  </section>
+
+  <section class="bv-sec" id="bv-folders">
+    <h2 class="bv-h2">Weekfolders</h2>
+    <p class="bv-uit">De volledige folder van deze week, bij de winkel zelf.</p>
+    <div class="bv-fchips" id="bv-fl"></div>
+    <div id="bv-fvolgende" hidden>
+      <h3 class="bv-h3">Volgende week</h3>
+      <p class="bv-uit">Deze winkels hebben hun volgende folder al online gezet. De rest volgt later deze week.</p>
+      <div class="bv-fchips" id="bv-fv"></div>
+    </div>
+  </section>
+
+  <section class="bv-sec" id="bv-cb-blok" hidden>
+    <h2 class="bv-h2">Ook bij Coolblue</h2>
+    <p class="bv-uit">Apparaten die een supermarkt deze week in de aanbieding heeft, naast precies hetzelfde product bij Coolblue.</p>
+    <div class="bv-cb" id="bv-cb"></div>
+  </section>
+
+  <p class="bv-fijn">Bij elke aanbieding staat wat voor soort het is. <b>Weekfolder</b> betekent dat de actie in de folder van deze week staat, en de knop brengt je naar de pagina waar hij staat. <b>Alleen zaterdag</b> of <b>Weekendactie</b> betekent dat de actie maar één dag of alleen in het weekend geldt. <b>Van de website</b> is een actie die we op de aanbiedingenpagina van de winkel vonden, <b>Webshop</b> komt uit hun webwinkel.</p>
+  <p class="bv-fijn">Actieprijzen gelden zolang de actie loopt en kunnen per filiaal verschillen. Controleer de voorwaarden bij de winkel zelf. Omgerekend naar prijs per liter, kilo, wasbeurt of stuk, zodat 1+1 gratis en 25 procent korting eerlijk naast elkaar staan. Productfoto's: Open Food Facts (CC BY-SA). Via sommige links ontvangen wij een vergoeding, jij betaalt hetzelfde.</p>
+</div>
+
+<style>
+#bv .dpvmb{display:none !important}
+.bv{max-width:1180px;margin:0 auto;padding:18px 16px 48px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0D1B2A}
+.bv *{box-sizing:border-box}
+.bv-weg{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* Kop */
+.bv-top{display:flex;gap:20px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;margin:0 0 14px}
+.bv-e{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#0b7d5c;font-weight:800;margin:0 0 6px}
+.bv h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:clamp(24px,3.4vw,34px);line-height:1.06;letter-spacing:-.03em;margin:0 0 6px;color:#0D1B2A}
+.bv-sub{font-size:15px;line-height:1.55;color:#475569;margin:0 0 8px;max-width:760px}
+.bv-wk{font-size:14px;color:#5B6B80;margin:0;font-weight:600}
+.bv-tr{display:flex;gap:8px;flex-wrap:wrap}
+.bv-c{background:#F5F8FB;border:1px solid #E6EBF2;border-radius:12px;padding:8px 14px;min-width:92px}
+.bv-c b{display:block;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;line-height:1.1}
+.bv-c span{font-size:11.5px;color:#5B6B80;font-weight:600}
+
+/* Filterbalk */
+.bv-barhouder{margin:0 0 16px}
+.bv-bar{background:#fff;border:1px solid #E6EBF2;border-radius:16px;padding:12px 14px;box-shadow:0 1px 2px rgba(13,27,42,.04)}
+.bv-bar.bv-vast{position:fixed;z-index:40;border-radius:0 0 16px 16px;box-shadow:0 10px 22px -16px rgba(13,27,42,.45)}
+/* Schakelaar tussen deze en volgende week. Staat alleen in beeld als er van
+   volgende week al iets bekend is. */
+.bv-weken{display:flex;gap:6px;margin:0 0 10px}
+.bv-wkt{flex:1;font:inherit;font-size:13px;font-weight:800;border:1.5px solid #E6EBF2;background:#fff;color:#475569;border-radius:11px;padding:7px 8px;cursor:pointer;line-height:1.2}
+.bv-wkt small{display:block;font-weight:700;font-size:11px;opacity:.75;margin-top:1px}
+.bv-wkt.aan{background:#0D1B2A;border-color:#0D1B2A;color:#fff}
+.bv-vooruit{background:#FDF0DC;border:1px solid #f6d9ae;color:#8a5a12;border-radius:12px;padding:10px 13px;font-size:13px;line-height:1.5;font-weight:600;margin:0 0 14px}
+.bv-vooruit b{font-weight:800}
+.bv-zoek{position:relative;margin:0 0 10px}
+.bv-zoek svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:18px;height:18px;fill:#94A3B8;pointer-events:none}
+.bv-zoek input{width:100%;height:46px !important;min-height:46px !important;-webkit-appearance:none;appearance:none;border:1.5px solid #E6EBF2 !important;border-radius:12px !important;padding:0 40px 0 40px !important;font-size:16px !important;background:#F8FAFC !important;color:#0D1B2A !important;margin:0 !important;box-sizing:border-box !important}
+.bv-zoek input:focus{outline:none;border-color:#10b981 !important;background:#fff !important}
+.bv-zoek button{position:absolute;right:8px;top:50%;transform:translateY(-50%);border:0;background:#E6EBF2;color:#475569;width:26px;height:26px;border-radius:99px;font-size:17px;line-height:1;cursor:pointer}
+.bv-rij{display:flex;gap:10px;align-items:center;margin:0 0 6px;min-width:0}
+.bv-rl{flex:0 0 52px;font-size:10.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#94A3B8}
+.bv-chipswrap{position:relative;flex:1;min-width:0}
+.bv-chipswrap::after{content:'';position:absolute;right:0;top:0;bottom:0;width:26px;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,0),#fff)}
+.bv-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:2px 0;-webkit-overflow-scrolling:touch}
+.bv-chips::-webkit-scrollbar{display:none}
+.bv-chips button{flex:0 0 auto;font:inherit;font-size:13px;font-weight:700;border:1.5px solid #E6EBF2;background:#fff;color:#475569;border-radius:99px;padding:6px 13px;cursor:pointer;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+.bv-chips button:hover{border-color:#CBD5E1}
+.bv-chips button small{font-weight:700;font-size:11px;color:#94A3B8}
+.bv-chips button.aan{background:#0D1B2A;border-color:#0D1B2A;color:#fff}
+.bv-chips button.aan small{color:#9FB3C8}
+.bv-chips button i{width:9px;height:9px;border-radius:3px;flex:0 0 9px;font-style:normal}
+.bv-onder{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:8px;padding-top:9px;border-top:1px solid #F1F5F9}
+.bv-telling{margin:0;font-size:13px;font-weight:700;color:#0D1B2A;flex:1;min-width:120px}
+.bv-telling span{color:#94A3B8;font-weight:600}
+.bv-kies{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#94A3B8}
+.bv-kies select{font:inherit;font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;color:#0D1B2A;border:1.5px solid #E6EBF2;border-radius:10px;background:#fff;padding:6px 10px;max-width:200px}
+.bv-kies select:focus{outline:none;border-color:#10b981}
+.bv-reset{font:inherit;font-size:13px;font-weight:800;color:#2563EB;background:none;border:0;cursor:pointer;padding:6px 2px}
+/* Vastgezet neemt de balk minder ruimte in: de telling en het sorteren staan
+   al bovenaan, tijdens het scrollen heb je vooral de filters nodig. */
+.bv-bar.bv-vast .bv-telling{display:none}
+.bv-bar.bv-vast .bv-onder{padding-top:7px;margin-top:6px;justify-content:flex-end}
+.bv-bar.bv-vast .bv-zoek{margin-bottom:8px}
+.bv-bar.bv-vast .bv-zoek input{height:40px !important;min-height:40px !important}
+
+/* Raster */
+/* Kaarten krijgen de hoogte van hun eigen inhoud. Rekten ze mee met de hoogste
+   kaart in de rij, dan ontstond er een gat zodra je er één uitklapte. */
+.bv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(214px,1fr));gap:12px;align-items:start}
+.bv-k{background:#fff;border:1px solid #E6EBF2;border-radius:16px;padding:12px;display:flex;flex-direction:column;position:relative}
+.bv-k:hover{border-color:#CBD5E1}
+.bv-badge{position:absolute;left:10px;top:10px;z-index:2;font-size:12px;font-weight:800;background:#E11D48;color:#fff;border-radius:8px;padding:3px 7px;line-height:1.1}
+.bv-badge b{font-weight:700;opacity:.85;font-size:.86em}
+/* Schapkoppen in het raster. Ze lopen over de volle breedte, ook in een
+   raster van drie kolommen, zodat ze echt als scheiding werken. */
+.bv-schapkop{grid-column:1/-1;margin:22px 0 2px;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;
+  font-size:17px;font-weight:800;letter-spacing:-.02em;color:#0D1B2A;
+  display:flex;align-items:center;gap:10px}
+.bv-schapkop:first-child{margin-top:4px}
+.bv-schapkop:after{content:'';flex:1;height:1px;background:#E6EBF2}
+.bv-nuschap{display:inline-flex;align-items:center;gap:6px;background:#0D1B2A;color:#fff;border-radius:99px;
+  padding:5px 12px;font-size:12.5px;font-weight:800;white-space:nowrap;max-width:46vw;overflow:hidden;
+  text-overflow:ellipsis}
+.bv-nuschap:before{content:'';width:6px;height:6px;border-radius:50%;background:#10b981;flex:0 0 6px}
+@media(max-width:700px){.bv-schapkop{font-size:15.5px;margin:16px 0 2px}}
+.bv-badge.gratis{background:#0b7d5c}
+.bv-beeld{height:104px;display:flex;align-items:center;justify-content:center;margin:0 0 8px}
+.bv-beeld img{max-height:104px;max-width:100%;object-fit:contain}
+/* Niet elk product heeft een foto. In plaats van een leeg vlak tonen we de
+   merknaam in een getinte tegel, dan blijft de kaart herkenbaar. */
+.bv-geenbeeld{width:100%;height:96px;border-radius:12px;background:linear-gradient(160deg,#F5F8FB,#EDF2F7);display:flex;align-items:center;justify-content:center;padding:8px 10px;text-align:center;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:16px;line-height:1.15;font-weight:800;color:#A8B6C6;letter-spacing:-.01em;overflow:hidden}
+.bv-cat{font-size:11px;color:#94A3B8;font-weight:700;margin:0 0 2px;letter-spacing:.02em}
+.bv-k h3{font-size:14.5px;line-height:1.25;margin:0 0 8px;font-weight:800}
+.bv-hm{font-size:10px;font-weight:800;background:#EEF2F7;color:#64748B;border-radius:99px;padding:1px 6px;margin-left:4px;vertical-align:1px}
+.bv-prijs{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin:0 0 2px}
+.bv-prijs strong{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:25px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.bv-prijs s{font-size:13px;color:#94A3B8;font-weight:700}
+.bv-prijs em{font-style:normal;font-size:11.5px;color:#5B6B80;font-weight:700}
+.bv-actiep{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;color:#E11D48;line-height:1.1;margin:0 0 2px}
+.bv-vw{font-size:12.5px;font-weight:800;color:#B45309;background:#FEF3C7;border-radius:6px;padding:3px 8px;display:inline-block;margin:3px 0 0}
+.bv-pe{font-size:12px;font-weight:800;color:#0b7d5c;margin:0 0 9px}
+.bv-pe.leeg{color:#B45309;font-weight:700}
+.bv-eerder{font-size:11.5px;font-weight:700;color:#64748B;margin:-6px 0 9px}
+.bv-eerder.laag{color:#0b7d5c}
+.bv-lm em{font-style:normal;color:#94A3B8;font-weight:700}
+/* De prijs staat direct onder de naam, de winkel en de knop worden naar de
+   onderkant geduwd. Zo staan de prijzen in een rij netjes op één lijn. */
+.bv-bij{display:block;color:#0D1B2A;margin:auto 0 2px}
+.bv-oms{margin-top:5px;font-size:11.5px;line-height:1.35;color:#5B6B80;font-weight:700;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bv-wl{display:inline-block;font-size:11.5px;font-weight:800;line-height:1;padding:4px 8px;border-radius:7px;white-space:nowrap}
+/* Wat voor aanbieding het is, staat als label op de kaart. Een dag- of
+   weekendactie krijgt een opvallender kleur, want die loopt het snelst af. */
+.bv-tot{margin:5px 0 0;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.bv-soort{font-size:10.5px;font-weight:800;letter-spacing:.02em;border-radius:6px;padding:3px 7px;line-height:1.2;white-space:nowrap}
+.bv-soort.folder{background:#E8EEF9;color:#1B3FA0}
+.bv-soort.dag{background:#FDF0DC;color:#B45309}
+.bv-soort.web{background:#EEF2F7;color:#5B6B80}
+.bv-tdatum{font-size:11px;color:#B45309;font-weight:700}
+.bv-knop{display:block;text-align:center;margin:9px 0 0;font-size:13px;font-weight:800;color:#fff;background:#0D1B2A;border-radius:10px;padding:9px 10px;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bv-knop:hover{background:#16305C}
+.bv-knop.check{background:#fff;color:#0D1B2A;border:1.5px solid #E6EBF2}
+.bv-knop.bestel{background:#059669;margin-top:6px}
+.bv-knop.bestel:hover{background:#047857}
+.bv-online{margin:10px 0 0;padding:9px 10px 10px;background:#F4FAF7;border:1px solid #D7EDE3;border-radius:11px}
+.bv-okop{margin:0;font-size:10.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;color:#047857;line-height:1.25}
+.bv-owin{display:inline-block;background:#059669;color:#fff;border-radius:5px;padding:1px 5px;font-size:9.5px;font-weight:900;white-space:nowrap;vertical-align:1px;text-transform:uppercase;letter-spacing:.03em}
+.bv-oreg{margin:4px 0 0;font-size:13px;font-weight:700;color:#0D1B2A;line-height:1.3}
+.bv-oreg b{font-size:17px;font-weight:900;letter-spacing:-.02em}
+.bv-ototaal{margin:2px 0 0;font-size:12px;font-weight:700;color:#3C4B5F}
+.bv-ototaal s{color:#8A98AA;font-weight:600}
+.bv-otitel{margin:3px 0 0;font-size:11.5px;color:#5B6B80;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.bv-ofolder{margin:7px 0 0;font-size:11px;color:#5B6B80;line-height:1.35}
+/* Vaste opbouw per kaart. Elk blok heeft dezelfde kop op dezelfde plek, zodat
+   je langs de kaarten kunt scrollen en steeds op dezelfde hoogte de prijs
+   vindt. Dat scheelt zoeken en maakt vergelijken een kwestie van kijken. */
+.bv-folder{display:flex;flex-direction:column}
+.bv-folder .bv-okop{color:#5B6B80;margin:0 0 5px}
+/* Omgedraaid: bij wasmiddel, huishoudelijk en baby staat de grootverpakking
+   bovenaan, want daar koopt men voorraad. De folderaanbieding blijft staan
+   maar wordt het tweede blok, rustiger van toon. */
+.bv-omgedraaid .bv-online{margin:2px 0 0;background:#fff;border:1.5px solid #059669;padding:11px 12px 12px}
+.bv-omgedraaid .bv-online .bv-oreg b{font-size:21px}
+.bv-folder.bv-bijzaak{margin:10px 0 0;padding:9px 10px 10px;background:#F7F9FC;border:1px solid #E6EBF2;border-radius:11px}
+.bv-folder.bv-bijzaak .bv-nu{font-size:15px}
+.bv-folder.bv-bijzaak .bv-knop{margin-top:8px}
+/* In het omgedraaide geval staat de folderverwijzing al in het tweede blok,
+   dus de regel onderin het onlineblok zou hem herhalen. */
+.bv-omgedraaid .bv-ofolder{display:none}
+.bv-verg{margin:8px 0 0;width:100%;font:inherit;font-size:12.5px;font-weight:800;color:#2563EB;background:none;border:0;border-top:1px dashed #E6EBF2;padding:8px 0 0;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.bv-verg i{font-style:normal;font-size:11px;transition:transform .15s}
+.bv-verg[aria-expanded="true"] i{transform:rotate(180deg)}
+.bv-lijst{margin:6px 0 0;border-top:1px solid #F1F5F9}
+.bv-lijst[hidden]{display:none}
+.bv-lr{display:grid;grid-template-columns:auto 1fr;gap:2px 8px;align-items:center;padding:7px 0;border-bottom:1px solid #F8FAFC;text-decoration:none;color:inherit}
+.bv-lr:last-child{border-bottom:0}
+.bv-lp{grid-column:2;text-align:right;font-weight:800;font-size:13.5px;white-space:nowrap}
+.bv-lp s{font-weight:700;font-size:11.5px;color:#94A3B8;margin-left:3px}
+.bv-lm{grid-column:1 / -1;font-size:11px;color:#5B6B80;font-weight:600;line-height:1.3}
+.bv-lm b{color:#0b7d5c;font-weight:800}
+.bv-lr.normaal .bv-lp{color:#5B6B80;font-weight:700}
+.bv-lkop{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#94A3B8;margin:8px 0 2px}
+.bv-meerp{text-align:center;margin:18px 0 0}
+.bv-meerp button{font:inherit;font-size:14px;font-weight:800;border:1.5px solid #E6EBF2;background:#fff;border-radius:12px;padding:11px 24px;cursor:pointer}
+.bv-meerp button:hover{border-color:#CBD5E1}
+.bv-leeg{color:#94A3B8;grid-column:1/-1}
+
+/* Losse blokken: dagdeals, alles per winkel, Coolblue */
+.bv-sec{margin:34px 0 0}
+.bv-h2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:22px;margin:0 0 4px;letter-spacing:-.02em}
+.bv-uit{font-size:13.5px;color:#5B6B80;margin:0 0 10px;max-width:760px}
+.bv-sec .bv-chipswrap{margin:0 0 10px}
+.bv-sec .bv-chipswrap::after{background:linear-gradient(90deg,rgba(255,255,255,0),#fff)}
+.bv-h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:16px;margin:20px 0 3px;letter-spacing:-.01em}
+.bv-aw{font-weight:600;color:#8B98A8;font-size:.86em;margin-left:5px;text-decoration-thickness:1.5px}
+.bv-folder{margin:0 0 12px}
+.bv-folder a{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:800;color:#0D1B2A;text-decoration:none;border:1.5px solid #E6EBF2;border-radius:11px;padding:8px 14px;background:#fff}
+.bv-agrid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(262px,1fr))}
+.bv-ai{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:3px 10px;align-items:baseline;border:1px solid #E6EBF2;border-radius:12px;padding:10px 12px;background:#fff;text-decoration:none;color:inherit}
+.bv-ai:hover{border-color:#CBD5E1}
+.bv-an{font-weight:700;font-size:13.5px;line-height:1.3;overflow-wrap:anywhere}
+.bv-ap{font-weight:800;font-size:14.5px;white-space:nowrap;text-align:right}
+.bv-aa{grid-column:1/-1;font-size:11.5px;font-weight:800;color:#E11D48}
+.bv-ae{font-size:11.5px;font-weight:800;color:#0b7d5c}
+.bv-avgl{grid-column:1/-1;font-size:11.5px;font-weight:800;color:#2563EB;background:none;border:0;padding:3px 0 0;cursor:pointer;text-align:left}
+.bv-fchips{display:flex;flex-wrap:wrap;gap:8px}
+#bv-fvolgende .bv-fchips a{border-color:#DDD6FE;background:#F6F4FF;color:#5B21B6}
+#bv-fvolgende .bv-fchips a:hover{border-color:#C4B5FD}
+.bv-fchips a{display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:800;color:#0D1B2A;text-decoration:none;border:1.5px solid #E6EBF2;border-radius:99px;padding:7px 14px;background:#fff}
+.bv-fchips a:hover{border-color:#CBD5E1}
+.bv-fchips a i{width:9px;height:9px;border-radius:3px;flex:0 0 9px;font-style:normal}
+.bv-fchips a span{color:#94A3B8;font-weight:700}
+.bv-wgrid{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(258px,1fr))}
+.bv-dgrid{display:grid;gap:0;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:0 22px}
+.bv-dr{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 2px;border-top:1px solid #F1F5F9;text-decoration:none;color:inherit}
+.bv-dr:hover{background:#FAFCFE}
+.bv-dn{font-weight:700;font-size:13.5px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bv-dn i{display:block;font-style:normal;font-size:11px;font-weight:800;color:#E11D48}
+.bv-dp{font-weight:800;font-size:14.5px;white-space:nowrap}
+.bv-wi{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 10px;align-items:baseline;border:1px solid #E6EBF2;border-radius:12px;padding:10px 12px;background:#fff;text-decoration:none;color:inherit}
+.bv-wi:hover{border-color:#CBD5E1}
+.bv-wn{font-weight:700;font-size:13.5px;line-height:1.3;min-width:0;overflow-wrap:anywhere}
+.bv-wp{font-weight:800;font-size:14px;white-space:nowrap;text-align:right}
+.bv-wa{grid-column:1/-1;font-size:11.5px;color:#E11D48;font-weight:800}
+.bv-wa .bv-wl{font-size:10.5px;padding:3px 6px;margin-right:5px;vertical-align:1px}
+.bv-cb{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.bv-cbk{border:1px solid #E6EBF2;border-radius:14px;padding:14px;background:#fff}
+.bv-cbk h3{font-size:15px;margin:0 0 8px}
+.bv-cbr{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-top:1px solid #F1F5F9;text-decoration:none;color:inherit}
+.bv-cbr small{display:block;font-size:11.5px;color:#5B6B80;margin-top:3px}
+.bv-cbr b{font-size:16px;white-space:nowrap}
+.bv-cbr .g{font-size:11px;font-weight:800;color:#0b7d5c;display:block}
+.bv-niets{grid-column:1/-1;background:#F8FAFC;border:1px solid #E6EBF2;border-radius:14px;padding:22px;text-align:center}
+.bv-niets b{display:block;font-size:16px;margin:0 0 4px}
+.bv-niets span{font-size:13.5px;color:#5B6B80}
+.bv-fijn{font-size:12px;color:#94A3B8;margin:26px 0 0;line-height:1.6}
+
+@media(max-width:820px){
+  .bv-rl{display:none}
+  .bv-rij{gap:0}
+  .bv-bar{padding:10px 12px}
+  .bv-barhouder{margin:0 0 12px}
+  .bv-bar.bv-vast{border-radius:0 0 14px 14px;padding:10px 14px}
+  .bv-top{align-items:flex-start;gap:10px}
+  .bv-tr{width:100%}
+  .bv-c{flex:1;min-width:0;padding:7px 10px}
+  .bv-c b{font-size:18px}
+  /* Vastgezet op een telefoon: het zoekveld eruit, drie rijen filters plus een
+     zoekveld nemen anders een derde van het scherm in beslag. Scroll je terug
+     naar boven, dan staat het zoekveld er weer. */
+  .bv-bar.bv-vast .bv-zoek{display:none}
+}
+@media(max-width:620px){
+  .bv{padding:14px 12px 40px}
+  .bv-tr{display:none}
+  .bv h1{font-size:23px}
+  /* De intro blijft in de pagina staan voor Google, maar neemt op een telefoon
+     niet het halve scherm in beslag. */
+  .bv-sub{font-size:14px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .bv-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .bv-k{padding:10px;border-radius:14px}
+  .bv-beeld{height:84px}
+  .bv-beeld img{max-height:84px}
+  .bv-prijs strong{font-size:22px}
+  .bv-k h3{font-size:13.5px}
+  .bv-onder{gap:6px}
+  .bv-kies span{display:none}
+  .bv-kies select{max-width:none;flex:1;min-width:0;text-overflow:ellipsis;font-size:12.5px;padding:6px 6px}
+  .bv-kies{flex:1;min-width:0}
+  .bv-telling{display:none}
+  .bv-dgrid{gap:0}
+  .bv-dn{white-space:normal}
+}
+</style>
+
+<script>
+(function(){
+  var root=document.getElementById('bv'); if(!root) return;
+  var API=root.getAttribute('data-api')||'';
+  var D=null, alles=[], winkel='', actie='', dsoort='', categorie='', vraag='', sort='schap', getoond=24, STAP=24;
+  var welkeWeek='deze', cache={}, weekKeys={};
+
+  function e(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function eu(n){return n==null?'':'€'+Number(n).toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2})}
+  var DGN=['zo','ma','di','wo','do','vr','za'], MND=['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+  var MNDLANG=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];
+  function maandag(wk){var j=+String(wk).slice(0,4),w=+String(wk).split('-W')[1],d=new Date(Date.UTC(j,0,4)),dag=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()-dag+1+(w-1)*7);return d}
+  function plusD(d,n){var x=new Date(d);x.setUTCDate(x.getUTCDate()+n);return x}
+  function tot(s){if(!s)return '';var d=new Date(s+'T12:00:00');if(isNaN(d))return '';return 't/m '+DGN[d.getDay()]+' '+d.getDate()+' '+MND[d.getMonth()]}
+  var KLEUR={ah:['#00A0E2','#fff'],jumbo:['#FFC800','#1A1A1A'],plus:['#6AA521','#fff'],dirk:['#E30613','#fff'],lidl:['#0050AA','#FFF000'],aldi:['#00005F','#fff'],
+    hoogvliet:['#009A44','#fff'],vomar:['#D1001C','#fff'],kruidvat:['#E3000F','#fff'],action:['#0B64B4','#fff'],etos:['#1A1A1A','#fff'],da:['#E6007E','#fff'],trekpleister:['#F18A00','#fff']};
+  function wl(w,naam){var k=KLEUR[w]||['#334155','#fff'];return '<span class="bv-wl" style="background:'+k[0]+';color:'+k[1]+'">'+e(naam||w)+'</span>'}
+  window.bvGeenFoto=function(img){var m=img.getAttribute('data-merk')||'';
+    var v=document.createElement('div');v.className='bv-geenbeeld';v.textContent=m;
+    if(img.parentNode)img.parentNode.replaceChild(v,img)};
+  function stip(w){var k=KLEUR[w]||['#334155','#fff'];return '<i style="background:'+k[0]+'"></i>'}
+
+  /* Elke deal krijgt een actietype, zodat je daarop kunt filteren. Let op: dit
+     is iets anders dan d.soort van de worker, dat zegt of het een weekfolder,
+     dagaanbieding of webshopactie is. */
+  function actieSoortVan(a){a=String(a||'').toLowerCase();
+    if(/\d+\s*\+\s*\d+\s*gratis/.test(a))return 'gratis';
+    if(/halve prijs|50\s*%/.test(a))return 'halve';
+    if(/\d+\s*%\s*korting/.test(a))return 'korting';
+    if(/\d+\s*voor\b|\bvoor\s*€?\s*\d/.test(a))return 'meer';
+    return 'prijs'}
+  var SOORTNAAM={gratis:'Gratis erbij',halve:'2e halve prijs',korting:'Procent korting',meer:'Meerstuks',prijs:'Actieprijs'};
+
+  /* Hoeveel procent lever je in ten opzichte van de normale prijs? */
+  function kortingVan(d){
+    if(d.korting)return d.korting;
+    var m=/(\d+)\s*\+\s*(\d+)\s*gratis/i.exec(d.actie||'');
+    if(m)return Math.round(+m[2]/(+m[1]+ +m[2])*100);
+    m=/(\d+)\s*%\s*korting/i.exec(d.actie||'');
+    if(m)return +m[1];
+    if(/halve prijs/i.test(d.actie||''))return 25;
+    if(d.normaalprijs&&d.prijsPerStuk&&d.normaalprijs>d.prijsPerStuk)return Math.round((1-d.prijsPerStuk/d.normaalprijs)*100);
+    return 0}
+
+  /* Eén regel per product, klaar om te filteren en te sorteren. */
+  function bouw(d){
+    return (d.producten||[]).filter(function(p){return p.deals&&p.deals.length}).map(function(p){
+      var ds=p.deals.map(function(x){var q=Object.assign({},x);q.k=kortingVan(x);q.asoort=actieSoortVan(x.actie);
+        /* Wat voor aanbieding: komt van de worker, maar we vullen hem zelf aan
+           zolang die nog de oude gegevens stuurt. */
+        q.dsoort=x.soort||(x.dag?(x.dag==='weekend'?'weekend':'dag'):(x.bron==='folder'?'weekfolder':(x.bron==='action'?'webshop':'website')));
+        return q});
+      /* Beste aanbieding: eerst op prijs per eenheid, anders op korting. */
+      var metEenheid=ds.filter(function(x){return x.perEenheid});
+      var best=metEenheid.length?metEenheid.slice().sort(function(a,b){return a.perEenheid-b.perEenheid})[0]
+        :ds.slice().sort(function(a,b){return (b.k-a.k)||((a.prijsPerStuk||9e9)-(b.prijsPerStuk||9e9))})[0];
+      var rest=ds.filter(function(x){return x!==best}).sort(function(a,b){
+        var pa=a.perEenheid||(a.prijsPerStuk?1e3+a.prijsPerStuk:1e6), pb=b.perEenheid||(b.prijsPerStuk?1e3+b.prijsPerStuk:1e6);return pa-pb});
+      /* Sorteren op de korting van de aanbieding die we ook tonen, anders staat
+         een kaart met -11% ineens tussen de kaarten met -60% omdat een andere
+         winkel daar wel veel korting geeft maar per liter duurder is. */
+      return {p:p,ds:ds,best:best,rest:rest,elders:p.elders||[],
+        k:best.k||0,
+        pe:best.perEenheid||null, pr:best.prijsPerStuk||null,
+        zoek:(p.naam+' '+p.merk+' '+p.categorie+' '+ds.map(function(x){return x.omschrijving||''}).join(' ')).toLowerCase()}})}
+
+  /* De volgorde waarin je door een winkel loopt, niet alfabetisch. Schappen
+     die hier niet in staan komen erachter, op naam. */
+  var SCHAPVOLGORDE = ['Groente en fruit','Vlees en vis','Zuivel en kaas','Broodbeleg en sauzen',
+    'Ontbijt','Houdbaar','Diepvries','Chips en snoep','Frisdrank','Sappen','Water','Bier',
+    'Koffie en thee','Huishouden','Wasmiddel','Verzorging','Baby','Huisdier'];
+
+  function gefilterd(){
+    return alles.filter(function(x){
+      if(categorie&&x.p.categorie!==categorie)return false;
+      if(winkel&&!x.ds.some(function(d){return d.winkel===winkel}))return false;
+      if(actie&&!x.ds.some(function(d){return d.asoort===actie}))return false;
+      if(dsoort&&!x.ds.some(function(d){return d.dsoort===dsoort}))return false;
+      if(vraag&&x.zoek.indexOf(vraag)<0)return false;
+      return true}).sort(function(a,b){
+        /* Per schap is de standaard. Daarvoor stond alles op korting door
+           elkaar: zuivel, chips en wasmiddel afgewisseld, en dan is de lijst
+           niet te lopen zoals je door een winkel loopt. Binnen een schap nog
+           steeds de hoogste korting bovenaan, want daar kom je voor. */
+        if(sort==='schap'){
+          var ca=SCHAPVOLGORDE.indexOf(a.p.categorie), cb=SCHAPVOLGORDE.indexOf(b.p.categorie);
+          if(ca<0)ca=99; if(cb<0)cb=99;
+          if(ca!==cb)return ca-cb;
+          var na=String(a.p.categorie||''), nb=String(b.p.categorie||'');
+          if(na!==nb)return na.localeCompare(nb);
+          return (b.k-a.k)||a.p.naam.localeCompare(b.p.naam);
+        }
+        if(sort==='naam')return a.p.naam.localeCompare(b.p.naam);
+        if(sort==='winkels')return (b.ds.length-a.ds.length)||(b.k-a.k);
+        if(sort==='eenheid')return (a.pe||9e9)-(b.pe||9e9)||(b.k-a.k);
+        if(sort==='prijs')return (a.pr||9e9)-(b.pr||9e9)||(b.k-a.k);
+        return (b.k-a.k)||(b.ds.length-a.ds.length)})}
+
+  /* Een actie als "4 voor 17,94" geldt pas als je er ook echt vier koopt. De
+     prijs per stuk zegt dat niet, en wie er een pakt betaalt de volle prijs.
+     Die voorwaarde zetten we er daarom apart onder. */
+  function voorwaarde(d){
+    var a=String(d.actie||'');
+    if(/^\s*\d+\s*voor\b/i.test(a))return '<p class="bv-vw">Alleen bij '+e(a)+'</p>';
+    if(/^\s*\d\s*\+\s*\d\s*gratis/i.test(a))return '<p class="bv-vw">Prijs per stuk bij '+e(a)+'</p>';
+    return ''}
+  function prijsBlok(d,eh){
+    if(d.prijsPerStuk)return '<p class="bv-prijs"><strong>'+(d.groep?'vanaf ':'')+eu(d.prijsPerStuk)+'</strong>'+
+      (d.normaalprijs&&!d.groep&&d.normaalprijs>d.prijsPerStuk?'<s>'+eu(d.normaalprijs)+'</s>':'')+
+      (/voor|gratis|halve/i.test(d.actie||'')?'<em>per stuk</em>':'')+'</p>'+voorwaarde(d);
+    return '<p class="bv-actiep">'+e(d.actie||'aanbieding')+'</p>'}
+
+  /* Wat kostte dit eerder? Zodra wij een week of langer meekijken staat hier de
+     laagste actieprijs die we eerder zagen, met winkel en datum. Is het nu even
+     goedkoop of goedkoper, dan zeggen we dat, want dat is het echte signaal. */
+  function korteDatum(s){if(!s)return '';var d=new Date(String(s).slice(0,10)+'T12:00:00');
+    if(isNaN(d))return '';return d.getDate()+' '+MND[d.getMonth()]}
+  function eerderRegel(x,d,eh){
+    var v=x.p.eerder; if(!v)return '';
+    var nuPE=d.perEenheid, nuP=d.prijsPerStuk;
+    if(v.perEenheid!=null&&nuPE!=null){
+      if(nuPE<=v.perEenheid)return '<p class="bv-eerder laag">Nog niet eerder zo goedkoop gezien</p>';
+      return '<p class="bv-eerder">Eerder '+eu(v.perEenheid)+' per '+e(eh)+' bij '+e(v.winkelNaam)+(v.datum?' ('+korteDatum(v.datum)+')':'')+'</p>'}
+    if(v.prijs!=null&&nuP!=null){
+      if(nuP<=v.prijs)return '<p class="bv-eerder laag">Nog niet eerder zo goedkoop gezien</p>';
+      return '<p class="bv-eerder">Eerder '+eu(v.prijs)+' bij '+e(v.winkelNaam)+(v.datum?' ('+korteDatum(v.datum)+')':'')+'</p>'}
+    return ''}
+
+  /* Waar komt deze aanbieding vandaan en hoe lang loopt hij? Dat zegt meteen
+     waar de knop je heen brengt: de folderpagina of het product zelf. */
+  var DAGNM={ma:'maandag',di:'dinsdag',wo:'woensdag',do:'donderdag',vr:'vrijdag',za:'zaterdag',zo:'zondag'};
+  var SOORT={
+    weekfolder:['Weekfolder','folder'],
+    dag:['Dagaanbieding','dag'],
+    weekend:['Weekendactie','dag'],
+    webshop:['Webshop','web'],
+    website:['Van de website','web']};
+  function soortDeal(d){
+    var s=d.dsoort||d.soort;
+    var v=SOORT[s]; if(!v)return null;
+    var tekst=v[0];
+    if(s==='dag'&&d.dag&&DAGNM[d.dag])tekst='Alleen '+DAGNM[d.dag];
+    return {tekst:tekst,kleur:v[1]}}
+  function herkomst(d){
+    var s=soortDeal(d), r='';
+    if(s)r+='<span class="bv-soort '+s.kleur+'">'+e(s.tekst)+'</span>';
+    if(d.geldigTot)r+='<span class="bv-tdatum">'+tot(d.geldigTot)+'</span>';
+    return r?'<p class="bv-tot">'+r+'</p>':''}
+
+  /* Grootverpakkingen die je online kunt bestellen. Die staan niet in een
+     folder, dus ze horen niet tussen de aanbiedingen maar als eigen regel
+     eronder. We tonen altijd de totaalprijs en het aantal erbij: per wasbeurt
+     is zo'n pak goedkoper, maar je legt wel een groter bedrag neer, en dat
+     hoort de bezoeker te zien voordat hij klikt.
+     Staat het product deze week ook in een folder, dan zetten we dat er klein
+     bij, zodat hij kan kiezen tussen meenemen of laten bezorgen. */
+  function onlineBlok(x,eh,best){
+    var o=(x.p.online||[])[0];
+    if(!o||!o.url)return '';
+    var goedkoper=best&&best.perEenheid&&o.perEenheid<best.perEenheid;
+    var mv=eh==='wasbeurt'?'wasbeurten':(eh==='stuk'?'stuks':eh);
+    return '<div class="bv-online">'+
+      '<p class="bv-okop">Online bij '+e(o.winkelNaam)+'</p>'+
+      /* Bij een product waarvan "per stuk" niets betekent, omdat er doekjes
+         en flacons onder dezelfde naam vallen, laat de worker de omrekening
+         weg. Dan tonen we de pakprijs groot: dat getal klopt altijd. */
+      (o.perEenheid
+        ? '<p class="bv-oreg"><b>'+eu(o.perEenheid)+'</b> per '+e(eh)+
+            (goedkoper?' <span class="bv-owin">voordeligst</span>':'')+'</p>'
+        : '<p class="bv-oreg"><b>'+eu(o.prijs)+'</b> voor de hele verpakking</p>')+
+      '<p class="bv-ototaal">'+(o.perEenheid
+          ? 'Grootverpakking: '+eu(o.prijs)+' voor '+e(String(Math.round(o.aantal*100)/100))+' '+e(mv)
+          : e(String(Math.round(o.aantal*100)/100))+' '+e(mv)+' in de verpakking')+
+        (o.vanprijs&&o.vanprijs>o.prijs?' <s>'+eu(o.vanprijs)+'</s>':'')+'</p>'+
+      (o.titel?'<p class="bv-otitel">'+e(o.titel)+'</p>':'')+
+      '<a class="bv-knop bestel" href="'+e(o.url)+'" target="_blank" rel="sponsored nofollow noopener">Bestel nu online →</a>'+
+      (o.folderOok?'<p class="bv-ofolder">Staat deze week ook in de folder bij '+e(o.folderOok.winkelNaam)+
+        (o.folderOok.perEenheid?' voor '+eu(o.folderOok.perEenheid)+' per '+e(eh):'')+
+        (o.folderOok.geldigTot?', '+tot(o.folderOok.geldigTot):'')+'</p>':'')+
+      '</div>'}
+
+  /* In welke categorieen slaat de bezoeker in? Wasmiddel, huishoudelijke
+     middelen en babyspullen koop je per grootverpakking en niet per week. Daar
+     is de online bestelling de hoofdzaak en de folderaanbieding de bijzaak, dus
+     daar draaien we de volgorde om. In de rest blijft de folder leidend: boter,
+     kaas en frisdrank haal je bij de winkel om de hoek.
+     De opbouw van de kaart blijft wel overal gelijk, met boven elk blok dezelfde
+     kop, zodat je kunt scrollen en vergelijken zonder te zoeken waar de prijs
+     staat. */
+  var ONLINE_EERST = { 'Wasmiddel':1, 'Huishouden':1, 'Baby':1 };
+
+  /* De folderaanbieding als een los blok, zodat die boven of onder het
+     onlineblok kan staan zonder dat de inhoud verandert. */
+  function folderBlok(x,d,eh,klein){
+    return '<div class="bv-folder'+(klein?' bv-bijzaak':'')+'">'+
+      '<p class="bv-okop">Deze week in de folder</p>'+
+      prijsBlok(d,eh)+
+      '<p class="bv-pe'+(d.perEenheid?'':' leeg')+'">'+(d.perEenheid?eu(d.perEenheid)+' per '+e(eh):(d.prijsPerStuk?'inhoud niet vermeld':'prijs checken in de winkel'))+'</p>'+
+      eerderRegel(x,d,eh)+
+      '<span class="bv-bij">'+wl(d.winkel,d.winkelNaam)+'<span class="bv-oms">'+e(d.omschrijving||d.actie||'')+'</span></span>'+
+      herkomst(d)+
+      /* Bij een lange winkelnaam past "Bekijk bij Albert Heijn" niet op een
+         smal scherm. De winkel staat er vlak boven al, dus dan volstaat dit. */
+      '<a class="bv-knop'+(d.prijsPerStuk?'':' check')+'" href="'+e(d.url)+'" target="_blank" rel="sponsored nofollow noopener">'+
+        (d.dsoort==='weekfolder'?'Bekijk in de folder'
+          :(d.prijsPerStuk?(String(d.winkelNaam||'').length>9?'Bekijk deal':'Bekijk bij '+e(d.winkelNaam)):'Prijs checken'))+'</a>'+
+      /* Bij een winkel waar wij partner zijn kan de bezoeker meteen bestellen.
+         De folderknop blijft staan, want daar ziet hij de actie zelf. Bij een
+         lange winkelnaam laten we die naam uit de knop, anders wordt hij op een
+         smal scherm afgekapt. */
+      (d.bestelUrl&&d.bestelUrl!==d.url?'<a class="bv-knop bestel" href="'+e(d.bestelUrl)+'" target="_blank" rel="sponsored nofollow noopener">Bestel nu online'+
+        (String(d.winkelNaam||'').length>6?'':' bij '+e(d.winkelNaam))+' →</a>':'')+
+      '</div>'}
+
+  /* 3 okt: de badge zei niet bij welk aanbod hij hoorde, en dat ging mis.
+     Bij "Dettol (merkbrede actie)" stond -54% bovenaan de kaart. Dat was de
+     allesreiniger van Dirk, maar omdat Huishouden in ONLINE_EERST staat, kwam
+     daar direct het bol.com-blok onder: doekjes van €16,99, af van €17,97, en
+     dat is 5 procent. Twee verschillende producten onder één percentage.
+
+     Twee dingen veranderd. De badge noemt nu de winkel waar hij bij hoort, en
+     staat het onlineblok bovenaan, dan hoort de badge bij dát aanbod en wordt
+     hij uit de van-prijs van die winkel gerekend. Is er geen van-prijs, dan
+     staat er geen percentage: liever niets dan een getal van elders. */
+  function onlineKorting(o){
+    if(!o||!(o.vanprijs>o.prijs))return 0;
+    return Math.round((1-o.prijs/o.vanprijs)*100)}
+
+  function kaart(x,i){
+    var p=x.p, d=x.best, eh=p.eenheid||'stuk';
+    var o0=(x.p.online||[])[0];
+    var onlineBoven=!!(o0&&o0.url&&ONLINE_EERST[p.categorie]);
+    var badge='';
+    if(onlineBoven){
+      var ok=onlineKorting(o0);
+      if(ok>=3)badge='<span class="bv-badge">-'+ok+'% <b>'+e(o0.winkelNaam)+'</b></span>';
+    } else if(d.k){
+      badge='<span class="bv-badge'+(d.asoort==='gratis'?' gratis':'')+'">'+
+        (d.asoort==='gratis'?e(d.actie):'-'+d.k+'%')+' <b>'+e(d.winkelNaam)+'</b></span>';
+    }
+    var anders=x.rest.length+x.elders.length;
+    /* Alleen omdraaien als er ook echt iets online te bestellen is. Een lege
+       kop boven een folderaanbieding maakt de kaart alleen verwarrender. */
+    var online=onlineBlok(x,eh,d);
+    var omgedraaid=!!online&&!!ONLINE_EERST[p.categorie];
+    return '<article class="bv-k'+(omgedraaid?' bv-omgedraaid':'')+'" id="bvk-'+e(p.id)+'">'+badge+
+      '<div class="bv-beeld">'+(p.afbeelding
+        ?'<img src="'+e(p.afbeelding)+'" alt="'+e(p.naam)+'" loading="lazy" data-merk="'+e(p.merk||p.naam)+'" onerror="bvGeenFoto(this)">'
+        :'<div class="bv-geenbeeld">'+e(p.merk||p.naam)+'</div>')+'</div>'+
+      '<p class="bv-cat">'+e(p.categorie)+'</p>'+
+      '<h3>'+e(p.naam)+(p.huismerk?'<span class="bv-hm">huismerk</span>':'')+'</h3>'+
+      (omgedraaid ? online+folderBlok(x,d,eh,true) : folderBlok(x,d,eh,false)+online)+
+      (anders?'<button type="button" class="bv-verg" aria-expanded="false" aria-controls="bvl-'+e(p.id)+'"><span>Ook bij '+anders+(anders===1?' andere winkel':' andere winkels')+'</span><i>▾</i></button>'+
+        '<div class="bv-lijst" id="bvl-'+e(p.id)+'" hidden>'+lijst(x)+'</div>':'')+
+      '</article>'}
+
+  function lijst(x){
+    var eh=x.p.eenheid||'stuk', h='';
+    h+=x.rest.map(function(d){
+      return '<a class="bv-lr" href="'+e(d.url)+'" target="_blank" rel="sponsored nofollow noopener">'+
+        wl(d.winkel,d.winkelNaam)+
+        '<span class="bv-lp">'+(d.prijsPerStuk?(d.groep?'vanaf ':'')+eu(d.prijsPerStuk)+(d.normaalprijs&&!d.groep&&d.normaalprijs>d.prijsPerStuk?'<s>'+eu(d.normaalprijs)+'</s>':''):'→')+'</span>'+
+        '<span class="bv-lm">'+e(d.actie||'')+(d.perEenheid?' · <b>'+eu(d.perEenheid)+' per '+e(eh)+'</b>':'')+
+        (soortDeal(d)?' · '+e(soortDeal(d).tekst).toLowerCase():'')+(d.geldigTot?' · '+tot(d.geldigTot):'')+
+        (d.eerderPrijs!=null?' · <em>eerder '+eu(d.eerderPrijs)+'</em>':'')+'</span></a>'}).join('');
+    if(x.elders.length){
+      h+='<p class="bv-lkop">Normale prijs elders</p>'+x.elders.slice(0,6).map(function(y){
+        var dt=y.datum?new Date(y.datum+'T12:00:00'):null;
+        return '<a class="bv-lr normaal"'+(y.url?' href="'+e(y.url)+'" target="_blank" rel="sponsored nofollow noopener"':'')+'>'+
+          wl(y.winkel,y.winkelNaam)+
+          '<span class="bv-lp">'+eu(y.normaalprijs)+'</span>'+
+          '<span class="bv-lm">'+(y.titel?e(y.titel):'geen actie')+(y.perEenheid?' · '+eu(y.perEenheid)+' per '+e(eh):'')+(dt?' · '+(y.nu?'gecheckt ':'gezien ')+dt.getDate()+' '+MND[dt.getMonth()]:'')+'</span></a>'}).join('')}
+    return h}
+
+  function teken(){
+    var r=gefilterd(), g=document.getElementById('bv-grid');
+    if(!r.length){
+      g.innerHTML='<div class="bv-niets"><b>Niets gevonden</b><span>Geen aanbieding die aan deze filters voldoet. Wis een filter of zoek op een ander merk.</span></div>';
+      document.getElementById('bv-meer').hidden=true;
+      document.getElementById('bv-telling').innerHTML='0 producten';
+    }else{
+      /* Bij sorteren per schap een kop boven elke groep. Die kop is ook het
+         ankerpunt waar de balk bovenin op meeleest tijdens het scrollen. */
+      var zicht=r.slice(0,getoond);
+      if(sort==='schap'){
+        var vorige=null, h='';
+        zicht.forEach(function(x,n){
+          var c=x.p.categorie||'Overig';
+          if(c!==vorige){
+            h+='<h3 class="bv-schapkop" data-schap="'+e(c)+'">'+e(c)+'</h3>';
+            vorige=c;
+          }
+          h+=kaart(x,n);
+        });
+        g.innerHTML=h;
+      } else {
+        g.innerHTML=zicht.map(kaart).join('');
+      }
+      var m=document.getElementById('bv-meer');
+      m.hidden=r.length<=getoond;
+      m.textContent='Toon '+Math.min(STAP*2,r.length-getoond)+' van de '+(r.length-getoond)+' overige producten';
+      var w=0;r.forEach(function(x){w+=x.ds.length});
+      document.getElementById('bv-telling').innerHTML=r.length+(r.length===1?' product':' producten')+' <span>· '+w+(w===1?' aanbieding':' aanbiedingen')+'</span>';
+    }
+    document.getElementById('bv-reset').hidden=!(winkel||actie||dsoort||categorie||vraag);
+    plak();
+    schapVolgen();
+  }
+
+  /* Uitklappen van de vergelijking gebeurt via het raster, dan blijft het werken
+     na opnieuw tekenen. */
+  document.getElementById('bv-grid').addEventListener('click',function(ev){
+    var b=ev.target.closest('.bv-verg'); if(!b)return;
+    var l=document.getElementById(b.getAttribute('aria-controls')); if(!l)return;
+    var open=l.hidden; l.hidden=!open; b.setAttribute('aria-expanded',open?'true':'false');
+    b.querySelector('span').textContent=open?'Verberg de andere winkels':b.querySelector('span').textContent;
+    if(!open){var n=l.querySelectorAll('.bv-lr').length;b.querySelector('span').textContent='Ook bij '+n+(n===1?' andere winkel':' andere winkels')}
+  });
+
+  /* Welk schap staat er nu in beeld? De balk bovenaan plakt al vast tijdens
+     het scrollen; dit zet de naam van het schap erin dat je op dat moment
+     bekijkt. Zo weet je waar je bent zonder terug te scrollen.
+
+     IntersectionObserver met een rootMargin die alles onder de balk wegsnijdt,
+     dus de bovenste kop die nog zichtbaar is wint. Scroll-events zouden
+     hetzelfde doen maar dan dertig keer per seconde. */
+  var schapWijzer=null, schapKijker=null;
+  function schapVolgen(){
+    if(schapKijker){schapKijker.disconnect();schapKijker=null}
+    var wijzer=document.getElementById('bv-nuschap');
+    if(!wijzer)return;
+    if(sort!=='schap'){wijzer.hidden=true;return}
+    var koppen=[].slice.call(document.querySelectorAll('.bv-schapkop'));
+    if(!koppen.length){wijzer.hidden=true;return}
+    wijzer.hidden=false;
+    wijzer.textContent=koppen[0].getAttribute('data-schap')||'';
+    if(!('IntersectionObserver' in window))return;
+    var bar=document.getElementById('bv-bar');
+    var hoog=(bar?bar.offsetHeight:0)+12;
+    var inBeeld={};
+    schapKijker=new IntersectionObserver(function(rijen){
+      rijen.forEach(function(r){inBeeld[r.target.getAttribute('data-schap')]=r.isIntersecting});
+      /* de eerste kop die nog niet voorbij is, van boven naar beneden */
+      for(var i=0;i<koppen.length;i++){
+        var k=koppen[i];
+        if(k.getBoundingClientRect().top<=hoog+1){
+          wijzer.textContent=k.getAttribute('data-schap')||'';
+        }
+      }
+    },{rootMargin:(-hoog)+'px 0px 0px 0px',threshold:[0,1]});
+    koppen.forEach(function(k){schapKijker.observe(k)});
+  }
+
+  function chips(el,items,huidig,kies){
+    el.innerHTML=items.map(function(it){
+      return '<button type="button" data-v="'+e(it.v)+'"'+(it.v===huidig?' class="aan"':'')+'>'+(it.kleur?stip(it.kleur):'')+e(it.n)+(it.a?'<small>'+it.a+'</small>':'')+'</button>'}).join('');
+    if(el.dataset.aan)return;
+    el.dataset.aan='1';
+    el.addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;
+      kies(b.getAttribute('data-v')===huidigVan(el)?'':b.getAttribute('data-v'));});
+  }
+  function huidigVan(el){var a=el.querySelector('button.aan');return a?a.getAttribute('data-v'):''}
+
+  function tekenChips(){
+    var wc={},ac={},cc={};
+    alles.forEach(function(x){
+      var w={},s={};
+      x.ds.forEach(function(d){w[d.winkel]=d.winkelNaam;s[d.asoort]=1});
+      Object.keys(w).forEach(function(k){wc[k]=wc[k]||{n:w[k],a:0};wc[k].a++});
+      Object.keys(s).forEach(function(k){ac[k]=(ac[k]||0)+1});
+      cc[x.p.categorie]=(cc[x.p.categorie]||0)+1});
+    var wl2=[{v:'',n:'Alle winkels',a:0}].concat(Object.keys(wc).sort(function(a,b){return wc[b].a-wc[a].a})
+      .map(function(k){return {v:k,n:wc[k].n,a:wc[k].a,kleur:k}}));
+    chips(document.getElementById('bv-cw'),wl2,winkel,function(v){winkel=v;getoond=STAP;tekenChips();teken()});
+    var VOLG=['gratis','korting','halve','meer','prijs'];
+    var al2=[{v:'',n:'Alle acties',a:0}].concat(VOLG.filter(function(k){return ac[k]}).map(function(k){return {v:k,n:SOORTNAAM[k],a:ac[k]}}));
+    chips(document.getElementById('bv-ca'),al2,actie,function(v){actie=v;getoond=STAP;tekenChips();teken()});
+    /* Zeventien schappen passen niet als knoppen: dan moet je zijwaarts scrollen
+       en zie je maar een paar. Als keuzelijst staan ze er allemaal in. */
+    var SOORTVOLG=['weekfolder','dag','weekend','website','webshop'];
+    var SOORTKNOP={weekfolder:'Weekfolder',dag:'Dagaanbiedingen',weekend:'Weekend',website:'Van de website',webshop:'Webshop'};
+    var sc={};
+    alles.forEach(function(x){var g={};x.ds.forEach(function(d){g[d.dsoort]=1});Object.keys(g).forEach(function(k){sc[k]=(sc[k]||0)+1})});
+    var sl=[{v:'',n:'Alle soorten',a:0}].concat(SOORTVOLG.filter(function(k){return sc[k]}).map(function(k){return {v:k,n:SOORTKNOP[k],a:sc[k]}}));
+    chips(document.getElementById('bv-cs'),sl,dsoort,function(v){dsoort=v;getoond=STAP;tekenChips();teken()});
+    var SCHAP=['Frisdrank','Water','Sappen','Bier','Koffie en thee','Zuivel en kaas','Ontbijt','Broodbeleg en sauzen','Houdbaar','Chips en snoep','Diepvries','Groente en fruit','Vlees en vis','Huishouden','Verzorging','Baby','Huisdier'];
+    var ks=Object.keys(cc).sort(function(a,b){var i=SCHAP.indexOf(a),j=SCHAP.indexOf(b);return (i<0?99:i)-(j<0?99:j)});
+    var sel=document.getElementById('bv-cc'), totaal=0;
+    ks.forEach(function(k){totaal+=cc[k]});
+    sel.innerHTML='<option value="">Alle schappen</option>'+
+      ks.map(function(k){return '<option value="'+e(k)+'"'+(k===categorie?' selected':'')+'>'+e(k)+' ('+cc[k]+')</option>'}).join('');
+    if(!sel.dataset.aan){sel.dataset.aan='1';
+      sel.addEventListener('change',function(){categorie=sel.value;getoond=STAP;tekenChips();teken()})}
+  }
+
+  /* De filterbalk zet zich vast zodra hij de bovenkant raakt. Het thema laat
+     position:sticky niet toe, daarom meten we de vaste balken van het thema één
+     keer en schuiven we er zelf onderlangs. */
+  var raf=0, vaste=[], houder=document.getElementById('bv-barhouder'), bar=document.getElementById('bv-bar');
+  function meet(){vaste=[];Array.prototype.forEach.call(document.querySelectorAll('body *'),function(el){
+      if(el.closest&&el.closest('#bv'))return;var s=getComputedStyle(el);
+      if(s.position!=='fixed'&&s.position!=='sticky')return;
+      var r=el.getBoundingClientRect();
+      if(r.top<300&&r.height<260&&r.width>window.innerWidth*0.5)vaste.push(el)})}
+  function bovenrand(){var m=0;vaste.map(function(el){return el.getBoundingClientRect()})
+      .filter(function(r){return r.bottom>0&&r.height>0}).sort(function(a,b){return a.top-b.top})
+      .forEach(function(r){if(r.top<=m+5)m=Math.max(m,r.bottom)});return Math.round(m)}
+  function plak(){raf=0;if(!houder||!bar)return;
+    var hr=houder.getBoundingClientRect(), boven=bovenrand();
+    var grid=document.getElementById('bv-grid'), gr=grid.getBoundingClientRect();
+    var vast=hr.top<boven&&gr.bottom>boven+120;
+    if(vast){houder.style.height=bar.offsetHeight+'px';bar.classList.add('bv-vast');
+      bar.style.top=boven+'px';bar.style.left=hr.left+'px';bar.style.width=hr.width+'px'}
+    else{houder.style.height='';bar.classList.remove('bv-vast');bar.style.top=bar.style.left=bar.style.width=''}}
+  window.addEventListener('scroll',function(){if(!raf)raf=requestAnimationFrame(plak)},{passive:true});
+  window.addEventListener('resize',function(){meet();plak()});
+  setTimeout(function(){meet();plak()},1200);
+
+  /* Zoeken doorzoekt ook de folders zelf, zodat je ook iets vindt dat niet bij
+     een merk hoort dat wij per winkel volgen. Die treffers staan apart. */
+  function brederZoeken(w){
+    var blok=document.getElementById('bv-zoekextra'), lijst=document.getElementById('bv-zl');
+    if(!w||w.length<2){blok.hidden=true;lijst.innerHTML='';return}
+    fetch(API+'/sm/api/zoek?q='+encodeURIComponent(w)).then(function(r){return r.json()}).then(function(d){
+      if(q.value.trim().toLowerCase()!==w)return;
+      var los=(d.resultaten||[]).filter(function(x){return !x.product_id});
+      blok.hidden=!los.length;
+      lijst.innerHTML=los.slice(0,36).map(function(x){
+        return '<a class="bv-wi"'+(x.url?' href="'+e(x.url)+'" target="_blank" rel="sponsored nofollow noopener"':'')+'>'+
+          '<span class="bv-wn">'+e(x.titel)+'</span>'+
+          '<span class="bv-wp">'+(x.prijs?eu(x.prijs):'')+'</span>'+
+          '<span class="bv-wa">'+wl(x.winkel,x.winkelNaam)+e(nette(x.actie,x.prijs))+'</span></a>'}).join('');
+    }).catch(function(){blok.hidden=true})}
+
+  /* "voor 1.49" naast €1,49 herhaalt alleen de prijs; toon alleen een echte
+     actie zoals 1+1 gratis, 2e halve prijs of een kortingspercentage. */
+  function nette(a,p){a=String(a||'').trim();
+    if(!a)return '';
+    if(/^(voor|prijs|actieprijs|van)\b/i.test(a))return '';
+    if(p&&a.replace(',','.').indexOf(String(p))>-1)return '';
+    return a.charAt(0).toUpperCase()+a.slice(1)}
+
+  var q=document.getElementById('bv-q'), wis=document.getElementById('bv-wis'), t;
+  q.addEventListener('input',function(){clearTimeout(t);t=setTimeout(function(){
+    vraag=q.value.trim().toLowerCase();wis.hidden=!vraag;getoond=STAP;teken();brederZoeken(vraag)},220)});
+  wis.addEventListener('click',function(){q.value='';vraag='';wis.hidden=true;getoond=STAP;teken();brederZoeken('');q.focus()});
+  document.getElementById('bv-zoekform').addEventListener('submit',function(ev){ev.preventDefault()});
+  document.getElementById('bv-sort').addEventListener('change',function(){sort=this.value;getoond=STAP;teken()});
+  document.getElementById('bv-meer').addEventListener('click',function(){getoond+=STAP*2;teken()});
+  document.getElementById('bv-reset').addEventListener('click',function(){
+    winkel=actie=dsoort=categorie=vraag='';q.value='';wis.hidden=true;getoond=STAP;tekenChips();teken();brederZoeken('');
+    window.scrollTo({top:houder.offsetTop-90,behavior:'smooth'})});
+
+  /* Dagdeals: acties die maar op één dag of alleen in het weekend gelden. */
+  var DAGNAAM={ma:'maandag',di:'dinsdag',wo:'woensdag',do:'donderdag',vr:'vrijdag',za:'zaterdag',zo:'zondag',weekend:'weekend'};
+  fetch(API+'/sm/api/dagdeals').then(function(r){return r.json()}).then(function(d){
+    /* Bij Dirk en Hoogvliet staat de verpakking in een eigen regel ("Kuip 100
+       tot 200 gram.", "VR, ZA & ZO actie"). Dat is geen aanbieding. */
+    function rommel(t){t=String(t||'').trim();
+      if(!t)return true;
+      if(/^(kuip|bus|pak|fles|zak|doos|krat|blik|bakje|rol|set|emmer|beker|tray|stuk)\b[^a-z]*\d/i.test(t))return true;
+      if(/^\d+([.,]\d+)?\s*(gram|gr|ml|liter|l|kg|stuks?)\b/i.test(t))return true;
+      if(/^(ma|di|wo|do|vr|za|zo)[,\s&].*actie$/i.test(t))return true;
+      return false}
+    var lijst=(d.dagdeals||[]).filter(function(x){
+      return !/verzending|bezorging/i.test(x.actie||'')&&!/acties$|^dag- en weekend/i.test(x.titel||'')&&!rommel(x.titel)});
+    if(!lijst.length)return;
+    var volg=['ma','di','wo','do','vr','za','zo','weekend'], vandaag=['zo','ma','di','wo','do','vr','za'][new Date().getDay()];
+    var dagen=volg.filter(function(k){return lijst.some(function(x){return x.dag===k})});
+    var open=dagen.indexOf(vandaag)>-1?vandaag:((['za','zo','vr'].indexOf(vandaag)>-1&&dagen.indexOf('weekend')>-1)?'weekend':dagen[0]);
+    var dt=document.getElementById('bv-dt'), dl=document.getElementById('bv-dl'), ma=maandag(d.week||'');
+    var idx={ma:0,di:1,wo:2,do:3,vr:4,za:5,zo:6};
+    function toon(){
+      dt.innerHTML=dagen.map(function(k){var n=lijst.filter(function(x){return x.dag===k}).length, lab;
+        if(k==='weekend')lab='Weekend';
+        else lab=(k===vandaag?'Vandaag':DAGNAAM[k].charAt(0).toUpperCase()+DAGNAAM[k].slice(1)+' '+plusD(ma,idx[k]).getUTCDate()+' '+MND[plusD(ma,idx[k]).getUTCMonth()]);
+        return '<button type="button" role="tab" data-d="'+k+'"'+(k===open?' class="aan"':'')+'>'+e(lab)+'<small>'+n+'</small></button>'}).join('');
+      dl.innerHTML=lijst.filter(function(x){return x.dag===open})
+        .sort(function(a,b){return (a.prijs||9e9)-(b.prijs||9e9)}).slice(0,12).map(function(x){
+        var act=nette(x.actie,x.prijs);
+        return '<a class="bv-dr"'+(x.url?' href="'+e(x.url)+'" target="_blank" rel="sponsored nofollow noopener"':'')+'>'+
+          wl(x.winkel,x.winkelNaam)+
+          '<span class="bv-dn">'+e(x.titel)+(act?'<i>'+e(act)+'</i>':'')+'</span>'+
+          '<span class="bv-dp">'+(x.prijs?eu(x.prijs):'→')+'</span></a>'}).join('')}
+    dt.addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;open=b.getAttribute('data-d');toon()});
+    toon(); document.getElementById('bv-dag').hidden=false;
+  }).catch(function(){});
+
+  /* Alles uit de folder: per winkel alles wat we binnenkregen. Dit blok stond
+     er eerder ook, maar toen zonder prijs per eenheid en zonder de stap naar de
+     vergelijking, en dan zegt een rij prijzen inderdaad weinig. */
+  (function(){
+    var at=document.getElementById('bv-at'), al=document.getElementById('bv-al'),
+        af=document.getElementById('bv-af'), am=document.getElementById('bv-ameer');
+    var huidig='', aantal=30, opslag={};
+    function nette(a,p){a=String(a||'').trim();
+      if(!a)return '';
+      if(/^(voor|prijs|actieprijs|van)\b/i.test(a))return '';
+      if(p&&a.replace(',','.').indexOf(String(p))>-1)return '';
+      return a.charAt(0).toUpperCase()+a.slice(1)}
+    function toon(d){
+      var r=d.aanbiedingen||[];
+      af.innerHTML=d.folder?'<a href="'+e(d.folder)+'" target="_blank" rel="nofollow noopener">Bekijk de hele folder bij '+e(d.naam)+' \u2192</a>':'';
+      al.innerHTML=r.slice(0,aantal).map(function(x){
+        var act=nette(x.actie,x.prijs);
+        return '<a class="bv-ai"'+(x.url?' href="'+e(x.url)+'" target="_blank" rel="sponsored nofollow noopener"':'')+'>'+
+          '<span class="bv-an">'+e(x.titel)+'</span>'+
+          '<span class="bv-ap">'+(x.prijs?eu(x.prijs):'')+
+            (x.normaalprijs&&x.normaalprijs>x.prijs?' <s class="bv-aw">'+eu(x.normaalprijs)+'</s>':'')+'</span>'+
+          (act?'<span class="bv-aa">'+e(act)+'</span>':'')+
+          (x.perEenheid?'<span class="bv-ae">'+eu(x.perEenheid)+' per '+e(x.eenheid||'stuk')+'</span>':'')+
+          (x.product_id?'<span class="bv-avgl" data-p="'+e(x.product_id)+'">Vergelijk '+e(x.productNaam||'')+' bij alle winkels \u2193</span>':'')+
+          '</a>'}).join('');
+      am.hidden=r.length<=aantal; am.textContent='Toon de overige '+(r.length-aantal)+' aanbiedingen'}
+    function kies(w){
+      huidig=w; aantal=30;
+      Array.prototype.forEach.call(at.children,function(b){b.classList.toggle('aan',b.getAttribute('data-w')===w)});
+      if(opslag[w])return toon(opslag[w]);
+      al.innerHTML='<p class="bv-leeg">Laden\u2026</p>';
+      fetch(API+'/sm/api/winkel?w='+encodeURIComponent(w)).then(function(r){return r.json()}).then(function(j){
+        if(j&&j.ok){opslag[w]=j;if(huidig===w)toon(j)}})}
+    al.addEventListener('click',function(ev){
+      var k=ev.target.closest('.bv-avgl'); if(!k)return;
+      ev.preventDefault(); ev.stopPropagation();
+      var kaart=document.getElementById('bvk-'+k.getAttribute('data-p'));
+      if(kaart){try{kaart.scrollIntoView({behavior:'smooth',block:'center'})}catch(err){}
+        kaart.style.outline='2px solid #10b981'; kaart.style.outlineOffset='3px';
+        setTimeout(function(){kaart.style.outline=''},2200)}});
+    fetch(API+'/sm/api/winkels').then(function(r){return r.json()}).then(function(j){
+      if(!j||!j.ok||!j.winkels.length)return;
+      at.innerHTML=j.winkels.map(function(w){
+        return '<button type="button" role="tab" data-w="'+e(w.winkel)+'">'+stip(w.winkel)+e(w.naam)+'<small>'+w.aantal+'</small></button>'}).join('');
+      at.addEventListener('click',function(ev){var b=ev.target.closest('button');if(b)kies(b.getAttribute('data-w'))});
+      am.addEventListener('click',function(){aantal=9999;toon(opslag[huidig])});
+      document.getElementById('bv-alles').hidden=false;
+      kies(j.winkels[0].winkel);
+    }).catch(function(){});
+  })();
+
+  /* Weekfolders: alleen een knop per winkel naar hun eigen folder. Alles per
+     winkel uitschrijven zei weinig, want zonder vergelijking weet je niet of
+     zo'n prijs goed is. Filteren op winkel kan hierboven al. */
+  (function(){
+    /* De folders komen uit de worker, die weet ook of de folder van volgende
+       week er al staat. Lukt dat niet, dan vallen we terug op de vaste lijst,
+       zodat de knoppen er altijd staan. */
+    fetch(API+'/sm/api/folders').then(function(r){return r.json()}).then(function(j){
+      if(!j||!j.ok||!j.winkels)return;
+      var deze=j.winkels.filter(function(w){return w.deze});
+      if(deze.length)document.getElementById('bv-fl').innerHTML=deze.map(function(w){
+        return '<a href="'+e(w.deze)+'" target="_blank" rel="nofollow noopener">'+stip(w.winkel)+e(w.naam)+'</a>'}).join('');
+      var later=j.winkels.filter(function(w){return w.volgende});
+      document.getElementById('bv-fvolgende').hidden=!later.length;
+      document.getElementById('bv-fv').innerHTML=later.map(function(w){
+        return '<a href="'+e(w.volgende)+'" target="_blank" rel="nofollow noopener">'+stip(w.winkel)+e(w.naam)+'</a>'}).join('');
+    }).catch(function(){});
+
+    var FOLDER=[
+      ['ah','Albert Heijn','https://www.ah.nl/bonus'],
+      ['jumbo','Jumbo','https://www.jumbo.com/aanbiedingen'],
+      ['plus','PLUS','https://www.plus.nl/aanbiedingen'],
+      ['dirk','Dirk','https://www.dirk.nl/folder'],
+      ['lidl','Lidl','https://www.lidl.nl/c/folder/s10007813'],
+      ['aldi','Aldi','https://www.aldi.nl/aanbiedingen.html'],
+      ['hoogvliet','Hoogvliet','https://folder.hoogvliet.com/'],
+      ['vomar','Vomar','https://www.vomar.nl/folder'],
+      ['kruidvat','Kruidvat','https://www.kruidvat.nl/acties'],
+      ['etos','Etos','https://www.etos.nl/aanbiedingen/'],
+      ['da','DA','https://www.da.nl/aanbiedingen'],
+      ['trekpleister','Trekpleister','https://www.trekpleister.nl/acties'],
+      ['action','Action','https://www.action.com/nl-nl/weekactie/']];
+    document.getElementById('bv-fl').innerHTML=FOLDER.map(function(f){
+      return '<a href="'+e(f[2])+'" target="_blank" rel="nofollow noopener">'+stip(f[0])+e(f[1])+'</a>'}).join('');
+  })();
+
+  /* Kom je vanuit de zoekhulp binnen met ?zoek=sanex, dan staat die term hier
+     meteen ingevuld en is het raster er al op gefilterd. */
+  try{
+    var vanUrl=new URLSearchParams(location.search).get('zoek');
+    if(vanUrl){q.value=vanUrl;vraag=vanUrl.trim().toLowerCase();wis.hidden=!vraag}
+  }catch(err){}
+
+  function weekErna(w){var m=/^(\d{4})-W(\d{1,2})$/.exec(String(w||''));if(!m)return null;
+    var n=+m[2]+1;return m[1]+'-W'+(n<10?'0'+n:''+n)}
+  function toonWeek(d){
+    D=d; alles=bouw(d);
+    var ma=maandag(d.week), zo=plusD(ma,6);
+    document.getElementById('bv-wk').textContent='Aanbiedingen van maandag '+ma.getUTCDate()+
+      (ma.getUTCMonth()!==zo.getUTCMonth()?' '+MNDLANG[ma.getUTCMonth()]:'')+' tot en met zondag '+zo.getUTCDate()+' '+MNDLANG[zo.getUTCMonth()];
+    var deals=0, wk={};
+    alles.forEach(function(x){deals+=x.ds.length;x.ds.forEach(function(dd){wk[dd.winkel]=1})});
+    document.getElementById('bv-cijfers').innerHTML=
+      '<div class="bv-c"><b>'+alles.length+'</b><span>producten</span></div>'+
+      '<div class="bv-c"><b>'+deals+'</b><span>aanbiedingen</span></div>'+
+      '<div class="bv-c"><b>'+Object.keys(wk).length+'</b><span>winkels</span></div>';
+    /* Coolblue: alleen exact hetzelfde apparaat. */
+    if(d.coolblue&&d.coolblue.length){
+      document.getElementById('bv-cb-blok').hidden=false;
+      document.getElementById('bv-cb').innerHTML=d.coolblue.map(function(c){
+        var cbGoedkoper=c.prijs&&c.cbPrijs<c.prijs;
+        return '<div class="bv-cbk"><h3>'+e(c.titel)+'</h3>'+
+          '<div class="bv-cbr"><span>'+wl(c.winkel,c.winkelNaam)+'<small>'+e(c.actie||'aanbieding')+'</small></span>'+
+          '<span><b>'+(c.prijs?eu(c.prijs):'prijs checken')+'</b>'+(c.prijs&&!cbGoedkoper?'<span class="g">goedkoopst</span>':'')+'</span></div>'+
+          '<a class="bv-cbr" href="'+e(c.cbUrl)+'" target="_blank" rel="sponsored nofollow noopener">'+
+          '<span><span class="bv-wl" style="background:#0090E3;color:#fff">Coolblue</span><small>'+e(c.cbNaam)+'</small></span>'+
+          '<span><b>'+eu(c.cbPrijs)+'</b>'+(cbGoedkoper?'<span class="g">goedkoopst</span>':'')+'</span></a></div>'}).join('')}
+    tekenChips(); teken();
+  }
+
+  /* Schakelen tussen deze en volgende week. De data per week bewaren we, zodat
+     heen en weer klikken niets opnieuw ophaalt. */
+  function laadWeek(welke){
+    var sleutel=weekKeys[welke];
+    if(cache[welke]){welkeWeek=welke;toonWeek(cache[welke]);vooruitMelding();return}
+    document.getElementById('bv-grid').innerHTML='<p class="bv-leeg">Laden\u2026</p>';
+    fetch(API+'/sm/api/deals'+(sleutel?'?week='+encodeURIComponent(sleutel):'')).then(function(r){return r.json()}).then(function(d){
+      cache[welke]=d;welkeWeek=welke;toonWeek(d);vooruitMelding()}).catch(function(){
+      document.getElementById('bv-grid').innerHTML='<p class="bv-leeg">Kon de aanbiedingen niet laden. Probeer het zo nog eens.</p>'});
+  }
+  function telVan(d){return d&&d.producten?d.producten.filter(function(p){return p.deals&&p.deals.length}).length:0}
+  function vooruitMelding(){
+    var p=document.getElementById('bv-vooruit');
+    if(welkeWeek!=='volgende'){p.hidden=true;return}
+    var d=cache.volgende;
+    var ws={};(d&&d.producten||[]).forEach(function(x){(x.deals||[]).forEach(function(y){ws[y.winkelNaam]=1})});
+    var namen=Object.keys(ws);
+    p.hidden=false;
+    p.innerHTML=namen.length
+      ? '<b>Nog niet compleet.</b> Van '+e(namen.join(', '))+' weten we het al. De andere winkels publiceren hun folder later deze week, dan vullen we aan.'
+      : '<b>Nog niets bekend.</b> Geen enkele winkel heeft de folder van volgende week al online gezet. Meestal gebeurt dat vanaf donderdag.';
+  }
+  document.getElementById('bv-weken').addEventListener('click',function(ev){
+    var b=ev.target.closest('button'); if(!b)return;
+    var welke=b.getAttribute('data-w'); if(welke===welkeWeek)return;
+    Array.prototype.forEach.call(this.children,function(x){x.classList.toggle('aan',x===b)});
+    winkel=actie=dsoort=categorie=''; getoond=STAP;
+    laadWeek(welke);
+  });
+
+  fetch(API+'/sm/api/deals').then(function(r){return r.json()}).then(function(d){
+    cache.deze=d; weekKeys.deze=d.week; weekKeys.volgende=weekErna(d.week);
+    toonWeek(d);
+    if(vraag){brederZoeken(vraag);
+      try{document.getElementById('bv-grid').scrollIntoView({behavior:'smooth',block:'start'})}catch(err){}}
+    /* Alleen een schakelaar tonen als er van volgende week echt iets is. */
+    if(weekKeys.volgende)fetch(API+'/sm/api/deals?week='+encodeURIComponent(weekKeys.volgende))
+      .then(function(r){return r.json()}).then(function(v){
+        var n=telVan(v); if(!n)return;
+        cache.volgende=v;
+        document.getElementById('bv-wk1').textContent=telVan(d)+' producten';
+        document.getElementById('bv-wk2').textContent=n+' producten';
+        document.getElementById('bv-weken').hidden=false;
+      }).catch(function(){});
+  }).catch(function(){
+    document.getElementById('bv-grid').innerHTML='<p class="bv-leeg">Kon de aanbiedingen niet laden. Probeer het zo nog eens.</p>'});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Boodschappen raster",
+  "settings": [
+    { "type": "text", "id": "api", "label": "Adres van de boodschappenworker", "default": "https://dpv-boodschappen.business-347.workers.dev" },
+    { "type": "text", "id": "titel", "label": "Titel", "default": "Welk merk is deze week waar in de aanbieding?" },
+    { "type": "textarea", "id": "intro", "label": "Intro onder de titel", "default": "A-merken en huismerken naast elkaar bij Albert Heijn, Jumbo, PLUS, Dirk, Lidl, Aldi, Vomar, Hoogvliet, Kruidvat, Etos, DA, Trekpleister en Action. Omgerekend naar de prijs per liter, kilo of stuk, zodat 1+1 gratis en 25 procent korting eerlijk te vergelijken zijn." }
+  ]
+}
+{% endschema %}

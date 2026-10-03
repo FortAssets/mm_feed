@@ -1,0 +1,571 @@
+{%- comment -%}
+  Aanmeldblok voor de wekelijkse aanbiedingenmail.
+
+  Geen account en geen wachtwoord. De bezoeker vult alleen een e-mailadres in.
+  De worker maakt er een willekeurige sleutel van 128 bits bij en stuurt een
+  bevestigingsmail. Pas na die klik staat iemand op actief. Dat is een dubbele
+  opt-in: het voorkomt dat iemand een ander aanmeldt en het is wat de
+  spamregels (artikel 11.7 Telecomwet) van je vragen.
+
+  Het veld "website" staat verborgen en is een val voor bots. Een mens vult
+  het nooit in. De worker doet bij een ingevuld veld alsof het gelukt is en
+  slaat niets op, zodat een bot niet merkt dat hij geweigerd wordt.
+
+  Deze sectie kan twee kanten op:
+  - vorm "blok": het hele blok met uitleg, voor midden op een pagina.
+  - vorm "balk": een smalle variant voor onder een lijst.
+
+  Dezelfde sectie wordt gebruikt op /pages/bevestigen, /pages/afmelden en
+  /pages/mijn-aanbiedingen; daar herkent het script de sleutel in de URL en
+  toont het de juiste melding in plaats van het formulier.
+{%- endcomment -%}
+
+{%- comment -%}
+  3 okt: twee dingen erbij.
+
+  1. "Alleen bij artikelen met tag": zo kan dit blok in het artikeltemplate
+     staan en toch alleen onder de artikelen waar het hoort. Zelfde aanpak als
+     bij dpv-zorgpremie-2027.
+
+  2. Onderwerpchips in het formulier zelf, met alles standaard aan. Eerst kon
+     je pas na de bevestiging kiezen, en dan alleen tussen
+     boodschappencategorieen. Wie zich op de gamingpagina aanmeldde kreeg
+     daarna de keuze tussen Zuivel en Vlees. Nu staan de onderwerpen van de
+     site in het formulier (black friday, gaming, telefoons, laptops, tv,
+     audio, huishoudelijk, keuken, boodschappen, telecom, energie, zorg) en
+     gaan ze mee met de aanmelding.
+
+     Alles staat aan: iemand die niets aanraakt krijgt alles, en dat is ook wat
+     hij verwacht als hij op "Aanmelden" drukt. Met "Voorselectie" zet je per
+     pagina alleen de onderwerpen aan die daar passen, bijvoorbeeld
+     gaming,black-friday op de gamingpagina.
+{%- endcomment -%}
+
+{%- assign pa_toon = true -%}
+{%- assign pa_tag = section.settings.alleen_tag | strip -%}
+{%- if pa_tag != blank -%}
+  {%- assign pa_toon = false -%}
+  {%- if article and article.tags contains pa_tag -%}{%- assign pa_toon = true -%}{%- endif -%}
+{%- endif -%}
+
+{%- if pa_toon -%}
+{%- assign api = section.settings.api | default: 'https://dpv-boodschappen.business-347.workers.dev' -%}
+
+<div class="pa pa-vorm-{{ section.settings.vorm }}" id="pa-{{ section.id }}"
+     data-api="{{ api }}" data-bron="{{ section.settings.bron }}"
+     data-voor="{{ section.settings.chips_voor }}">
+  <div class="pa-in">
+
+    <div class="pa-blok" data-rol="formulier">
+      {%- if section.settings.oog != blank -%}
+      <span class="pa-oog">{{ section.settings.oog }}</span>
+      {%- endif -%}
+      <h2 class="pa-kop">{{ section.settings.kop }}</h2>
+      {%- if section.settings.tekst != blank -%}
+      <p class="pa-tekst">{{ section.settings.tekst }}</p>
+      {%- endif -%}
+
+      <form class="pa-f" novalidate>
+        <label class="pa-verborgen" aria-hidden="true">
+          Website<input type="text" name="website" tabindex="-1" autocomplete="off">
+        </label>
+        <input type="email" class="pa-mail" placeholder="{{ section.settings.veld }}"
+               autocomplete="email" inputmode="email" aria-label="E-mailadres" required>
+        <button type="submit" class="pa-knop">{{ section.settings.knop }}</button>
+      </form>
+
+      {%- if section.settings.chips -%}
+      {%- comment -%}
+        De chips stonden eerst gewoon open onder het veld. Dat leest als een
+        formulier dat je moet invullen voordat je mag aanmelden, terwijl het
+        tegenovergestelde waar is: alles staat al aan en je hoeft niets te doen.
+        Daarom nu dicht, met een knop die zegt wat er aanstaat. Wie niets doet
+        krijgt alles; wie wil kiezen klapt hem open.
+      {%- endcomment -%}
+      <div class="pa-ow" data-rol="ow-vak">
+        <button type="button" class="pa-ow-knop" data-rol="ow-knop" aria-expanded="false" aria-controls="pa-ow-{{ section.id }}">
+          <span class="pa-ow-tel" data-rol="ow-tel">&nbsp;</span>
+          <span class="pa-ow-aan">{{ section.settings.chips_kop }}</span>
+          <i aria-hidden="true">&#9662;</i>
+        </button>
+        <div class="pa-ow-in" id="pa-ow-{{ section.id }}" data-rol="ow-in" hidden>
+          <div class="pa-cats" data-rol="ow"></div>
+          <div class="pa-ow-snel">
+            <button type="button" class="pa-link" data-rol="ow-alles">Alles aan</button>
+            <button type="button" class="pa-link" data-rol="ow-niets">Alles uit</button>
+          </div>
+          <p class="pa-ow-fijn">{{ section.settings.chips_fijn }}</p>
+        </div>
+      </div>
+      {%- endif -%}
+
+      <p class="pa-melding" data-rol="melding" hidden></p>
+      <p class="pa-fijn">{{ section.settings.fijn }}</p>
+    </div>
+
+    <div class="pa-blok pa-uit" data-rol="gelukt" hidden>
+      <span class="pa-vink" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg>
+      </span>
+      <h2 class="pa-kop" data-rol="gelukt-kop">Kijk even in je mail</h2>
+      <p class="pa-tekst" data-rol="gelukt-tekst">Wij hebben je een bericht gestuurd met één link erin. Klik erop en je staat erbij. Zonder die klik sturen wij je niets.</p>
+    </div>
+
+    <div class="pa-blok" data-rol="voorkeur" hidden>
+      <h2 class="pa-kop">Waar wil je mail over?</h2>
+      <p class="pa-tekst" data-rol="voorkeur-tekst"></p>
+      <div class="pa-cats" data-rol="vk-ow"></div>
+      <div class="pa-ow" data-rol="vk-cats-vak" hidden>
+        <p class="pa-ow-kop">En welke schappen bij boodschappen?</p>
+        <div class="pa-cats" data-rol="cats"></div>
+      </div>
+      <button type="button" class="pa-knop pa-breed" data-rol="bewaar">Bewaren</button>
+      <p class="pa-melding" data-rol="voorkeur-melding" hidden></p>
+      <p class="pa-fijn">Kies je niets, dan krijg je alles.
+        <button type="button" class="pa-link" data-rol="afmelden">Liever helemaal geen mail meer</button></p>
+    </div>
+
+  </div>
+</div>
+
+<style>
+.pa{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#059669;--groen-d:#047857;--groen-t:#F0FDF4;--rood:#B42318;
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);padding:18px 0}
+.pa *{box-sizing:border-box}
+/* hidden moet winnen van elke display-regel hieronder */
+.pa [hidden]{display:none !important}
+.pa-in{max-width:1080px;margin:0 auto;padding:0 16px}
+.pa-blok{border:2px solid var(--groen);background:var(--groen-t);border-radius:18px;padding:20px 22px}
+.pa-vorm-balk .pa-blok{border-width:1.5px;padding:16px 18px}
+.pa-vorm-balk .pa-tekst{display:none}
+.pa-oog{display:inline-block;background:var(--groen);color:#fff;font-size:11.5px;font-weight:800;letter-spacing:.07em;
+  text-transform:uppercase;border-radius:5px;padding:4px 9px;margin:0 0 10px}
+.pa-kop{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:clamp(19px,2.4vw,24px);font-weight:800;
+  letter-spacing:-.02em;line-height:1.2;margin:0;color:var(--ink)}
+.pa-tekst{font-size:15px;line-height:1.5;color:var(--soft);margin:7px 0 0;max-width:620px}
+.pa-f{display:flex;gap:8px;margin:14px 0 0;max-width:520px}
+.pa-mail{flex:1;min-width:0;height:50px;border:1.5px solid #BFE6D4;border-radius:12px;padding:0 15px;
+  font-size:16px;font-family:inherit;color:var(--ink);background:#fff}
+.pa-mail::placeholder{color:#9AA6B4}
+.pa-knop{flex:0 0 auto;height:50px;border:0;border-radius:12px;padding:0 22px;background:var(--groen);color:#fff;
+  font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;white-space:nowrap}
+.pa-knop:hover{background:var(--groen-d)}
+.pa-knop:disabled{opacity:.6;cursor:default}
+.pa-breed{width:100%;margin-top:14px}
+.pa-verborgen{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.pa-melding{margin:10px 0 0;font-size:14px;font-weight:700}
+.pa-fijn{margin:12px 0 0;font-size:13px;line-height:1.5;color:var(--soft)}
+.pa-link{background:none;border:0;padding:0;font-family:inherit;font-size:13px;font-weight:700;color:var(--soft);
+  text-decoration:underline;cursor:pointer}
+.pa-uit{display:flex;gap:14px;align-items:flex-start}
+.pa-vink{flex:0 0 auto;width:40px;height:40px;border-radius:50%;background:var(--groen);color:#fff;
+  display:flex;align-items:center;justify-content:center}
+.pa-cats{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0 0}
+.pa-ow{margin:14px 0 0}
+.pa-ow-kop{font-size:13.5px;font-weight:800;color:var(--ink);margin:0}
+.pa-ow-knop{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #BFE6D4;
+  border-radius:12px;padding:9px 14px;font-family:inherit;font-size:13.5px;font-weight:700;color:var(--ink);
+  cursor:pointer;text-align:left;max-width:100%}
+.pa-ow-knop:hover{border-color:var(--groen)}
+.pa-ow-knop i{font-style:normal;color:var(--soft);transition:transform .14s;flex:0 0 auto}
+.pa-ow-knop[aria-expanded="true"] i{transform:rotate(180deg)}
+.pa-ow-tel{background:var(--groen);color:#fff;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:800;flex:0 0 auto}
+.pa-ow-aan{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pa-ow-in{margin:10px 0 0}
+.pa-ow .pa-cats{margin:0}
+.pa-ow-snel{display:flex;gap:14px;margin:10px 0 0}
+.pa-ow-fijn{font-size:12px;line-height:1.5;color:var(--soft);margin:8px 0 0}
+.pa-vorm-balk .pa-ow{display:none}
+.pa-cat{background:#fff;border:1.5px solid #BFE6D4;border-radius:99px;padding:8px 14px;font-family:inherit;
+  font-size:14px;font-weight:700;color:var(--ink);cursor:pointer}
+.pa-cat[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+@media(max-width:560px){
+  .pa-f{flex-direction:column}
+  .pa-knop{width:100%}
+}
+</style>
+
+<script>
+(function () {
+  var wortel = document.getElementById('pa-{{ section.id }}');
+  if (!wortel) return;
+  var API = wortel.getAttribute('data-api');
+  var BRON = wortel.getAttribute('data-bron') || '';
+
+  function deel(rol) { return wortel.querySelector('[data-rol="' + rol + '"]'); }
+  function toon(rol) {
+    ['formulier', 'gelukt', 'voorkeur'].forEach(function (r) {
+      var el = deel(r); if (el) el.hidden = r !== rol;
+    });
+  }
+  function zeg(el, tekst, goed) {
+    el.textContent = tekst;
+    el.style.color = goed ? '#047857' : '#B42318';
+    el.hidden = false;
+  }
+
+  var sleutel = new URLSearchParams(location.search).get('s') || '';
+  var pad = location.pathname;
+
+  // De drie servicepagina's horen niet in Google: ze hebben geen inhoud
+  // zonder sleutel en een gedeelde link zou een vreemde op iemands
+  // voorkeuren kunnen zetten. Google voert dit script uit en houdt zich
+  // aan een robots-meta die er zo in komt.
+  if (/bevestig|afmeld|mijn-aanbiedingen/.test(pad)) {
+    var mt = document.querySelector('meta[name="robots"]');
+    if (!mt) { mt = document.createElement('meta'); mt.setAttribute('name', 'robots'); document.head.appendChild(mt); }
+    mt.setAttribute('content', 'noindex,follow');
+  }
+
+  // ---- Onderwerpchips ----------------------------------------------------
+  //
+  // De lijst staat hier en niet alleen in de worker, zodat de chips er staan
+  // voordat er een verzoek uit is. De worker gooit alles weg wat hij niet
+  // kent, dus een verouderde lijst hier kan geen rommel in de database zetten.
+  var ONDERWERPEN = [
+    ['black-friday', 'Black Friday'],
+    ['gaming', 'Gaming en consoles'],
+    ['telefoons', 'Telefoons en tablets'],
+    ['laptops', 'Laptops en computers'],
+    ['tv-beeld', "Tv's en beeld"],
+    ['audio', 'Audio'],
+    ['huishoudelijk', 'Huishoudelijk'],
+    ['keuken', 'Koffie en keuken'],
+    ['boodschappen', 'Boodschappen'],
+    ['telecom', 'Sim only en abonnementen'],
+    ['energie', 'Energie'],
+    ['zorg', 'Zorgverzekering']
+  ];
+
+  var owVak = deel('ow');
+  if (owVak) {
+    // Voorselectie: leeg betekent alles aan. Zet je er iets in, dan staan
+    // alleen die aan, en de rest uit maar wel zichtbaar.
+    var voor = String(wortel.getAttribute('data-voor') || '').split(',')
+      .map(function (x) { return x.trim(); }).filter(Boolean);
+    owVak.innerHTML = ONDERWERPEN.map(function (o) {
+      var aan = voor.length ? voor.indexOf(o[0]) > -1 : true;
+      return '<button type="button" class="pa-cat" aria-pressed="' + (aan ? 'true' : 'false') +
+        '" data-o="' + o[0] + '">' + o[1] + '</button>';
+    }).join('');
+    owVak.addEventListener('click', function (e) {
+      var k = e.target.closest('.pa-cat');
+      if (!k) return;
+      k.setAttribute('aria-pressed', k.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      owTelBij();
+    });
+
+    // De knop zegt hoeveel er aanstaan en welke, zodat je niet hoeft open te
+    // klappen om te zien wat er gebeurt als je niets doet.
+    var owKnop = deel('ow-knop'), owIn = deel('ow-in'), owTel = deel('ow-tel');
+    function owTelBij() {
+      var aan = gekozenOnderwerpen();
+      if (owTel) owTel.textContent = aan.length === ONDERWERPEN.length ? 'alles' : String(aan.length);
+      var tekst = deel('ow-aan');
+      if (!tekst) return;
+      if (aan.length === ONDERWERPEN.length) tekst.textContent = 'onderwerpen staan aan';
+      else if (!aan.length) tekst.textContent = 'niets gekozen, je krijgt alles';
+      else {
+        var namen = ONDERWERPEN.filter(function (o) { return aan.indexOf(o[0]) > -1; }).map(function (o) { return o[1]; });
+        tekst.textContent = namen.slice(0, 2).join(', ') + (namen.length > 2 ? ' en ' + (namen.length - 2) + ' meer' : '');
+      }
+    }
+    if (owKnop && owIn) {
+      owKnop.addEventListener('click', function () {
+        var open = owIn.hidden;
+        owIn.hidden = !open;
+        owKnop.setAttribute('aria-expanded', open ? 'true' : 'false');
+      });
+    }
+    var alles = deel('ow-alles'), niets = deel('ow-niets');
+    function zetAlle(aan) {
+      [].slice.call(owVak.querySelectorAll('.pa-cat')).forEach(function (k) {
+        k.setAttribute('aria-pressed', aan ? 'true' : 'false');
+      });
+      owTelBij();
+    }
+    if (alles) alles.addEventListener('click', function () { zetAlle(true); });
+    if (niets) niets.addEventListener('click', function () { zetAlle(false); });
+    owTelBij();
+  }
+  function gekozenOnderwerpen() {
+    if (!owVak) return [];
+    return [].slice.call(owVak.querySelectorAll('.pa-cat[aria-pressed="true"]'))
+      .map(function (k) { return k.getAttribute('data-o'); });
+  }
+
+  // ---- Aanmelden ---------------------------------------------------------
+  var form = wortel.querySelector('.pa-f');
+  if (form) {
+    var veld = wortel.querySelector('.pa-mail');
+    var knop = wortel.querySelector('.pa-knop');
+    var melding = deel('melding');
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var adres = (veld.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) { zeg(melding, 'Vul een geldig e-mailadres in.', false); veld.focus(); return; }
+      var val = form.querySelector('input[name="website"]');
+      knop.disabled = true; var oud = knop.textContent; knop.textContent = 'Bezig…';
+      fetch(API + '/sm/api/aanmelden', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: adres, bron: BRON, website: val ? val.value : '', onderwerpen: gekozenOnderwerpen() })
+      }).then(function (r) { return r.json(); }).then(function (res) {
+        if (res && res.ok) {
+          if (res.status === 'al-actief') {
+            deel('gelukt-kop').textContent = 'Je stond er al bij';
+            deel('gelukt-tekst').textContent = 'Dit adres ontvangt de wekelijkse mail al. Je hoeft niets te doen.';
+          }
+          toon('gelukt');
+        } else {
+          zeg(melding, (res && res.fout) || 'Er ging iets mis. Probeer het later nog eens.', false);
+        }
+      }).catch(function () {
+        zeg(melding, 'Er ging iets mis. Probeer het later nog eens.', false);
+      }).then(function () { knop.disabled = false; knop.textContent = oud; });
+    });
+    veld.addEventListener('input', function () { melding.hidden = true; });
+  }
+
+  // ---- Bevestigen, afmelden en voorkeuren --------------------------------
+  // Deze drie pagina's hebben alleen een sleutel in de URL nodig. De worker
+  // doet het werk; wij tonen hier het antwoord.
+  // /sm/bevestig en /sm/afmelden geven een hele HTML-pagina terug, bedoeld
+  // voor wie die link rechtstreeks opent. Zo'n antwoord heeft geen
+  // CORS-koppen, dus de browser laat ons het hier niet lezen; dat gaf een
+  // "Failed to fetch" terwijl de bevestiging aan de andere kant wel gelukt
+  // was. Daarom sturen wij het verzoek met mode no-cors, dat komt wel aan,
+  // en lezen wij daarna bij /sm/api/mijn terug wat er echt is gebeurd. Zo
+  // volgt de melding de database in plaats van een aanname.
+  function doeEnControleer(pad, verwacht, kop, tekst, alsHtml) {
+    fetch(API + pad + '?s=' + encodeURIComponent(sleutel), { mode: 'no-cors' })
+      .catch(function () {})
+      .then(function () { return fetch(API + '/sm/api/mijn?s=' + encodeURIComponent(sleutel)); })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (!res || !res.ok) {
+          deel('gelukt-kop').textContent = 'Deze link werkt niet meer';
+          deel('gelukt-tekst').textContent = 'Hij is mogelijk al gebruikt of verlopen. Meld je hieronder opnieuw aan, dan sturen wij een nieuwe bevestiging.';
+        } else if (res.status !== verwacht) {
+          deel('gelukt-kop').textContent = 'Er ging iets mis';
+          deel('gelukt-tekst').textContent = 'Probeer het over een minuut nog eens, of meld je hieronder opnieuw aan.';
+        } else {
+          deel('gelukt-kop').textContent = kop;
+          if (alsHtml) deel('gelukt-tekst').innerHTML = tekst;
+          else deel('gelukt-tekst').textContent = tekst;
+        }
+        toon('gelukt');
+      })
+      .catch(function () {
+        deel('gelukt-kop').textContent = 'Er ging iets mis';
+        deel('gelukt-tekst').textContent = 'Probeer het over een minuut nog eens.';
+        toon('gelukt');
+      });
+  }
+  function bevestig() {
+    doeEnControleer('/sm/bevestig', 'actief', 'Je aanmelding is bevestigd',
+      'Vanaf volgende week krijg je \u00e9\u00e9n mail met de aanbiedingen waarbij het verschil het grootst is, omgerekend naar de prijs per liter en per kilo. ' +
+      '<a href="/pages/mijn-aanbiedingen?s=' + encodeURIComponent(sleutel) + '">Kies welke producten je volgt</a>.', true);
+  }
+  function afmelden() {
+    doeEnControleer('/sm/afmelden', 'afgemeld', 'Je bent afgemeld',
+      'Wij sturen je geen mail meer. Je adres blijft alleen bewaard om te onthouden dat je geen mail meer wilt.', false);
+  }
+  function voorkeuren() {
+    fetch(API + '/sm/api/mijn?s=' + encodeURIComponent(sleutel))
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (!res || !res.ok) {
+          deel('gelukt-kop').textContent = 'Deze link werkt niet meer';
+          deel('gelukt-tekst').textContent = 'Hij is mogelijk verlopen. Meld je hieronder opnieuw aan, dan sturen wij een nieuwe bevestiging.';
+          toon('gelukt');
+          return;
+        }
+        deel('voorkeur-tekst').textContent = 'Je ontvangt de mail op ' + res.email + '. Vink aan wat je wilt volgen.';
+
+        // Onderwerpen. De worker stuurt de lijst mee; kan hij dat niet (oude
+        // versie nog niet uitgerold), dan vallen we terug op de lijst hierboven.
+        var lijst = (res.onderwerpen && res.onderwerpen.length)
+          ? res.onderwerpen.map(function (o) { return [o.id, o.naam]; })
+          : ONDERWERPEN;
+        var ow = res.gekozenOnderwerpen || [];
+        var vkOw = deel('vk-ow');
+        if (vkOw) {
+          vkOw.innerHTML = lijst.map(function (o) {
+            return '<button type="button" class="pa-cat" aria-pressed="' +
+              (ow.indexOf(o[0]) > -1 ? 'true' : 'false') + '" data-o="' + o[0] + '">' + o[1] + '</button>';
+          }).join('');
+        }
+
+        // De boodschappenschappen zijn een laag dieper en hebben alleen zin als
+        // boodschappen aanstaat. Anders staat er een rij Zuivel en Vlees onder
+        // een aanmelding die over consoles ging.
+        var gekozen = res.gekozen || [];
+        deel('cats').innerHTML = (res.categorieen || []).map(function (c) {
+          return '<button type="button" class="pa-cat" aria-pressed="' + (gekozen.indexOf(c) > -1 ? 'true' : 'false') + '" data-c="' + c.replace(/"/g, '&quot;') + '">' + c + '</button>';
+        }).join('');
+        function schappenBij() {
+          var vak = deel('vk-cats-vak');
+          if (!vak) return;
+          var aan = !!(vkOw && vkOw.querySelector('.pa-cat[data-o="boodschappen"][aria-pressed="true"]'));
+          vak.hidden = !(aan && (res.categorieen || []).length);
+        }
+        schappenBij();
+        if (vkOw) vkOw.addEventListener('click', function (e) {
+          var k = e.target.closest('.pa-cat');
+          if (!k) return;
+          k.setAttribute('aria-pressed', k.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+          schappenBij();
+        });
+
+        toon('voorkeur');
+      });
+  }
+  deel('cats') && deel('cats').addEventListener('click', function (e) {
+    var k = e.target.closest('.pa-cat');
+    if (!k) return;
+    k.setAttribute('aria-pressed', k.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+  });
+  deel('bewaar') && deel('bewaar').addEventListener('click', function () {
+    // Alleen binnen het eigen vak zoeken. Eerst stond hier een query over de
+    // hele sectie, en die pakte ook de chips van het aanmeldformulier mee.
+    var catsVak = deel('cats');
+    var owVak2 = deel('vk-ow');
+    var cats = catsVak ? [].slice.call(catsVak.querySelectorAll('.pa-cat[aria-pressed="true"]')).map(function (k) { return k.getAttribute('data-c'); }) : [];
+    var ow = owVak2 ? [].slice.call(owVak2.querySelectorAll('.pa-cat[aria-pressed="true"]')).map(function (k) { return k.getAttribute('data-o'); }) : [];
+    var m = deel('voorkeur-melding');
+    this.disabled = true;
+    fetch(API + '/sm/api/voorkeur', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ s: sleutel, cats: cats, onderwerpen: ow })
+    }).then(function (r) { return r.json(); }).then(function (res) {
+      zeg(m, res && res.ok ? 'Bewaard. Zo ziet je mail er vanaf nu uit.' : 'Opslaan lukte niet. Probeer het nog eens.', !!(res && res.ok));
+    }).catch(function () { zeg(m, 'Opslaan lukte niet. Probeer het nog eens.', false); })
+      .then(function () { deel('bewaar').disabled = false; });
+  });
+  deel('afmelden') && deel('afmelden').addEventListener('click', afmelden);
+
+  if (sleutel) {
+    if (pad.indexOf('bevestig') > -1) bevestig();
+    else if (pad.indexOf('afmeld') > -1) afmelden();
+    else if (pad.indexOf('mijn-aanbiedingen') > -1) voorkeuren();
+  }
+})();
+</script>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Prijsalarm aanmelden",
+  "settings": [
+    {
+      "type": "select",
+      "id": "vorm",
+      "label": "Vorm",
+      "default": "blok",
+      "options": [
+        {
+          "value": "blok",
+          "label": "Blok"
+        },
+        {
+          "value": "balk",
+          "label": "Smalle balk"
+        }
+      ]
+    },
+    {
+      "type": "text",
+      "id": "oog",
+      "label": "Labeltje erboven",
+      "default": "Gratis"
+    },
+    {
+      "type": "text",
+      "id": "kop",
+      "label": "Kop",
+      "default": "Elke week de beste aanbiedingen in je mailbox"
+    },
+    {
+      "type": "textarea",
+      "id": "tekst",
+      "label": "Tekst",
+      "default": "Wij rekenen alle folders om naar de prijs per liter en per kilo en sturen je de aanbiedingen waarbij het verschil het grootst is. Geen account nodig."
+    },
+    {
+      "type": "text",
+      "id": "veld",
+      "label": "Tekst in het veld",
+      "default": "jouw@e-mail.nl"
+    },
+    {
+      "type": "text",
+      "id": "knop",
+      "label": "Knop",
+      "default": "Aanmelden"
+    },
+    {
+      "type": "textarea",
+      "id": "fijn",
+      "label": "Kleine letters",
+      "default": "Eén mail per week, alleen als er iets in de aanbieding is. Afmelden kan met één klik. Wij geven je adres aan niemand door."
+    },
+    {
+      "type": "text",
+      "id": "bron",
+      "label": "Herkomst (voor de statistiek)",
+      "default": "boodschappen"
+    },
+    {
+      "type": "text",
+      "id": "api",
+      "label": "Worker-URL",
+      "default": "https://dpv-boodschappen.business-347.workers.dev"
+    },
+    {
+      "type": "header",
+      "content": "Waar tonen"
+    },
+    {
+      "type": "text",
+      "id": "alleen_tag",
+      "label": "Alleen bij artikelen met deze tag",
+      "info": "Leeg laten om hem altijd te tonen. Zet je deze sectie in het artikeltemplate, vul dan een tag in, bijvoorbeeld gta6."
+    },
+    {
+      "type": "header",
+      "content": "Onderwerpen"
+    },
+    {
+      "type": "checkbox",
+      "id": "chips",
+      "label": "Chips in het formulier",
+      "default": false,
+      "info": "Staat uit op bestaande pagina's zodat daar niets verandert. Aan op de nieuwe pagina's en onder artikelen."
+    },
+    {
+      "type": "text",
+      "id": "chips_kop",
+      "label": "Kop boven de chips",
+      "default": "Waar wil je bericht over?"
+    },
+    {
+      "type": "text",
+      "id": "chips_voor",
+      "label": "Voorselectie",
+      "info": "Komma gescheiden id's, bijvoorbeeld gaming,black-friday. Leeg laten zet alles aan. Geldige id's: black-friday, gaming, telefoons, laptops, tv-beeld, audio, huishoudelijk, keuken, boodschappen, telecom, energie, zorg."
+    },
+    {
+      "type": "text",
+      "id": "chips_fijn",
+      "label": "Tekst onder de chips",
+      "default": "Alles staat aan. Vink uit wat je niet wilt; je kunt het later altijd aanpassen."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Prijsalarm aanmelden"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,482 @@
+{%- comment -%}
+  dpv-shop-rij — een rij producten uit de shop-feed, om ergens tussen te zetten.
+
+  Dit is met opzet een los blokje en geen onderdeel van de vergelijkpagina, want
+  je wilt hem op meer plekken: een gamingrij op de homepage, een Black
+  Friday-rij, een rij onder een artikel. Alle instellingen staan in het thema,
+  dus je kunt hem neerzetten zonder dat ik eraan te pas kom.
+
+  Hij haalt niets op als er geen producten zijn en verdwijnt dan helemaal. Dat is
+  belangrijk: een lege rij met een kop erboven ziet eruit als een storing.
+
+  Met "Alleen bij artikelen met tag" zet je hem in het artikeltemplate en komt
+  hij alleen onder artikelen met die tag. Zo kan een artikel over GTA VI een
+  prijsvergelijking tonen zonder dat elk artikel dat krijgt. Dezelfde aanpak als
+  bij dpv-zorgpremie-2027.
+
+  Let op: dit thema verbergt lege divs (div:empty). Lege plekken krijgen daarom
+  &nbsp; in plaats van niets.
+{%- endcomment -%}
+
+{%- assign toon = true -%}
+{%- assign tag = section.settings.alleen_tag | strip -%}
+{%- if tag != blank -%}
+  {%- assign toon = false -%}
+  {%- if article and article.tags contains tag -%}{%- assign toon = true -%}{%- endif -%}
+{%- endif -%}
+
+{%- if toon -%}
+{%- assign rid = 'dsr-' | append: section.id -%}
+
+<section class="dsr dsr-{{ section.settings.vlak }}" id="{{ rid }}"
+         data-api="{{ section.settings.api }}"
+         data-bron="{{ section.settings.bron }}"
+         data-cat="{{ section.settings.cat }}"
+         data-sort="{{ section.settings.sort }}"
+         data-n="{{ section.settings.aantal }}"
+         data-echt="{% if section.settings.alleen_echt %}1{% endif %}"
+         data-deal="{% if section.settings.alleen_deal %}1{% endif %}"
+         data-multi="{% if section.settings.alleen_multi %}1{% endif %}"
+         data-type="{{ section.settings.types }}"
+         data-min="{{ section.settings.min }}"
+         data-max="{{ section.settings.max }}"
+         hidden>
+
+  <div class="dsr-kop">
+    <div>
+      {%- if section.settings.label != blank -%}
+        <p class="dsr-eyebrow">{{ section.settings.label }}</p>
+      {%- endif -%}
+      <h2>{{ section.settings.kop }}</h2>
+      {%- if section.settings.sub != blank -%}
+        <p class="dsr-sub">{{ section.settings.sub }}</p>
+      {%- endif -%}
+    </div>
+    {%- if section.settings.link_url != blank -%}
+      <a class="dsr-alles" href="{{ section.settings.link_url }}">{{ section.settings.link_tekst }}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+      </a>
+    {%- endif -%}
+  </div>
+
+  <div class="dsr-spoor" data-spoor></div>
+
+  <p class="dsr-fijn" data-fijn>&nbsp;</p>
+</section>
+
+<style>
+#{{ rid }}{--pa:#5b3b8c;--pa2:#F6F4FB;--rd:#E2DCF2;--gr:#10b981;--rood:#e11d48;--ink:#0D1B2A;--mut:#5B6B80;
+ max-width:1180px;margin:0 auto;padding:18px 0 10px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
+/* Een band eromheen. Op de homepage staan er drie blokken met kaarten onder
+   elkaar (de iPhone-strip, de Black Friday-strip en deze rij) en dan loopt
+   alles in elkaar over. Met een eigen vlak is het een blok in plaats van nog
+   een rij. De band loopt over de volle breedte, de inhoud blijft in het midden. */
+#{{ rid }}.dsr-vlak,#{{ rid }}.dsr-donker{max-width:none;padding:26px 0 18px;margin:18px 0}
+#{{ rid }}.dsr-vlak{background:var(--pa2);border-top:1px solid var(--rd);border-bottom:1px solid var(--rd)}
+#{{ rid }}.dsr-donker{background:linear-gradient(135deg,#1b1033,#2d1b52 60%,#3d2370);border:0}
+#{{ rid }}.dsr-vlak .dsr-kop,#{{ rid }}.dsr-vlak .dsr-spoor,#{{ rid }}.dsr-vlak .dsr-fijn,
+#{{ rid }}.dsr-donker .dsr-kop,#{{ rid }}.dsr-donker .dsr-spoor,#{{ rid }}.dsr-donker .dsr-fijn{
+ max-width:1180px;margin-left:auto;margin-right:auto}
+#{{ rid }}.dsr-donker h2{color:#fff}
+#{{ rid }}.dsr-donker .dsr-eyebrow{color:#c3aef0}
+#{{ rid }}.dsr-donker .dsr-sub{color:#ddd3f5}
+#{{ rid }}.dsr-donker .dsr-alles,#{{ rid }}.dsr-donker .dsr-alles:visited{color:#fff}
+#{{ rid }}.dsr-donker .dsr-fijn{color:#a899c9}
+#{{ rid }}.dsr-donker .dsr-spoor::-webkit-scrollbar-thumb{background:rgba(255,255,255,.3)}
+#{{ rid }} *{box-sizing:border-box}
+#{{ rid }} .dsr-kop{display:flex;align-items:flex-end;gap:12px;padding:0 16px;margin:0 0 12px}
+#{{ rid }} .dsr-kop>div{flex:1;min-width:0}
+#{{ rid }} .dsr-eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--pa);font-weight:800;margin:0 0 5px}
+#{{ rid }} h2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;line-height:1.2;
+ letter-spacing:-.025em;font-weight:800;margin:0}
+#{{ rid }} .dsr-sub{font-size:13.5px;line-height:1.55;color:var(--mut);margin:5px 0 0;max-width:60ch}
+#{{ rid }} .dsr-alles,#{{ rid }} .dsr-alles:visited{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
+ font-size:13.5px;font-weight:800;color:var(--pa);text-decoration:none;white-space:nowrap}
+#{{ rid }} .dsr-alles svg{width:15px;height:15px}
+#{{ rid }} .dsr-alles:hover{text-decoration:underline}
+
+#{{ rid }} .dsr-spoor{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 14px;scroll-snap-type:x mandatory;
+ scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+#{{ rid }} .dsr-spoor::-webkit-scrollbar{height:6px}
+#{{ rid }} .dsr-spoor::-webkit-scrollbar-thumb{background:var(--rd);border-radius:99px}
+#{{ rid }} .dsr-k{flex:0 0 160px;scroll-snap-align:start;display:flex;flex-direction:column;background:#fff;
+ border:1px solid var(--rd);border-radius:14px;overflow:hidden;position:relative;
+ transition:box-shadow .14s,border-color .14s}
+@media(min-width:620px){#{{ rid }} .dsr-k{flex-basis:186px}}
+#{{ rid }} .dsr-k:hover{border-color:#cdc2e8;box-shadow:0 6px 18px rgba(13,27,42,.07)}
+#{{ rid }} .dsr-afb{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:10px;background:#fff}
+#{{ rid }} .dsr-afb img{max-width:100%;max-height:100%;object-fit:contain}
+#{{ rid }} .dsr-in{padding:0 10px 10px;display:flex;flex-direction:column;flex:1;gap:4px}
+#{{ rid }} .dsr-merk{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);font-weight:800}
+#{{ rid }} .dsr-naam{font-size:12.5px;line-height:1.35;font-weight:700;margin:0;display:-webkit-box;
+ -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#{{ rid }} .dsr-pr{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+#{{ rid }} .dsr-p{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.02em}
+#{{ rid }} .dsr-v{font-size:11.5px;color:var(--mut);text-decoration:line-through}
+#{{ rid }} .dsr-kt{font-size:10px;font-weight:800;color:#fff;background:var(--rood);border-radius:5px;padding:2px 4px}
+#{{ rid }} .dsr-w{font-size:11px;color:var(--mut);font-weight:600;min-height:15px}
+#{{ rid }} .dsr-w b{color:var(--ink);font-weight:800}
+#{{ rid }} .dsr-knop,#{{ rid }} .dsr-knop:visited{display:flex;align-items:center;justify-content:center;min-height:36px;
+ margin-top:6px;background:var(--gr);color:#fff !important;border-radius:9px;font-size:12.5px;font-weight:800;
+ text-decoration:none !important}
+#{{ rid }} .dsr-knop:hover{background:#0fa876}
+#{{ rid }} .dsr-b{position:absolute;top:7px;left:7px;font-size:9.5px;font-weight:800;border-radius:5px;padding:3px 5px;
+ line-height:1.2;z-index:2}
+#{{ rid }} .dsr-b.laag{background:var(--gr);color:#fff}
+#{{ rid }} .dsr-b.multi{background:var(--pa);color:#fff}
+#{{ rid }} .dsr-fijn{padding:0 16px;margin:0;font-size:11.5px;color:var(--mut);line-height:1.5}
+#{{ rid }} .dsr-sk{flex:0 0 160px;border:1px solid var(--rd);border-radius:14px;overflow:hidden}
+#{{ rid }} .dsr-sk i{display:block;aspect-ratio:1/1;background:linear-gradient(90deg,#f4f1fa,#faf9fd,#f4f1fa);
+ background-size:200% 100%;animation:dsr-golf 1.2s linear infinite}
+#{{ rid }} .dsr-sk u{display:block;height:10px;margin:9px 10px;border-radius:5px;background:#f0ecf8}
+@keyframes dsr-golf{0%{background-position:100% 0}100%{background-position:-100% 0}}
+</style>
+
+<script>
+(function () {
+  var w = document.getElementById('{{ rid }}');
+  if (!w) return;
+  var API = (w.getAttribute('data-api') || '').replace(/\/+$/, '');
+  if (!API) return;
+  var spoor = w.querySelector('[data-spoor]');
+  var fijn = w.querySelector('[data-fijn]');
+
+  function eur(n) {
+    if (n == null || isNaN(n)) return '';
+    var v = Math.round(n * 100) / 100;
+    return '€' + (v % 1 === 0 ? String(v) : v.toFixed(2).replace('.', ','));
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  // Drie bronnen. "categorie" is de gewone lijst-route; "deals" en "vergelijk"
+  // gaan over alle categorieen heen en zijn voor een Black Friday-pagina, waar
+  // je bovenaan alles wilt zien wat is afgeprijsd zonder eerst een categorie te
+  // kiezen. Daar is cat een filter in plaats van een keuze.
+  var bron = w.getAttribute('data-bron') || 'categorie';
+  var route = bron === 'deals' ? '/api/shop/deals'
+    : bron === 'vergelijk' ? '/api/shop/vergelijk'
+    : '/api/shop/lijst';
+  var cat = w.getAttribute('data-cat') || '';
+  var p = new URLSearchParams();
+  if (bron === 'categorie') p.set('cat', cat || 'gaming');
+  else if (cat) p.set('cat', cat);
+  p.set('sort', w.getAttribute('data-sort') || 'prijs');
+  p.set('n', String(Math.min(30, Math.max(3, parseInt(w.getAttribute('data-n'), 10) || 10))));
+  if (w.getAttribute('data-echt')) p.set('echt', '1');
+  if (w.getAttribute('data-deal')) p.set('deal', '1');
+  if (w.getAttribute('data-multi')) p.set('multi', '1');
+  if (w.getAttribute('data-type')) p.set('type', w.getAttribute('data-type'));
+  if (w.getAttribute('data-min')) p.set('min', w.getAttribute('data-min'));
+  if (w.getAttribute('data-max')) p.set('max', w.getAttribute('data-max'));
+
+  // Pas ophalen als de rij bijna in beeld komt. Op de homepage staan er straks
+  // meerdere van deze blokjes en die hoeven niet allemaal direct te laden.
+  function start() {
+    fetch(API + route + '?' + p.toString())
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var items = (d && d.items) || [];
+        if (!items.length) { w.hidden = true; return; }
+
+        spoor.innerHTML = items.map(function (x) {
+          var korting = (x.v > x.p) ? Math.round((1 - x.p / x.v) * 100) : 0;
+          var multi = x.o && x.o.length > 1;
+          var laagsteOoit = (typeof x.lp === 'number' && x.mt >= 2 && x.p <= x.lp + 0.005);
+          var badge = laagsteOoit ? '<span class="dsr-b laag">Laagste tot nu</span>'
+            : (multi ? '<span class="dsr-b multi">' + x.o.length + ' winkels</span>' : '');
+          var ga = API + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c);
+          return '<article class="dsr-k">' + badge +
+            '<div class="dsr-afb">' + (x.im ? '<img src="' + esc(x.im) + '" alt="' + esc(x.n) + '" loading="lazy" decoding="async">' : '') + '</div>' +
+            '<div class="dsr-in">' +
+            '<span class="dsr-merk">' + (x.b ? esc(x.b) : '&nbsp;') + '</span>' +
+            '<p class="dsr-naam">' + esc(x.n) + '</p>' +
+            '<div class="dsr-pr"><span class="dsr-p">' + eur(x.p) + '</span>' +
+            (korting ? '<span class="dsr-v">' + eur(x.v) + '</span><span class="dsr-kt">-' + korting + '%</span>' : '') +
+            '</div>' +
+            '<div class="dsr-w">' + (multi
+              ? '<b>' + esc(x.o[0].w) + '</b> &middot; tot ' + eur(x.o[x.o.length - 1].p) + ' elders'
+              : '<b>' + esc(x.o[0].w) + '</b>') + '</div>' +
+            '<a class="dsr-knop" href="' + ga + '" target="_blank" rel="sponsored noopener">Bekijk</a>' +
+            '</div></article>';
+        }).join('');
+
+        var dag = d.gemaakt ? String(d.gemaakt).slice(0, 10) : '';
+        fijn.innerHTML = 'Prijzen bijgewerkt op ' + esc(dag) +
+          '. Wij ontvangen een vergoeding als je iets koopt; jij betaalt hetzelfde.';
+      })
+      .catch(function () { w.hidden = true; });
+  }
+
+  // De sectie staat in de HTML op hidden, zodat er nooit een lege kop in beeld
+  // komt als de worker niet antwoordt. Hier zetten we hem aan met skeletten
+  // erin; komt er niets terug, dan gaat hij weer op hidden.
+  w.hidden = false;
+  spoor.innerHTML = '<div class="dsr-sk"><i></i><u></u><u></u></div>' +
+    '<div class="dsr-sk"><i></i><u></u><u></u></div>' +
+    '<div class="dsr-sk"><i></i><u></u><u></u></div>' +
+    '<div class="dsr-sk"><i></i><u></u><u></u></div>';
+
+  if ('IntersectionObserver' in window) {
+    var ob = new IntersectionObserver(function (rijen) {
+      if (rijen.some(function (r) { return r.isIntersecting; })) { ob.disconnect(); start(); }
+    }, { rootMargin: '400px' });
+    ob.observe(w);
+  } else start();
+})();
+</script>
+
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Productrij",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Een rij producten uit de shop-feed. Verdwijnt automatisch als er niets te tonen is."
+    },
+    {
+      "type": "text",
+      "id": "api",
+      "label": "API",
+      "default": "https://shop.deprijsvergelijker.com"
+    },
+    {
+      "type": "header",
+      "content": "Teksten"
+    },
+    {
+      "type": "select",
+      "id": "vlak",
+      "label": "Achtergrond",
+      "options": [
+        {
+          "value": "geen",
+          "label": "Geen (gewoon op de pagina)"
+        },
+        {
+          "value": "vlak",
+          "label": "Lichte band"
+        },
+        {
+          "value": "donker",
+          "label": "Donkere band"
+        }
+      ],
+      "default": "geen",
+      "info": "Een band maakt er een eigen blok van. Handig als er al kaarten boven of onder staan."
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Gaming"
+    },
+    {
+      "type": "text",
+      "id": "kop",
+      "label": "Kop",
+      "default": "Consoles en games vergelijken"
+    },
+    {
+      "type": "textarea",
+      "id": "sub",
+      "label": "Tekst onder de kop",
+      "default": "Prijzen van Coolblue en MediaMarkt naast elkaar, elke nacht opnieuw opgehaald."
+    },
+    {
+      "type": "text",
+      "id": "link_tekst",
+      "label": "Linktekst",
+      "default": "Alles in gaming"
+    },
+    {
+      "type": "url",
+      "id": "link_url",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Waar tonen"
+    },
+    {
+      "type": "text",
+      "id": "alleen_tag",
+      "label": "Alleen bij artikelen met deze tag",
+      "info": "Leeg laten om hem altijd te tonen. Zet je deze sectie in het artikeltemplate, vul dan een tag in, bijvoorbeeld gta6. De rij verschijnt dan alleen onder artikelen met die tag."
+    },
+    {
+      "type": "header",
+      "content": "Welke producten"
+    },
+    {
+      "type": "select",
+      "id": "bron",
+      "label": "Bron",
+      "options": [
+        {
+          "value": "categorie",
+          "label": "Een categorie"
+        },
+        {
+          "value": "deals",
+          "label": "Alles wat is afgeprijsd (alle categorieen)"
+        },
+        {
+          "value": "vergelijk",
+          "label": "Alles bij meer dan een winkel (alle categorieen)"
+        }
+      ],
+      "default": "categorie",
+      "info": "Bij de twee laatste is de categorie hieronder een filter: leeg laten is alles."
+    },
+    {
+      "type": "select",
+      "id": "cat",
+      "label": "Categorie",
+      "options": [
+        {
+          "value": "",
+          "label": "Alle categorieen (alleen bij deals en vergelijk)"
+        },
+        {
+          "value": "gaming",
+          "label": "Gaming"
+        },
+        {
+          "value": "telefoons",
+          "label": "Telefoons en tablets"
+        },
+        {
+          "value": "laptops",
+          "label": "Laptops en computers"
+        },
+        {
+          "value": "tv-beeld",
+          "label": "Tv's en beeld"
+        },
+        {
+          "value": "audio",
+          "label": "Audio"
+        },
+        {
+          "value": "huishoudelijk",
+          "label": "Huishoudelijk"
+        },
+        {
+          "value": "keuken",
+          "label": "Koffie en keuken"
+        },
+        {
+          "value": "foto",
+          "label": "Foto en video"
+        },
+        {
+          "value": "slim-huis",
+          "label": "Slim huis"
+        },
+        {
+          "value": "randapparatuur",
+          "label": "Randapparatuur"
+        },
+        {
+          "value": "accessoires",
+          "label": "Accessoires"
+        },
+        {
+          "value": "verzorging",
+          "label": "Persoonlijke verzorging"
+        },
+        {
+          "value": "klussen",
+          "label": "Klussen en tuin"
+        },
+        {
+          "value": "speelgoed",
+          "label": "Speelgoed"
+        }
+      ],
+      "default": "gaming"
+    },
+    {
+      "type": "text",
+      "id": "types",
+      "label": "Alleen deze soorten",
+      "info": "Komma gescheiden, zoals ze in de feed staan: consoles,games,gaming headsets. Leeg laten is alles."
+    },
+    {
+      "type": "select",
+      "id": "sort",
+      "label": "Volgorde",
+      "options": [
+        {
+          "value": "prijs",
+          "label": "Prijs laag naar hoog"
+        },
+        {
+          "value": "prijs-af",
+          "label": "Prijs hoog naar laag"
+        },
+        {
+          "value": "korting",
+          "label": "Hoogste korting"
+        },
+        {
+          "value": "verschil",
+          "label": "Grootste prijsverschil tussen winkels"
+        },
+        {
+          "value": "winkels",
+          "label": "Meeste winkels"
+        }
+      ],
+      "default": "verschil"
+    },
+    {
+      "type": "range",
+      "id": "aantal",
+      "label": "Aantal producten",
+      "min": 4,
+      "max": 30,
+      "step": 1,
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "alleen_echt",
+      "label": "Alleen kortingen die het prijslogboek bevestigt",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "alleen_deal",
+      "label": "Alleen producten met een van-prijs",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "alleen_multi",
+      "label": "Alleen producten bij meer dan een winkel",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "min",
+      "label": "Vanaf prijs"
+    },
+    {
+      "type": "text",
+      "id": "max",
+      "label": "Tot prijs"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Productrij"
+    }
+  ]
+}
+{% endschema %}

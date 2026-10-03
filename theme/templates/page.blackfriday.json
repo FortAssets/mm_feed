@@ -1,0 +1,197 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "bf": {
+      "type": "dpv-blackfriday",
+      "settings": {
+        "start_iso": "2026-11-27T00:00:00+01:00",
+        "status_voor": "Black Friday: vrijdag 27 november",
+        "status_na": "Black Friday is bezig",
+        "kop": "Black Friday 2026: wat er echt goedkoper wordt",
+        "sub": "Black Friday valt dit jaar op vrijdag 27 november. Wij meten vanaf nu elke nacht de prijs van ruim 56.000 producten bij Coolblue, MediaMarkt en de rest. Op de dag zelf weten wij dus van elk product wat het de weken ervoor kostte, en dat is het enige harde bewijs dat een korting echt is."
+      }
+    },
+    "rij_korting": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "bron": "deals",
+        "cat": "",
+        "label": "Nu afgeprijsd",
+        "kop": "Wat er op dit moment van de prijs af is",
+        "sub": "Alles waar een winkel zelf een eerdere prijs bij noemt, op volgorde van kortingspercentage. Of die eerdere prijs klopt, controleren wij met ons eigen prijslogboek; klik op een product voor wat wij gemeten hebben.",
+        "link_tekst": "Alles vergelijken",
+        "link_url": "/pages/vergelijken",
+        "types": "",
+        "sort": "korting",
+        "aantal": 16,
+        "alleen_multi": false,
+        "alleen_deal": false,
+        "alleen_echt": false,
+        "min": "",
+        "max": ""
+      }
+    },
+    "rij_tv": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "bron": "categorie",
+        "cat": "tv-beeld",
+        "label": "Beeld",
+        "kop": "Televisies",
+        "sub": "De grootste prijsverschillen tussen winkels staan vooraan. Bij een tv van boven de duizend euro is dat zo snel vijftig euro.",
+        "link_tekst": "Alle televisies",
+        "link_url": "/pages/vergelijken?cat=tv-beeld&type=televisies",
+        "types": "televisies",
+        "sort": "verschil",
+        "aantal": 14,
+        "alleen_multi": true,
+        "alleen_deal": false,
+        "alleen_echt": false,
+        "min": "",
+        "max": ""
+      }
+    },
+    "rij_console": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "bron": "categorie",
+        "cat": "gaming",
+        "label": "Gaming",
+        "kop": "PlayStation, Xbox en Nintendo Switch",
+        "sub": "Consoles zijn waar het geld zit in de Black Friday-week, en waar de prijzen tussen winkels het meest uiteenlopen.",
+        "link_tekst": "Alles in gaming",
+        "link_url": "/pages/gaming",
+        "types": "consoles",
+        "sort": "verschil",
+        "aantal": 12,
+        "alleen_multi": true,
+        "alleen_deal": false,
+        "alleen_echt": false,
+        "min": "",
+        "max": ""
+      }
+    },
+    "rij_laptop": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "bron": "categorie",
+        "cat": "laptops",
+        "label": "Computers",
+        "kop": "Laptops en monitoren",
+        "sub": "",
+        "link_tekst": "Alle laptops",
+        "link_url": "/pages/vergelijken?cat=laptops",
+        "types": "laptops,windows laptops qwerty,zakelijke windows laptops qwerty,monitoren",
+        "sort": "verschil",
+        "aantal": 14,
+        "alleen_multi": true,
+        "alleen_deal": false,
+        "alleen_echt": false,
+        "min": "",
+        "max": ""
+      }
+    },
+    "rij_keuken": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "bron": "categorie",
+        "cat": "keuken",
+        "label": "Keuken",
+        "kop": "Koffiemachines, airfryers en pannen",
+        "sub": "De klassieke Black Friday-categorie, en ook de categorie waar het vaakst een doorgestreept bedrag bij staat dat nooit gevraagd is.",
+        "link_tekst": "Alles voor de keuken",
+        "link_url": "/pages/vergelijken?cat=keuken",
+        "types": "",
+        "sort": "verschil",
+        "aantal": 14,
+        "alleen_multi": true,
+        "alleen_deal": false,
+        "alleen_echt": false,
+        "min": "",
+        "max": ""
+      }
+    },
+    "rij_huis": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "bron": "categorie",
+        "cat": "huishoudelijk",
+        "label": "Huishoudelijk",
+        "kop": "Wassen, koelen en stofzuigen",
+        "sub": "",
+        "link_tekst": "Alles huishoudelijk",
+        "link_url": "/pages/vergelijken?cat=huishoudelijk",
+        "types": "",
+        "sort": "verschil",
+        "aantal": 14,
+        "alleen_multi": true,
+        "alleen_deal": false,
+        "alleen_echt": false,
+        "min": "",
+        "max": ""
+      }
+    },
+    "rij_audio": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "bron": "categorie",
+        "cat": "audio",
+        "label": "Audio",
+        "kop": "Oordopjes, koptelefoons en soundbars",
+        "sub": "",
+        "link_tekst": "Alles in audio",
+        "link_url": "/pages/vergelijken?cat=audio",
+        "types": "",
+        "sort": "verschil",
+        "aantal": 14,
+        "alleen_multi": true,
+        "alleen_deal": false,
+        "alleen_echt": false,
+        "min": "",
+        "max": ""
+      }
+    },
+    "aanmelden": {
+      "type": "dpv-prijsalarm",
+      "settings": {
+        "vorm": "blok",
+        "oog": "Gratis",
+        "kop": "Of: bericht zodra een prijs echt zakt",
+        "tekst": "Hierboven kun je je opgeven voor een bericht op 27 november zelf. Dit is iets anders: wij sturen je een mail op het moment dat een prijs onder de laagste zakt die wij ooit gemeten hebben. Dat kan volgende week zijn, of in januari.",
+        "knop": "Hou mij op de hoogte",
+        "bron": "black-friday",
+        "chips": true,
+        "chips_kop": "Waar wil je bericht over?",
+        "chips_voor": "",
+        "chips_fijn": "Alles staat aan. Vink uit wat je niet wilt; aanpassen kan later met een klik in elke mail.",
+        "fijn": "Dubbele opt-in: je krijgt eerst een mail met een link erin. Zonder die klik sturen wij je niets. Afmelden kan altijd."
+      }
+    }
+  },
+  "order": [
+    "bf",
+    "rij_korting",
+    "rij_console",
+    "rij_tv",
+    "rij_laptop",
+    "aanmelden",
+    "rij_keuken",
+    "rij_huis",
+    "rij_audio"
+  ]
+}

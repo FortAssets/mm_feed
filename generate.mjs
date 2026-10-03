@@ -3,7 +3,15 @@
 // data/mm-simonly.json en data/mm-devices.json. De worker leest deze via jsDelivr.
 import fs from 'fs'
 
-const MM_TOKEN = process.env.MM_TOKEN || 'FC04F9EAC08F46AB8394D3645F6FED3536266625'
+// 3 okt: het token stond hier als platte tekst in, en deze repo is openbaar.
+// Nu alleen uit de secret, en stoppen als die er niet is. Draai het oude token
+// om bij Tradedoubler: het staat in de geschiedenis van deze repo en is dus
+// gewoon op te zoeken.
+const MM_TOKEN = process.env.MM_TOKEN
+if (!MM_TOKEN) {
+  console.error('MM_TOKEN ontbreekt. Zet die als repository secret (Settings -> Secrets and variables -> Actions).')
+  process.exit(1)
+}
 const MM_TELCO_FID = '117525'
 const MM_DEVICE_FID = '50606'
 const MM_LOGO = 'https://hst.tradedoubler.com/file/262336/MM-logo.png'
@@ -27,18 +35,57 @@ function parseCsvText(text){
   return rows
 }
 
-async function fetchRows(fid,maxPages){
-  const out=[];let hdr=null
-  for(let p=1;p<=maxPages;p++){
-    const url='https://api.tradedoubler.com/1.0/products.csv;page='+p+';pageSize=100;csvFlattenFields=true;fid='+fid+'?token='+MM_TOKEN
-    const r=await fetch(url,{headers:{'User-Agent':'Mozilla/5.0 (feed-bot) Chrome/120','Accept':'text/csv,*/*'}})
-    if(!r.ok){console.error('fid',fid,'page',p,'HTTP',r.status);break}
-    const text=await r.text();if(text.length<50)break
-    const rows=parseCsvText(text);if(rows.length<2)break
-    if(!hdr)hdr=rows[0]
-    for(let i=1;i<rows.length;i++){const o={};for(let j=0;j<hdr.length;j++)o[hdr[j]]=(rows[i][j]||'').trim();out.push(o)}
-    if(rows.length-1<100)break
+// 3 okt: Tradedoubler weigert elke query voorbij rij 1000 ("PF_430 Can't
+// paginate beyond..."). Feed 117525 heeft 1206 aanbiedingen, dus er vielen er
+// 206 buiten en die stonden dus niet in de sim-only vergelijker. Opgelost door
+// de feed in prijsbanden op te halen; elke band blijft onder de 1000. De banden
+// overlappen aan de randen (maxPrice telt mee), daarom de dedupe op TDProductId.
+const TD_BANDEN=[[0,60],[60,120],[120,300],[300,500],[500,800],[800,1200],[1200,0]]
+
+async function fetchPagina(fid,p,min,max){
+  let q='page='+p+';pageSize=100;csvFlattenFields=true'
+  if(min>0)q+=';minPrice='+min
+  if(max>0)q+=';maxPrice='+max
+  const url='https://api.tradedoubler.com/1.0/products.csv;'+q+';fid='+fid+'?token='+MM_TOKEN
+  for(let poging=1;poging<=3;poging++){
+    try{
+      const r=await fetch(url,{headers:{'User-Agent':'Mozilla/5.0 (feed-bot) Chrome/120','Accept':'text/csv,*/*'}})
+      if(r.status===429||r.status>=500){await new Promise(s=>setTimeout(s,1500*poging));continue}
+      if(!r.ok){console.error('fid',fid,'band',min+'-'+(max||'oo'),'p',p,'HTTP',r.status);return null}
+      return await r.text()
+    }catch(e){if(poging===3){console.error('fid',fid,'p',p,String(e.message||e));return null}
+      await new Promise(s=>setTimeout(s,1500*poging))}
   }
+  return null
+}
+
+async function fetchRows(fid,maxPages){
+  const out=[];const gezien=new Set();let hdr=null
+  const banden=[[0,0]].concat(TD_BANDEN)
+  let eersteRonde=true
+  for(const [min,max] of banden){
+    let geraaktLimiet=false
+    for(let p=1;p<=10;p++){
+      const text=await fetchPagina(fid,p,min,max)
+      if(text===null)break
+      if(text.length<50)break
+      if(/^\s*\{"errors"/.test(text))break
+      const rows=parseCsvText(text);if(rows.length<2)break
+      if(!hdr)hdr=rows[0]
+      let nieuw=0
+      for(let i=1;i<rows.length;i++){
+        const o={};for(let j=0;j<hdr.length;j++)o[hdr[j]]=(rows[i][j]||'').trim()
+        const k=o['TDProductId']||o['tdId']||(o['name']||'')+'|'+(o['productUrl']||'')
+        if(gezien.has(k))continue
+        gezien.add(k);out.push(o);nieuw++
+      }
+      if(rows.length-1<100)break
+      if(p===10)geraaktLimiet=true
+    }
+    // paste de hele feed binnen de eerste 1000 rijen, dan zijn de banden niet nodig
+    if(eersteRonde){eersteRonde=false;if(!geraaktLimiet)break}
+  }
+  console.log('fid',fid,'->',out.length,'rijen')
   return out
 }
 

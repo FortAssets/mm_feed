@@ -1,0 +1,4 @@
+# lokale testbestanden
+feed.csv.gz
+td_*.json
+node_modules/

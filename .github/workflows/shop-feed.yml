@@ -1,0 +1,61 @@
+name: Shop feed
+
+# Twee keer per dag. Niet vaker: de uitvoer is ongeveer 5 MB en elke run die
+# iets verandert zet een nieuwe versie in de repo. Prijzen in de feeds
+# veranderen hoogstens een paar keer per dag, dus hier valt niets te winnen
+# met vaker draaien.
+#
+# De tijden staan op :07 en :37. Op het hele uur draaien er bij GitHub zo veel
+# jobs dat een cron er tientallen minuten naast kan zitten.
+on:
+  schedule:
+    - cron: '7 4 * * *'
+    - cron: '37 16 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+# Twee runs tegelijk zouden allebei naar dezelfde branch pushen en dan verliest
+# de tweede het prijslogboek van de eerste.
+concurrency:
+  group: shop-feed
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Genereer de shop-bestanden
+        env:
+          AWIN_KEY: ${{ secrets.AWIN_KEY }}
+          MM_TOKEN: ${{ secrets.MM_TOKEN }}
+          GITHUB_SHA: ${{ github.sha }}
+        run: node --max-old-space-size=4096 shop.mjs
+
+      # Zekerheid voor het prijslogboek: als de generator halverwege stukloopt
+      # staan er lege of halve bestanden, en die wil je niet pushen. Dan is het
+      # logboek van gisteren weg en dat komt niet meer terug.
+      - name: Controleer de uitvoer
+        run: |
+          test -s data/shop/index.json || { echo "index.json ontbreekt of is leeg"; exit 1; }
+          n=$(node -e "console.log(JSON.parse(require('fs').readFileSync('data/shop/index.json')).totaal||0)")
+          echo "producten: $n"
+          test "$n" -gt 10000 || { echo "te weinig producten ($n), niet pushen"; exit 1; }
+          ls -1 data/shop/hist/*.json.gz | wc -l
+
+      - name: Commit en push
+        run: |
+          git config user.name "mm-feed-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add -A data/shop
+          git diff --staged --quiet || git commit -m "Shop feed $(date -u +%FT%TZ)"
+          git pull --rebase --autostash || true
+          git push

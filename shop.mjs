@@ -190,14 +190,17 @@ const TYPE_NAAR_CAT = {
 const TREFWOORDEN = [
   ['gaming', /\b(playstation|ps5|ps4|xbox|nintendo|switch\s?2?|steam deck|dualsense|joy-?con|amiibo|gta|fifa\s?\d|ea sports fc|call of duty|zelda|mario|pokemon|game ?controller)\b/i],
   ['telefoons', /\b(iphone|galaxy s\d|galaxy a\d|galaxy z|pixel \d|smartphone|ipad|galaxy tab|smartwatch|apple watch|galaxy watch)\b/i],
-  ['laptops', /\b(macbook|laptop|notebook|chromebook|imac|mac mini|mac studio|monitor \d|beeldscherm)\b/i],
+  // "monitor \d" stond hier ook, maar daarmee werd de Xiaomi "Temperature and
+  // Humidity Monitor 3" een laptop. Monitoren komen bij Coolblue netjes uit
+  // product_type, dus het trefwoord is niet nodig.
+  ['laptops', /\b(macbook|laptop|notebook|chromebook|imac|mac mini|mac studio|beeldscherm)\b/i],
   ['tv-beeld', /\b(oled|qled|smart ?tv|televisie|\d{2} inch tv|beamer|projector)\b/i],
   ['audio', /\b(airpods|koptelefoon|oordopjes|earbuds|soundbar|speaker|platenspeler|versterker)\b/i],
   ['keuken', /\b(espresso|koffiezet|koffiemachine|nespresso|dolce gusto|senseo|airfryer|friteuse|blender|waterkoker|pannenset|koekenpan)\b/i],
   ['huishoudelijk', /\b(koelkast|wasmachine|wasdroger|vaatwasser|stofzuiger|vriezer|oven|magnetron|afzuigkap|kookplaat|strijkijzer|airco|ventilator)\b/i],
   ['verzorging', /\b(tandenborstel|scheerapparaat|haardroger|fohn|stijltang|tondeuse|trimmer|epilator|shampoo|conditioner)\b/i],
   ['foto', /\b(camera|objectief|lens \d|dslr|gopro|drone|statief|dashcam)\b/i],
-  ['slim-huis', /\b(philips hue|slimme lamp|smart lamp|thermostaat|rookmelder|deurbel|babyfoon|slimme stekker)\b/i],
+  ['slim-huis', /\b(philips hue|slimme lamp|smart lamp|thermostaat|rookmelder|deurbel|babyfoon|slimme stekker|humidity monitor|temperatuursensor|luchtkwaliteit)\b/i],
   ['randapparatuur', /\b(toetsenbord|keyboard|muis|mouse|ssd|harde schijf|usb-stick|geheugenkaart|microsd|router|wifi|printer|toner|cartridge|videokaart|rtx \d|processor|moederbord)\b/i],
   ['accessoires', /\b(hoesje|case voor|screenprotector|powerbank|oplader|usb-c kabel|adapter|telefoonhouder)\b/i],
   ['speelgoed', /\b(lego|playmobil|barbie|knuffel|puzzel \d|speelgoed)\b/i],

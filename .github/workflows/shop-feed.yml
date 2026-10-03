@@ -25,7 +25,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
 
@@ -37,6 +37,9 @@ jobs:
         env:
           AWIN_KEY: ${{ secrets.AWIN_KEY }}
           MM_TOKEN: ${{ secrets.MM_TOKEN }}
+          BOL_CLIENT_ID: ${{ secrets.BOL_CLIENT_ID }}
+          BOL_CLIENT_SECRET: ${{ secrets.BOL_CLIENT_SECRET }}
+          BOL_SITE_ID: ${{ secrets.BOL_SITE_ID }}
         run: node --max-old-space-size=4096 shop.mjs
 
       # Zekerheid voor het prijslogboek: als de generator halverwege stukloopt

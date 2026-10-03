@@ -45,6 +45,172 @@ const MM_FEEDS = [
 
 const MM_LOGO = 'https://hst.tradedoubler.com/file/262336/MM-logo.png'
 
+// --------------------------------------------------------------------- bol
+//
+// bol doet niet mee aan Awin; die heeft een eigen partnerprogramma en een eigen
+// API. Daar is geen feed van, alleen een zoek- en een aanbod-endpoint, dus
+// bol wordt per EAN opgevraagd bij de producten die wij al uit de andere feeds
+// kennen. Dat is meteen de nauwkeurigste koppeling die er is: gelijk EAN is
+// gelijk product, zonder naamvergelijking.
+//
+// Eén regel is hier belangrijker dan alle andere: bol toont standaard het beste
+// aanbod, en dat kan van een marktplaatsverkoper zijn. Op 3 oktober stond de
+// Xbox Series X daar op €1140 (VF E-Shop) en de PlayStation 5 op €749
+// (NBB.com), terwijl die consoles normaal rond de €499 en €549 liggen. bol
+// verkoopt die twee niet zelf. Zonder filter zou de vergelijker dus een
+// PlayStation van €749 laten zien, en dat is erger dan hem helemaal niet
+// hebben. Daarom: alleen aanbiedingen waar de verkoper bol.com zelf is.
+//
+// Het veld seller komt alleen mee met include-seller=true; zonder die parameter
+// staat er niets en lijkt elk aanbod van bol zelf te komen.
+const BOL_TOKEN_URL = 'https://login.bol.com/token?grant_type=client_credentials'
+const BOL_API = 'https://api.bol.com/marketing/catalog/v1/'
+const BOL_ID = process.env.BOL_CLIENT_ID || ''
+const BOL_GEHEIM = process.env.BOL_CLIENT_SECRET || ''
+const BOL_SITE = process.env.BOL_SITE_ID || '1528494'
+const BOL_PER_RONDE = Number(process.env.BOL_PER_RONDE || 9000)   // EAN's per run
+const BOL_TEGELIJK = 6                                             // parallelle verzoeken
+const BOL_MINUTEN = Number(process.env.BOL_MINUTEN || 14)          // harde tijdgrens
+const BOL_CURSOR = UIT + '/bol-cursor.json'
+
+let bolToken = { waarde: '', tot: 0 }
+
+async function bolHaalToken () {
+  if (bolToken.waarde && bolToken.tot > Date.now() + 30000) return bolToken.waarde
+  const auth = Buffer.from(BOL_ID + ':' + BOL_GEHEIM).toString('base64')
+  const r = await fetch(BOL_TOKEN_URL, {
+    method: 'POST',
+    headers: { Authorization: 'Basic ' + auth, Accept: 'application/json' }
+  })
+  if (!r.ok) throw new Error('bol token HTTP ' + r.status + '. Niet opnieuw proberen: bol blokkeert ip-adressen bij herhaalde mislukte pogingen.')
+  const d = await r.json()
+  bolToken = { waarde: d.access_token, tot: Date.now() + (d.expires_in || 600) * 1000 }
+  return bolToken.waarde
+}
+
+async function bolAanbod (ean) {
+  const t = await bolHaalToken()
+  const url = BOL_API + 'products/' + encodeURIComponent(ean) + '/offers/best?country-code=NL&include-seller=true'
+  const r = await fetch(url, {
+    headers: { Authorization: 'Bearer ' + t, Accept: 'application/json', 'Accept-Language': 'nl-NL' }
+  })
+  if (r.status === 404) return null          // bol kent dit EAN niet
+  if (r.status === 429) { await new Promise(s => setTimeout(s, 2000)); return undefined }  // opnieuw
+  if (!r.ok) return null
+  const d = await r.json()
+  if (!(d && d.price > 0)) return null
+  const verkoper = String((d.seller && d.seller.name) || '').trim()
+  // alleen bol zelf; een marktplaatsverkoper is geen winkelprijs
+  if (verkoper.toLowerCase().replace(/\s+/g, '') !== 'bol.com') return null
+  if (String(d.condition || 'NEW').toUpperCase() !== 'NEW') return null
+  return {
+    prijs: d.price,
+    van: d.strikethroughPrice > d.price ? d.strikethroughPrice : 0,
+    url: d.url || '',
+    voorraad: /voorraad|in huis|besteld/i.test(d.deliveryDescription || '') ? 1 : 0,
+    preorder: !!d.isPreOrder
+  }
+}
+
+function bolLink (url, naam) {
+  if (!url) return ''
+  return 'https://partner.bol.com/click/click?p=2&t=url&s=' + BOL_SITE + '&f=TXL&url=' +
+    encodeURIComponent(url) + '&name=' + encodeURIComponent(String(naam || '').slice(0, 40))
+}
+
+function bolLeesCursor () {
+  try { return JSON.parse(fs.readFileSync(BOL_CURSOR, 'utf8')).volgende || 0 } catch (e) { return 0 }
+}
+function bolSchrijfCursor (n) {
+  try {
+    fs.mkdirSync(path.dirname(BOL_CURSOR), { recursive: true })
+    fs.writeFileSync(BOL_CURSOR, JSON.stringify({ volgende: n, bij: new Date().toISOString() }))
+  } catch (e) { /* niet erg */ }
+}
+
+// Welke EAN's deze ronde. Niet alles tegelijk: 56.000 losse verzoeken duurt te
+// lang en bol zit daar niet op te wachten. Dus eerst waar het meeste aan hangt,
+// daarna roterend de rest, zodat de dekking over een paar dagen vanzelf
+// compleet wordt.
+function bolKies (items) {
+  const perEan = new Map()
+  for (const it of items) {
+    if (!it.ean) continue
+    if (!perEan.has(it.ean)) perEan.set(it.ean, { ean: it.ean, cat: it.cat, prijs: it.prijs, winkels: new Set() })
+    const e = perEan.get(it.ean)
+    e.winkels.add(it.winkel)
+    if (it.prijs < e.prijs) e.prijs = it.prijs
+  }
+  const alle = [...perEan.values()]
+
+  const belangrijk = new Set(['gaming', 'telefoons', 'laptops', 'tv-beeld', 'audio', 'keuken', 'huishoudelijk', 'foto', 'randapparatuur', 'slim-huis'])
+  // Waar levert bol het meeste op? Bij een product dat nu maar bij een winkel
+  // ligt, want daar maakt bol er een vergelijking van. Bij iets dat al bij twee
+  // winkels ligt is bol een derde prijs: nuttig, en hij brengt een van-prijs mee
+  // die Coolblue nooit meestuurt, maar het is geen nieuwe vergelijking. Daarom
+  // weegt een dure, relevante eenpitter zwaarder dan een goedkoop product dat
+  // al vergeleken wordt.
+  const score = (e) => {
+    let s = 0
+    if (belangrijk.has(e.cat)) s += 40
+    if (e.prijs >= 50) s += 25
+    else if (e.prijs >= 20) s += 12
+    if (e.winkels.size > 1) s += 10
+    return s
+  }
+  alle.sort((a, b) => score(b) - score(a) || a.ean.localeCompare(b.ean))
+
+  // de kop van de lijst altijd, de staart roterend
+  const kop = alle.filter(e => score(e) >= 65)   // belangrijke categorie en minstens 50 euro
+  const staart = alle.filter(e => score(e) < 100)
+  const ruimte = Math.max(0, BOL_PER_RONDE - kop.length)
+  const start = staart.length ? bolLeesCursor() % staart.length : 0
+  const deel = staart.slice(start, start + ruimte)
+  if (deel.length < ruimte) deel.push(...staart.slice(0, ruimte - deel.length))
+  bolSchrijfCursor(staart.length ? (start + ruimte) % staart.length : 0)
+  return { lijst: kop.concat(deel), kop: kop.length, staart: staart.length }
+}
+
+async function haalBol (items) {
+  if (!BOL_ID || !BOL_GEHEIM) {
+    console.error('BOL_CLIENT_ID of BOL_CLIENT_SECRET ontbreekt, bol wordt overgeslagen')
+    return []
+  }
+  const { lijst, kop, staart } = bolKies(items)
+  console.log('bol: ' + lijst.length + ' EAN opvragen (' + kop + ' met voorrang, ' +
+    staart + ' in de roulatie)')
+
+  const stop = Date.now() + BOL_MINUTEN * 60000
+  const uit = []
+  let gedaan = 0; let gevonden = 0; let marktplaats = 0
+  let i = 0
+
+  async function werker () {
+    while (true) {
+      if (Date.now() > stop) return
+      const n = i++
+      if (n >= lijst.length) return
+      const e = lijst[n]
+      let a
+      try {
+        a = await bolAanbod(e.ean)
+        if (a === undefined) a = await bolAanbod(e.ean)   // was 429
+      } catch (err) {
+        console.error('  bol ' + e.ean + ': ' + String(err.message || err))
+        if (String(err.message || '').includes('token')) throw err
+        a = null
+      }
+      gedaan++
+      if (a) { gevonden++; uit.push({ ean: e.ean, aanbod: a }) }
+      if (gedaan % 1000 === 0) console.log('  bol: ' + gedaan + ' van ' + lijst.length + ', ' + gevonden + ' gevonden')
+    }
+  }
+  await Promise.all(Array.from({ length: BOL_TEGELIJK }, werker))
+  console.log('bol: ' + gedaan + ' opgevraagd, ' + gevonden + ' aanbiedingen van bol zelf' +
+    (gedaan < lijst.length ? ' (tijdgrens bereikt bij ' + gedaan + ')' : ''))
+  return uit
+}
+
 // ---------------------------------------------------------------- categorieen
 
 // volgorde = volgorde van de chips op de pagina
@@ -908,6 +1074,36 @@ async function main () {
     throw new Error('Maar ' + mmAantal + ' bruikbare producten van MediaMarkt (ondergrens ' +
       MM_ONDERGRENS + '). Staat er HTTP 403 of 401 hierboven, dan is MM_TOKEN verlopen of ' +
       'gedraaid. Zonder MediaMarkt valt er niets te vergelijken, dus hier stoppen.')
+  }
+
+  // bol erbij, op EAN. Dit kan niet eerder: bolKies gebruikt wat de andere
+  // feeds al opgeleverd hebben om te bepalen welke EAN's de moeite waard zijn.
+  const bolRijen = await haalBol(rauw)
+  if (bolRijen.length) {
+    const perEan = new Map()
+    for (const it of rauw) if (it.ean && !perEan.has(it.ean)) perEan.set(it.ean, it)
+    for (const b of bolRijen) {
+      const basis = perEan.get(b.ean)
+      if (!basis) continue
+      rauw.push({
+        bron: 'bol',
+        naam: basis.naam,
+        merk: basis.merk,
+        prijs: b.aanbod.prijs,
+        van: b.aanbod.van,
+        winkel: 'bol.com',
+        url: bolLink(b.aanbod.url, basis.merk || basis.naam),
+        afb: basis.afb,
+        ean: b.ean,
+        type: basis.type,
+        cat: basis.cat,
+        voorraad: b.aanbod.voorraad,
+        staat: 'nieuw',
+        kleur: '',
+        verzend: 0
+      })
+    }
+    console.log('bol: ' + bolRijen.length + ' aanbiedingen aan bestaande producten gekoppeld')
   }
 
   console.log('Totaal bruikbaar:', rauw.length)

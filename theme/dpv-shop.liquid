@@ -106,6 +106,11 @@
 .ds-van{font-size:12.5px;color:var(--mut);text-decoration:line-through}
 .ds-korting{font-size:11px;font-weight:800;color:#fff;background:var(--rood);border-radius:6px;padding:2px 5px}
 .ds-winkelrij{display:flex;align-items:center;gap:5px;font-size:11.5px;color:var(--mut);font-weight:600;min-height:17px}
+.ds-amz{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding:11px 13px;border:1px solid var(--lijn);border-radius:10px;background:var(--vlak)}
+.ds-amz b{display:block;font-size:13px;color:var(--ink)}
+.ds-amz small{display:block;font-size:11.5px;color:var(--mut);margin-top:2px;line-height:1.35}
+.ds-amz a{flex:0 0 auto;font-size:13px;font-weight:700;color:var(--ink);border:1px solid var(--lijn);border-radius:8px;padding:7px 12px;text-decoration:none;background:#fff}
+.ds-amz a:hover{border-color:var(--ink)}
 .ds-winkelrij b{color:var(--ink);font-weight:800}
 .ds-badges{position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;z-index:2}
 .ds-badge{font-size:10px;font-weight:800;border-radius:6px;padding:3px 6px;line-height:1.2;letter-spacing:.01em}
@@ -230,7 +235,7 @@
 .ds-vz{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
 
-<section class="ds" id="ds" data-api="{{ section.settings.api }}">
+<section class="ds" id="ds" data-api="{{ section.settings.api }}" data-amazon="{{ section.settings.amazon_tag }}">
 
   <div class="ds-kop">
     {%- if section.settings.label != blank -%}
@@ -352,6 +357,18 @@
   if (!wortel) return;
   var API = (wortel.getAttribute('data-api') || '').replace(/\/+$/, '');
   if (!API) return;
+  /* Het partnerlabel van Amazon. Leeg betekent: geen Amazon op de pagina. */
+  var AMZ = (wortel.getAttribute('data-amazon') || '').trim();
+
+  /* Een EAN is de nauwkeurigste zoekopdracht die Amazon aanneemt; staat er
+     geen EAN bij, dan het merk met de productnaam. Een vast ASIN heeft
+     voorrang, want dat wijst naar precies het juiste product. */
+  function amzLink(p) {
+    var asin = (p.az || '').trim();
+    if (asin) return 'https://www.amazon.nl/dp/' + encodeURIComponent(asin) + '?tag=' + encodeURIComponent(AMZ);
+    var q = (p.e || ((p.b ? p.b + ' ' : '') + p.n)).trim();
+    return 'https://www.amazon.nl/s?k=' + encodeURIComponent(q) + '&tag=' + encodeURIComponent(AMZ);
+  }
 
   // ---------------------------------------------------------------- toestand
   var st = {
@@ -893,6 +910,20 @@
         });
         h += '</div>';
 
+        /* Amazon. Hier staat geen prijs, en dat is geen slordigheid.
+           De voorwaarden van Amazon Partnernet laten alleen prijzen toe die uit
+           hun eigen API komen, en die mogen hoogstens 24 uur bewaard worden en
+           moeten daarna meteen verversd worden. Dat gaat niet samen met een
+           prijslogboek dat maanden teruggaat, en de prijs van de pagina
+           afplukken mag niet. Dus: een link, geen bedrag, en Amazon doet nooit
+           mee in de kolom wie goedkoopst is. Zodra de API-sleutels er zijn kan
+           de prijs erbij, los van het logboek. */
+        if (AMZ) {
+          h += '<div class="ds-amz"><div><b>Ook bij Amazon</b>' +
+            '<small>Wij meten de prijs van Amazon niet, dus die staat hier niet. Kijk zelf wat het daar kost.</small></div>' +
+            '<a href="' + esc(amzLink(pr)) + '" target="_blank" rel="sponsored nofollow noopener">Zoek bij Amazon</a></div>';
+        }
+
         var besteW = pr.o[0].w;
         var reeks = (d.logboek || {})[besteW] || [];
         h += '<div class="ds-oordeel"><b>Wat wij van deze prijs weten</b>' +
@@ -1107,6 +1138,13 @@
       "id": "api",
       "label": "API",
       "default": "https://shop.deprijsvergelijker.com"
+    },
+    {
+      "type": "text",
+      "id": "amazon_tag",
+      "label": "Amazon partnerlabel",
+      "default": "fortassets-21",
+      "info": "Leeg laten betekent geen Amazon op de pagina. Er staat bij Amazon geen prijs: hun voorwaarden laten alleen prijzen uit hun eigen API toe, met een bewaartermijn van 24 uur, en dat gaat niet samen met het prijslogboek."
     },
     {
       "type": "text",

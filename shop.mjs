@@ -70,7 +70,12 @@ const BOL_GEHEIM = process.env.BOL_CLIENT_SECRET || ''
 const BOL_SITE = process.env.BOL_SITE_ID || '1528494'
 const BOL_PER_RONDE = Number(process.env.BOL_PER_RONDE || 9000)   // EAN's per run
 const BOL_TEGELIJK = 6                                             // parallelle verzoeken
-const BOL_MINUTEN = Number(process.env.BOL_MINUTEN || 14)          // harde tijdgrens
+// Harde tijdgrens. bol knijpt na een paar duizend verzoeken af: de eerste
+// duizend gaan in ruim een minuut, daarna zakt het naar ongeveer tweehonderd
+// per minuut. Met twintig minuten haal je er zo'n drieduizend per ronde, en
+// met twee ronden per dag is de hele catalogus in ruim een week rond. Dat is
+// prima: de rotatie zorgt dat elke ronde een ander deel aan de beurt is.
+const BOL_MINUTEN = Number(process.env.BOL_MINUTEN || 20)
 const BOL_CURSOR = UIT + '/bol-cursor.json'
 
 let bolToken = { waarde: '', tot: 0 }
@@ -161,14 +166,24 @@ function bolKies (items) {
   alle.sort((a, b) => score(b) - score(a) || a.ean.localeCompare(b.ean))
 
   // de kop van de lijst altijd, de staart roterend
-  const kop = alle.filter(e => score(e) >= 65)   // belangrijke categorie en minstens 50 euro
-  const staart = alle.filter(e => score(e) < 100)
+  // De voorrangslijst kan zelf groter zijn dan wat in een ronde past: op 3
+  // oktober waren het er 10.166 bij een budget van 9.000. Dan werd de rest
+  // stilletjes door de tijdgrens afgekapt, en altijd dezelfde staart. Dus ook
+  // binnen de voorrangslijst roteren.
+  const alleKop = alle.filter(e => score(e) >= 65)   // belangrijke categorie en minstens 50 euro
+  const staart = alle.filter(e => score(e) < 65)
+  let kop = alleKop
+  if (alleKop.length > BOL_PER_RONDE) {
+    const k0 = bolLeesCursor() % alleKop.length
+    kop = alleKop.slice(k0, k0 + BOL_PER_RONDE)
+    if (kop.length < BOL_PER_RONDE) kop = kop.concat(alleKop.slice(0, BOL_PER_RONDE - kop.length))
+  }
   const ruimte = Math.max(0, BOL_PER_RONDE - kop.length)
   const start = staart.length ? bolLeesCursor() % staart.length : 0
   const deel = staart.slice(start, start + ruimte)
   if (deel.length < ruimte) deel.push(...staart.slice(0, ruimte - deel.length))
   bolSchrijfCursor(staart.length ? (start + ruimte) % staart.length : 0)
-  return { lijst: kop.concat(deel), kop: kop.length, staart: staart.length }
+  return { lijst: kop.concat(deel), kop: kop.length, staart: staart.length, voorrangTotaal: alleKop.length }
 }
 
 async function haalBol (items) {
@@ -176,9 +191,9 @@ async function haalBol (items) {
     console.error('BOL_CLIENT_ID of BOL_CLIENT_SECRET ontbreekt, bol wordt overgeslagen')
     return []
   }
-  const { lijst, kop, staart } = bolKies(items)
-  console.log('bol: ' + lijst.length + ' EAN opvragen (' + kop + ' met voorrang, ' +
-    staart + ' in de roulatie)')
+  const { lijst, kop, staart, voorrangTotaal } = bolKies(items)
+  console.log('bol: ' + lijst.length + ' EAN opvragen (' + kop + ' met voorrang van ' +
+    voorrangTotaal + ', ' + staart + ' in de roulatie)')
 
   const stop = Date.now() + BOL_MINUTEN * 60000
   const uit = []

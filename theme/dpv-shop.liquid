@@ -877,6 +877,10 @@
           h += '<div class="ds-pv-w-r' + (i === 0 ? ' beste' : '') + '">';
           h += '<div class="ds-pv-w-n">' + esc(o.w);
           var sub = [];
+          /* Bij bol kan het aanbod van een marktplaatsverkoper komen. Die
+             staat dan als "bol.com partner", en hier staat wie het is. Zonder
+             die naam lijkt het de prijs van bol zelf, en dat is het niet. */
+          if (o.vk) sub.push('verkocht door ' + esc(o.vk));
           if (o.vz > 0) sub.push(eur(o.vz) + ' verzending'); else sub.push('gratis verzending');
           if (!o.vr) sub.push('voorraad onbekend');
           if (hist.length >= 2) sub.push('sinds ' + esc(hist[hist.length - 1].dag));

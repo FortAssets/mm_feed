@@ -21,6 +21,17 @@
 
 {%- assign start = section.settings.start_iso -%}
 
+{%- comment -%}
+  Alle kliklinks hieronder lopen via de awin-worker. Die stond op
+  awin.business-347.workers.dev, en een workers.dev-adres wordt door een deel
+  van de adblockers en door sommige bedrijfsnetwerken geblokkeerd; dan gaat de
+  klik verloren en zie je er niets van terug. Vandaar een eigen subdomein. Het
+  staat hier als een veld in plaats van in elke link, zodat omzetten een keer
+  gebeurt en niet twintig keer.
+{%- endcomment -%}
+{%- assign klikbasis = section.settings.klik_domein | strip -%}
+{%- if klikbasis == blank -%}{%- assign klikbasis = 'https://awin.business-347.workers.dev' -%}{%- endif -%}
+
 <div class="bfr" id="bfr" data-start="{{ start }}"
      data-api="{{ section.settings.api }}"
      data-bron="{{ section.settings.bron }}"
@@ -60,7 +71,7 @@
       {%- for r in prov -%}
         {%- assign d = r | strip | split: '|' -%}
         {%- if d.size >= 3 -%}
-          <a class="bfr-kaart" href="{{ d[2] | strip }}" rel="nofollow sponsored noopener" target="_blank">
+          <a class="bfr-kaart" href="{{ d[2] | strip | replace: 'https://awin.business-347.workers.dev', klikbasis }}" rel="nofollow sponsored noopener" target="_blank">
             <span class="bfr-naam">{{ d[0] | strip }}</span>
             <span class="bfr-detail">{{ d[1] | strip }}</span>
             <span class="bfr-cta">Bekijk bij {{ d[0] | strip }}</span>
@@ -75,7 +86,7 @@
       {%- for r in win -%}
         {%- assign d = r | strip | split: '|' -%}
         {%- if d.size >= 3 -%}
-          <a class="bfr-kaart" href="{{ d[2] | strip }}" rel="nofollow sponsored noopener" target="_blank">
+          <a class="bfr-kaart" href="{{ d[2] | strip | replace: 'https://awin.business-347.workers.dev', klikbasis }}" rel="nofollow sponsored noopener" target="_blank">
             <span class="bfr-naam">{{ d[0] | strip }}</span>
             <span class="bfr-detail">{{ d[1] | strip }}</span>
             <span class="bfr-cta">Bekijk bij {{ d[0] | strip }}</span>
@@ -292,6 +303,13 @@
     {
       "type": "header",
       "content": "Aanmelden"
+    },
+    {
+      "type": "text",
+      "id": "klik_domein",
+      "label": "Klikdomein",
+      "default": "https://awin.business-347.workers.dev",
+      "info": "Waar de affiliatelinks langsgaan. Zet hier ga.deprijsvergelijker.com zodra dat domein op de awin-worker staat; alle links op deze pagina gaan dan mee. Leeg betekent het workers.dev-adres."
     },
     {
       "type": "text",

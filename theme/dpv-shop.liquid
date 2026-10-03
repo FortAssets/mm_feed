@@ -28,14 +28,6 @@
 .ds{--pa:#5b3b8c;--pa2:#F6F4FB;--rd:#E2DCF2;--gr:#10b981;--rood:#e11d48;--ink:#0D1B2A;--mut:#5B6B80;
  max-width:1180px;margin:0 auto;padding:10px 16px 40px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
 .ds *{box-sizing:border-box}
-/* 3 okt, fout die het hele scherm grijs maakte.
-   Hier stond alleen ".ds [hidden]", en dat is een afstammelingsselector: hij
-   raakt elementen BINNEN .ds, niet .ds zelf. De overlay en de zwevende balk
-   dragen zelf de klasse .ds, dus hun hidden-attribuut deed niets, terwijl
-   .ds-ovl{display:flex} de standaard van de browser overschreef. Gevolg: de
-   donkere laag lag permanent over de pagina, de kaarten waren niet meer aan te
-   klikken en het vergelijkvak stond leeg in beeld.
-   De eerste selector repareert dat; beide zijn nodig. */
 .ds[hidden],.ds [hidden]{display:none !important}
 
 /* ---------------------------------------------------------------- kop */
@@ -1115,8 +1107,7 @@
     {
       "type": "text",
       "id": "label",
-      "label": "Label",
-      "default": ""
+      "label": "Label"
     },
     {
       "type": "text",
@@ -1128,8 +1119,7 @@
       "type": "textarea",
       "id": "sub",
       "label": "Tekst onder de kop",
-      "default": "",
-      "info": "Leeg laten is netter: de pagina spreekt voor zich. Vul alleen iets in als er echt iets uitgelegd moet worden."
+      "info": "Leeg laten is netter. Vul alleen iets in als er echt iets uitgelegd moet worden."
     },
     {
       "type": "text",
@@ -1199,4 +1189,3 @@
   ]
 }
 {% endschema %}
-

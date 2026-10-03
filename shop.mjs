@@ -21,7 +21,41 @@ const UIT = 'data/shop'
 const AWIN_KEY = process.env.AWIN_KEY || ''
 const MM_TOKEN = process.env.MM_TOKEN || ''
 
-const AWIN_FIDS = '19979,61111,65453,82771,89758,95829,95830,95831,95833,95834,95835,95836,95839,95886,95887,95888,95889,95890,95892,95893,95894,95895,95896,95897,95898,95902,95903,95904,95927,95929,95932,95938,95939,95940,96487,96636,99064,101992,111946,115421,116143,117541,117569'
+// 3 okt: de feedlijst van Awin opgehaald en vergeleken met wat hier binnenkomt.
+// Twee dingen kwamen eruit.
+//
+// 1. Drie programma's stonden op "Not Joined" terwijl hun producten wel
+//    binnenkwamen: Goedkoopste-Kantoorartikelen (20.456), Bazta (19.733) en
+//    Workliving (2.180). Samen 42.369 van de 56.000 producten, oftewel
+//    driekwart van de vergelijker, van winkels zonder goedgekeurde
+//    samenwerking. Awin laat de feed wel downloaden maar schrijft een klik niet
+//    toe. Ze staan in NIET_AANGESLOTEN zodat je ze met een schakelaar weg kunt
+//    laten, en zodat het in het log zichtbaar is.
+//
+// 2. Drie actieve feeds ontbraken: Mobiel.nl toestel en accessoires (19975),
+//    Simyo Handset (64283) en PLUS FamilyBlend (92549). De eerste twee horen
+//    hier thuis en zijn toegevoegd. PLUS zijn boodschappen en hoort bij de
+//    boodschappenpagina, dus die laat ik hier weg.
+const AWIN_FIDS = '19979,61111,65453,82771,89758,95829,95830,95831,95833,95834,95835,95836,95839,95886,95887,95888,95889,95890,95892,95893,95894,95895,95896,95897,95898,95902,95903,95904,95927,95929,95932,95938,95939,95940,96487,96636,99064,101992,111946,115421,116143,117541,117569,19975,64283'
+
+// Winkels waar geen goedgekeurde Awin-samenwerking mee is. Een klik daar levert
+// niets op. Zet AWIN_ALLEEN_AANGESLOTEN=1 om ze helemaal weg te laten.
+const NIET_AANGESLOTEN = new Set(['Goedkoopste-Kantoorartikelen', 'Bazta', 'Workliving'])
+const ALLEEN_AANGESLOTEN = process.env.AWIN_ALLEEN_AANGESLOTEN === '1'
+
+// Goedkoopste-Kantoorartikelen gaat er helemaal uit, en niet om de commissie.
+// De feed heet "Goedkoopste-Kantoorartikelen NL", maar van de 20.456 regels
+// wijzen er 20.449 naar goedkoopste-kantoorartikelen.be: het is de Belgische
+// webshop, met Belgische prijzen en Belgische verzending. Op een Nederlandse
+// prijsvergelijker is dat geen prijs maar ruis, en het was wel 19.263 van de
+// 19.410 producten in de categorie kantoor, oftewel de hele categorie. Bij
+// controle stond er ook een kalender van 4,10 euro met 9,62 als eerdere prijs,
+// dus 57 procent korting, bij een winkel die ik niet kan nabellen.
+//
+// Bazta (nl.bazta.com) en Workliving zijn wel Nederlands, dus die blijven
+// staan tot de aanmelding bij Awin rond is. De links werken; getest op
+// 3 oktober, alle drie gaven een 302 naar de juiste productpagina.
+const UIT_DE_FEED = new Set(['Goedkoopste-Kantoorartikelen'])
 const AWIN_KOLOMMEN = 'aw_deep_link,product_name,merchant_image_url,search_price,merchant_name,merchant_id,category_name,merchant_category,brand_name,product_type,merchant_product_category_path,rrp_price,store_price,in_stock,ean,data_feed_id,condition,colour,delivery_cost,product_price_old'
 
 // MediaMarkt-feeds. 117525 (telco) zit er niet bij: die houdt generate.mjs,
@@ -57,12 +91,27 @@ const MM_LOGO = 'https://hst.tradedoubler.com/file/262336/MM-logo.png'
 // aanbod, en dat kan van een marktplaatsverkoper zijn. Op 3 oktober stond de
 // Xbox Series X daar op €1140 (VF E-Shop) en de PlayStation 5 op €749
 // (NBB.com), terwijl die consoles normaal rond de €499 en €549 liggen. bol
-// verkoopt die twee niet zelf. Zonder filter zou de vergelijker dus een
-// PlayStation van €749 laten zien, en dat is erger dan hem helemaal niet
-// hebben. Daarom: alleen aanbiedingen waar de verkoper bol.com zelf is.
+// verkoopt die twee niet zelf.
 //
-// Het veld seller komt alleen mee met include-seller=true; zonder die parameter
-// staat er niets en lijkt elk aanbod van bol zelf te komen.
+// Het veld seller komt alleen mee met include-seller=true, en alleen op de
+// route products/{ean}/offers/best. De brede lijst (products/lists/popular)
+// stuurt hem niet mee, ook niet met include-seller erbij; getest op 3 oktober
+// met include-seller, include-offers en include-all-offers, alle drie zonder
+// verkoper in het antwoord. Een route products/{ean}/offers in het meervoud
+// bestaat niet (HTTP 404). Er is dus geen manier om de verkoper in bulk te
+// krijgen: één product is één verzoek.
+//
+// Daarom deze verdeling:
+//   de brede lijst vindt producten, de losse route bepaalt de prijs.
+// Een prijs uit de brede lijst zonder gecontroleerde verkoper komt niet op de
+// pagina. Dat is geen overdreven voorzichtigheid, het is gemeten: van tachtig
+// aanbiedingen onder de 75 euro die ik nacontroleerde was 62 procent van een
+// marktplaatsverkoper, precies dezelfde verhouding als boven de 75 euro
+// (210 van 323). Prijs zegt dus niets over wie er verkoopt, en "bol.com" boven
+// een prijs van RS Goods of Smartphonehoesjes.nl is simpelweg onwaar.
+//
+// Wat gecontroleerd is blijft bewaard in data/shop/bol-verkopers.json.gz, dus
+// de dekking loopt over de ronden op en begint niet elke keer bij nul.
 const BOL_TOKEN_URL = 'https://login.bol.com/token?grant_type=client_credentials'
 const BOL_API = 'https://api.bol.com/marketing/catalog/v1/'
 const BOL_ID = process.env.BOL_CLIENT_ID || ''
@@ -77,6 +126,61 @@ const BOL_TEGELIJK = 6                                             // parallelle
 // prima: de rotatie zorgt dat elke ronde een ander deel aan de beurt is.
 const BOL_MINUTEN = Number(process.env.BOL_MINUTEN || 20)
 const BOL_CURSOR = UIT + '/bol-cursor.json'
+
+// ------------------------------------------------- wie verkoopt het, onthouden
+//
+// Een verkoper opvragen kost een verzoek, en bol knijpt af. Het antwoord
+// verandert zelden: wie een product verkoopt is een eigenschap van het product,
+// niet van de dag. Dus wordt het bewaard en meegecommit, en pas na een paar
+// weken opnieuw gecontroleerd.
+const BOL_VERKOPERS = UIT + '/bol-verkopers.json.gz'
+const BOL_VERS_DAGEN = Number(process.env.BOL_VERS_DAGEN || 14)   // daarna opnieuw nakijken
+const BOL_BEWAAR_DAGEN = 120                                      // daarna uit het bestand
+const bolVerkopers = new Map()                                    // ean -> { v, bij }
+let bolVerkopersGewijzigd = false
+
+function bolLeesVerkopers () {
+  try {
+    const d = JSON.parse(zlib.gunzipSync(fs.readFileSync(BOL_VERKOPERS)).toString('utf8'))
+    const grens = Date.now() - BOL_BEWAAR_DAGEN * 864e5
+    for (const [ean, r] of Object.entries(d)) {
+      const t = Date.parse(r.bij || '')
+      if (!t || t < grens) continue
+      bolVerkopers.set(ean, { v: r.v || '', bij: r.bij })
+    }
+    console.log('bol: ' + bolVerkopers.size + ' verkopers uit eerdere ronden')
+  } catch (e) { /* eerste keer */ }
+}
+
+function bolSchrijfVerkopers () {
+  if (!bolVerkopersGewijzigd) return
+  const d = {}
+  for (const [ean, r] of bolVerkopers) d[ean] = r
+  try {
+    fs.mkdirSync(path.dirname(BOL_VERKOPERS), { recursive: true })
+    fs.writeFileSync(BOL_VERKOPERS, zlib.gzipSync(Buffer.from(JSON.stringify(d)), { level: 9 }))
+    console.log('bol: ' + bolVerkopers.size + ' verkopers bewaard')
+  } catch (e) { console.error('bol verkopers niet bewaard: ' + e.message) }
+}
+
+function bolOnthou (ean, verkoper) {
+  if (!ean || !verkoper) return
+  const oud = bolVerkopers.get(ean)
+  if (oud && oud.v === verkoper && bolVersGenoeg(oud)) return
+  bolVerkopers.set(ean, { v: verkoper, bij: new Date().toISOString().slice(0, 10) })
+  bolVerkopersGewijzigd = true
+}
+
+function bolVersGenoeg (r) {
+  if (!r || !r.bij) return false
+  const t = Date.parse(r.bij)
+  return !!t && t > Date.now() - BOL_VERS_DAGEN * 864e5
+}
+
+// Is dit bol zelf? Alleen te zeggen als het ooit gecontroleerd is.
+function bolIsEigen (verkoper) {
+  return String(verkoper || '').toLowerCase().replace(/\s+/g, '') === 'bol.com'
+}
 
 let bolToken = { waarde: '', tot: 0 }
 
@@ -105,16 +209,172 @@ async function bolAanbod (ean) {
   const d = await r.json()
   if (!(d && d.price > 0)) return null
   const verkoper = String((d.seller && d.seller.name) || '').trim()
-  // alleen bol zelf; een marktplaatsverkoper is geen winkelprijs
-  if (verkoper.toLowerCase().replace(/\s+/g, '') !== 'bol.com') return null
+  if (!verkoper) return null                 // geen verkoper = niet te plaatsen
+  bolOnthou(ean, verkoper)
   if (String(d.condition || 'NEW').toUpperCase() !== 'NEW') return null
+  // Een marktplaatsverkoper gaat er niet meer uit. Hij krijgt een eigen
+  // winkelnaam: "bol.com partner", met de verkoper erbij. Een PlayStation 5 van
+  // €749 bij NBB.com is een echt aanbod dat je echt via bol kunt kopen, en de
+  // kaart moet alleen niet doen alsof het de prijs van bol zelf is.
   return {
     prijs: d.price,
     van: d.strikethroughPrice > d.price ? d.strikethroughPrice : 0,
     url: d.url || '',
     voorraad: /voorraad|in huis|besteld/i.test(d.deliveryDescription || '') ? 1 : 0,
-    preorder: !!d.isPreOrder
+    preorder: !!d.isPreOrder,
+    verkoper
   }
+}
+
+// ---------------------------------------------------------------- bol breed
+//
+// De koppeling per EAN hierboven haalt bol alleen op bij producten die ik al
+// uit de andere feeds ken. Dat is te smal: bol heeft alleen al in Gaming
+// 161.992 producten en 300.000 populair over alles heen, en daar zitten dingen
+// bij die bij Coolblue en MediaMarkt niet in de feed staan. De PlayStation 5
+// bijvoorbeeld, en de Xbox.
+//
+// Het endpoint products/lists/popular geeft per categorie vijftig producten per
+// verzoek, mét prijs, van-prijs, afbeelding en EAN. Dat is vijftig keer
+// efficienter dan per EAN vragen.
+//
+// De verkoper komt hier niet mee (include-seller werkt alleen op de losse
+// aanbod-route). Daarom wordt die apart gecontroleerd voor de aanbiedingen waar
+// het uitmaakt, en staat er op de kaart "bol.com partner" als het aanbod van
+// een marktplaatsverkoper komt. Niet weglaten dus, wel eerlijk benoemen: een
+// PlayStation 5 van 749 euro bij NBB.com is een echt aanbod, maar het is niet
+// de prijs van bol zelf.
+const BOL_CATS = [
+  { id: '3135', naam: 'Gaming', cat: 'gaming' },
+  { id: '3136', naam: 'Elektronica', cat: '' },   // te breed voor een vaste categorie, alleen op trefwoord
+  { id: '3134', naam: 'Computer', cat: 'laptops' },
+  { id: '12001', naam: 'Huishouden', cat: 'huishoudelijk' },
+  { id: '11764', naam: 'Koken & Tafelen', cat: 'keuken' },
+  { id: '12442', naam: 'Persoonlijke verzorging', cat: 'verzorging' },
+  { id: '7934', naam: 'Speelgoed', cat: 'speelgoed' },
+  { id: '13155', naam: 'Klussen', cat: 'klussen' },
+  { id: '14648', naam: 'Sport', cat: 'klussen' },
+  { id: '25897', naam: 'Kantoor & School', cat: 'kantoor' },
+  { id: '12974', naam: 'Tuin', cat: 'klussen' },
+  { id: '14035', naam: 'Wonen', cat: 'wonen' }
+]
+const BOL_PAGINAS = Number(process.env.BOL_PAGINAS || 40)   // 50 producten per pagina
+
+async function bolLijst (catId, pagina) {
+  const t = await bolHaalToken()
+  const url = BOL_API + 'products/lists/popular?country-code=NL&category-id=' + encodeURIComponent(catId) +
+    '&page=' + pagina + '&page-size=50&include-offer=true&include-image=true'
+  const r = await fetch(url, {
+    headers: { Authorization: 'Bearer ' + t, Accept: 'application/json', 'Accept-Language': 'nl-NL' }
+  })
+  if (r.status === 429) { await new Promise(s => setTimeout(s, 2000)); return undefined }
+  if (!r.ok) return null
+  const d = await r.json()
+  return (d && d.results) || []
+}
+
+async function haalBolBreed () {
+  if (!BOL_ID || !BOL_GEHEIM) return []
+  const uit = []
+  const gezien = new Set()
+  for (const c of BOL_CATS) {
+    let n = 0
+    for (let p = 1; p <= BOL_PAGINAS; p++) {
+      let rs = await bolLijst(c.id, p)
+      if (rs === undefined) rs = await bolLijst(c.id, p)
+      if (!rs || !rs.length) break
+      for (const x of rs) {
+        const ean = String((x && x.ean) || '').trim()
+        const o = x && x.offer
+        if (!ean || !/^\d{8,14}$/.test(ean) || !o || !(o.price > 0)) continue
+        if (gezien.has(ean)) continue
+        gezien.add(ean)
+        uit.push({
+          ean,
+          naam: String(x.title || '').trim(),
+          url: x.url || '',
+          afb: (x.image && (x.image.url || x.image)) || '',
+          prijs: o.price,
+          van: o.strikethroughPrice > o.price ? o.strikethroughPrice : 0,
+          voorraad: /voorraad|in huis|besteld/i.test(o.deliveryDescription || '') ? 1 : 0,
+          bolCat: c.cat
+        })
+        n++
+      }
+    }
+    console.log('  bol ' + c.naam + ': ' + n + ' producten')
+  }
+  console.log('bol breed: ' + uit.length + ' producten uit ' + BOL_CATS.length + ' categorieen')
+  return uit
+}
+
+// Welke brede rijen moeten gecontroleerd worden, en welke niet?
+//
+// Waar een verkeerd label echt schade doet is de vergelijking. Daar staat de
+// bol-prijs naast Coolblue en MediaMarkt, en daar bepaalt hij wie "goedkoopst"
+// is. Een PlayStation van NBB.com die daar als bol.com meedoet, verpest de hele
+// tabel. Dus: elke bol-prijs bij een product dat ook bij een andere winkel
+// ligt, wordt gecontroleerd. Lukt dat niet, dan gaat die prijs eruit en staat
+// het product er gewoon zonder bol in.
+//
+// Bij een product dat alleen bij bol ligt valt er niets te vergelijken. Daar is
+// "bol.com" ook niet onwaar: je koopt het op bol.com, met de bestelling, de
+// betaling en het retourrecht van bol. Wie het verstuurt staat op de
+// productpagina waar de link naartoe gaat. Die rijen gaan er dus zonder
+// controle in, en krijgen met de tijd alsnog een verkoper mee als het budget
+// het toelaat.
+const BOL_CONTROLE_MINUTEN = Number(process.env.BOL_CONTROLE_MINUTEN || 12)
+const BOL_CONTROLE_MAX = Number(process.env.BOL_CONTROLE_MAX || 8000)
+
+// Haalt prijs én verkoper op bij de losse route, want die is de enige die de
+// verkoper kent, en zijn prijs hoort bij die verkoper. De prijs uit de brede
+// lijst is een momentopname van een mogelijk ander aanbod.
+async function bolControleer (rijen, bestaandeEans, gedaan) {
+  const uitCache = []
+  const nodig = []
+  for (const r of rijen) {
+    const vergelijking = bestaandeEans.has(r.ean)
+    const c = bolVerkopers.get(r.ean)
+    if (c && bolVersGenoeg(c)) { r.verkoper = c.v; r.gecontroleerd = true; uitCache.push(r); continue }
+    if (c) { r.verkoper = c.v; r.gecontroleerd = true }   // oud, maar beter dan niets
+    // een vergelijking eerst, daarna het dure spul, daarna de rest
+    r.gewicht = (vergelijking ? 1000 : 0) + Math.min(400, r.prijs) + (c ? -200 : 0)
+    nodig.push(r)
+  }
+  nodig.sort((a, b) => b.gewicht - a.gewicht)
+  const lijst = nodig.slice(0, BOL_CONTROLE_MAX)
+  console.log('bol: ' + uitCache.length + ' verkopers uit de cache, ' + lijst.length +
+    ' van ' + nodig.length + ' na te kijken')
+  if (!lijst.length) return
+
+  const stop = Date.now() + BOL_CONTROLE_MINUTEN * 60000
+  let i = 0; let n = 0; let partner = 0; let weg = 0
+  async function werker () {
+    while (true) {
+      if (Date.now() > stop) return
+      const k = i++
+      if (k >= lijst.length) return
+      const r = lijst[k]
+      try {
+        let a = await bolAanbod(r.ean)
+        if (a === undefined) a = await bolAanbod(r.ean)
+        gedaan.add(r.ean)
+        if (!a) { weg++; r.weg = true; continue }
+        // de losse route is de bron, niet de lijst
+        r.prijs = a.prijs
+        r.van = a.van
+        r.url = a.url || r.url
+        r.voorraad = a.voorraad
+        r.verkoper = a.verkoper
+        r.gecontroleerd = true
+        n++
+        if (!bolIsEigen(a.verkoper)) partner++
+      } catch (e) { /* onbekend blijft onbekend */ }
+    }
+  }
+  await Promise.all(Array.from({ length: BOL_TEGELIJK }, werker))
+  console.log('bol: ' + n + ' nagekeken (' + partner + ' marktplaats, ' + weg +
+    ' zonder aanbod)' + (i < lijst.length ? ', tijdgrens bereikt bij ' + i : ''))
 }
 
 function bolLink (url, naam) {
@@ -186,18 +446,23 @@ function bolKies (items) {
   return { lijst: kop.concat(deel), kop: kop.length, staart: staart.length, voorrangTotaal: alleKop.length }
 }
 
-async function haalBol (items) {
+async function haalBol (items, alGedaan) {
   if (!BOL_ID || !BOL_GEHEIM) {
     console.error('BOL_CLIENT_ID of BOL_CLIENT_SECRET ontbreekt, bol wordt overgeslagen')
     return []
   }
-  const { lijst, kop, staart, voorrangTotaal } = bolKies(items)
-  console.log('bol: ' + lijst.length + ' EAN opvragen (' + kop + ' met voorrang van ' +
-    voorrangTotaal + ', ' + staart + ' in de roulatie)')
+  const gezien = alGedaan || new Set()
+  const gekozen = bolKies(items)
+  // Wat de brede controle hierboven al heeft opgevraagd hoeft niet opnieuw. Dat
+  // waren er op 3 oktober een paar duizend, en dat is zonde van het budget.
+  const lijst = gekozen.lijst.filter(e => !gezien.has(e.ean))
+  console.log('bol: ' + lijst.length + ' EAN opvragen (' + gekozen.kop + ' met voorrang van ' +
+    gekozen.voorrangTotaal + ', ' + gekozen.staart + ' in de roulatie, ' +
+    (gekozen.lijst.length - lijst.length) + ' deze ronde al gedaan)')
 
   const stop = Date.now() + BOL_MINUTEN * 60000
   const uit = []
-  let gedaan = 0; let gevonden = 0; let marktplaats = 0
+  let gedaan = 0; let gevonden = 0
   let i = 0
 
   async function werker () {
@@ -216,12 +481,13 @@ async function haalBol (items) {
         a = null
       }
       gedaan++
+      gezien.add(e.ean)
       if (a) { gevonden++; uit.push({ ean: e.ean, aanbod: a }) }
       if (gedaan % 1000 === 0) console.log('  bol: ' + gedaan + ' van ' + lijst.length + ', ' + gevonden + ' gevonden')
     }
   }
   await Promise.all(Array.from({ length: BOL_TEGELIJK }, werker))
-  console.log('bol: ' + gedaan + ' opgevraagd, ' + gevonden + ' aanbiedingen van bol zelf' +
+  console.log('bol: ' + gedaan + ' opgevraagd, ' + gevonden + ' aanbiedingen' +
     (gedaan < lijst.length ? ' (tijdgrens bereikt bij ' + gedaan + ')' : ''))
   return uit
 }
@@ -747,8 +1013,11 @@ function uitAwin (r) {
   // 0 van de 95.000 regels gevuld, product_price_old in ongeveer 2 procent.
   let van = num(r.product_price_old) || num(r.store_price) || num(r.rrp_price)
   if (!(van > prijs * 1.01)) van = 0
+  if (UIT_DE_FEED.has(merchant)) return null
+  if (ALLEEN_AANGESLOTEN && NIET_AANGESLOTEN.has(merchant)) return null
   return {
     bron: 'awin',
+    aangesloten: !NIET_AANGESLOTEN.has(merchant),
     naam,
     merk: (r.brand_name || '').trim(),
     prijs,
@@ -760,7 +1029,14 @@ function uitAwin (r) {
     type: (r.product_type || '').trim(),
     cat,
     voorraad: /^(1|true|yes|ja|in stock)$/i.test(r.in_stock || '') ? 1 : 0,
-    staat: /refurb|gebruikt|tweedehands|used/i.test((r.condition || '') + ' ' + (r.product_type || '')) ? 'refurbished' : 'nieuw',
+    // "Second chance" is hoe Coolblue zijn retouren noemt, en dat stond tot nu
+    // toe als nieuw in de vergelijker: 4.428 regels in de feed van 3 oktober.
+    // Daar zat de PlayStation 5 Slim Digital Edition bij, voor €611, terwijl
+    // die nieuw rond de €499 ligt. Een gebruikt apparaat dat duurder is dan
+    // nieuw, zonder dat er iets bij staat. Vandaar deze woorden erbij.
+    staat: /refurb|gebruikt|tweedehands|used|second.?chance|tweede.?kans|open.?box|zo goed als nieuw/i
+      .test((r.condition || '') + ' ' + (r.product_type || '') + ' ' + (r.merchant_category || ''))
+      ? 'refurbished' : 'nieuw',
     kleur: (r.colour || '').trim(),
     verzend: num(r.delivery_cost)
   }
@@ -820,6 +1096,8 @@ function uitMm (q, feed) {
 
 // ------------------------------------------------------------------ koppelen
 
+let ongecontroleerdUitVergelijking = 0
+
 function koppel (items) {
   // Eerst de EAN-groepen, en per naamsleutel bijhouden welke EAN daarbij hoort.
   // Zonder die tweede stap valt eenzelfde product uiteen zodra de ene winkel een
@@ -850,10 +1128,17 @@ function koppel (items) {
       const ean = sl ? naamNaarEan.get(sl) : undefined
       if (ean) { k = 'e' + ean; viaBrug++ } else k = sl ? 'n' + hash(sl) : 'u' + (los++)
     }
+    // Een tweedekansexemplaar is een ander product dan een nieuw exemplaar,
+    // ook bij hetzelfde EAN. Zaten ze in dezelfde groep, dan hield de goedkoopste
+    // per winkel over, en dat werd dan het gebruikte apparaat tegen een prijs
+    // die naast nieuwe prijzen kwam te staan. Dus apart groeperen, met de
+    // aanduiding "tweedekans" erbij op de kaart.
+    if (it.staat === 'refurbished') k += '~r'
     if (!perSleutel.has(k)) perSleutel.set(k, [])
     perSleutel.get(k).push(it)
   }
   if (viaBrug) console.log('  ' + viaBrug + ' aanbiedingen zonder EAN op naam aan een EAN-groep gekoppeld')
+  ongecontroleerdUitVergelijking = 0
 
   // Binnen een naamgroep nog splitsen op merk: staat er bij twee producten een
   // verschillend merk, dan zijn het twee producten. Een leeg merk doet mee met
@@ -884,7 +1169,16 @@ function koppel (items) {
       const b = perWinkel.get(w)
       if (!b || it.prijs < b.prijs) perWinkel.set(w, it)
     }
-    const aanbod = [...perWinkel.values()].sort((a, b) => a.prijs - b.prijs)
+    let aanbod = [...perWinkel.values()].sort((a, b) => a.prijs - b.prijs)
+    // Hier staat of valt de betrouwbaarheid van de tabel. Een bol-prijs waarvan
+    // niet gecontroleerd is wie er verkoopt, mag niet naast Coolblue en
+    // MediaMarkt staan: dan doet een marktplaatsverkoper mee alsof het de prijs
+    // van bol zelf is, en bepaalt hij wie "goedkoopst" heet. Ligt het product
+    // alleen bij bol, dan valt er niets te vergelijken en blijft hij staan.
+    if (aanbod.length > 1 && aanbod.some(a => a.bolOnbekend)) {
+      const schoon = aanbod.filter(a => !a.bolOnbekend)
+      if (schoon.length) { ongecontroleerdUitVergelijking += aanbod.length - schoon.length; aanbod = schoon }
+    }
     const beste = aanbod[0]
     const metAfb = aanbod.find(a => a.afb) || beste
     const metMerk = aanbod.find(a => a.merk) || beste
@@ -904,6 +1198,7 @@ function koppel (items) {
       s: beste.staat === 'refurbished' ? 'r' : 'n',
       o: aanbod.map(a => ({
         w: a.winkel,
+        vk: a.verkoper || undefined,
         p: Math.round(a.prijs * 100) / 100,
         v: a.van ? Math.round(a.van * 100) / 100 : 0,
         u: a.url,
@@ -1062,6 +1357,7 @@ function prijslogboek (producten) {
 
 async function main () {
   const rauw = []
+  bolLeesVerkopers()
 
   const awin = await haalAwin()
   for (const r of awin) { const it = uitAwin(r); if (it) rauw.push(it) }
@@ -1091,22 +1387,78 @@ async function main () {
       'gedraaid. Zonder MediaMarkt valt er niets te vergelijken, dus hier stoppen.')
   }
 
+  // bol breed: per categorie ophalen, vijftig tegelijk, met prijs erbij. Dit
+  // levert ook producten op die bij de andere winkels niet in de feed staan,
+  // zoals de PlayStation 5 en de Xbox.
+  const bolBreed = await haalBolBreed()
+  const bolGedaan = new Set()          // deze ronde al bij de losse route geweest
+  if (bolBreed.length) {
+    const perEanBestaand = new Map()
+    for (const it of rauw) if (it.ean && !perEanBestaand.has(it.ean)) perEanBestaand.set(it.ean, it)
+    await bolControleer(bolBreed, new Set(perEanBestaand.keys()), bolGedaan)
+    let nieuwe = 0; let erbij = 0; let ongecontroleerd = 0
+    for (const b of bolBreed) {
+      if (b.weg) continue                        // bol heeft hier geen aanbod meer
+      const basis = perEanBestaand.get(b.ean)
+      const eigen = bolIsEigen(b.verkoper)
+      // Een marktplaatsverkoper krijgt een eigen winkelnaam. Dan staat er op de
+      // kaart "bol.com partner" met de verkoper erbij, en niet "bol.com", want
+      // dat is een ander aanbod met een andere prijs en soms een andere
+      // levertijd. Weglaten doe ik ze niet: je kunt ze echt kopen.
+      const winkel = b.gecontroleerd && !eigen ? 'bol.com partner' : 'bol.com'
+      if (!b.gecontroleerd) ongecontroleerd++
+      // Eerst op de productnaam proberen, want dat is nauwkeuriger dan de
+      // afdeling waar bol hem onder hangt. Lukt dat niet, dan de categorie van
+      // de bol-afdeling. Zonder die terugval viel 14.000 van de 22.688
+      // producten weg omdat de naam geen trefwoord bevatte.
+      let cat = basis ? basis.cat : bepaalCat('', b.naam, 'bol.com', '')
+      if (!GELDIG.has(cat) && b.bolCat) cat = b.bolCat
+      if (!GELDIG.has(cat)) continue
+      if (basis) erbij++; else nieuwe++
+      rauw.push({
+        bron: 'bol',
+        naam: basis ? basis.naam : b.naam,
+        merk: basis ? basis.merk : '',
+        prijs: b.prijs,
+        van: b.van,
+        winkel,
+        verkoper: eigen ? '' : (b.verkoper || ''),
+        // Niet gecontroleerd betekent: deze prijs mag niet meedoen in een
+        // vergelijking. koppel() haalt hem daar uit.
+        bolOnbekend: !b.gecontroleerd,
+        url: bolLink(b.url, b.naam),
+        afb: (basis && basis.afb) || b.afb,
+        ean: b.ean,
+        type: basis ? basis.type : '',
+        cat,
+        voorraad: b.voorraad,
+        staat: 'nieuw',
+        kleur: '',
+        verzend: 0
+      })
+    }
+    console.log('bol breed: ' + erbij + ' bij bestaande producten, ' + nieuwe +
+      ' nieuwe producten, ' + ongecontroleerd + ' zonder gecontroleerde verkoper')
+  }
+
   // bol erbij, op EAN. Dit kan niet eerder: bolKies gebruikt wat de andere
   // feeds al opgeleverd hebben om te bepalen welke EAN's de moeite waard zijn.
-  const bolRijen = await haalBol(rauw)
+  const bolRijen = await haalBol(rauw, bolGedaan)
   if (bolRijen.length) {
     const perEan = new Map()
     for (const it of rauw) if (it.ean && !perEan.has(it.ean)) perEan.set(it.ean, it)
     for (const b of bolRijen) {
       const basis = perEan.get(b.ean)
       if (!basis) continue
+      const eigen = bolIsEigen(b.aanbod.verkoper)
       rauw.push({
         bron: 'bol',
         naam: basis.naam,
         merk: basis.merk,
         prijs: b.aanbod.prijs,
         van: b.aanbod.van,
-        winkel: 'bol.com',
+        winkel: eigen ? 'bol.com' : 'bol.com partner',
+        verkoper: eigen ? '' : b.aanbod.verkoper,
         url: bolLink(b.aanbod.url, basis.merk || basis.naam),
         afb: basis.afb,
         ean: b.ean,
@@ -1118,13 +1470,19 @@ async function main () {
         verzend: 0
       })
     }
-    console.log('bol: ' + bolRijen.length + ' aanbiedingen aan bestaande producten gekoppeld')
+    console.log('bol: ' + bolRijen.length + ' aanbiedingen aan bestaande producten gekoppeld (' +
+      bolRijen.filter(b => !bolIsEigen(b.aanbod.verkoper)).length + ' via een partner)')
   }
 
   console.log('Totaal bruikbaar:', rauw.length)
   const producten = koppel(rauw)
   console.log('Na koppelen:', producten.length, 'producten,',
     producten.filter(p => p.o.length > 1).length, 'met meer dan een winkel')
+  if (ongecontroleerdUitVergelijking) {
+    console.log('  ' + ongecontroleerdUitVergelijking + ' bol-prijzen uit een vergelijking gehouden ' +
+      'omdat de verkoper niet gecontroleerd was')
+  }
+  bolSchrijfVerkopers()
 
   // Eerst het logboek, want dat vult per product de laagst gemeten prijs en
   // sinds wanneer de huidige prijs geldt. Die velden horen in de bestanden die
@@ -1192,6 +1550,18 @@ async function main () {
     for (const [w, n] of Object.entries(winkels)) index.winkels[w] = (index.winkels[w] || 0) + n
   }
 
+  // Zichtbaar maken wat er van winkels zonder samenwerking komt. Niet om het
+  // te verbergen, wel om te kunnen zien hoeveel van de vergelijker geld kan
+  // opleveren en hoeveel niet.
+  const zonder = {}
+  for (const p of producten) for (const o of p.o) if (NIET_AANGESLOTEN.has(o.w)) zonder[o.w] = (zonder[o.w] || 0) + 1
+  index.nietAangesloten = zonder
+  if (Object.keys(zonder).length) {
+    const n = Object.values(zonder).reduce((a, b) => a + b, 0)
+    console.log('Let op: ' + n + ' aanbiedingen komen van winkels zonder Awin-samenwerking (' +
+      Object.keys(zonder).join(', ') + '). Een klik daar levert geen commissie op.')
+  }
+
   schrijf(UIT + '/index.json', index)
 
   // Lichte zoekindex over alle categorieen heen. Zonder deze zou zoeken zonder
@@ -1229,8 +1599,8 @@ async function main () {
   for (const c of index.categorieen) {
     console.log(String(c.aantal).padStart(6), c.slug, '| korting', c.korting, '| multi-winkel', c.multi)
   }
-  const zonder = rauw.length - producten.reduce((s, p) => s + p.o.length, 0)
-  if (zonder > 0) console.log('(' + zonder + ' dubbele varianten samengevouwen)')
+  const samengevouwen = rauw.length - producten.reduce((s, p) => s + p.o.length, 0)
+  if (samengevouwen > 0) console.log('(' + samengevouwen + ' dubbele varianten samengevouwen)')
 }
 
 main().catch(e => { console.error(e); process.exit(1) })

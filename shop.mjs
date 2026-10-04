@@ -1178,6 +1178,38 @@ function koppel (items) {
     else if (al !== it.ean) naamNaarEan.set(sl, null)
   }
 
+  // 4 okt: de brug op naam koppelde verschillende uitvoeringen aan elkaar.
+  // Coolblue noemt elke MacBook Air "MacBook Air 13\" M5", welke opslag of kleur
+  // het ook is, en stuurt bij de meeste geen EAN mee. Een daarvan had wel een
+  // EAN (16 GB, 1 TB), en daardoor kwam de goedkoopste van allemaal (512 GB,
+  // 1.349 euro) in die groep terecht, naast 1.759 euro bij MediaMarkt voor het
+  // model met 1 TB. Twee regels:
+  //  - heeft een winkel onder dezelfde naam meer dan een artikel met een andere
+  //    prijs, dan zegt die naam niet welk product het is en gaat de brug dicht;
+  //  - een prijs die meer dan 30 procent onder of 40 procent boven de laagste
+  //    prijs van de EAN-groep ligt, gaat er ook niet in.
+  const perWinkelNaam = new Map()
+  const eanLaagste = new Map()
+  for (const it of items) {
+    if (it.ean && it.staat !== 'refurbished') {
+      const l = eanLaagste.get(it.ean)
+      if (l === undefined || it.prijs < l) eanLaagste.set(it.ean, it.prijs)
+    }
+    const ns = naamSleutel(it.naam)
+    if (!ns) continue
+    const wk = it.winkel + '|' + it.cat + '|' + ns
+    let set = perWinkelNaam.get(wk)
+    if (!set) { set = new Set(); perWinkelNaam.set(wk, set) }
+    if (set.size < 4) set.add(Math.round(it.prijs))
+  }
+  const meerduidig = new Set()
+  for (const [wk, set] of perWinkelNaam) {
+    if (set.size < 2) continue
+    const ps = [...set]
+    if (Math.max(...ps) > Math.min(...ps) * 1.03) meerduidig.add(wk.slice(wk.indexOf('|') + 1))
+  }
+  let brugDicht = 0
+
   const perSleutel = new Map()
   let los = 0
   let viaBrug = 0
@@ -1187,7 +1219,11 @@ function koppel (items) {
     else {
       const ns = naamSleutel(it.naam)
       const sl = ns ? it.cat + '|' + ns : ''
-      const ean = sl ? naamNaarEan.get(sl) : undefined
+      let ean = sl ? naamNaarEan.get(sl) : undefined
+      if (ean) {
+        const laag = eanLaagste.get(ean)
+        if (meerduidig.has(sl) || (laag && (it.prijs < laag * 0.7 || it.prijs > laag * 1.4))) { ean = undefined; brugDicht++ }
+      }
       if (ean) { k = 'e' + ean; viaBrug++ } else k = sl ? 'n' + hash(sl) : 'u' + (los++)
     }
     // Een tweedekansexemplaar is een ander product dan een nieuw exemplaar,
@@ -1200,6 +1236,7 @@ function koppel (items) {
     perSleutel.get(k).push(it)
   }
   if (viaBrug) console.log('  ' + viaBrug + ' aanbiedingen zonder EAN op naam aan een EAN-groep gekoppeld')
+  if (brugDicht) console.log('  ' + brugDicht + ' keer niet op naam gekoppeld: naam meerduidig of prijs te ver van de groep')
   ongecontroleerdUitVergelijking = 0
   onmogelijkePrijzen = 0
   onmogelijkeKortingen = 0

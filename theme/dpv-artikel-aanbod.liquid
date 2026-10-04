@@ -79,7 +79,7 @@
 {%- endcomment -%}
 <style>
 a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !important}
-.ak-th{width:46px;height:46px;object-fit:contain;flex:0 0 46px;border-radius:8px;background:#fff}
+.ak-t img.ak-th{width:46px !important;height:46px !important;max-width:46px !important;min-width:46px;object-fit:contain;flex:0 0 46px;border-radius:8px;background:#fff;margin:0 !important;display:block}
 .ak-tc{display:flex;align-items:center;gap:10px}
 .ak-tc>span{min-width:0}
 @media(max-width:640px){
@@ -94,7 +94,7 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
   .ak-s .ak .dpvmb{font-size:12px !important;padding:7px 6px !important;margin-top:6px !important;min-height:0 !important}
   .ak-t table{font-size:13.5px !important}
   .ak-t th,.ak-t td{padding:8px 7px !important}
-  .ak-th{width:40px;height:40px;flex-basis:40px}
+  .ak-t img.ak-th{width:40px !important;height:40px !important;max-width:40px !important;min-width:40px;flex-basis:40px}
 }
 </style>
 <script>
@@ -116,15 +116,18 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
       var img = k.querySelector('img'), n = k.querySelector('.ak-n');
       if (img && n && img.getAttribute('src')) opNaam.push([n.textContent.toLowerCase().replace(/\s+/g, ' ').trim(), img.getAttribute('src')]);
     });
+    function norm(t) { return String(t || '').toLowerCase().replace(/\s+/g, ' ').trim(); }
     function viaNaam(cel) {
-      var t = cel.textContent.toLowerCase().replace(/\s+/g, ' ');
-      for (var i = 0; i < opNaam.length; i++) if (opNaam[i][0].length > 5 && t.indexOf(opNaam[i][0]) > -1) return opNaam[i][1];
-      return '';
+      var st = cel.querySelector('strong'), eigen = norm(st ? st.textContent : cel.textContent), t = norm(cel.textContent), beste = '', src = '';
+      for (var i = 0; i < opNaam.length; i++) {
+        var n = opNaam[i][0];
+        if (n === eigen) return opNaam[i][1];
+        if (n.length > 5 && n.length > beste.length && (t.indexOf(n) > -1 || (eigen.length > 5 && n.indexOf(eigen) > -1))) { beste = n; src = opNaam[i][1]; }
+      }
+      return src;
     }
     Array.prototype.forEach.call(rijen, function (tr) {
       var cel = tr.cells[0]; if (!cel || cel.querySelector('img')) return;
-      var a = tr.querySelector('a[href*="/api/shop/go"], a[href*="/api/go"]'); if (!a) return;
-      var href = a.getAttribute('href'), k = sleutel(href);
       function zet(src) {
         if (!src || cel.querySelector('.ak-th')) return;
         var wrap = document.createElement('div'); wrap.className = 'ak-tc';
@@ -134,8 +137,11 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
         while (cel.firstChild) tekst.appendChild(cel.firstChild);
         wrap.appendChild(img); wrap.appendChild(tekst); cel.appendChild(wrap);
       }
-      if (foto[k]) return zet(foto[k]);
+      var a = tr.querySelector('a[href*="/api/shop/go"]');
+      var href = a ? a.getAttribute('href') : '', k = a ? sleutel(href) : '';
+      if (k && foto[k]) return zet(foto[k]);
       var vn = viaNaam(cel); if (vn) return zet(vn);
+      if (!a) return;
       var c = /[?&]cat=([^&#]+)/.exec(href);
       if (href.indexOf('/api/shop/go') < 0 || !c) return;
       fetch('https://shop.deprijsvergelijker.com/api/shop/product?i=' + encodeURIComponent(k) + '&cat=' + c[1])

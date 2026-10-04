@@ -102,7 +102,9 @@
     },
     "dpv-gidsen": {
       "type": "dpv-gidsen",
-      "settings": {}
+      "settings": {
+        "kop": "Koopgidsen iPhone 18 Pro"
+      }
     },
     "dpv-app-knop": {
       "type": "dpv-app-knop",
@@ -114,21 +116,22 @@
       "type": "dpv-shop-rij",
       "settings": {
         "api": "https://shop.deprijsvergelijker.com",
-        "label": "Nieuw op de site",
-        "kop": "Gaming: dezelfde console, tientallen euro’s verschil",
-        "sub": "Coolblue, MediaMarkt en bol.com naast elkaar, elke nacht opnieuw gemeten. Zo zie je bij een aanbieding of de prijs echt gedaald is.",
+        "label": "Populair",
+        "kop": "Gaming, per winkel vergeleken",
+        "sub": "Elke nacht opnieuw gemeten, zodat je ziet of een aanbieding echt een aanbieding is.",
         "link_tekst": "Alles in gaming",
         "link_url": "/pages/gaming",
         "cat": "gaming",
         "types": "",
         "sort": "verschil",
         "aantal": 10,
-        "alleen_multi": true,
+        "alleen_multi": false,
         "alleen_echt": false,
         "alleen_deal": false,
         "min": "",
         "max": "",
-        "vlak": "donker"
+        "vlak": "donker",
+        "uitgelicht": "e0711719020837 e5026555439817 e0045496337414 e0045496312343 e5030935125535 e0711719580782 e0815820025252 e0196388866229 e0045496313067 e0889842651393"
       }
     },
     "dpv-blackfriday-strip": {
@@ -153,8 +156,8 @@
     "dpv-hero-prijzen",
     "dpv-deals",
     "dpv-iphone18",
-    "dpv-blackfriday-strip",
     "dpv-gidsen",
+    "dpv-blackfriday-strip",
     "dpv-gaming-rij",
     "dpv-energie-contracten",
     "dpv-kennisbank",

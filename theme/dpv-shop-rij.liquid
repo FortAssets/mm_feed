@@ -40,6 +40,7 @@
          data-type="{{ section.settings.types }}"
          data-min="{{ section.settings.min }}"
          data-max="{{ section.settings.max }}"
+         data-uitgelicht="{{ section.settings.uitgelicht | strip_newlines | escape }}"
          hidden>
 
   <div class="dsr-kop">
@@ -57,6 +58,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
       </a>
     {%- endif -%}
+    <div class="dsr-pijlen" data-pijlen hidden>
+      <button type="button" data-pijl="-1" aria-label="Vorige producten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <button type="button" data-pijl="1" aria-label="Volgende producten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
   </div>
 
   <div class="dsr-spoor" data-spoor></div>
@@ -82,7 +87,6 @@
 #{{ rid }}.dsr-donker .dsr-sub{color:#ddd3f5}
 #{{ rid }}.dsr-donker .dsr-alles,#{{ rid }}.dsr-donker .dsr-alles:visited{color:#fff}
 #{{ rid }}.dsr-donker .dsr-fijn{color:#a899c9}
-#{{ rid }}.dsr-donker .dsr-spoor::-webkit-scrollbar-thumb{background:rgba(255,255,255,.3)}
 #{{ rid }} *{box-sizing:border-box}
 #{{ rid }} .dsr-kop{display:flex;align-items:flex-end;gap:12px;padding:0 16px;margin:0 0 12px}
 #{{ rid }} .dsr-kop>div{flex:1;min-width:0}
@@ -96,9 +100,18 @@
 #{{ rid }} .dsr-alles:hover{text-decoration:underline}
 
 #{{ rid }} .dsr-spoor{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 14px;scroll-snap-type:x mandatory;
- scrollbar-width:thin;-webkit-overflow-scrolling:touch}
-#{{ rid }} .dsr-spoor::-webkit-scrollbar{height:6px}
-#{{ rid }} .dsr-spoor::-webkit-scrollbar-thumb{background:var(--rd);border-radius:99px}
+ scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+/* De schuifbalk van de browser stond als een grijze streep onder de kaarten.
+   Schuiven kan nog steeds, met de vinger, het muiswiel of de pijlen in de kop. */
+#{{ rid }} .dsr-spoor::-webkit-scrollbar{display:none}
+#{{ rid }} .dsr-pijlen{flex:0 0 auto;display:flex;gap:6px;margin-left:6px}
+#{{ rid }} .dsr-pijlen[hidden]{display:none}
+#{{ rid }} .dsr-pijlen button{width:34px;height:34px;border-radius:50%;border:1px solid var(--rd);background:#fff;color:var(--pa);
+ display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+#{{ rid }} .dsr-pijlen button svg{width:16px;height:16px}
+#{{ rid }} .dsr-pijlen button:disabled{opacity:.35;cursor:default}
+#{{ rid }}.dsr-donker .dsr-pijlen button{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff}
+@media(max-width:640px){#{{ rid }} .dsr-pijlen{display:none}}
 #{{ rid }} .dsr-k{flex:0 0 160px;scroll-snap-align:start;display:flex;flex-direction:column;background:#fff;
  border:1px solid var(--rd);border-radius:14px;overflow:hidden;position:relative;
  transition:box-shadow .14s,border-color .14s}
@@ -174,40 +187,82 @@
 
   // Pas ophalen als de rij bijna in beeld komt. Op de homepage staan er straks
   // meerdere van deze blokjes en die hoeven niet allemaal direct te laden.
-  function start() {
+  function teken(items, gemaakt) {
+    if (!items.length) { w.hidden = true; return; }
+    spoor.innerHTML = items.map(function (x) {
+      var korting = (x.v > x.p) ? Math.round((1 - x.p / x.v) * 100) : 0;
+      var multi = x.o && x.o.length > 1;
+      var laagsteOoit = (typeof x.lp === 'number' && x.mt >= 2 && x.p <= x.lp + 0.005);
+      var badge = laagsteOoit ? '<span class="dsr-b laag">Laagste tot nu</span>'
+        : (multi ? '<span class="dsr-b multi">' + x.o.length + ' winkels</span>' : '');
+      var ga = API + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c);
+      return '<article class="dsr-k">' + badge +
+        '<div class="dsr-afb">' + (x.im ? '<img src="' + esc(x.im) + '" alt="' + esc(x.n) + '" loading="lazy" decoding="async">' : '') + '</div>' +
+        '<div class="dsr-in">' +
+        '<span class="dsr-merk">' + (x.b ? esc(x.b) : '&nbsp;') + '</span>' +
+        '<p class="dsr-naam">' + esc(x.n) + '</p>' +
+        '<div class="dsr-pr"><span class="dsr-p">' + eur(x.p) + '</span>' +
+        (korting ? '<span class="dsr-v">' + eur(x.v) + '</span><span class="dsr-kt">-' + korting + '%</span>' : '') +
+        '</div>' +
+        '<div class="dsr-w">' + (multi
+          ? '<b>' + esc(x.o[0].w) + '</b> &middot; tot ' + eur(x.o[x.o.length - 1].p) + ' elders'
+          : '<b>' + esc(x.o[0].w) + '</b>') + '</div>' +
+        '<a class="dsr-knop" href="' + ga + '" target="_blank" rel="sponsored noopener">Bekijk</a>' +
+        '</div></article>';
+    }).join('');
+
+    var dag = gemaakt ? String(gemaakt).slice(0, 10).split('-').reverse().join('-') : '';
+    fijn.innerHTML = (dag ? 'Prijzen bijgewerkt op ' + esc(dag) + '. ' : '') +
+      'Wij ontvangen een vergoeding als je iets koopt; jij betaalt hetzelfde.';
+    pijlenAan();
+  }
+
+  // Pijlen in de kop, in plaats van de schuifbalk van de browser.
+  function pijlenAan() {
+    var vak = w.querySelector('[data-pijlen]');
+    if (!vak) return;
+    var knoppen = vak.querySelectorAll('button');
+    function stand() {
+      var max = spoor.scrollWidth - spoor.clientWidth;
+      vak.hidden = max < 8;
+      knoppen[0].disabled = spoor.scrollLeft < 8;
+      knoppen[1].disabled = spoor.scrollLeft > max - 8;
+    }
+    for (var i = 0; i < knoppen.length; i++) {
+      knoppen[i].addEventListener('click', function () {
+        spoor.scrollBy({ left: (+this.getAttribute('data-pijl')) * Math.max(240, spoor.clientWidth * 0.8), behavior: 'smooth' });
+      });
+    }
+    spoor.addEventListener('scroll', stand, { passive: true });
+    window.addEventListener('resize', stand);
+    stand();
+  }
+
+  function lijst() {
     fetch(API + route + '?' + p.toString())
       .then(function (r) { return r.json(); })
-      .then(function (d) {
-        var items = (d && d.items) || [];
-        if (!items.length) { w.hidden = true; return; }
-
-        spoor.innerHTML = items.map(function (x) {
-          var korting = (x.v > x.p) ? Math.round((1 - x.p / x.v) * 100) : 0;
-          var multi = x.o && x.o.length > 1;
-          var laagsteOoit = (typeof x.lp === 'number' && x.mt >= 2 && x.p <= x.lp + 0.005);
-          var badge = laagsteOoit ? '<span class="dsr-b laag">Laagste tot nu</span>'
-            : (multi ? '<span class="dsr-b multi">' + x.o.length + ' winkels</span>' : '');
-          var ga = API + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c);
-          return '<article class="dsr-k">' + badge +
-            '<div class="dsr-afb">' + (x.im ? '<img src="' + esc(x.im) + '" alt="' + esc(x.n) + '" loading="lazy" decoding="async">' : '') + '</div>' +
-            '<div class="dsr-in">' +
-            '<span class="dsr-merk">' + (x.b ? esc(x.b) : '&nbsp;') + '</span>' +
-            '<p class="dsr-naam">' + esc(x.n) + '</p>' +
-            '<div class="dsr-pr"><span class="dsr-p">' + eur(x.p) + '</span>' +
-            (korting ? '<span class="dsr-v">' + eur(x.v) + '</span><span class="dsr-kt">-' + korting + '%</span>' : '') +
-            '</div>' +
-            '<div class="dsr-w">' + (multi
-              ? '<b>' + esc(x.o[0].w) + '</b> &middot; tot ' + eur(x.o[x.o.length - 1].p) + ' elders'
-              : '<b>' + esc(x.o[0].w) + '</b>') + '</div>' +
-            '<a class="dsr-knop" href="' + ga + '" target="_blank" rel="sponsored noopener">Bekijk</a>' +
-            '</div></article>';
-        }).join('');
-
-        var dag = d.gemaakt ? String(d.gemaakt).slice(0, 10) : '';
-        fijn.innerHTML = 'Prijzen bijgewerkt op ' + esc(dag) +
-          '. Wij ontvangen een vergoeding als je iets koopt; jij betaalt hetzelfde.';
-      })
+      .then(function (d) { teken((d && d.items) || [], d && d.gemaakt); })
       .catch(function () { w.hidden = true; });
+  }
+
+  // Uitgelicht: een vaste keuze van producten, in jouw volgorde. De gewone
+  // lijst sorteert op prijs of prijsverschil en dan komen er vooral
+  // accessoires bovenaan, want daar zijn er het meeste van. Voor de homepage
+  // wil je de dingen waar mensen voor komen. Lukt het ophalen van minder dan
+  // drie, dan valt de rij terug op de gewone lijst.
+  function start() {
+    var ids = (w.getAttribute('data-uitgelicht') || '').split(/[\s,;]+/).filter(Boolean);
+    if (!ids.length) return lijst();
+    Promise.all(ids.map(function (id) {
+      return fetch(API + '/api/shop/product?i=' + encodeURIComponent(id) + '&cat=' + encodeURIComponent(cat || 'gaming'))
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { return d && d.product && d.product.o && d.product.o.length ? d.product : null; })
+        .catch(function () { return null; });
+    })).then(function (ps) {
+      var items = ps.filter(Boolean);
+      if (items.length < 3) return lijst();
+      teken(items, new Date().toISOString());
+    });
   }
 
   // De sectie staat in de HTML op hidden, zodat er nooit een lege kop in beeld
@@ -434,6 +489,12 @@
         }
       ],
       "default": "verschil"
+    },
+    {
+      "type": "textarea",
+      "id": "uitgelicht",
+      "label": "Uitgelicht (product-id's)",
+      "info": "Een vaste keuze, in deze volgorde, gescheiden door een spatie of een nieuwe regel. Een id is de letter e met het EAN erachter, bijvoorbeeld e0711719020837. Leeg betekent de gewone lijst met de sortering hieronder."
     },
     {
       "type": "range",

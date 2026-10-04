@@ -141,13 +141,29 @@
         "blog_handle_2": "news",
         "eyebrow": "Vrijdag 27 november",
         "heading": "Black Friday 2026",
-        "subheading": "Wij meten vanaf nu elke nacht de prijs van ruim 56.000 producten. Op 27 november weten wij dus van elk product wat het de weken ervoor kostte, en dat is het enige harde bewijs dat een korting echt is.",
+        "subheading": "Wij meten vanaf nu elke nacht de prijs van ruim 60.000 producten. Op 27 november weten wij dus van elk product wat het de weken ervoor kostte, en dat is het enige harde bewijs dat een korting echt is.",
         "tag_filter": "black friday",
         "image_fit": "cover",
         "max_items": 6,
         "more_label": "Naar de Black Friday-pagina",
         "more_url": "/pages/black-friday",
         "verberg_na": "2026-12-01",
+        "melding_aan": false
+      }
+    },
+    "dpv-gaming-artikelen": {
+      "type": "dpv-blog-strip",
+      "settings": {
+        "blog_handle": "advies",
+        "blog_handle_2": "news",
+        "eyebrow": "Gaming",
+        "heading": "Wat het kost, en waar je het koopt",
+        "subheading": "Per game en per console uitgezocht wat de winkels vragen.",
+        "tag_filter": "gaming",
+        "image_fit": "cover",
+        "max_items": 3,
+        "more_label": "Alles in gaming",
+        "more_url": "/pages/gaming",
         "melding_aan": false
       }
     }
@@ -159,6 +175,7 @@
     "dpv-gidsen",
     "dpv-blackfriday-strip",
     "dpv-gaming-rij",
+    "dpv-gaming-artikelen",
     "dpv-energie-contracten",
     "dpv-kennisbank",
     "dpv-waarom",

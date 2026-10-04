@@ -23,24 +23,6 @@
         "seo_html": "<p>Vergelijk de goedkoopste <a href=\"/pages/sim-only\">sim only abonnementen</a> van KPN, Odido, Vodafone, <a href=\"/pages/providers-simyo\">Simyo</a> en <a href=\"/pages/providers-ben\">Ben</a>. Een sim only abonnement begint al rond 5 euro per maand voor een kleine databundel en loopt op tot onbeperkt internet. Je houdt je eigen telefoon en betaalt alleen voor data, bellen en sms. Bekijk ook de <a href=\"/pages/goedkoopste-sim-only-deze-maand\">goedkoopste sim only deze maand</a> of lees in onze gids <a href=\"/blogs/advies/hoeveel-gb-data-heb-je-nodig\">hoeveel GB data je echt nodig hebt</a>.</p><p>Vergelijk een <a href=\"/pages/telefoonabonnement\">telefoon met abonnement</a> van de nieuwste modellen zoals de iPhone 17, Samsung Galaxy S26 en OnePlus, in combinatie met een abonnement van KPN, Odido of Vodafone. Let bij een toestel op afbetaling altijd op de totaalprijs over de looptijd, niet alleen de maandprijs. Heb je al een goede telefoon? Dan ben je vaak voordeliger uit met <a href=\"/pages/sim-only\">sim only</a>. Twijfel je? Lees <a href=\"/blogs/advies/sim-only-of-abonnement-met-toestel\">sim only of een abonnement met toestel</a>. Wacht je op het nieuwste model, bekijk dan <a href=\"/pages/iphone-18\">alles over de iPhone 18</a>.</p><p>Vergelijk <a href=\"/pages/internet-tv\">internet en TV pakketten</a> van Ziggo, <a href=\"/pages/providers-kpn\">KPN</a>, <a href=\"/pages/providers-odido\">Odido</a>, <a href=\"/pages/providers-vodafone\">Vodafone</a> en DELTA. Kies tussen glasvezel, kabel of DSL en bepaal of je een alles-in-1 pakket met televisie wilt of internet-only. Voor een gemiddeld huishouden volstaat 100 tot 300 Mbit/s. Lees meer over <a href=\"/blogs/advies/glasvezel-kabel-of-dsl-internet-kiezen\">glasvezel, kabel of DSL kiezen</a>.</p><p>Nieuw: vergelijk ook <a href=\"/pages/energie\">energie</a>. Wij rekenen je hele rekening door, dus levering, energiebelasting, netbeheerkosten en de vermindering van €629 per jaar, en niet alleen het tarief per kWh. Zo zie je wat een contract je echt kost bij jouw verbruik.</p>"
       }
     },
-    "dpv-energie-contracten": {
-      "type": "dpv-home-contracten",
-      "settings": {
-        "toon_energie": false,
-        "energie_titel": "Energie vergelijken",
-        "energie_sub": "Je hele rekening doorgerekend, niet alleen de prijs per kWh",
-        "energie_url": "/pages/energie",
-        "beeld": "shopify://shop_images/dpv-mc-toestel.png",
-        "mc_label": "Mijn contracten",
-        "mc_titel": "Wij zeggen het wanneer je te veel betaalt",
-        "mc_sub": "Leg één keer vast wat je nu betaalt voor telecom, energie en zorg. Wij vergelijken dat elke ochtend met de markt en sturen bericht zodra je kunt overstappen of verlengen.",
-        "mc_cta": "Mijn contracten openen",
-        "mc_cta2": "Scan je factuur",
-        "mc_fijn": "Gratis. Geen bankkoppeling, geen wachtwoord. Alleen wat je zelf opgeeft.",
-        "mc_voorbeeld": "De bedragen in de melding zijn voorbeelden op basis van de gemiddelde prijsontwikkeling.",
-        "mc_url": "https://mijn.deprijsvergelijker.com/mijn-contracten"
-      }
-    },
     "dpv-iphone18": {
       "type": "dpv-blog-strip",
       "settings": {
@@ -176,7 +158,6 @@
     "dpv-blackfriday-strip",
     "dpv-gaming-rij",
     "dpv-gaming-artikelen",
-    "dpv-energie-contracten",
     "dpv-kennisbank",
     "dpv-waarom",
     "dpv-app-knop",

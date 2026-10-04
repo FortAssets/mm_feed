@@ -1,0 +1,221 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+.pvf{background:linear-gradient(160deg,#1e3a8a 0%,#172b63 60%,#13234f 100%);color:#b8c4e0;padding:58px 0 0;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.pvf-wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+.pvf-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:26px;margin-bottom:44px}
+.pvf-grid>*{min-width:0}
+.pvf-logo{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;font-size:26px;text-decoration:none;letter-spacing:-.01em;display:inline-block;margin-bottom:14px;line-height:1;background:linear-gradient(135deg,#fff,#bfd2ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#fff}
+.pvf-logo .g{-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:#10b981;color:#10b981}
+.pvf-brand p{font-size:14px;line-height:1.65;color:#9fb0d4;max-width:262px;margin-bottom:20px}
+.pvf-badges{display:flex;gap:10px;flex-wrap:wrap}
+.pvf-badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:600;color:#cdd7ee;display:flex;align-items:center;gap:6px}
+.pvf-col h5{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:16px;letter-spacing:.04em;text-transform:uppercase}
+.pvf-col ul{list-style:none;display:flex;flex-direction:column;gap:9px;margin:0;padding:0}
+.pvf-col ul a{font-size:13px;color:#9fb0d4;text-decoration:none;transition:color .15s;overflow-wrap:break-word;word-break:break-word}
+.pvf-col ul a:hover{color:#fff}
+.pvf-col ul a:focus-visible{outline:2px solid #10b981;outline-offset:3px;border-radius:3px}
+.pvf-col ul a.pvf-uit{color:#cdd7ee;font-weight:700}
+.pvf-bottom{border-top:1px solid rgba(255,255,255,.12);padding:20px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.pvf-bottom p{font-size:12px;color:#8295bb}
+.pvf-bottom-links{display:flex;gap:20px;flex-wrap:wrap}
+.pvf-bottom-links a{font-size:12px;color:#8295bb;text-decoration:none}
+.pvf-bottom-links a:hover{color:#cdd7ee}
+.pvf-trustpilot{display:inline-flex;align-items:center;gap:8px;width:fit-content;max-width:100%;box-sizing:border-box;flex-wrap:wrap;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;margin-top:20px}
+.pvf-trustpilot .stars{color:#10b981;font-size:15px;letter-spacing:.5px;white-space:nowrap}
+.pvf-trustpilot span{font-size:12px;color:#9fb0d4}
+.pvf-trustpilot strong{color:#fff;font-size:14px}
+@media(max-width:1024px){.pvf-grid{grid-template-columns:1fr 1fr 1fr;gap:30px 24px}.pvf-brand{grid-column:1/-1}.pvf-brand p{max-width:520px}}
+@media(max-width:640px){.pvf{padding:44px 0 0}.pvf-wrap{padding:0 20px}.pvf-grid{grid-template-columns:1fr 1fr;gap:28px 20px}.pvf-brand{grid-column:1/-1}.pvf-bottom{flex-direction:column;text-align:center;align-items:center}}
+@media(max-width:380px){.pvf-grid{grid-template-columns:1fr}}
+</style>
+
+{%- assign pvloc = request.locale.iso_code | slice: 0, 2 | downcase -%}
+{%- assign pvsupported = 'nl,en,tr,pl,uk' | split: ',' -%}
+{%- unless pvsupported contains pvloc -%}{%- assign pvloc = 'nl' -%}{%- endunless -%}
+{%- case pvloc -%}
+{%- when 'en' -%}
+  {%- assign f_tag = 'Independent comparison for phone, SIM only, internet and energy. We help you find the best deal &mdash; honest, fast and free.' -%}
+  {%- assign f_b1 = '100% independent' -%}{%- assign f_b2 = 'Safe &amp; reliable' -%}{%- assign f_b3 = 'Free switching service' -%}
+  {%- assign f_c1 = 'Compare' -%}{%- assign f_l1 = 'Internet &amp; TV' -%}{%- assign f_l2 = 'Phone + plan' -%}{%- assign f_l4c = 'Best phone deals this month' -%}{%- assign f_l3 = 'SIM only' -%}{%- assign f_l4 = 'Daily deals' -%}{%- assign f_zp = 'TV channels &amp; packages' -%}
+  {%- assign f_ap = 'All prices today' -%}{%- assign f_zv = 'Health insurance' -%}
+  {%- assign f_en = 'Energy (electricity &amp; gas)' -%}{%- assign f_c2 = 'SIM only guide' -%}{%- assign f_l5 = 'What is SIM only?' -%}{%- assign f_l6 = 'Cheapest SIM only' -%}{%- assign f_l6b = 'Cheapest SIM only this month' -%}{%- assign f_l7 = '5G SIM only' -%}{%- assign f_l8 = 'How to switch?' -%}{%- assign f_buit = 'Calling abroad' -%}{%- assign f_vak = 'Internet on holiday & eSIM' -%}{%- assign f_prov = 'All providers' -%}
+  {%- assign f_c4 = 'Advice &amp; knowledge' -%}{%- assign f_a0 = 'All articles' -%}{%- assign f_a1 = 'SIM only or phone + plan?' -%}{%- assign f_a2 = 'How much data do you need?' -%}{%- assign f_a3 = 'Fibre, cable or DSL?' -%}
+  {%- assign f_c5 = 'Providers' -%}{%- assign f_c6 = 'New &amp; expected' -%}{%- assign f_n0 = 'All news' -%}
+  {%- assign f_c3 = 'About us' -%}{%- assign f_l9 = 'About De Prijsvergelijker' -%}{%- assign f_l10 = 'Frequently asked questions' -%}{%- assign f_l11 = 'Contact' -%}{%- assign f_l12 = 'Privacy statement' -%}{%- assign f_l13 = 'Disclaimer' -%}
+  {%- assign f_score = 'Customer score' -%}{%- assign f_rights = 'All rights reserved' -%}
+  {%- assign f_priv = 'Privacy' -%}{%- assign f_terms = 'Terms' -%}{%- assign f_smap = 'Sitemap' -%}
+{%- when 'tr' -%}
+  {%- assign f_tag = 'Telefon, sadece SIM, internet ve enerji için bağımsız karşılaştırma. En iyi fırsatı bulmanıza yardımcı oluruz &mdash; dürüst, hızlı ve ücretsiz.' -%}
+  {%- assign f_b1 = '100% bağımsız' -%}{%- assign f_b2 = 'Güvenli ve güvenilir' -%}{%- assign f_b3 = 'Ücretsiz geçiş hizmeti' -%}
+  {%- assign f_c1 = 'Karşılaştır' -%}{%- assign f_l1 = 'İnternet ve TV' -%}{%- assign f_l2 = 'Telefon + abonelik' -%}{%- assign f_l4c = 'Bu ayın en iyi telefon fırsatları' -%}{%- assign f_l3 = 'Sadece SIM' -%}{%- assign f_l4 = 'Günlük fırsatlar' -%}{%- assign f_zp = 'TV kanalları ve paketleri' -%}
+  {%- assign f_ap = 'Bugünkü tüm fiyatlar' -%}{%- assign f_zv = 'Sağlık sigortası' -%}
+  {%- assign f_en = 'Enerji (elektrik ve gaz)' -%}{%- assign f_c2 = 'Sadece SIM rehberi' -%}{%- assign f_l5 = 'Sadece SIM nedir?' -%}{%- assign f_l6 = 'En ucuz sadece SIM' -%}{%- assign f_l6b = 'Bu ayın en ucuz sadece SIM' -%}{%- assign f_l7 = '5G sadece SIM' -%}{%- assign f_l8 = 'Nasıl geçilir?' -%}{%- assign f_buit = 'Yurt dışında arama' -%}{%- assign f_vak = 'Tatilde internet & eSIM' -%}{%- assign f_prov = 'Tüm sağlayıcılar' -%}
+  {%- assign f_c4 = 'Tavsiye ve bilgi' -%}{%- assign f_a0 = 'Tüm makaleler' -%}{%- assign f_a1 = 'Sadece SIM mi, telefonlu mu?' -%}{%- assign f_a2 = 'Ne kadar internet gerekir?' -%}{%- assign f_a3 = 'Fiber, kablo mu DSL mi?' -%}
+  {%- assign f_c5 = 'Sağlayıcılar' -%}{%- assign f_c6 = 'Yeni ve beklenen' -%}{%- assign f_n0 = 'Tüm haberler' -%}
+  {%- assign f_c3 = 'Hakkımızda' -%}{%- assign f_l9 = 'De Prijsvergelijker hakkında' -%}{%- assign f_l10 = 'Sıkça sorulan sorular' -%}{%- assign f_l11 = 'İletişim' -%}{%- assign f_l12 = 'Gizlilik beyanı' -%}{%- assign f_l13 = 'Sorumluluk reddi' -%}
+  {%- assign f_score = 'Müşteri puanı' -%}{%- assign f_rights = 'Tüm hakları saklıdır' -%}
+  {%- assign f_priv = 'Gizlilik' -%}{%- assign f_terms = 'Koşullar' -%}{%- assign f_smap = 'Site haritası' -%}
+{%- when 'pl' -%}
+  {%- assign f_tag = 'Niezależne porównanie telefonów, SIM only, Internetu i energii. Pomagamy znaleźć najlepszą ofertę &mdash; uczciwie, szybko i za darmo.' -%}
+  {%- assign f_b1 = '100% niezależny' -%}{%- assign f_b2 = 'Bezpieczny i niezawodny' -%}{%- assign f_b3 = 'Bezpłatna usługa zmiany' -%}
+  {%- assign f_c1 = 'Porównaj' -%}{%- assign f_l1 = 'Internet i TV' -%}{%- assign f_l2 = 'Telefon + abonament' -%}{%- assign f_l4c = 'Najlepsze oferty telefonów w tym miesiącu' -%}{%- assign f_l3 = 'SIM only' -%}{%- assign f_l4 = 'Codzienne oferty' -%}{%- assign f_zp = 'Kanały TV i pakiety' -%}
+  {%- assign f_ap = 'Wszystkie ceny dzisiaj' -%}{%- assign f_zv = 'Ubezpieczenie zdrowotne' -%}
+  {%- assign f_en = 'Energia (prąd i gaz)' -%}{%- assign f_c2 = 'Przewodnik SIM only' -%}{%- assign f_l5 = 'Co to jest SIM only?' -%}{%- assign f_l6 = 'Najtańszy SIM only' -%}{%- assign f_l6b = 'Najtańszy SIM only w tym miesiącu' -%}{%- assign f_l7 = '5G SIM only' -%}{%- assign f_l8 = 'Jak zmienić?' -%}{%- assign f_buit = 'Dzwonienie za granicą' -%}{%- assign f_vak = 'Internet na wakacjach i eSIM' -%}{%- assign f_prov = 'Wszyscy operatorzy' -%}
+  {%- assign f_c4 = 'Porady i wiedza' -%}{%- assign f_a0 = 'Wszystkie artykuły' -%}{%- assign f_a1 = 'SIM only czy z telefonem?' -%}{%- assign f_a2 = 'Ile danych potrzebujesz?' -%}{%- assign f_a3 = 'Światłowód, kabel czy DSL?' -%}
+  {%- assign f_c5 = 'Operatorzy' -%}{%- assign f_c6 = 'Nowe i oczekiwane' -%}{%- assign f_n0 = 'Wszystkie nowości' -%}
+  {%- assign f_c3 = 'O nas' -%}{%- assign f_l9 = 'O De Prijsvergelijker' -%}{%- assign f_l10 = 'Często zadawane pytania' -%}{%- assign f_l11 = 'Kontakt' -%}{%- assign f_l12 = 'Oświadczenie o prywatności' -%}{%- assign f_l13 = 'Zastrzeżenie' -%}
+  {%- assign f_score = 'Ocena klientów' -%}{%- assign f_rights = 'Wszelkie prawa zastrzeżone' -%}
+  {%- assign f_priv = 'Prywatność' -%}{%- assign f_terms = 'Warunki' -%}{%- assign f_smap = 'Mapa strony' -%}
+{%- when 'uk' -%}
+  {%- assign f_tag = 'Незалежне порівняння телефонів, SIM only, Інтернету та енергії. Ми допоможемо знайти найкращу пропозицію &mdash; чесно, швидко та безкоштовно.' -%}
+  {%- assign f_b1 = '100% незалежний' -%}{%- assign f_b2 = 'Безпечно та надійно' -%}{%- assign f_b3 = 'Безкоштовний перехід' -%}
+  {%- assign f_c1 = 'Порівняти' -%}{%- assign f_l1 = 'Інтернет та TV' -%}{%- assign f_l2 = 'Телефон + контракт' -%}{%- assign f_l4c = 'Найкращі пропозиції телефонів цього місяця' -%}{%- assign f_l3 = 'Тільки SIM' -%}{%- assign f_l4 = 'Щоденні пропозиції' -%}{%- assign f_zp = 'ТВ-канали та пакети' -%}
+  {%- assign f_ap = 'Усі ціни сьогодні' -%}{%- assign f_zv = 'Медичне страхування' -%}
+  {%- assign f_en = 'Енергія (світло та газ)' -%}{%- assign f_c2 = 'Посібник SIM only' -%}{%- assign f_l5 = 'Що таке тільки SIM?' -%}{%- assign f_l6 = 'Найдешевший тільки SIM' -%}{%- assign f_l6b = 'Найдешевший тільки SIM цього місяця' -%}{%- assign f_l7 = '5G тільки SIM' -%}{%- assign f_l8 = 'Як перейти?' -%}{%- assign f_buit = 'Дзвінки за кордоном' -%}{%- assign f_vak = 'Інтернет у відпустці та eSIM' -%}{%- assign f_prov = 'Усі оператори' -%}
+  {%- assign f_c4 = 'Поради та знання' -%}{%- assign f_a0 = 'Усі статті' -%}{%- assign f_a1 = 'Тільки SIM чи з телефоном?' -%}{%- assign f_a2 = 'Скільки даних потрібно?' -%}{%- assign f_a3 = 'Оптоволокно, кабель чи DSL?' -%}
+  {%- assign f_c5 = 'Оператори' -%}{%- assign f_c6 = 'Нове та очікуване' -%}{%- assign f_n0 = 'Усі новини' -%}
+  {%- assign f_c3 = 'Про нас' -%}{%- assign f_l9 = 'Про De Prijsvergelijker' -%}{%- assign f_l10 = 'Часті запитання' -%}{%- assign f_l11 = 'Контакт' -%}{%- assign f_l12 = 'Заява про конфіденційність' -%}{%- assign f_l13 = 'Відмова від відповідальності' -%}
+  {%- assign f_score = 'Оцінка клієнтів' -%}{%- assign f_rights = 'Усі права захищені' -%}
+  {%- assign f_priv = 'Конфіденційність' -%}{%- assign f_terms = 'Умови' -%}{%- assign f_smap = 'Карта сайту' -%}
+{%- else -%}
+  {%- assign f_tag = 'Onafhankelijk vergelijken voor telefoon, sim only, internet en energie. Wij helpen jou de beste deal te vinden &mdash; eerlijk, snel en gratis.' -%}
+  {%- assign f_b1 = '100% onafhankelijk' -%}{%- assign f_b2 = 'Veilig &amp; betrouwbaar' -%}{%- comment -%} 22 sep: was 'Gratis overstapservice'. Die service bieden de aanbieders, niet wij; de claim klopte dus niet. {%- endcomment -%}{%- assign f_b3 = 'Gratis te gebruiken' -%}
+  {%- assign f_c1 = 'Vergelijken' -%}{%- assign f_l1 = 'Internet &amp; TV' -%}{%- assign f_l2 = 'Telefoon + abonnement' -%}{%- assign f_l4c = 'Beste telefoondeals deze maand' -%}{%- assign f_l3 = 'Sim only' -%}{%- assign f_l4 = 'Dagelijkse deals' -%}{%- assign f_zp = 'Tv-zenders &amp; pakketten' -%}
+  {%- assign f_ap = 'Alle prijzen van vandaag' -%}{%- assign f_zv = 'Zorgverzekering' -%}
+  {%- assign f_en = 'Energie (stroom &amp; gas)' -%}{%- assign f_c2 = 'Sim only gids' -%}{%- assign f_l5 = 'Wat is sim only?' -%}{%- assign f_l6 = 'Goedkoopste sim only' -%}{%- assign f_l6b = 'Goedkoopste sim only deze maand' -%}{%- assign f_l7 = '5G sim only' -%}{%- assign f_l8 = 'Hoe overstappen?' -%}{%- assign f_buit = 'Bellen in het buitenland' -%}{%- assign f_vak = 'Internet op vakantie & eSIM' -%}{%- assign f_prov = 'Alle providers' -%}
+  {%- assign f_c4 = 'Advies &amp; kennisbank' -%}{%- assign f_a0 = 'Alle artikelen' -%}{%- assign f_a1 = 'Sim only of toestel erbij?' -%}{%- assign f_a2 = 'Hoeveel data heb je nodig?' -%}{%- assign f_a3 = 'Glasvezel, kabel of DSL?' -%}
+  {%- assign f_c5 = 'Providers' -%}{%- assign f_c6 = 'Nieuw &amp; verwacht' -%}{%- assign f_n0 = 'Al het nieuws' -%}
+  {%- assign f_c3 = 'Over ons' -%}{%- assign f_l9 = 'Over De Prijsvergelijker' -%}{%- assign f_l10 = 'Veelgestelde vragen' -%}{%- assign f_l11 = 'Contact' -%}{%- assign f_l12 = 'Privacyverklaring' -%}{%- assign f_l13 = 'Disclaimer' -%}
+  {%- assign f_score = 'Klantscore' -%}{%- assign f_rights = 'Alle rechten voorbehouden' -%}
+  {%- assign f_priv = 'Privacy' -%}{%- assign f_terms = 'Voorwaarden' -%}{%- assign f_smap = 'Sitemap' -%}
+{%- endcase -%}
+
+<footer class="pvf" role="contentinfo" aria-label="{{ f_c3 | strip_html }}">
+  <div class="pvf-wrap">
+    <div class="pvf-grid">
+      <div class="pvf-brand">
+        <a href="/" class="pvf-logo" aria-label="De Prijsvergelijker home">De<span class="g">Prijs</span>vergelijker</a>
+        <p>{{ f_tag }}</p>
+        <div class="pvf-badges">
+          <div class="pvf-badge">&#9989; {{ f_b1 }}</div>
+          <div class="pvf-badge">&#128274; {{ f_b2 }}</div>
+          <div class="pvf-badge">&#9889; {{ f_b3 }}</div>
+        </div>
+      </div>
+      <nav class="pvf-col" aria-label="{{ f_c1 | strip_html }}">
+        <h5>{{ f_c1 }}</h5>
+        <ul>
+          <li><a class="pvf-uit" href="/pages/alle-prijzen">{{ f_ap }}</a></li>
+          <li><a href="/pages/telefoonabonnement">{{ f_l2 }}</a></li>
+          <li><a href="/pages/beste-telefoon-deals-deze-maand">{{ f_l4c }}</a></li>
+          <li><a href="/pages/sim-only">{{ f_l3 }}</a></li>
+          <li><a href="/pages/internet-tv">{{ f_l1 }}</a></li>
+          <li><a href="/pages/energie">{{ f_en }}</a></li>
+          <li><a href="/pages/zorgverzekering">{{ f_zv }}</a></li>
+          <li><a href="/pages/zenderpakketten">{{ f_zp }}</a></li>
+          <li><a href="/pages/bellen-internet-buitenland">{{ f_buit }}</a></li>
+          <li><a href="/pages/internet-op-vakantie">{{ f_vak }}</a></li>
+          <li><a href="/pages/dagelijkse-deals">{{ f_l4 }}</a></li>
+          <li><a href="/pages/vergelijken">Productvergelijker</a></li>
+          <li><a href="/pages/gaming">Gaming</a></li>
+          <li><a href="/pages/black-friday">Black Friday 2026</a></li>
+          <li><a href="/pages/mijn-contracten">Mijn contracten</a></li>
+        </ul>
+      </nav>
+      <nav class="pvf-col" aria-label="{{ f_c2 | strip_html }}">
+        <h5>{{ f_c2 }}</h5>
+        <ul>
+          <li><a href="/pages/wat-is-sim-only">{{ f_l5 }}</a></li>
+          <li><a href="/pages/goedkoopste-sim-only">{{ f_l6 }}</a></li>
+          <li><a href="/pages/goedkoopste-sim-only-deze-maand">{{ f_l6b }}</a></li>
+          <li><a href="/pages/5g-sim-only">{{ f_l7 }}</a></li>
+          <li><a href="/pages/hoe-overstappen">{{ f_l8 }}</a></li>
+        </ul>
+      </nav>
+      <nav class="pvf-col" aria-label="{{ f_c5 | strip_html }}">
+        <h5>{{ f_c5 }}</h5>
+        <ul>
+          <li><a href="/pages/providers-kpn">KPN</a></li>
+          <li><a href="/pages/providers-odido">Odido</a></li>
+          <li><a href="/pages/providers-vodafone">Vodafone</a></li>
+          <li><a href="/pages/providers-ben">Ben</a></li>
+          <li><a href="/pages/providers-simyo">Simyo</a></li>
+          <li><a href="/pages/providers">{{ f_prov }}</a></li>
+        </ul>
+      </nav>
+      <nav class="pvf-col" aria-label="{{ f_c4 | strip_html }}">
+        <h5>{{ f_c4 }}</h5>
+        <ul>
+          <li><a href="/blogs/advies">{{ f_a0 }}</a></li>
+          <li><a href="/blogs/advies/sim-only-of-abonnement-met-toestel">{{ f_a1 }}</a></li>
+          <li><a href="/blogs/advies/hoeveel-gb-data-heb-je-nodig">{{ f_a2 }}</a></li>
+          <li><a href="/blogs/advies/glasvezel-kabel-of-dsl-internet-kiezen">{{ f_a3 }}</a></li>
+          <li><a href="/blogs/advies/energierekening-opbouw-2026">Je energierekening uitgelegd</a></li>
+          <li><a href="/blogs/advies/netbeheerkosten-2026">Netbeheerkosten 2026</a></li>
+          <li><a href="/blogs/advies/eigen-risico-2027-400-euro">Eigen risico 2027</a></li>
+          <li><a href="/blogs/advies/einde-salderen-2027-energiecontract">Einde salderen in 2027</a></li>
+          <li><a href="/blogs/advies/vast-variabel-of-dynamisch-energiecontract">Vast, variabel of dynamisch</a></li>
+          <li><a href="/blogs/advies/android-vs-ios-in-2026-welk-besturingssysteem-past-bij-jou">Android vs iOS</a></li>
+          <li><a href="/blogs/advies/samsung-vs-oneplus-vs-oppo-welke-android-topper-past-bij-jou">Samsung vs OnePlus vs OPPO</a></li>
+        </ul>
+      </nav>
+      <nav class="pvf-col" aria-label="{{ f_c6 | strip_html }}">
+        <h5>{{ f_c6 }}</h5>
+        <ul>
+          <li><a href="/pages/iphone-18-pre-order">iPhone 18 Pro pre-order</a></li>
+          <li><a href="/blogs/news">{{ f_n0 }}</a></li>
+          <li><a href="/blogs/advies/nieuw-verwacht-tweede-helft-2026-samsung-unpacked-iphone-18-vouwbare-iphone">Wat komt er nog aan in 2026?</a></li>
+          <li><a href="/blogs/advies/samsung-galaxy-z-fold-8-en-z-flip-8-dit-weten-we-vlak-voor-unpacked">Galaxy Z Fold 8 &amp; Flip 8</a></li>
+          <li><a href="/blogs/advies/iphone-18-serie-pro-pro-max-vouwbare-iphone-en-de-air-2-alle-geruchten">iPhone 18-serie</a></li>
+          <li><a href="/blogs/advies/samsung-galaxy-s27-serie-eerste-geruchten-over-vier-nieuwe-vlaggenschepen">Galaxy S27-serie</a></li>
+        </ul>
+      </nav>
+      <nav class="pvf-col" aria-label="{{ f_c3 | strip_html }}">
+        <h5>{{ f_c3 }}</h5>
+        <ul>
+          <li><a href="/pages/over-ons">{{ f_l9 }}</a></li>
+          <li><a href="/pages/veelgestelde-vragen">{{ f_l10 }}</a></li>
+          <li><a href="/pages/contact-1">{{ f_l11 }}</a></li>
+          <li><a href="/pages/privacyverklaring-de-prijsvergelijker">{{ f_l12 }}</a></li>
+          <li><a href="/pages/privacy-mijn-contracten">Privacy Mijn contracten</a></li>
+          <li><a href="/pages/disclaimer">{{ f_l13 }}</a></li>
+        </ul>
+        <div class="pvf-trustpilot">
+          <div class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <div><strong>9.2</strong><br><span>{{ f_score }}</span></div>
+        </div>
+      </nav>
+    </div>
+    <div class="pvf-bottom">
+      <p>&copy; {{ 'now' | date: '%Y' }} DePrijsvergelijker.com &mdash; {{ f_rights }}</p>
+      <div class="pvf-bottom-links">
+        <a href="/pages/sitemap">{{ f_smap }}</a>
+        <a href="/pages/privacyverklaring-de-prijsvergelijker">{{ f_priv }}</a>
+        <a href="/pages/algemene-voorwaarden">{{ f_terms }}</a>
+        <a href="/pages/disclaimer">{{ f_l13 }}</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "De Prijsvergelijker",
+  "url": "{{ shop.url }}",
+  "description": "Onafhankelijk vergelijkingsplatform voor telefoonabonnementen, sim only, internet, energie en zorgverzekeringen in Nederland.",
+  "areaServed": "NL",
+  "knowsAbout": ["sim only", "telefoonabonnement", "internet en tv", "mobiele providers", "energie vergelijken", "stroom en gas", "energiecontract", "zorgverzekering", "basisverzekering"]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "De Prijsvergelijker",
+  "url": "{{ shop.url }}"
+}
+</script>
+{% schema %}{"name":"PV Footer","settings":[],"presets":[{"name":"PV Footer"}]}{% endschema %}

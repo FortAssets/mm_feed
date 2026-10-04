@@ -1,0 +1,25 @@
+{
+  "sections": {
+    "contracten": {
+      "type": "dpv-home-contracten",
+      "settings": {
+        "toon_energie": false,
+        "energie_titel": "Energie vergelijken",
+        "energie_sub": "Je hele rekening doorgerekend, niet alleen de prijs per kWh",
+        "energie_url": "/pages/energie",
+        "beeld": "shopify://shop_images/dpv-mc-toestel.png",
+        "mc_label": "Mijn contracten",
+        "mc_titel": "Wij zeggen het wanneer je te veel betaalt",
+        "mc_sub": "Leg één keer vast wat je nu betaalt voor telecom, energie en zorg. Wij vergelijken dat elke ochtend met de markt en sturen bericht zodra je kunt overstappen of verlengen.",
+        "mc_cta": "Mijn contracten openen",
+        "mc_cta2": "Scan je factuur",
+        "mc_fijn": "Gratis. Geen bankkoppeling, geen wachtwoord. Alleen wat je zelf opgeeft.",
+        "mc_voorbeeld": "De bedragen in de melding zijn voorbeelden op basis van de gemiddelde prijsontwikkeling.",
+        "mc_url": "https://mijn.deprijsvergelijker.com/mijn-contracten"
+      }
+    }
+  },
+  "order": [
+    "contracten"
+  ]
+}

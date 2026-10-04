@@ -273,18 +273,31 @@
   function geloofwaardig(x) {
     if (!x.o || !x.o.length || !(x.p > 0)) return false;
     if (x.o.length > 1 && x.o[0].p < x.o[1].p * 0.6) return false;
+    // Meer dan 70% korting volgens de winkel zelf: zo goed als altijd een fout
+    // van-prijs, of een maandbedrag dat als prijs in de feed staat.
+    if (x.v > x.p && x.p < x.v * 0.3) return false;
     return true;
   }
+  function band(x) { return x.p < 100 ? 'a' : x.p < 300 ? 'b' : x.p < 800 ? 'c' : 'd'; }
   function mix(items, n) {
     var goed = items.filter(geloofwaardig), uit = [], gehad = {};
-    [[1, 2, 3], [1, 3, 5], [1, 99, 99]].forEach(function (g) {
-      var fam = {}, per = {}, ct = {};
-      uit.forEach(function (x) { fam[familie(x)] = 1; per[x.o[0].w] = (per[x.o[0].w] || 0) + 1; ct[x.c] = (ct[x.c] || 0) + 1; });
+    var perBand = Math.ceil(n / 3);
+    // [per winkel, per categorie, per type, per prijsklasse]; elke ronde ruimer.
+    [[2, 3, 3, perBand, 2], [3, 5, 4, perBand + 2, 3], [99, 99, 99, 99, 99]].forEach(function (g) {
+      var fam = {}, per = {}, ct = {}, ty = {}, bd = {}, mk = {};
+      function merk(x) { return String(x.b || String(x.n || '').split(' ')[0]).toLowerCase(); }
+      function tel(x) {
+        fam[familie(x)] = 1; per[x.o[0].w] = (per[x.o[0].w] || 0) + 1; ct[x.c] = (ct[x.c] || 0) + 1;
+        if (x.t) ty[x.t] = (ty[x.t] || 0) + 1;
+        bd[band(x)] = (bd[band(x)] || 0) + 1;
+        mk[merk(x)] = (mk[merk(x)] || 0) + 1;
+      }
+      uit.forEach(tel);
       goed.forEach(function (x) {
         if (uit.length >= n || gehad[x.i]) return;
-        var f = familie(x), wk = x.o[0].w;
-        if (fam[f] || (per[wk] || 0) >= g[1] || (ct[x.c] || 0) >= g[2]) return;
-        fam[f] = 1; per[wk] = (per[wk] || 0) + 1; ct[x.c] = (ct[x.c] || 0) + 1; gehad[x.i] = 1; uit.push(x);
+        if (fam[familie(x)] || (per[x.o[0].w] || 0) >= g[0] || (!cat && (ct[x.c] || 0) >= g[1]) ||
+            (x.t && (ty[x.t] || 0) >= g[2]) || (bd[band(x)] || 0) >= g[3] || (mk[merk(x)] || 0) >= g[4]) return;
+        tel(x); gehad[x.i] = 1; uit.push(x);
       });
     });
     // Om en om per winkel, zodat de eerste kaarten al verschillen.

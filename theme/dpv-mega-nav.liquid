@@ -1,0 +1,389 @@
+{%- comment -%}
+  DPV uitklapmenu.
+
+  Aparte sectie in plaats van een wijziging in pv-header.liquid. Die header is
+  meertalig en dat wil ik niet aanraken voor een navigatiewijziging.
+
+  Waarom in Liquid en niet met JavaScript vanuit de overlay: de zestig links
+  in deze panelen zijn de hele reden om dit te bouwen. Ze moeten in de HTML
+  staan die Google ophaalt, niet pas na het uitvoeren van een script.
+
+  Alle links zijn nagekeken tegen de sitemap. Er staat niets in wat niet
+  bestaat; ontbrekende onderwerpen zijn weggelaten in plaats van gegokt.
+
+  Deze sectie vervangt de linkrij van de oude header (.pvnav-links), die
+  hieronder met CSS verborgen wordt. Het logo en de rechterknoppen daar
+  blijven staan.
+
+  19 sep: de zakelijke links wijzen nu rechtstreeks naar de eigen zakelijke
+  pagina's. Ze gingen naar /pages/sim-only?zakelijk=1, en dat werkte alleen
+  doordat de vergelijker zo'n bezoeker doorstuurde. Voor een bezoeker is dat
+  een extra paginalading, en Google zag de oude link staan en volgde de
+  doorverwijzing niet als een echte verwijzing. Nu staan er drie: sim only,
+  internet en met toestel, elk vanuit de bijbehorende categorie.
+{%- endcomment -%}
+
+{%- assign p = '/pages/' -%}
+{%- assign a = '/blogs/advies/' -%}
+{%- assign n = '/blogs/news/' -%}
+
+<style>
+/* De oude linkrij verbergen; logo en knoppen blijven. */
+.pvnav-links{display:none !important}
+
+/* De 9,2-badge uit de header. Vertrouwen hoort waar iemand twijfelt — in de
+   hero en naast de dealkaarten — niet in de rij waarmee hij navigeert. De
+   score staat bovendien al twee keer elders op de pagina. */
+.pvnav-rating{display:none !important}
+
+.dmn{background:#fff;border-bottom:1px solid #e8edf5;position:relative;z-index:60;font-family:'Inter',system-ui,sans-serif}
+
+.dmn-zak{
+  margin-left:auto;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:700;color:#0D1B2A;text-decoration:none;
+  border:1px solid #e8edf5;border-radius:10px;padding:9px 14px;background:#fff;
+  white-space:nowrap;transition:border-color .12s,color .12s
+}
+.dmn-zak:hover{border-color:#059669;color:#047857}
+.dmn-zak svg{opacity:.65;flex:0 0 auto}
+.dmn-zak:hover svg{opacity:1}
+
+/* Samengevoegde rij: logo en menu naast elkaar. De panelen hangen dan aan de
+   headerrij zelf, zodat ze over de volle breedte uitlijnen. */
+.pvnav-inner.dmn-inline{position:relative;display:flex;align-items:center;gap:2px;flex-wrap:nowrap}
+.pvnav-inner.dmn-inline .pvnav-logo{margin-right:20px;flex:0 0 auto}
+.pvnav-inner.dmn-inline .dmn-i > a{padding:20px 12px;font-size:13.5px}
+.pvnav-inner.dmn-inline .dmn-i.plat > a{font-size:13.5px}
+.pvnav-inner.dmn-inline .dmn-zak{margin-left:auto}
+.pvnav-inner.dmn-inline .pvnav-right{flex:0 0 auto;margin-left:9px}
+.pvnav-inner.dmn-inline .dmn-p{width:auto}
+@media(max-width:1240px){
+  .pvnav-inner.dmn-inline .dmn-i > a{padding:20px 9px;font-size:13px}
+  .pvnav-inner.dmn-inline .pvnav-logo{margin-right:12px}
+}
+.dmn-in{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:2px}
+
+/* Het paneel lijnt uit op de BALK, niet op het losse menu-item. Stond het op
+   het item, dan schoof een breed paneel bij een item rechts in de balk het
+   scherm uit aan de linkerkant -- bij eSIM viel de eerste kolom weg.
+   Daarvoor moet .dmn-i zelf ongepositioneerd zijn, zodat het paneel zich aan
+   .dmn-in richt. */
+.dmn-in{position:relative}
+.dmn-i{position:static}
+.dmn-i > a{
+  display:flex;align-items:center;gap:6px;padding:14px 13px;
+  font-size:14px;font-weight:800;color:#0D1B2A;text-decoration:none;white-space:nowrap;
+  border-bottom:3px solid transparent;transition:color .12s,border-color .12s
+}
+.dmn-i > a .ch{transition:transform .18s ease;opacity:.5;flex:0 0 auto}
+.dmn-i:hover > a,.dmn-i:focus-within > a{color:#047857;border-bottom-color:#059669}
+.dmn-i:hover > a .ch,.dmn-i:focus-within > a .ch{transform:rotate(180deg)}
+.dmn-i.plat > a{font-weight:600;color:#64748b}
+.dmn-i.plat:hover > a{color:#0D1B2A;border-bottom-color:#e8edf5}
+/* Geen onzichtbare brug meer. Die was nodig toen het paneel aan het item hing;
+   nu sluit het paneel direct op de onderrand van de balk aan (top:100% en geen
+   bovenrand), dus er is geen kier om te overbruggen. En met .dmn-i op static
+   zou zo'n strook zich over de hele balk uitstrekken en elk item tegelijk
+   'aangewezen' maken. */
+
+.dmn-p{
+  position:absolute;left:0;right:0;top:100%;width:auto;
+  background:#fff;border:1px solid #e8edf5;border-top:none;border-radius:0 0 16px 16px;
+  box-shadow:0 26px 56px -24px rgba(13,27,42,.4);
+  padding:20px 22px;display:grid;grid-template-columns:1.05fr 1fr 1.15fr .95fr;gap:22px;
+  opacity:0;visibility:hidden;transform:translateY(-7px);
+  transition:opacity .16s ease,transform .16s ease,visibility .16s;z-index:55
+}
+.dmn-i:hover .dmn-p,.dmn-i:focus-within .dmn-p{opacity:1;visibility:visible;transform:none}
+/* De uitzondering voor de laatste items is niet meer nodig: alle panelen
+   staan nu op dezelfde plek, uitgelijnd met de inhoud van de balk. */
+
+.dmn-p h5{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#94a3b8;margin:0 0 9px}
+.dmn-p a.r{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:13px;color:#0D1B2A;text-decoration:none;padding:6px 8px;margin-left:-8px;border-radius:8px;line-height:1.35}
+.dmn-p a.r:hover{background:#f4f8ff;color:#1B3FA0}
+.dmn-p a.r small{color:#64748b;font-size:11px;display:block;margin-top:1px;font-weight:400}
+.dmn-p a.r .pl{color:#94a3b8;opacity:0;transition:opacity .12s;flex:0 0 auto}
+.dmn-p a.r:hover .pl{opacity:1}
+
+.dmn-pro{background:linear-gradient(160deg,#f0fdf4,#fff);border:1px solid #a7f3d0;border-radius:14px;padding:15px;display:flex;flex-direction:column}
+.dmn-pro .lb{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#047857;margin-bottom:7px}
+.dmn-pro b{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14.5px;display:block;line-height:1.25;color:#0D1B2A}
+.dmn-pro .sp{font-size:11.5px;color:#64748b;margin-top:3px;line-height:1.45}
+.dmn-pro .kn{background:#059669;color:#fff;text-align:center;font-size:12px;font-weight:700;padding:9px;border-radius:9px;margin-top:auto;text-decoration:none}
+.dmn-pro .kn:hover{background:#047857}
+
+.dmn-vt{grid-column:1/-1;border-top:1px solid #e8edf5;margin-top:2px;padding-top:12px;display:flex;gap:18px;flex-wrap:wrap;font-size:12px}
+.dmn-vt a{color:#1B3FA0;text-decoration:none;font-weight:600}
+.dmn-vt a:hover{text-decoration:underline}
+
+/* ============================================================
+   MOBIEL MENU — iconen zonder gekleurd vlak (variant C)
+   ------------------------------------------------------------
+   De vlakjes gebruikten zes kleuren die niets betekenden: Los toestel
+   groen, Dagdeals oranje, Veelgestelde vragen paars. Oranje en paars
+   komen nergens anders op de site voor, en juist in een menu — het meest
+   herhaalde element — valt dat op.
+
+   Nu alleen het lijnicoon in navy. Zonder vlak lopen de regels sneller in
+   elkaar over, dus de scheidingslijnen blijven staan en het icoon krijgt
+   meer ruimte ernaast; anders wordt het op een telefoon mistikken.
+   ============================================================ */
+.pvnav-mobile a .pvico{
+  background:none !important;color:#0D1B2A !important;
+  width:26px !important;height:26px !important;border-radius:0 !important
+}
+.pvnav-mobile a .pvico svg{width:22px !important;height:22px !important;stroke-width:1.8 !important;opacity:.8}
+.pvnav-mobile a{gap:16px !important;padding:15px 0 !important}
+.pvnav-mobile a:hover .pvico svg,.pvnav-mobile a:active .pvico svg{opacity:1}
+/* De kleuruitzonderingen per item overrulen: die zaten op de vlakjes. */
+.pvnav-mobile a.pvm-toestel .pvico,
+.pvnav-mobile a.pvm-deal .pvico,
+.pvnav-mobile a.pvm-esim .pvico,
+.pvnav-mobile a.pvm-faq .pvico,
+.pvnav-mobile a.pvm-zak .pvico{background:none !important;color:#0D1B2A !important}
+
+/* Aanwijzen bestaat niet op mobiel/tablet; daar neemt de hamburger van pv-header
+   het over. De oude linkrij NIET terugzetten: acht items met white-space:nowrap
+   zijn samen ruim 1100px breed en duwen het hele document breder dan het scherm
+   (horizontale overflow -- content in een smalle kolom links, witruimte rechts).
+   pv-header verbergt .pvnav-links zelf al onder 1100px en toont daar .pvnav-burger
+   met het .pvnav-mobile paneel. Zelfde breakpoint aanhouden, zodat er geen
+   tussengebied is waar beide menu's tegelijk zichtbaar zijn. */
+@media(max-width:1100px){ .dmn{display:none} }
+</style>
+
+{%- comment -%}
+  Het menu naast het logo in plaats van eronder.
+
+  De balk staat als losse sectie ná de header in de HTML — dat moet, want de
+  links moeten server-rendered zijn voor Google. Maar visueel hoort hij op
+  dezelfde regel als het logo. Daarom verhuizen we de items met JavaScript naar
+  de bestaande headerrij. De links zelf staan gewoon in de broncode; alleen hun
+  plek verandert.
+{%- endcomment -%}
+<script>
+(function(){
+  function schuif(){
+    var bar = document.querySelector('.dmn');
+    var rij = document.querySelector('.pvnav-inner');
+    if (!bar || !rij || rij.dataset.dmnKlaar) return;
+    if (window.innerWidth <= 1100) return;          // daar geldt de hamburger
+    var inner = bar.querySelector('.dmn-in');
+    if (!inner) return;
+    rij.dataset.dmnKlaar = '1';
+    var logo = rij.querySelector('.pvnav-logo');
+    // Items één voor één achter het logo plaatsen, in dezelfde volgorde.
+    var na = logo ? logo.nextSibling : rij.firstChild;
+    [].slice.call(inner.children).forEach(function(el){ rij.insertBefore(el, na); });
+    bar.remove();
+    rij.classList.add('dmn-inline');
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', schuif);
+  else schuif();
+  setTimeout(schuif, 400);
+})();
+</script>
+
+<nav class="dmn" aria-label="Hoofdmenu">
+  <div class="dmn-in">
+
+    <div class="dmn-i">
+      <a href="{{ p }}sim-only">Sim only <svg class="ch" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></a>
+      <div class="dmn-p">
+        <div>
+          <h5>Vergelijken</h5>
+          <a class="r" href="{{ p }}sim-only">Alle sim only abonnementen<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}sim-only?data=onbeperkt&amp;sorteer=price">Onbeperkt data<small>goedkoopste eerst</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}sim-only?data=20&amp;sorteer=price">Vanaf 20 GB<small>de meestgekozen bundel</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}sim-only?max=15&amp;sorteer=price">Onder &euro;15 per maand<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}sim-only?bellen=onbeperkt&amp;sorteer=price">Onbeperkt bellen<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}sim-only?looptijd=0&amp;sorteer=price">Maandelijks opzegbaar<small>geen 24 maanden vast</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}goedkoopste-sim-only">Goedkoopste sim only<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}zakelijk-sim-only">Zakelijk sim only<small>zzp en mkb, excl. btw</small><span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Per aanbieder</h5>
+          <a class="r" href="{{ p }}sim-only?netwerk=kpn&amp;sorteer=price">KPN<small>bundels op het KPN-netwerk</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}sim-only?netwerk=odido&amp;sorteer=price">Odido<small>bundels op het Odido-netwerk</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}sim-only?netwerk=vodafone&amp;sorteer=price">Vodafone<small>bundels op het Vodafone-netwerk</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}providers-simyo">Simyo<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}providers-ben">Ben<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Uitzoeken</h5>
+          <a class="r" href="{{ p }}wat-is-sim-only">Wat is sim only?<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}hoeveel-gb-data-heb-je-nodig">Hoeveel data heb je nodig?<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}prepaid-of-sim-only-wat-past-het-beste-bij-jou">Prepaid of sim only?<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}wat-kost-onbeperkt-internet">Wat kost onbeperkt data?<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div class="dmn-pro">
+          <div class="lb">Direct vergelijken</div>
+          <b>Alle sim only deals</b>
+          <span class="sp">1.060 abonnementen van alle aanbieders, elke ochtend bijgewerkt.</span>
+          <a class="kn" href="{{ p }}sim-only">Bekijk de lijst &rarr;</a>
+        </div>
+        <div class="dmn-vt">
+          <a href="{{ a }}sim-only-voor-kinderen">Sim only voor je kind &rsaquo;</a>
+          <a href="{{ a }}overstappen-met-behoud-van-je-telefoonnummer-zo-werkt-het">Overstappen met je nummer &rsaquo;</a>
+          <a href="{{ a }}beste-netwerk-nederland">Welk netwerk is het beste? &rsaquo;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="dmn-i">
+      <a href="{{ p }}telefoonabonnement">Telefoon <svg class="ch" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></a>
+      <div class="dmn-p">
+        <div>
+          <h5>Vergelijken</h5>
+          <a class="r" href="{{ p }}telefoonabonnement">Alle telefoons met abonnement<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}telefoonabonnement?aanbetaling=0&amp;sorteer=price">Zonder aanbetaling<small>&euro;0 vooraf</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}telefoonabonnement?q=iPhone&amp;sorteer=price">iPhone<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}telefoonabonnement?q=Samsung&amp;sorteer=price">Samsung<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}telefoonabonnement?max=35&amp;sorteer=price">Onder &euro;35 per maand<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}beste-telefoon-deals-deze-maand">Beste deals deze maand<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}telefoon-abonnement-met-gratis-toestel">Met gratis toestel<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}toestellen">Los toestel kopen<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}zakelijk-telefoon">Zakelijk met toestel<small>op bedrijfsnaam, excl. btw</small><span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Uitzoeken</h5>
+          <a class="r" href="{{ a }}sim-only-of-abonnement-met-toestel">Sim only of toestel erbij?<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}android-vs-ios-in-2026-welk-besturingssysteem-past-bij-jou">Android of iOS?<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}samsung-vs-oneplus-vs-oppo-welke-android-topper-past-bij-jou">Samsung, OnePlus of OPPO?<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}telefoonabonnement-zonder-bkr-registratie-zo-regel-je-het">Abonnement zonder BKR<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Tweedehands &amp; verzekeren</h5>
+          <a class="r" href="{{ a }}refurbished-telefoon-kopen">Refurbished kopen<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}refurbished-iphone-vs-nieuw">Refurbished iPhone of nieuw?<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}toestelverzekering-wel-of-niet">Toestelverzekering<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ n }}galaxy-z-fold-8-flip-8-met-abonnement">Vouwtelefoon met abonnement<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div class="dmn-pro">
+          <div class="lb">Nieuw &amp; verwacht</div>
+          <b>Galaxy Z Fold 8 &amp; Flip 8</b>
+          <span class="sp">De nieuwe vouwtelefoons met abonnement, en waar je op moet letten.</span>
+          <a class="kn" href="{{ n }}galaxy-z-fold-8-flip-8-met-abonnement">Lees meer &rarr;</a>
+        </div>
+        <div class="dmn-vt">
+          <a href="{{ n }}iphone-18-serie-pro-pro-max-vouwbare-iphone-en-de-air-2-alle-geruchten">iPhone 18-serie &rsaquo;</a>
+          <a href="{{ n }}samsung-galaxy-s27-serie-eerste-geruchten-over-vier-nieuwe-vlaggenschepen">Galaxy S27-serie &rsaquo;</a>
+          <a href="{{ n }}nieuw-verwacht-tweede-helft-2026-samsung-unpacked-iphone-18-vouwbare-iphone">Wat komt er nog aan in 2026? &rsaquo;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="dmn-i">
+      <a href="{{ p }}internet-tv">Internet &amp; TV <svg class="ch" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></a>
+      <div class="dmn-p">
+        <div>
+          <h5>Vergelijken</h5>
+          <a class="r" href="{{ p }}internet-tv">Alle internetpakketten<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}internet-tv?sorteer=price">Goedkoopste eerst<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}internet-tv?max=40&amp;sorteer=price">Onder &euro;40 per maand<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}internet-tv?q=5G">5G zonder monteur<small>Klik&amp;Klaar en KPN 5G</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}zenders-vergelijken">Welke provider heeft jouw zenders?<small>zenderoverzicht per aanbieder</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}buitenlandse-tv-zenderpakketten">Turkse, Hindi en Duitse zenders<small>vanaf &euro;3,99 per maand</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}goedkoopste-internet-deze-maand">Goedkoopste deze maand<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}zakelijk-internet">Zakelijk internet<small>zzp en mkb, excl. btw</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}combivoordeel-bespaar-met-internet-en-mobiel-bij-een-provider">Combivoordeel: internet en mobiel<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Televisie</h5>
+          <a class="r" href="{{ p }}zenderpakketten">Zenderpakketten<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}hindi-pakket">Hindi-pakket<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Uitzoeken</h5>
+          <a class="r" href="{{ a }}glasvezel-kabel-of-dsl-internet-kiezen">Glasvezel, kabel of DSL?<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}internet-thuis-goedkoop">Internet thuis goedkoop<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}combivoordeel-bespaar-met-internet-en-mobiel-bij-een-provider">Combivoordeel<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div class="dmn-pro">
+          <div class="lb">Direct vergelijken</div>
+          <b>Internet &amp; TV</b>
+          <span class="sp">Glasvezel, kabel en DSL van alle aanbieders naast elkaar.</span>
+          <a class="kn" href="{{ p }}internet-tv">Bekijk de lijst &rarr;</a>
+        </div>
+        <div class="dmn-vt">
+          <a href="{{ p }}providers">Alle providers &rsaquo;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="dmn-i">
+      <a href="{{ p }}internet-op-vakantie">eSIM &amp; buitenland <svg class="ch" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></a>
+      <div class="dmn-p">
+        <div>
+          <h5>Op reis</h5>
+          <a class="r" href="{{ p }}internet-op-vakantie">eSIM vergelijken<small>153 landen</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}bellen-internet-buitenland">Bellen in het buitenland<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}esim-wat-is-het-en-welke-providers-ondersteunen-het">Wat is een eSIM?<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}esim-installeren">eSIM installeren<small>stap voor stap, iPhone en Android</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}internet-bellen-op-vakantie-buitenland">Goedkoop online op vakantie<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Populaire bestemmingen</h5>
+          <a class="r" href="{{ a }}internet-esim-turkije">Turkije<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}internet-esim-amerika">Verenigde Staten<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}internet-esim-indonesie">Indonesië<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}internet-esim-marokko">Marokko<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}internet-esim-thailand">Thailand<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Uitzoeken</h5>
+          <a class="r" href="{{ a }}dual-sim-twee-abonnementen-een-telefoon">Dual SIM: twee nummers<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}bellen-en-internetten-in-het-buitenland-zo-voorkom-je-een-hoge-rekening">Hoge rekening voorkomen<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div class="dmn-pro">
+          <div class="lb">Ga je op reis?</div>
+          <b>Zoek op land</b>
+          <span class="sp">Typ je bestemming en zie meteen of je bundel daar werkt — en anders welke eSIM past.</span>
+          <a class="kn" href="{{ p }}internet-op-vakantie">Zoek je bestemming &rarr;</a>
+        </div>
+        <div class="dmn-vt">
+          <a href="{{ a }}internet-esim-egypte">Egypte &rsaquo;</a>
+          <a href="{{ a }}internet-esim-dubai">Dubai &rsaquo;</a>
+          <a href="{{ a }}internet-esim-spanje">Spanje &rsaquo;</a>
+          <a href="{{ a }}internet-esim-griekenland">Griekenland &rsaquo;</a>
+          <a href="{{ a }}internet-esim-zwitserland">Zwitserland &rsaquo;</a>
+          <a href="{{ a }}internet-esim-canada">Canada &rsaquo;</a>
+          <a href="{{ a }}internet-esim-suriname">Suriname &rsaquo;</a>
+          <a href="{{ a }}internet-esim-kaapverdie">Kaapverdië &rsaquo;</a>
+          <a href="{{ a }}internet-esim-gambia">Gambia &rsaquo;</a>
+          <a href="{{ a }}internet-esim-oostenrijk">Oostenrijk &rsaquo;</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="dmn-i plat"><a href="{{ p }}dagelijkse-deals">Dagdeals</a></div>
+    <div class="dmn-i plat"><a href="{{ p }}gaming">Gaming</a></div>
+    <div class="dmn-i plat"><a href="{{ p }}vergelijken">Vergelijker</a></div>
+
+    {%- comment -%}
+      Zakelijk staat apart, rechts. Het is geen categorie maar een doelgroep,
+      en het hoort dus niet tussen sim only en internet te staan.
+
+      19 sep: de link gaat rechtstreeks naar /pages/zakelijk-sim-only, de
+      drukste van de drie zakelijke pagina's. Daar staan de tabbladen naar
+      internet en met toestel bovenaan, dus vanaf hier is alles bereikbaar.
+    {%- endcomment -%}
+    <a class="dmn-zak" href="{{ p }}zakelijk-sim-only">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="7" width="18" height="13" rx="2.5"/><path d="M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7"/>
+      </svg>
+      Zakelijk
+    </a>
+
+  </div>
+</nav>
+
+{% schema %}
+{
+  "name": "DPV uitklapmenu",
+  "settings": [
+    { "type": "paragraph", "content": "Vervangt de linkrij van de header door vier categorieën met uitklappanelen. Op mobiel blijft de bestaande hamburger staan. Alle links zijn gecontroleerd tegen de sitemap." }
+  ],
+  "presets": [ { "name": "DPV uitklapmenu" } ]
+}
+{% endschema %}

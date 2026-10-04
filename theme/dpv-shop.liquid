@@ -111,6 +111,8 @@
 .ds-amz small{display:block;font-size:11.5px;color:var(--mut);margin-top:2px;line-height:1.35}
 .ds-amz a{flex:0 0 auto;font-size:13px;font-weight:700;color:var(--ink);border:1px solid var(--lijn);border-radius:8px;padding:7px 12px;text-decoration:none;background:#fff}
 .ds-amz a:hover{border-color:var(--ink)}
+.ds-amzlink{display:inline-block;font-size:11.5px;font-weight:700;color:var(--mut);text-decoration:none;margin:2px 0 4px}
+.ds-amzlink:hover{color:var(--ink)}
 .ds-winkelrij b{color:var(--ink);font-weight:800}
 .ds-badges{position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;z-index:2}
 .ds-badge{font-size:10px;font-weight:800;border-radius:6px;padding:3px 6px;line-height:1.2;letter-spacing:.01em}
@@ -665,6 +667,12 @@
     h += '<div class="ds-winkelrij">' + (multi
       ? '<b>' + esc(p.o[0].w) + '</b> &middot; tot ' + eur(hoogste) + ' elders'
       : '<b>' + esc(p.o[0].w) + '</b>' + (p.dg > 6 ? ' &middot; deze prijs al ' + p.dg + ' dagen' : '')) + '</div>';
+    /* Alleen bij een product waarvan het Amazon-ASIN bekend is, dus een
+       directe link naar precies dit product. Zonder prijs; zie de uitleg bij
+       het blok in het overzicht. */
+    if (AMZ && p.az) {
+      h += '<a class="ds-amzlink" href="' + esc(amzLink(p)) + '" target="_blank" rel="sponsored nofollow noopener">Ook bij Amazon &rsaquo;</a>';
+    }
     h += '<div class="ds-kaartknop">';
     h += '<a href="' + API + '/api/shop/go?i=' + encodeURIComponent(p.i) + '&cat=' + encodeURIComponent(p.c) +
       '" target="_blank" rel="sponsored noopener">Naar ' + esc(p.o[0].w) + '</a>';

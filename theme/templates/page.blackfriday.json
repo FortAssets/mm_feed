@@ -15,8 +15,10 @@
         "start_iso": "2026-11-27T00:00:00+01:00",
         "status_voor": "Black Friday: vrijdag 27 november",
         "status_na": "Black Friday is bezig",
-        "kop": "Black Friday 2026: wat er echt goedkoper wordt",
-        "sub": "Black Friday valt dit jaar op vrijdag 27 november. Wij meten vanaf nu elke nacht de prijs van ruim 56.000 producten bij Coolblue, MediaMarkt en de rest. Op de dag zelf weten wij dus van elk product wat het de weken ervoor kostte, en dat is het enige harde bewijs dat een korting echt is."
+        "kop": "Black Friday 2026: de aanbiedingen van nu, per winkel vergeleken",
+        "sub": "Black Friday is op vrijdag 27 november. Wij meten elke nacht de prijs van ruim 60.000 producten, dus op de dag zelf zie je of een korting echt is. Dit kost het vandaag.",
+        "deel": "top",
+        "chips": "Nu afgeprijsd|#afgeprijsd\nGaming|#gaming\nTelevisies|#televisies\nTelefoons|#telefoons\nMet abonnement|#abonnement\nLaptops|#laptops\nAudio|#audio\nKeuken|#keuken\nHuishoudelijk|#huishoudelijk\nKoopgidsen|#koopgidsen\nVeelgestelde vragen|#uitleg"
       }
     },
     "rij_korting": {
@@ -26,8 +28,8 @@
         "bron": "deals",
         "cat": "",
         "label": "Nu afgeprijsd",
-        "kop": "Wat er op dit moment van de prijs af is",
-        "sub": "Alles waar een winkel zelf een eerdere prijs bij noemt, op volgorde van kortingspercentage. Of die eerdere prijs klopt, controleren wij met ons eigen prijslogboek; klik op een product voor wat wij gemeten hebben.",
+        "kop": "Aanbiedingen van vandaag",
+        "sub": "Producten waar een winkel nu een lagere prijs voor vraagt dan eerder. Of die eerdere prijs klopt, controleren wij met ons eigen prijslogboek.",
         "link_tekst": "Alles vergelijken",
         "link_url": "/pages/vergelijken",
         "types": "",
@@ -37,7 +39,10 @@
         "alleen_deal": false,
         "alleen_echt": false,
         "min": "",
-        "max": ""
+        "max": "",
+        "anker": "afgeprijsd",
+        "gids_tekst": "Zo herken je een nepkorting",
+        "gids_url": "/blogs/advies/nepkortingen-black-friday-echte-korting"
       }
     },
     "rij_tv": {
@@ -46,9 +51,9 @@
         "api": "https://shop.deprijsvergelijker.com",
         "bron": "categorie",
         "cat": "tv-beeld",
-        "label": "Beeld",
-        "kop": "Televisies",
-        "sub": "De grootste prijsverschillen tussen winkels staan vooraan. Bij een tv van boven de duizend euro is dat zo snel vijftig euro.",
+        "label": "Televisies",
+        "kop": "Tv-aanbiedingen: OLED, QLED en LED",
+        "sub": "Bij een tv van boven de duizend euro scheelt de keuze van winkel zo vijftig euro of meer.",
         "link_tekst": "Alle televisies",
         "link_url": "/pages/vergelijken?cat=tv-beeld&type=televisies",
         "types": "televisies",
@@ -58,7 +63,10 @@
         "alleen_deal": false,
         "alleen_echt": false,
         "min": "",
-        "max": ""
+        "max": "",
+        "anker": "televisies",
+        "gids_tekst": "Koopgids: beste tv per schermmaat",
+        "gids_url": "/blogs/advies/beste-tv-black-friday-2026"
       }
     },
     "rij_console": {
@@ -69,7 +77,7 @@
         "cat": "gaming",
         "label": "Gaming",
         "kop": "PlayStation, Xbox en Nintendo Switch",
-        "sub": "Consoles zijn waar het geld zit in de Black Friday-week, en waar de prijzen tussen winkels het meest uiteenlopen.",
+        "sub": "Consoles lopen tussen winkels het meest uiteen in de Black Friday-week.",
         "link_tekst": "Alles in gaming",
         "link_url": "/pages/gaming",
         "types": "consoles",
@@ -79,7 +87,10 @@
         "alleen_deal": false,
         "alleen_echt": false,
         "min": "",
-        "max": ""
+        "max": "",
+        "anker": "gaming",
+        "gids_tekst": "Koopgids: goedkoopste PS5, Xbox en Switch 2",
+        "gids_url": "/blogs/advies/goedkoopste-ps5-xbox-switch-black-friday-2026"
       }
     },
     "rij_laptop": {
@@ -88,9 +99,9 @@
         "api": "https://shop.deprijsvergelijker.com",
         "bron": "categorie",
         "cat": "laptops",
-        "label": "Computers",
-        "kop": "Laptops en monitoren",
-        "sub": "",
+        "label": "Laptops",
+        "kop": "Laptops, MacBooks en monitoren",
+        "sub": "Dezelfde laptop, per winkel een andere prijs.",
         "link_tekst": "Alle laptops",
         "link_url": "/pages/vergelijken?cat=laptops",
         "types": "laptops,windows laptops qwerty,zakelijke windows laptops qwerty,monitoren",
@@ -100,7 +111,10 @@
         "alleen_deal": false,
         "alleen_echt": false,
         "min": "",
-        "max": ""
+        "max": "",
+        "anker": "laptops",
+        "gids_tekst": "Koopgids: goedkoopste laptop",
+        "gids_url": "/blogs/advies/goedkoopste-laptop-black-friday-2026"
       }
     },
     "rij_keuken": {
@@ -110,8 +124,8 @@
         "bron": "categorie",
         "cat": "keuken",
         "label": "Keuken",
-        "kop": "Koffiemachines, airfryers en pannen",
-        "sub": "De klassieke Black Friday-categorie, en ook de categorie waar het vaakst een doorgestreept bedrag bij staat dat nooit gevraagd is.",
+        "kop": "Airfryers, koffiemachines en pannen",
+        "sub": "Van airfryer tot volautomaat, met de winkel waar hij nu het minst kost.",
         "link_tekst": "Alles voor de keuken",
         "link_url": "/pages/vergelijken?cat=keuken",
         "types": "",
@@ -121,7 +135,10 @@
         "alleen_deal": false,
         "alleen_echt": false,
         "min": "",
-        "max": ""
+        "max": "",
+        "anker": "keuken",
+        "gids_tekst": "Koopgids: beste airfryer en koffiemachine",
+        "gids_url": "/blogs/advies/beste-airfryer-koffiemachine-black-friday-2026"
       }
     },
     "rij_huis": {
@@ -131,8 +148,8 @@
         "bron": "categorie",
         "cat": "huishoudelijk",
         "label": "Huishoudelijk",
-        "kop": "Wassen, koelen en stofzuigen",
-        "sub": "",
+        "kop": "Wasmachines, stofzuigers en koelkasten",
+        "sub": "Grote apparaten, grote verschillen tussen winkels.",
         "link_tekst": "Alles huishoudelijk",
         "link_url": "/pages/vergelijken?cat=huishoudelijk",
         "types": "",
@@ -142,7 +159,10 @@
         "alleen_deal": false,
         "alleen_echt": false,
         "min": "",
-        "max": ""
+        "max": "",
+        "anker": "huishoudelijk",
+        "gids_tekst": "Koopgids: goedkoopste wasmachine en stofzuiger",
+        "gids_url": "/blogs/advies/goedkoopste-wasmachine-stofzuiger-black-friday-2026"
       }
     },
     "rij_audio": {
@@ -153,7 +173,7 @@
         "cat": "audio",
         "label": "Audio",
         "kop": "Oordopjes, koptelefoons en soundbars",
-        "sub": "",
+        "sub": "AirPods, Sony, JBL en de rest, per winkel vergeleken.",
         "link_tekst": "Alles in audio",
         "link_url": "/pages/vergelijken?cat=audio",
         "types": "",
@@ -163,7 +183,10 @@
         "alleen_deal": false,
         "alleen_echt": false,
         "min": "",
-        "max": ""
+        "max": "",
+        "anker": "audio",
+        "gids_tekst": "Koopgids: beste oordopjes en koptelefoons",
+        "gids_url": "/blogs/advies/beste-oordopjes-koptelefoon-black-friday-2026"
       }
     },
     "aanmelden": {
@@ -181,6 +204,81 @@
         "chips_fijn": "Alles staat aan. Vink uit wat je niet wilt; aanpassen kan later met een klik in elke mail.",
         "fijn": "Dubbele opt-in: je krijgt eerst een mail met een link erin. Zonder die klik sturen wij je niets. Afmelden kan altijd."
       }
+    },
+    "bf_aanmeld": {
+      "type": "dpv-blackfriday",
+      "settings": {
+        "start_iso": "2026-11-27T00:00:00+01:00",
+        "status_voor": "Black Friday: vrijdag 27 november",
+        "status_na": "Black Friday is bezig",
+        "kop": "Black Friday 2026: wat er echt goedkoper wordt",
+        "sub": "Black Friday valt dit jaar op vrijdag 27 november. Wij meten vanaf nu elke nacht de prijs van ruim 56.000 producten bij Coolblue, MediaMarkt en de rest. Op de dag zelf weten wij dus van elk product wat het de weken ervoor kostte, en dat is het enige harde bewijs dat een korting echt is.",
+        "deel": "aanmeld"
+      }
+    },
+    "bf_abo": {
+      "type": "dpv-blackfriday",
+      "settings": {
+        "start_iso": "2026-11-27T00:00:00+01:00",
+        "status_voor": "Black Friday: vrijdag 27 november",
+        "status_na": "Black Friday is bezig",
+        "kop": "Black Friday 2026: wat er echt goedkoper wordt",
+        "sub": "Black Friday valt dit jaar op vrijdag 27 november. Wij meten vanaf nu elke nacht de prijs van ruim 56.000 producten bij Coolblue, MediaMarkt en de rest. Op de dag zelf weten wij dus van elk product wat het de weken ervoor kostte, en dat is het enige harde bewijs dat een korting echt is.",
+        "deel": "abonnement",
+        "abo_gids": "/blogs/advies/telefoon-met-abonnement-black-friday-2026"
+      }
+    },
+    "bf_uitleg": {
+      "type": "dpv-blackfriday",
+      "settings": {
+        "start_iso": "2026-11-27T00:00:00+01:00",
+        "status_voor": "Black Friday: vrijdag 27 november",
+        "status_na": "Black Friday is bezig",
+        "kop": "Black Friday 2026: wat er echt goedkoper wordt",
+        "sub": "Black Friday valt dit jaar op vrijdag 27 november. Wij meten vanaf nu elke nacht de prijs van ruim 56.000 producten bij Coolblue, MediaMarkt en de rest. Op de dag zelf weten wij dus van elk product wat het de weken ervoor kostte, en dat is het enige harde bewijs dat een korting echt is.",
+        "deel": "uitleg"
+      }
+    },
+    "rij_telefoon": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "bron": "categorie",
+        "cat": "telefoons",
+        "label": "Los toestel",
+        "kop": "Telefoons en tablets zonder abonnement",
+        "sub": "iPhone, Samsung Galaxy en Pixel als los toestel. Liever met abonnement? Dat staat hieronder.",
+        "link_tekst": "Alle telefoons",
+        "link_url": "/pages/vergelijken?cat=telefoons&type=mobiele%20telefoons",
+        "types": "mobiele telefoons,tablets",
+        "sort": "verschil",
+        "aantal": 14,
+        "alleen_multi": true,
+        "alleen_deal": false,
+        "alleen_echt": false,
+        "min": "150",
+        "max": "",
+        "anker": "telefoons",
+        "gids_tekst": "Koopgids: goedkoopste smartphone",
+        "gids_url": "/blogs/advies/goedkoopste-smartphone-black-friday-2026"
+      }
+    },
+    "gidsen": {
+      "type": "dpv-blog-strip",
+      "settings": {
+        "blog_handle": "advies",
+        "blog_handle_2": "news",
+        "eyebrow": "Koopgidsen",
+        "heading": "Per categorie uitgezocht",
+        "subheading": "Wat het nu kost, bij welke winkel, en of wachten tot 27 november zin heeft.",
+        "tag_filter": "koopgids",
+        "image_fit": "cover",
+        "max_items": 8,
+        "more_label": "Alle artikelen",
+        "more_url": "/blogs/advies",
+        "melding_aan": false,
+        "anker": "koopgidsen"
+      }
     }
   },
   "order": [
@@ -188,10 +286,15 @@
     "rij_korting",
     "rij_console",
     "rij_tv",
+    "bf_aanmeld",
+    "rij_telefoon",
+    "bf_abo",
     "rij_laptop",
-    "aanmelden",
+    "rij_audio",
     "rij_keuken",
     "rij_huis",
-    "rij_audio"
+    "aanmelden",
+    "gidsen",
+    "bf_uitleg"
   ]
 }

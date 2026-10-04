@@ -32,17 +32,30 @@
 {%- assign klikbasis = section.settings.klik_domein | strip -%}
 {%- if klikbasis == blank -%}{%- assign klikbasis = 'https://awin.business-347.workers.dev' -%}{%- endif -%}
 
-<div class="bfr" id="bfr" data-start="{{ start }}"
+{%- assign deel = section.settings.deel | default: 'alles' -%}
+<div class="bfr bfr-d-{{ deel }}" id="bfr-{{ section.id }}" data-start="{{ start }}"
      data-api="{{ section.settings.api }}"
      data-bron="{{ section.settings.bron }}"
      data-onderwerpen="{{ section.settings.onderwerpen }}">
-
+{%- if deel == 'alles' or deel == 'top' %}
   <header class="bfr-top">
     <span class="bfr-pil"><i></i><span id="bfr-status">{{ section.settings.status_voor }}</span></span>
     <h1>{{ section.settings.kop }}</h1>
     <p class="bfr-sub">{{ section.settings.sub }}</p>
   </header>
 
+
+  {%- assign chips = section.settings.chips | newline_to_br | split: '<br />' -%}
+  {%- if chips.size > 0 and section.settings.chips != blank -%}
+  <nav class="bfr-chips" aria-label="Ga naar">
+    {%- for r in chips -%}
+      {%- assign d = r | strip | split: '|' -%}
+      {%- if d.size >= 2 -%}<a href="{{ d[1] | strip }}">{{ d[0] | strip }}</a>{%- endif -%}
+    {%- endfor -%}
+  </nav>
+  {%- endif -%}
+{%- endif -%}
+{%- if deel == 'alles' or deel == 'aanmeld' %}
   <section class="bfr-aanmeld" id="bfr-aanmeld">
     <p class="bfr-eyebrow">Vrijdag 27 november</p>
     <p class="bfr-akop">{{ section.settings.aanmeld_kop }}</p>
@@ -56,16 +69,15 @@
     <p class="bfr-fijn">{{ section.settings.aanmeld_fijn }}</p>
   </section>
 
+{%- endif -%}
+{%- if deel == 'alles' or deel == 'abonnement' %}
+<span id="abonnement" style="display:block;position:relative;top:-80px;visibility:hidden"></span>
   <section class="bfr-blok">
-    <h2>Welke korting is echt korting?</h2>
-    <div class="bfr-tekst"><p><strong>Kijk naar het totaal over de looptijd.</strong> Bij abonnementen is de truc bijna altijd hetzelfde: een lager maandbedrag met een hogere aanbetaling, of andersom. Reken aanbetaling plus maandbedrag maal de maanden en vergelijk dat.</p><p><strong>Let op de van-prijs.</strong> Een winkel mag alleen de laagste prijs van de afgelopen dertig dagen als vergelijkingsprijs gebruiken. Zie je een van-prijs die maanden niet is gevraagd, dan is de korting op papier groter dan in werkelijkheid.</p><p><strong>Een toestel van vorig jaar is vaak de echte deal.</strong> De iPhone 17 Pro kost sinds de komst van de 18-serie ruim 400 euro minder, en dat is geen tijdelijke actie.</p><p><strong>Sim only is het eerlijkst te vergelijken.</strong> Daar zit geen toestel in dat het beeld vertroebelt: je ziet gewoon wat je per maand betaalt voor je bundel.</p></div>
-  </section>
+    <p class="bfr-eyebrow bfr-eb-licht">Abonnementen</p>
+    <h2>Telefoon met abonnement en sim only</h2>
+    <p class="bfr-tekst">Bij een toestel met abonnement telt het totaal over de looptijd, niet het bedrag per maand. Hieronder staan de providers en winkels waar de acties verschijnen. {%- if section.settings.abo_gids != blank %} <a class="bfr-link" href="{{ section.settings.abo_gids }}">Lees de koopgids met de aanbiedingen van nu &rsaquo;</a>{% endif %}</p>
 
-  <section class="bfr-blok">
-    <h2>Waar vallen de deals?</h2>
-    <p class="bfr-tekst">De aanbiedingen zijn er nog niet; die beginnen in de week voor 27 november. Hieronder staan de plekken waar ze verschijnen, zodat je alvast kunt kijken wat iets nu kost.</p>
-
-    <p class="bfr-kopje">Met abonnement</p>
+    <p class="bfr-kopje">Telefoon met abonnement</p>
     <div class="bfr-kaarten">
       {%- assign prov = section.settings.providers | newline_to_br | split: '<br />' -%}
       {%- for r in prov -%}
@@ -80,7 +92,7 @@
       {%- endfor -%}
     </div>
 
-    <p class="bfr-kopje">Losse toestellen en sim only</p>
+    <p class="bfr-kopje">Los toestel en sim only</p>
     <div class="bfr-kaarten">
       {%- assign win = section.settings.winkels | newline_to_br | split: '<br />' -%}
       {%- for r in win -%}
@@ -96,6 +108,14 @@
     </div>
 
     <p class="bfr-fijn">Klik je door en sluit je iets af, dan ontvangen wij een vergoeding. Jij betaalt hetzelfde.</p>
+  </section>
+
+{%- endif -%}
+{%- if deel == 'alles' or deel == 'uitleg' %}
+<span id="uitleg" style="display:block;position:relative;top:-80px;visibility:hidden"></span>
+  <section class="bfr-blok">
+    <h2>Welke korting is echt korting?</h2>
+    <div class="bfr-tekst"><p><strong>Kijk naar het totaal over de looptijd.</strong> Bij abonnementen is de truc bijna altijd hetzelfde: een lager maandbedrag met een hogere aanbetaling, of andersom. Reken aanbetaling plus maandbedrag maal de maanden en vergelijk dat.</p><p><strong>Let op de van-prijs.</strong> Een winkel mag alleen de laagste prijs van de afgelopen dertig dagen als vergelijkingsprijs gebruiken. Zie je een van-prijs die maanden niet is gevraagd, dan is de korting op papier groter dan in werkelijkheid.</p><p><strong>Een toestel van vorig jaar is vaak de echte deal.</strong> De iPhone 17 Pro kost sinds de komst van de 18-serie ruim 400 euro minder, en dat is geen tijdelijke actie.</p><p><strong>Sim only is het eerlijkst te vergelijken.</strong> Daar zit geen toestel in dat het beeld vertroebelt: je ziet gewoon wat je per maand betaalt voor je bundel.</p></div>
   </section>
 
   <section class="bfr-blok">
@@ -116,12 +136,15 @@
   </section>
 
   <p class="bfr-fijn">Wij vergelijken op prijs en productkenmerken en geven geen advies. Prijzen en acties controleren wij bij de aanbieders zelf; controleer het bedrag altijd op hun site voordat je bestelt.</p>
+{%- endif -%}
 </div>
 
+{%- if deel == 'alles' or deel == 'uitleg' %}
 <script type="application/ld+json">
 {"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": [{"@type": "Question", "name": "Wanneer is Black Friday 2026?", "acceptedAnswer": {"@type": "Answer", "text": "Vrijdag 27 november 2026. Veel winkels beginnen al eerder in die week, en Cyber Monday valt op 30 november."}}, {"@type": "Question", "name": "Zijn de kortingen met Black Friday echt?", "acceptedAnswer": {"@type": "Answer", "text": "Soms wel, soms niet. Een winkel mag alleen de laagste prijs van de afgelopen dertig dagen als vergelijkingsprijs tonen. Noteer de prijs van wat je wilt kopen nu al, dan zie je op de dag zelf of het klopt."}}, {"@type": "Question", "name": "Is een telefoon met abonnement voordeliger tijdens Black Friday?", "acceptedAnswer": {"@type": "Answer", "text": "Dat hangt af van het totaal over de looptijd. Een lage maandprijs met een hoge aanbetaling kan duurder uitvallen dan een gewone aanbieding. Reken altijd aanbetaling plus maandbedrag maal de maanden."}}, {"@type": "Question", "name": "Kan ik mijn abonnement tussentijds opzeggen voor een deal?", "acceptedAnswer": {"@type": "Answer", "text": "Loopt je contract nog, dan betaal je meestal een afkoopsom voor de resterende maanden. Reken die mee voordat je overstapt; vaak eet die de korting op."}}, {"@type": "Question", "name": "Wat is het verschil met Cyber Monday?", "acceptedAnswer": {"@type": "Answer", "text": "Cyber Monday valt op maandag 30 november en is oorspronkelijk gericht op online aanbiedingen. In de praktijk lopen de acties in Nederland van maandag 23 tot en met maandag 30 november door."}}, {"@type": "Question", "name": "Zijn oudere iPhones met Black Friday goedkoper?", "acceptedAnswer": {"@type": "Answer", "text": "Vaak wel, maar de grootste prijsdaling kwam al bij de introductie van het nieuwe model. De iPhone 17 Pro werd in september ruim 400 euro goedkoper, los van welke actie dan ook."}}]}
 </script>
 
+{%- endif %}
 <style>
 .bfr{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#10b981;--groen-d:#0b7d5c;--diep:#0B0F17;
  font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);max-width:880px;margin:0 auto;padding:10px 16px 50px}
@@ -167,11 +190,26 @@
 .bfr-vragen summary::after{content:'+';float:right;color:var(--soft);font-weight:800}
 .bfr-vragen details[open] summary::after{content:'\2212'}
 .bfr-vragen details[open] summary{margin-bottom:9px}
+/* Delen. Dezelfde sectie staat vier keer op de pagina, elke keer met een ander
+   stuk, zodat de productrijen ertussen kunnen staan. */
+.bfr.bfr-d-top{max-width:1180px;padding:14px 16px 4px}
+.bfr.bfr-d-top h1{font-size:30px;margin:12px 0 6px}
+.bfr.bfr-d-top .bfr-sub{font-size:15px;margin:0 0 12px;max-width:78ch}
+.bfr.bfr-d-aanmeld{padding:14px 16px}
+.bfr.bfr-d-abonnement{padding:6px 16px 10px}
+.bfr.bfr-d-abonnement .bfr-blok{border-top:0;padding-top:14px}
+.bfr.bfr-d-uitleg{padding-top:0}
+.bfr-eb-licht{color:#6d28d9}
+.bfr a.bfr-link,.bfr a.bfr-link:visited{color:#059669;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.bfr-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.bfr-chips::-webkit-scrollbar{display:none}
+.bfr .bfr-chips a,.bfr .bfr-chips a:visited{flex:0 0 auto;display:inline-flex;align-items:center;min-height:40px;padding:0 15px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--ink);font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap}
+.bfr .bfr-chips a:hover{border-color:var(--groen);color:var(--groen-d)}
 </style>
 
 <script>
 (function () {
-  var wortel = document.getElementById('bfr');
+  var wortel = document.getElementById('bfr-{{ section.id }}');
   if (!wortel) return;
 
   var startTijd = Date.parse(wortel.getAttribute('data-start') || '');
@@ -185,6 +223,7 @@
   var knop = document.getElementById('bfr-knop');
   var veld = document.getElementById('bfr-mail');
   var uit = document.getElementById('bfr-uit');
+  if (!knop || !veld || !wortel.contains(knop)) return;
   /* 3 okt: dit veld ging naar de mc-lijst en was enkele opt-in: het postte een
      adres en zei "Gelukt", zonder bevestigingsmail. Dat is wat artikel 11.7
      Telecomwet van je vraagt, en het betekende ook dat iemand dit formulier kon
@@ -244,6 +283,31 @@
 {
   "name": "Black Friday",
   "settings": [
+    {
+      "type": "select",
+      "id": "deel",
+      "label": "Welk deel",
+      "info": "Zet de sectie meerdere keren op de pagina, elke keer met een ander deel, en schuif de productrijen ertussen.",
+      "options": [
+        { "value": "alles", "label": "Alles onder elkaar" },
+        { "value": "top", "label": "Kop en snelkoppelingen" },
+        { "value": "aanmeld", "label": "Aanmelden" },
+        { "value": "abonnement", "label": "Telefoon met abonnement en sim only" },
+        { "value": "uitleg", "label": "Uitleg en veelgestelde vragen" }
+      ],
+      "default": "alles"
+    },
+    {
+      "type": "textarea",
+      "id": "chips",
+      "label": "Snelkoppelingen",
+      "info": "naam|#anker, een per regel"
+    },
+    {
+      "type": "url",
+      "id": "abo_gids",
+      "label": "Koopgids abonnementen"
+    },
     {
       "type": "text",
       "id": "start_iso",

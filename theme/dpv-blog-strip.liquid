@@ -34,6 +34,7 @@
   campagnestreep aan; die hoort alleen bij een tijdelijke campagne met aftelling
   of einddatum, dus die hangt nu daaraan.
 {%- endcomment -%}
+{%- if section.settings.anker != blank -%}<span id="{{ section.settings.anker | handleize }}" style="display:block;position:relative;top:-80px;visibility:hidden"></span>{%- endif -%}
 <style>
 .dbs{padding:42px 0 10px;font-family:'Inter',system-ui,sans-serif;color:#0D1B2A}
 .dbs *{box-sizing:border-box}
@@ -233,6 +234,12 @@
 {
   "name": "DPV Blogstrip",
   "settings": [
+    {
+      "type": "text",
+      "id": "anker",
+      "label": "Anker",
+      "info": "Naam om naartoe te springen, bijvoorbeeld koopgidsen."
+    },
     {
       "type": "text",
       "id": "blog_handle",

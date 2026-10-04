@@ -18,6 +18,42 @@ import zlib from 'zlib'
 
 const UIT = 'data/shop'
 
+// ------------------------------------------------------------------- Amazon
+//
+// Amazon heeft geen feed en geen API zonder sleutels, en die sleutels komen er
+// pas na drie verkopen. Hun prijs halen wij dus niet op; dat mag ook niet,
+// want Partnernet staat alleen prijzen toe die via hun eigen koppeling
+// binnenkomen en die mogen maximaal 24 uur bewaard worden. Met een
+// prijslogboek dat maanden teruggaat gaat dat niet samen.
+//
+// Wat wel kan is een link met het partnerlabel. Die ziet er zo uit:
+//
+//   https://www.amazon.nl/<naamslak>/dp/<ASIN>?tag=fortassets-21&linkCode=as4
+//
+// De naamslak en linkCode zijn versiering; www.amazon.nl/dp/<ASIN>?tag=... doet
+// hetzelfde. Het enige dat je echt nodig hebt is het ASIN, en dat is niet uit
+// een EAN te berekenen. Daarom staat het hier in een lijst, en vult amazon.mjs
+// die lijst bij uit de links die je bij Amazon genereert.
+//
+// Staat er voor een product geen ASIN, dan zet de pagina een zoeklink op het
+// EAN. Dat werkt verrassend goed: 0711719020837 komt bij Amazon uit op
+// B0FN7ZG39D, precies de PlayStation 5 Digital Edition. Maar niet altijd:
+// 0045496337414 (de Switch 2 van Coolblue) levert bij Amazon niets op, terwijl
+// 0045496321444 wel bij B0F2J4SYJ2 uitkomt. Vandaar de handmatige lijst voor de
+// producten waar het om gaat.
+const AMAZON_LIJST = UIT + '/amazon.json'
+const amazonEan = new Map()
+
+function leesAmazon () {
+  try {
+    const d = JSON.parse(fs.readFileSync(AMAZON_LIJST, 'utf8'))
+    for (const [ean, asin] of Object.entries(d.ean || {})) {
+      if (/^[A-Z0-9]{10}$/.test(String(asin))) amazonEan.set(String(ean), String(asin))
+    }
+    console.log('Amazon: ' + amazonEan.size + ' ASIN-koppelingen')
+  } catch (e) { /* nog geen lijst */ }
+}
+
 const AWIN_KEY = process.env.AWIN_KEY || ''
 const MM_TOKEN = process.env.MM_TOKEN || ''
 
@@ -1196,6 +1232,9 @@ function koppel (items) {
       im: metAfb.afb,
       e: beste.ean,
       s: beste.staat === 'refurbished' ? 'r' : 'n',
+      // Het ASIN bij Amazon, als wij dat weten. Een tweedekansexemplaar krijgt
+      // er geen: dat is bij Amazon een ander product.
+      az: (beste.ean && beste.staat !== 'refurbished' && amazonEan.get(beste.ean)) || undefined,
       o: aanbod.map(a => ({
         w: a.winkel,
         vk: a.verkoper || undefined,
@@ -1358,6 +1397,7 @@ function prijslogboek (producten) {
 async function main () {
   const rauw = []
   bolLeesVerkopers()
+  leesAmazon()
 
   const awin = await haalAwin()
   for (const r of awin) { const it = uitAwin(r); if (it) rauw.push(it) }

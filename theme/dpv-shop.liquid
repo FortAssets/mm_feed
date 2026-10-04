@@ -919,9 +919,13 @@
            mee in de kolom wie goedkoopst is. Zodra de API-sleutels er zijn kan
            de prijs erbij, los van het logboek. */
         if (AMZ) {
-          h += '<div class="ds-amz"><div><b>Ook bij Amazon</b>' +
-            '<small>Wij meten de prijs van Amazon niet, dus die staat hier niet. Kijk zelf wat het daar kost.</small></div>' +
-            '<a href="' + esc(amzLink(pr)) + '" target="_blank" rel="sponsored nofollow noopener">Zoek bij Amazon</a></div>';
+          var direct = !!(pr.az || '').trim();
+          h += '<div class="ds-amz"><div><b>Ook bij Amazon</b><small>' +
+            (direct
+              ? 'Dit product staat ook bij Amazon. Wij meten hun prijs niet, dus kijk zelf wat het daar kost.'
+              : 'Wij meten de prijs van Amazon niet. Deze knop zoekt het product bij hen op.') +
+            '</small></div><a href="' + esc(amzLink(pr)) + '" target="_blank" rel="sponsored nofollow noopener">' +
+            (direct ? 'Bekijk bij Amazon' : 'Zoek bij Amazon') + '</a></div>';
         }
 
         var besteW = pr.o[0].w;

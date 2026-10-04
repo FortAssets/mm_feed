@@ -1,0 +1,8 @@
+{
+  "uitleg": "ASIN per EAN. Vul bij met: node amazon.mjs <amzn.to-link of amazon.nl-link> ...",
+  "label": "fortassets-21",
+  "ean": {
+    "0711719020837": "B0FN7ZG39D",
+    "0045496321444": "B0F2J4SYJ2"
+  }
+}

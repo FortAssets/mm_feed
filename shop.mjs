@@ -92,7 +92,9 @@ const AWIN_FIDS = '19979,61111,65453,82771,89758,95829,95830,95831,95833,95834,9
 // Winkels waar geen goedgekeurde Awin-samenwerking mee is. Een klik daar levert
 // niets op. Zet AWIN_ALLEEN_AANGESLOTEN=1 om ze helemaal weg te laten.
 const NIET_AANGESLOTEN = new Set(['Goedkoopste-Kantoorartikelen', 'Bazta', 'Workliving'])
-const ALLEEN_AANGESLOTEN = process.env.AWIN_ALLEEN_AANGESLOTEN === '1'
+// 4 okt: standaard aan. Bazta en Workliving komen terug zodra Awin ze goedkeurt;
+// zet dan AWIN_ALLEEN_AANGESLOTEN=0 of haal ze uit de lijst hierboven.
+const ALLEEN_AANGESLOTEN = process.env.AWIN_ALLEEN_AANGESLOTEN !== '0'
 
 // Goedkoopste-Kantoorartikelen gaat er helemaal uit, en niet om de commissie.
 // De feed heet "Goedkoopste-Kantoorartikelen NL", maar van de 20.456 regels

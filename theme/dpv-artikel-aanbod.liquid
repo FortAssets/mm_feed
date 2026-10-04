@@ -70,6 +70,71 @@
   Een gamingartikel over internet valt eerder in de keten al onder internet,
   en dat is de bedoeling: daar horen providers bij.
 {%- endcomment -%}
+{%- comment -%}
+  4 okt: opmaak voor productkaarten en tabellen in artikelen, op een plek voor
+  alle artikelen. Op een telefoon stonden de kaarten onder elkaar, een per
+  scherm; nu twee naast elkaar. De knoptekst was blauw en onderstreept omdat de
+  linkstijl van het thema won. Tabellen krijgen een foto per product: uit de
+  kaart met dezelfde link, en anders uit de vergelijker.
+{%- endcomment -%}
+<style>
+a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !important}
+.ak-th{width:46px;height:46px;object-fit:contain;flex:0 0 46px;border-radius:8px;background:#fff}
+.ak-tc{display:flex;align-items:center;gap:10px}
+.ak-tc>span{min-width:0}
+@media(max-width:640px){
+  .ak-s,div:has(> a[style*="flex:1 1 2"]){display:grid !important;grid-template-columns:1fr 1fr;gap:10px !important;margin:16px 0 6px !important}
+  .ak-s .ak,div:has(> a[style*="flex:1 1 2"]) > a{max-width:none !important;min-width:0;flex:none !important;padding:11px 8px 10px !important;border-radius:14px !important;display:flex !important;flex-direction:column;align-items:stretch}
+  .ak-s .ak-i,div:has(> a[style*="flex:1 1 2"]) > a img{height:100px !important;margin-bottom:7px !important}
+  .ak-s .ak-n,div:has(> a[style*="flex:1 1 2"]) > a strong{font-size:13.5px !important;line-height:1.25 !important}
+  .ak-s .ak-r,.ak-s .ak-r2{font-size:12px !important}
+  .ak-s .ak-p{font-size:15.5px !important;margin:6px 0 8px !important}
+  .ak-s .ak-w{display:block;font-size:11.5px !important}
+  .ak-s a.ak-k{display:block !important;margin-top:auto;white-space:normal !important;font-size:12.5px !important;line-height:1.25;padding:9px 6px !important}
+  .ak-s .ak .dpvmb{font-size:12px !important;padding:7px 6px !important;margin-top:6px !important;min-height:0 !important}
+  .ak-t table{font-size:13.5px !important}
+  .ak-t th,.ak-t td{padding:8px 7px !important}
+  .ak-th{width:40px;height:40px;flex-basis:40px}
+}
+</style>
+<script>
+(function () {
+  function sleutel(href) {
+    var m = /[?&]i=([^&#]+)/.exec(href || '');
+    return m ? decodeURIComponent(m[1]) : (href || '');
+  }
+  function start() {
+    var rijen = document.querySelectorAll('.ak-t tbody tr');
+    if (!rijen.length) return;
+    var foto = {};
+    Array.prototype.forEach.call(document.querySelectorAll('.ak a[href] img, a[style*="flex:1 1 2"] img'), function (img) {
+      var a = img.closest('a'); if (a && img.getAttribute('src')) foto[sleutel(a.getAttribute('href'))] = img.getAttribute('src');
+    });
+    Array.prototype.forEach.call(rijen, function (tr) {
+      var cel = tr.cells[0]; if (!cel || cel.querySelector('img')) return;
+      var a = tr.querySelector('a[href*="/api/shop/go"], a[href*="/api/go"]'); if (!a) return;
+      var href = a.getAttribute('href'), k = sleutel(href);
+      function zet(src) {
+        if (!src || cel.querySelector('.ak-th')) return;
+        var wrap = document.createElement('div'); wrap.className = 'ak-tc';
+        var img = document.createElement('img'); img.className = 'ak-th'; img.loading = 'lazy'; img.alt = ''; img.src = src;
+        img.onerror = function () { img.remove(); };
+        var tekst = document.createElement('span');
+        while (cel.firstChild) tekst.appendChild(cel.firstChild);
+        wrap.appendChild(img); wrap.appendChild(tekst); cel.appendChild(wrap);
+      }
+      if (foto[k]) return zet(foto[k]);
+      var c = /[?&]cat=([^&#]+)/.exec(href);
+      if (href.indexOf('/api/shop/go') < 0 || !c) return;
+      fetch('https://shop.deprijsvergelijker.com/api/shop/product?i=' + encodeURIComponent(k) + '&cat=' + c[1])
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) { if (d && d.product && d.product.im) zet(d.product.im); })
+        .catch(function () {});
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+})();
+</script>
 {%- if onderwerp == 'winkel' -%}<style>[id$="__dpv-nieuws"]{display:none !important}</style>{%- endif -%}
 {%- if onderwerp != 'winkel' -%}
 

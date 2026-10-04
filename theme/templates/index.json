@@ -71,7 +71,7 @@
       "type": "dpv-home-waarom",
       "settings": {
         "kop": "Waarom onze prijzen anders zijn",
-        "sub": "Drie dingen die wij anders doen dan de rest, en waarom dat je geld scheelt.",
+        "sub": "Vier dingen die wij anders doen dan de rest, en waarom dat je geld scheelt.",
         "cta_tekst": "Leg je contracten vast",
         "cta_url": "https://mijn.deprijsvergelijker.com/mijn-contracten?van=waarom"
       }
@@ -79,8 +79,8 @@
     "dpv-capture": {
       "type": "dpv-email-capture",
       "settings": {
-        "heading": "Mis geen scherp contract",
-        "subtext": "De beste abonnementen en energiedeals, af en toe in je inbox."
+        "heading": "Mis geen scherpe deal",
+        "subtext": "Producten, abonnementen en energie: zakt er een prijs flink, dan hoor je het."
       }
     },
     "dpv-drawer": {

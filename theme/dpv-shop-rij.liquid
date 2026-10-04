@@ -283,7 +283,7 @@
     var goed = items.filter(geloofwaardig), uit = [], gehad = {};
     var perBand = Math.ceil(n / 3);
     // [per winkel, per categorie, per type, per prijsklasse]; elke ronde ruimer.
-    [[2, 3, 3, perBand, 2], [3, 5, 4, perBand + 2, 3], [99, 99, 99, 99, 99]].forEach(function (g) {
+    [[2, 3, 3, perBand, 2], [3, 5, 4, perBand + 2, 3], [99, 99, 99, 99, 3], [99, 99, 99, 99, 99]].forEach(function (g) {
       var fam = {}, per = {}, ct = {}, ty = {}, bd = {}, mk = {};
       function merk(x) { return String(x.b || String(x.n || '').split(' ')[0]).toLowerCase(); }
       function tel(x) {

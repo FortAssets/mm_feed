@@ -29,7 +29,21 @@
 {%- liquid
   assign spoor = article.tags | join: ' ' | append: ' ' | append: article.handle | append: ' ' | append: article.title | downcase
   assign onderwerp = 'simonly'
-  if spoor contains 'zorg' or spoor contains 'eigen risico' or spoor contains 'eigen-risico' or spoor contains 'basisverzekering'
+  comment
+    4 okt: een koopgids over koptelefoons kreeg advertenties voor telefoons met
+    abonnement, omdat "koptelefoon" het woord "telefoon" bevat. Koopgidsen over
+    producten krijgen geen telecomblok, behalve die over telefoons zelf.
+  endcomment
+  assign winkelgids = false
+  if article.tags contains 'koopgids'
+    assign winkelgids = true
+    if spoor contains 'abonnement' or spoor contains 'smartphone' or spoor contains 'sim only'
+      assign winkelgids = false
+    endif
+  endif
+  if winkelgids
+    assign onderwerp = 'winkel'
+  elsif spoor contains 'zorg' or spoor contains 'eigen risico' or spoor contains 'eigen-risico' or spoor contains 'basisverzekering'
     assign onderwerp = 'zorg'
   elsif spoor contains 'energie' or spoor contains 'stroom' or spoor contains 'salderen' or spoor contains 'netbeheer' or spoor contains 'zonnepanel'
     assign onderwerp = 'energie'

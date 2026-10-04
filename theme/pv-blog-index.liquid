@@ -1,0 +1,245 @@
+{%- comment -%}
+  PV Blog Index: overzichtspagina van de adviesblog.
+
+  21 sep: de filterknoppen deden bijna niets. Ze filterden alleen de 24
+  artikelen op de huidige pagina, en alleen op tags die veel artikelen niet
+  hadden (5 artikelen met de tag iphone, terwijl er ruim 40 over de iPhone
+  gaan). Energie, zorg en zakelijk hadden geen knop.
+
+  Nu:
+  - Alle artikelen staan in de pagina (tot 250); de knoppen filteren over
+    alles. Er worden er 24 tegelijk getoond, met "Toon meer" eronder.
+  - Het onderwerp komt uit tags, adres en titel samen, dezelfde logica als
+    het aanbodblok onder elk artikel. Een artikel kan onder meerdere knoppen
+    vallen (een iPhone-artikel staat ook bij Telefoon).
+  - De gekozen knop staat in de url (?onderwerp=zorg), zodat je vanuit een
+    menu, mail of post direct naar een onderwerp kunt linken.
+{%- endcomment -%}
+<style>
+.pvbi{font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#fff}
+.pvbi-hero{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 55%,#1d4ed8 100%);color:#fff;padding:54px 0 60px;position:relative;overflow:hidden}
+.pvbi-hero::after{content:'';position:absolute;right:-80px;top:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(255,255,255,.13),transparent 70%);border-radius:50%}
+.pvbi-wrap{max-width:1180px;margin:0 auto;padding:0 24px;position:relative;z-index:1}
+.pvbi-eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;color:#bfdbfe;margin-bottom:14px}
+.pvbi-eyebrow svg{width:16px;height:16px}
+.pvbi-h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:clamp(28px,4vw,42px);font-weight:800;margin:0 0 14px;letter-spacing:-1px;line-height:1.1;max-width:760px}
+.pvbi-intro{font-size:clamp(15px,1.8vw,17px);line-height:1.6;color:#dbeafe;margin:0;max-width:680px}
+.pvbi-trust{display:flex;gap:22px;flex-wrap:wrap;margin-top:26px}
+.pvbi-trust-item{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:600;color:#eff6ff}
+.pvbi-trust-item svg{width:19px;height:19px;flex-shrink:0;color:#86efac}
+.pvbi-body{padding:34px 0 56px}
+.pvbi-filters{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:12px}
+.pvbi-fbtn{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;color:#475569;background:#f1f5f9;border:1.5px solid #e8edf5;border-radius:999px;padding:8px 16px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.pvbi-fbtn:hover{border-color:#bfdbfe;color:#2563eb;background:#eff6ff}
+.pvbi-fbtn.active{background:#2563eb;border-color:#2563eb;color:#fff}
+.pvbi-fbtn span{opacity:.65;font-weight:600;margin-left:4px}
+.pvbi-telling{font-size:13.5px;color:#64748b;margin:0 0 20px}
+.pvbi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(310px,1fr));gap:20px}
+.pvbi-card{display:flex;flex-direction:column;background:#fff;border:1px solid #e8edf5;border-radius:18px;padding:24px 24px 22px;text-decoration:none;transition:box-shadow .2s,transform .2s,border-color .2s}
+.pvbi-card:hover{box-shadow:0 18px 44px rgba(27,63,160,.14);transform:translateY(-4px);border-color:#dbe4f3}
+.pvbi-card[hidden]{display:none}
+.pvbi-card-top{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+.pvbi-tag{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:#2563eb;background:#eff6ff;padding:4px 9px;border-radius:6px}
+.pvbi-date{font-size:12px;color:#94a3b8;font-weight:600}
+.pvbi-title{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:700;color:#0D1B2A;line-height:1.28;margin:0 0 11px}
+.pvbi-excerpt{font-size:14px;color:#5b6b7f;line-height:1.62;margin:0 0 18px;flex:1;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.pvbi-read{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:700;color:#2563eb;margin-top:auto}
+.pvbi-read svg{width:15px;height:15px;transition:transform .15s}
+.pvbi-card:hover .pvbi-read svg{transform:translateX(3px)}
+.pvbi-meer{display:block;margin:30px auto 0;font-family:inherit;font-size:14.5px;font-weight:800;color:#2563eb;background:#fff;border:1.5px solid #bfdbfe;border-radius:12px;padding:12px 26px;cursor:pointer}
+.pvbi-meer:hover{background:#eff6ff}
+.pvbi-empty{color:#94a3b8;font-size:15px;text-align:center;padding:40px 0;grid-column:1/-1}
+@media(max-width:620px){.pvbi-hero{padding:40px 0 44px}.pvbi-body{padding:26px 0 40px}.pvbi-grid{grid-template-columns:1fr}.pvbi-filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch}}
+</style>
+
+<div class="pvbi">
+  <div class="pvbi-hero">
+    <div class="pvbi-wrap">
+      <span class="pvbi-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h7a2 2 0 0 1 2 2v13a1.6 1.6 0 0 0-1.6-1.6H4Z"/><path d="M20 4.5h-7a2 2 0 0 0-2 2v13a1.6 1.6 0 0 1 1.6-1.6H20Z"/></svg>{{ section.settings.eyebrow | default: blog.title }}</span>
+      <h1 class="pvbi-h1">{{ section.settings.heading | default: 'Advies & Kennisbank' }}</h1>
+      <p class="pvbi-intro">{{ section.settings.intro | default: 'Onafhankelijke koopgidsen en uitleg over telefoon, sim only, internet, energie en zorg.' }}</p>
+      <div class="pvbi-trust">
+        <div class="pvbi-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Onafhankelijk vergeleken</div>
+        <div class="pvbi-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Dagelijks bijgewerkte prijzen</div>
+        <div class="pvbi-trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>Heldere uitleg, geen vakjargon</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pvbi-body">
+    <div class="pvbi-wrap">
+      <div class="pvbi-filters" id="pvbiFilters" role="group" aria-label="Filter op onderwerp">
+        <button type="button" class="pvbi-fbtn active" data-filter="alle" aria-pressed="true">Alle artikelen</button>
+        <button type="button" class="pvbi-fbtn" data-filter="simonly" aria-pressed="false">Sim only</button>
+        <button type="button" class="pvbi-fbtn" data-filter="telefoon" aria-pressed="false">Telefoon</button>
+        <button type="button" class="pvbi-fbtn" data-filter="iphone" aria-pressed="false">iPhone</button>
+        <button type="button" class="pvbi-fbtn" data-filter="internet" aria-pressed="false">Internet &amp; TV</button>
+        <button type="button" class="pvbi-fbtn" data-filter="energie" aria-pressed="false">Energie</button>
+        <button type="button" class="pvbi-fbtn" data-filter="zorg" aria-pressed="false">Zorg</button>
+        <button type="button" class="pvbi-fbtn" data-filter="zakelijk" aria-pressed="false">Zakelijk</button>
+        <button type="button" class="pvbi-fbtn" data-filter="buitenland" aria-pressed="false">Buitenland</button>
+        <button type="button" class="pvbi-fbtn" data-filter="besparen" aria-pressed="false">Besparen</button>
+        <button type="button" class="pvbi-fbtn" data-filter="producten" aria-pressed="false">Koopgidsen</button>
+        <button type="button" class="pvbi-fbtn" data-filter="gaming" aria-pressed="false">Gaming</button>
+        <button type="button" class="pvbi-fbtn" data-filter="blackfriday" aria-pressed="false">Black Friday</button>
+      </div>
+      <p class="pvbi-telling" id="pvbiTelling" aria-live="polite"></p>
+
+      {%- paginate blog.articles by 250 -%}
+      <div class="pvbi-grid" id="pvbiGrid">
+        {%- for art in blog.articles -%}
+          {%- liquid
+            assign s = art.tags | join: ' ' | append: ' ' | append: art.handle | append: ' ' | append: art.title | downcase
+            assign cats = ''
+            assign lbl = 'Advies'
+            comment
+              4 okt: sinds de vergelijker ook producten heeft, stonden artikelen over
+              gaming, Black Friday en koopgidsen hier zonder onderwerp, of onder het
+              verkeerde: "koptelefoon" bevat "telefoon". Drie onderwerpen erbij, en
+              de telefooncheck kijkt naar de tekst zonder dat woord.
+            endcomment
+            assign s_tel = s | replace: 'koptelefoon', '' | replace: 'hoofdtelefoon', ''
+            if s contains 'gaming' or s contains 'gta' or s contains 'playstation' or s contains 'ps5' or s contains 'xbox' or s contains 'nintendo' or s contains 'console' or s contains 'fc27' or s contains 'fc-27'
+              assign cats = cats | append: ' gaming producten'
+              assign lbl = 'Gaming'
+            endif
+            if s contains 'black friday' or s contains 'black-friday'
+              assign cats = cats | append: ' blackfriday'
+              if lbl == 'Advies'
+                assign lbl = 'Black Friday'
+              endif
+            endif
+            if art.tags contains 'koopgids' or s contains 'boodschappen'
+              assign cats = cats | append: ' producten'
+              if lbl == 'Advies' or lbl == 'Black Friday'
+                assign lbl = 'Koopgids'
+              endif
+            endif
+            if s contains 'zakelijk' or s contains 'zzp' or s contains 'mkb'
+              assign cats = cats | append: ' zakelijk'
+              assign lbl = 'Zakelijk'
+            endif
+            if s contains 'zorg' or s contains 'eigen risico' or s contains 'eigen-risico' or s contains 'basisverzekering'
+              assign cats = cats | append: ' zorg'
+              assign lbl = 'Zorg'
+            endif
+            if s contains 'energie' or s contains 'stroom' or s contains 'salderen' or s contains 'netbeheer' or s contains 'zonnepanel'
+              assign cats = cats | append: ' energie'
+              if lbl == 'Advies'
+                assign lbl = 'Energie'
+              endif
+            endif
+            if s contains 'esim' or s contains 'buitenland' or s contains 'roaming' or s contains 'vakantie'
+              assign cats = cats | append: ' buitenland'
+              if lbl == 'Advies'
+                assign lbl = 'Buitenland'
+              endif
+            endif
+            if s contains 'iphone' or s contains 'apple'
+              assign cats = cats | append: ' iphone telefoon'
+              if lbl == 'Advies'
+                assign lbl = 'iPhone'
+              endif
+            endif
+            if s contains 'internet' or s contains 'glasvezel' or s contains 'wifi' or s contains 'zender' or s contains 'klik en klaar'
+              unless s contains 'buitenland' or s contains 'esim'
+                assign cats = cats | append: ' internet'
+                if lbl == 'Advies'
+                  assign lbl = 'Internet & TV'
+                endif
+              endunless
+            endif
+            if s_tel contains 'telefoon' or s contains 'toestel' or s contains 'smartphone' or s contains 'samsung' or s contains 'galaxy' or s contains 'vouwtelefoon' or s contains 'refurbished' or s contains 'android' or s contains 'oneplus'
+              assign cats = cats | append: ' telefoon'
+              if lbl == 'Advies'
+                assign lbl = 'Telefoon'
+              endif
+            endif
+            if s contains 'sim only' or s contains 'sim-only' or s contains 'data' or s contains 'prepaid' or s contains 'contracten' or s contains 'prijsverhoging' or s contains '5g' or s contains 'netwerk' or s contains 'bkr'
+              assign cats = cats | append: ' simonly'
+              if lbl == 'Advies'
+                assign lbl = 'Sim only'
+              endif
+            endif
+            if s contains 'besparen' or s contains 'goedkoop' or s contains 'prinsjesdag' or s contains 'koopkracht' or s contains 'cashback'
+              assign cats = cats | append: ' besparen'
+            endif
+          -%}
+          <a class="pvbi-card" href="{{ art.url }}" data-cats="{{ cats | strip }}">
+            <div class="pvbi-card-top">
+              <span class="pvbi-tag">{{ lbl }}</span>
+              <span class="pvbi-date">{{ art.published_at | date: '%-d %B %Y' }}</span>
+            </div>
+            <h2 class="pvbi-title">{{ art.title }}</h2>
+            <p class="pvbi-excerpt">{{ art.excerpt_or_content | strip_html | truncatewords: 32 }}</p>
+            <span class="pvbi-read">Lees het artikel <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+          </a>
+        {%- else -%}
+          <p class="pvbi-empty">Er zijn nog geen artikelen gepubliceerd.</p>
+        {%- endfor -%}
+        <p class="pvbi-empty" id="pvbiNoResult" hidden>Geen artikelen in deze categorie.</p>
+      </div>
+      <button type="button" class="pvbi-meer" id="pvbiMeer" hidden>Toon meer artikelen</button>
+      {%- endpaginate -%}
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var wrap = document.getElementById('pvbiFilters');
+  if (!wrap) return;
+  var cards = Array.prototype.slice.call(document.querySelectorAll('#pvbiGrid .pvbi-card'));
+  var btns = Array.prototype.slice.call(wrap.querySelectorAll('.pvbi-fbtn'));
+  var meer = document.getElementById('pvbiMeer');
+  var telling = document.getElementById('pvbiTelling');
+  var noRes = document.getElementById('pvbiNoResult');
+  var STAP = 24, zichtbaar = STAP, huidig = 'alle';
+
+  function past(c, f) { return f === 'alle' || (' ' + (c.getAttribute('data-cats') || '') + ' ').indexOf(' ' + f + ' ') > -1; }
+
+  // Aantal per knop erachter.
+  btns.forEach(function (b) {
+    var f = b.getAttribute('data-filter');
+    var n = cards.filter(function (c) { return past(c, f); }).length;
+    if (f !== 'alle' && n === 0) { b.hidden = true; return; }
+    b.insertAdjacentHTML('beforeend', '<span>' + n + '</span>');
+  });
+
+  function toon() {
+    var lijst = cards.filter(function (c) { return past(c, huidig); });
+    cards.forEach(function (c) { c.hidden = true; });
+    lijst.slice(0, zichtbaar).forEach(function (c) { c.hidden = false; });
+    meer.hidden = lijst.length <= zichtbaar;
+    noRes.hidden = lijst.length > 0;
+    var b = btns.filter(function (x) { return x.getAttribute('data-filter') === huidig; })[0];
+    telling.textContent = lijst.length + ' artikelen' + (huidig === 'alle' ? '' : ' over ' + b.firstChild.textContent.trim().toLowerCase());
+  }
+  function kies(f, url) {
+    huidig = f; zichtbaar = STAP;
+    btns.forEach(function (x) { var aan = x.getAttribute('data-filter') === f; x.classList.toggle('active', aan); x.setAttribute('aria-pressed', aan ? 'true' : 'false'); });
+    toon();
+    if (url) {
+      var u = new URL(location.href);
+      if (f === 'alle') u.searchParams.delete('onderwerp'); else u.searchParams.set('onderwerp', f);
+      history.replaceState(null, '', u);
+    }
+  }
+  btns.forEach(function (b) { b.addEventListener('click', function () { kies(b.getAttribute('data-filter'), true); }); });
+  meer.addEventListener('click', function () { zichtbaar += STAP; toon(); });
+
+  var start = new URLSearchParams(location.search).get('onderwerp');
+  kies(btns.some(function (b) { return b.getAttribute('data-filter') === start; }) ? start : 'alle', false);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "PV Blog Index",
+  "settings": [
+    {"type":"text","id":"eyebrow","label":"Eyebrow","default":"Advies & Kennisbank"},
+    {"type":"text","id":"heading","label":"Titel","default":"Advies & Kennisbank"},
+    {"type":"textarea","id":"intro","label":"Introtekst"}
+  ]
+}
+{% endschema %}

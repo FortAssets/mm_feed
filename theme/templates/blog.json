@@ -1,0 +1,18 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "pv-blog-index",
+      "settings": {
+        "eyebrow": "Advies & Kennisbank",
+        "heading": "Advies & Kennisbank",
+        "intro": "Onafhankelijke koopgidsen en heldere uitleg over telefoonabonnementen, sim only, internet & TV en refurbished toestellen. Wij vergelijken de feiten en rekenen het voor je uit, zodat jij met vertrouwen de beste \u00e9n voordeligste keuze maakt."
+      }
+    }
+  },
+  "order": ["main"]
+}

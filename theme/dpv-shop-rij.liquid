@@ -104,21 +104,24 @@
 /* De schuifbalk van de browser stond als een grijze streep onder de kaarten.
    Schuiven kan nog steeds, met de vinger, het muiswiel of de pijlen in de kop. */
 #{{ rid }} .dsr-spoor::-webkit-scrollbar{display:none}
-#{{ rid }} .dsr-pijlen{flex:0 0 auto;display:flex;gap:6px;margin-left:6px}
-#{{ rid }} .dsr-pijlen[hidden]{display:none}
+#{{ rid }} .dsr-kop>.dsr-pijlen{flex:0 0 auto;display:flex;gap:6px;margin-left:6px}
+#{{ rid }} .dsr-kop>.dsr-pijlen[hidden]{display:none}
 #{{ rid }} .dsr-pijlen button{width:34px;height:34px;border-radius:50%;border:1px solid var(--rd);background:#fff;color:var(--pa);
  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 #{{ rid }} .dsr-pijlen button svg{width:16px;height:16px}
 #{{ rid }} .dsr-pijlen button:disabled{opacity:.35;cursor:default}
 #{{ rid }}.dsr-donker .dsr-pijlen button{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff}
-@media(max-width:640px){#{{ rid }} .dsr-pijlen{display:none}}
+@media(max-width:640px){#{{ rid }} .dsr-kop>.dsr-pijlen{display:none}}
 #{{ rid }} .dsr-k{flex:0 0 160px;scroll-snap-align:start;display:flex;flex-direction:column;background:#fff;
  border:1px solid var(--rd);border-radius:14px;overflow:hidden;position:relative;
  transition:box-shadow .14s,border-color .14s}
 @media(min-width:620px){#{{ rid }} .dsr-k{flex-basis:186px}}
 #{{ rid }} .dsr-k:hover{border-color:#cdc2e8;box-shadow:0 6px 18px rgba(13,27,42,.07)}
-#{{ rid }} .dsr-afb{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;padding:10px;background:#fff}
-#{{ rid }} .dsr-afb img{max-width:100%;max-height:100%;object-fit:contain}
+/* Vaste hoogte voor het plaatje. Een staande hoes (een game) trok de kaart
+   anders langer dan een liggende foto (een console) en dan stond de prijs bij
+   elke kaart op een andere hoogte. */
+#{{ rid }} .dsr-afb{aspect-ratio:1/1;position:relative;background:#fff;overflow:hidden}
+#{{ rid }} .dsr-afb img{position:absolute;inset:10px;width:calc(100% - 20px);height:calc(100% - 20px);object-fit:contain}
 #{{ rid }} .dsr-in{padding:0 10px 10px;display:flex;flex-direction:column;flex:1;gap:4px}
 #{{ rid }} .dsr-merk{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);font-weight:800}
 #{{ rid }} .dsr-naam{font-size:12.5px;line-height:1.35;font-weight:700;margin:0;display:-webkit-box;

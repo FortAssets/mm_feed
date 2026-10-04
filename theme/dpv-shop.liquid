@@ -378,6 +378,10 @@
     var mnd = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
     return (+m[3]) + ' ' + mnd[+m[2] - 1];
   }
+  /* Staat Amazon al tussen de winkels, dan hoeft het losse blok niet. */
+  function amzIsWinkel(p) {
+    return (p.o || []).some(function (o) { return /^Amazon/.test(o.w); });
+  }
   function amzGoedkoper(p) { return p.azp > 0 && p.o && p.o.length && p.azp < p.o[0].p; }
 
   function amzLink(p) {
@@ -685,7 +689,7 @@
     /* Alleen bij een product waarvan het Amazon-ASIN bekend is, dus een
        directe link naar precies dit product. Zonder prijs; zie de uitleg bij
        het blok in het overzicht. */
-    if (AMZ && p.az) {
+    if (AMZ && p.az && !amzIsWinkel(p)) {
       h += '<a class="ds-amzlink' + (amzGoedkoper(p) ? ' lager' : '') + '" href="' + esc(amzLink(p)) + '" target="_blank" rel="sponsored nofollow noopener">' +
         (p.azp > 0
           ? (amzGoedkoper(p) ? 'Goedkoper bij Amazon: ' : 'Bij Amazon ') + eur(p.azp) + ' <small>gezien ' + esc(amzDag(p)) + '</small>'
@@ -942,7 +946,7 @@
            mee in de winkellijst hierboven en gaat niet het prijslogboek in,
            want hij is gezien en niet gemeten. Is hij lager dan de laagste
            winkel, dan staat dat erbij. */
-        if (AMZ) {
+        if (AMZ && !amzIsWinkel(pr)) {
           var direct = !!(pr.az || '').trim();
           var tekst;
           if (pr.azp > 0) {

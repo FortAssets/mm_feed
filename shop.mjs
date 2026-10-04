@@ -42,25 +42,28 @@ const UIT = 'data/shop'
 // 0045496321444 wel bij B0F2J4SYJ2 uitkomt. Vandaar de handmatige lijst voor de
 // producten waar het om gaat.
 const AMAZON_LIJST = UIT + '/amazon.json'
+let amazonLabel = 'fortassets-21'
 const amazonEan = new Map()
-// Een prijs die met de hand bij Amazon is afgelezen, met de dag erbij. Die
-// komt niet uit een koppeling en wordt dus ook niet vanzelf ververst. Daarom
-// staat hij maar een week op de pagina, altijd met "gezien op" erbij, en gaat
-// hij niet het prijslogboek in. Een prijs van drie weken oud die "goedkoper
-// bij Amazon" roept is precies het soort fout dat de rest van de site vermijdt.
-const AMAZON_PRIJS_DAGEN = Number(process.env.AMAZON_PRIJS_DAGEN || 7)
+// Prijzen van Amazon komen uit amazon.json, daar neergezet door amazon.mjs
+// (--prijzen leest ze van de productpagina, --prijs zet er een met de hand).
+// Is de verkoper erbij gelezen, dan doet de prijs mee als winkel en gaat hij
+// het logboek in. Zonder verkoper staat hij alleen als "gezien op" op de
+// kaart. Ouder dan drie dagen telt niet meer: dan draait het script blijkbaar
+// niet, en een oude prijs die "goedkoopst" heet is erger dan geen prijs.
+const AMAZON_PRIJS_DAGEN = Number(process.env.AMAZON_PRIJS_DAGEN || 3)
 const amazonPrijs = new Map()
 
 function leesAmazon () {
   try {
     const d = JSON.parse(fs.readFileSync(AMAZON_LIJST, 'utf8'))
+    if (d.label) amazonLabel = String(d.label)
     for (const [ean, asin] of Object.entries(d.ean || {})) {
       if (/^[A-Z0-9]{10}$/.test(String(asin))) amazonEan.set(String(ean), String(asin))
     }
     const grens = Date.now() - AMAZON_PRIJS_DAGEN * 864e5
     for (const [ean, r] of Object.entries(d.prijs || {})) {
       const t = Date.parse((r && r.d) || '')
-      if (r && r.p > 0 && t && t >= grens && amazonEan.has(String(ean))) amazonPrijs.set(String(ean), { p: +r.p, d: r.d })
+      if (r && r.p > 0 && t && t >= grens && amazonEan.has(String(ean))) amazonPrijs.set(String(ean), { p: +r.p, d: r.d, vk: r.vk || '', eigen: !!r.eigen })
     }
     console.log('Amazon: ' + amazonEan.size + ' ASIN-koppelingen, ' + amazonPrijs.size + ' met een verse afgelezen prijs')
   } catch (e) { /* nog geen lijst */ }
@@ -1247,8 +1250,10 @@ function koppel (items) {
       // Het ASIN bij Amazon, als wij dat weten. Een tweedekansexemplaar krijgt
       // er geen: dat is bij Amazon een ander product.
       az: (beste.ean && beste.staat !== 'refurbished' && amazonEan.get(beste.ean)) || undefined,
-      azp: (beste.ean && beste.staat !== 'refurbished' && amazonPrijs.get(beste.ean) || {}).p,
-      azd: (beste.ean && beste.staat !== 'refurbished' && amazonPrijs.get(beste.ean) || {}).d,
+      // Alleen als de prijs niet als winkel meedoet: dan is hij wel gezien maar
+      // weten wij niet wie er verkoopt.
+      azp: (beste.ean && beste.staat !== 'refurbished' && !(amazonPrijs.get(beste.ean) || {}).vk && amazonPrijs.get(beste.ean) || {}).p,
+      azd: (beste.ean && beste.staat !== 'refurbished' && !(amazonPrijs.get(beste.ean) || {}).vk && amazonPrijs.get(beste.ean) || {}).d,
       o: aanbod.map(a => ({
         w: a.winkel,
         vk: a.verkoper || undefined,
@@ -1526,6 +1531,41 @@ async function main () {
     }
     console.log('bol: ' + bolRijen.length + ' aanbiedingen aan bestaande producten gekoppeld (' +
       bolRijen.filter(b => !bolIsEigen(b.aanbod.verkoper)).length + ' via een partner)')
+  }
+
+  // Amazon als winkel. Alleen een prijs waarvan de verkoper gelezen is, en
+  // dezelfde regel als bij bol: verkoopt Amazon zelf, dan heet de winkel
+  // Amazon; is het een marktplaatsverkoper, dan Amazon partner met de naam
+  // erbij. Vanaf hier doet hij gewoon mee: in de vergelijking, in wie
+  // goedkoopst is, en in het prijslogboek.
+  if (amazonPrijs.size) {
+    const perEan = new Map()
+    for (const it of rauw) if (it.ean && it.staat !== 'refurbished' && !perEan.has(it.ean)) perEan.set(it.ean, it)
+    let n = 0
+    for (const [ean, a] of amazonPrijs) {
+      const basis = perEan.get(ean)
+      if (!basis || !a.vk) continue
+      rauw.push({
+        bron: 'amazon',
+        naam: basis.naam,
+        merk: basis.merk,
+        prijs: a.p,
+        van: 0,
+        winkel: a.eigen ? 'Amazon' : 'Amazon partner',
+        verkoper: a.eigen ? '' : a.vk,
+        url: 'https://www.amazon.nl/dp/' + amazonEan.get(ean) + '?tag=' + encodeURIComponent(amazonLabel),
+        afb: basis.afb,
+        ean,
+        type: basis.type,
+        cat: basis.cat,
+        voorraad: 1,
+        staat: 'nieuw',
+        kleur: '',
+        verzend: 0
+      })
+      n++
+    }
+    console.log('Amazon: ' + n + ' prijzen als winkel in de vergelijking')
   }
 
   console.log('Totaal bruikbaar:', rauw.length)

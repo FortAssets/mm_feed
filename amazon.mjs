@@ -147,6 +147,60 @@ async function bevestigViaEan (asin, kandidaten) {
   return []
 }
 
+// Prijs en verkoper van een productpagina. Dezelfde regel als bij bol: een
+// prijs zonder bekende verkoper telt niet. Amazon zet onder "Verzender /
+// Verkoper" wie het verkoopt; is dat Amazon zelf, dan staat er Amazon, en bij
+// een marktplaatsverkoper staat daar de naam van die verkoper.
+function leesProduct (html) {
+  if (!html || html.length < 50000) return null
+  if (!/id="buybox"/.test(html)) return { fout: 'geen koopblok' }
+  const pr = /"priceAmount":\s*([\d.]+)/.exec(html)
+  if (!pr || !(+pr[1] > 0)) return { fout: 'geen prijs' }
+  const i = html.indexOf('odf-feature-text-desktop-merchant-info')
+  if (i < 0) return { fout: 'geen verkoper' }
+  const blok = html.slice(i, i + 2500)
+  const vk = (/id="sellerProfileTriggerId"[^>]*>([^<]{1,80})</.exec(blok) ||
+    /offer-display-feature-text-message">([^<]{1,80})</.exec(blok) || [])[1]
+  if (!vk) return { fout: 'geen verkoper' }
+  const verkoper = vk.replace(/&amp;/g, '&').trim()
+  // Tweedehands via het koopblok komt voor; die prijs hoort niet tussen nieuw.
+  if (/id="usedBuySection"/.test(html) && !/id="newAccordionRow/.test(html) && /Tweedehands|Gebruikt/.test(html.slice(i - 6000, i))) {
+    return { fout: 'alleen tweedehands' }
+  }
+  return { prijs: +pr[1], verkoper, eigen: /^amazon(\.nl)?$/i.test(verkoper) }
+}
+
+// De prijs van elk gekoppeld product ophalen, langst geleden eerst.
+// Rustig aan: een pagina per vijf tot negen seconden, en stoppen zodra Amazon
+// drie keer achter elkaar geen pagina geeft. Er zit geen omweg in voor een
+// blokkade, en dat is expres.
+async function prijsRonde (d, aantal) {
+  d.prijs = d.prijs || {}
+  const vandaag = new Date().toISOString().slice(0, 10)
+  const lijst = Object.keys(d.ean)
+    .sort((a, b) => String((d.prijs[a] || {}).d || '').localeCompare(String((d.prijs[b] || {}).d || '')))
+    .slice(0, aantal)
+  let ok = 0; let dicht = 0; let weg = 0
+  for (const ean of lijst) {
+    const r = leesProduct(haalPagina('https://www.amazon.nl/dp/' + d.ean[ean]))
+    if (r === null) {
+      dicht++
+      if (dicht >= 3) { console.log('  Amazon geeft geen pagina meer, hier stoppen.'); break }
+      await new Promise(s => setTimeout(s, 20000))
+      continue
+    }
+    dicht = 0
+    if (r.fout) { weg++; delete d.prijs[ean]; console.log('  ' + ean + ' ' + d.ean[ean] + ': ' + r.fout) } else {
+      d.prijs[ean] = { p: r.prijs, d: vandaag, vk: r.verkoper, eigen: r.eigen }
+      ok++
+      console.log('  ' + ean + ' ' + d.ean[ean] + '  EUR ' + r.prijs + '  ' + (r.eigen ? 'Amazon' : 'partner: ' + r.verkoper))
+    }
+    schrijf(d)
+    await new Promise(s => setTimeout(s, 5000 + Math.random() * 4000))
+  }
+  console.log('prijs gelezen ' + ok + ', zonder bruikbare prijs ' + weg + ', van ' + lijst.length)
+}
+
 // Lijkt de titel van Amazon op onze naam? Een EAN dat bij Amazon aan het
 // verkeerde product hangt komt voor, dus een tweede controle: minstens twee
 // woorden gemeen, of het merk.
@@ -210,6 +264,16 @@ async function main () {
     for (const [ean, asin] of Object.entries(d.ean || {})) console.log('  ' + ean + '  ' + asin + (d.prijs[ean] ? '  EUR ' + d.prijs[ean].p + ' gezien ' + d.prijs[ean].d : ''))
     if (!args.length) console.log('\nGebruik: node amazon.mjs <link> [--ean=<ean>]')
     return
+  }
+
+  const proef = (args.find(a => a.startsWith('--proef=')) || '').slice(8)
+  if (proef) { console.log(leesProduct(fs.readFileSync(proef, 'utf8'))); return }
+
+  const pz = args.find(a => a === '--prijzen' || a.startsWith('--prijzen='))
+  if (pz) {
+    await prijsRonde(d, Number(pz.split('=')[1]) || 200)
+    schrijf(d)
+    if (!args.some(a => a.startsWith('--match='))) return
   }
 
   const m = args.find(a => a.startsWith('--match='))

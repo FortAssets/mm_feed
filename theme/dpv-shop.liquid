@@ -241,7 +241,8 @@
 .ds-vz{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 </style>
 
-<section class="ds" id="ds" data-api="{{ section.settings.api }}" data-amazon="{{ section.settings.amazon_tag }}">
+{%- if section.settings.bf_knop -%}{%- render 'dpv-bf-knop', api: section.settings.bf_api, tot: section.settings.bf_tot -%}{%- endif -%}
+<section class="ds" id="ds" data-api="{{ section.settings.api }}" data-amazon="{{ section.settings.amazon_tag }}" data-bf="{% if section.settings.bf_knop %}1{% endif %}">
 
   <div class="ds-kop">
     {%- if section.settings.label != blank -%}
@@ -365,6 +366,7 @@
   if (!API) return;
   /* Het partnerlabel van Amazon. Leeg betekent: geen Amazon op de pagina. */
   var AMZ = (wortel.getAttribute('data-amazon') || '').trim();
+  var BF = wortel.getAttribute('data-bf') === '1';
 
   /* Een EAN is de nauwkeurigste zoekopdracht die Amazon aanneemt; staat er
      geen EAN bij, dan het merk met de productnaam. Een vast ASIN heeft
@@ -700,7 +702,9 @@
       '" target="_blank" rel="sponsored noopener">Naar ' + esc(p.o[0].w) + '</a>';
     h += '<button type="button" data-open="' + esc(p.i) + '" aria-label="Alle winkels en prijsverloop">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg></button>';
-    h += '</div></div></article>';
+    h += '</div>';
+    if (BF && window.dpvBf && window.dpvBf.aan) h += window.dpvBf.knop(p);
+    h += '</div></article>';
     return h;
   }
 
@@ -1176,6 +1180,30 @@
       "id": "api",
       "label": "API",
       "default": "https://shop.deprijsvergelijker.com"
+    },
+    {
+      "type": "header",
+      "content": "Seintje op Black Friday"
+    },
+    {
+      "type": "checkbox",
+      "id": "bf_knop",
+      "label": "Knop 'Seintje op Black Friday' op elke kaart",
+      "default": true,
+      "info": "De bezoeker krijgt op 27 november een mail over dat product, ook als de prijs niet gezakt is. De aanmeldingen staan op /sm/api/bf-alarmen."
+    },
+    {
+      "type": "text",
+      "id": "bf_tot",
+      "label": "Knop tonen tot en met (JJJJ-MM-DD)",
+      "default": "2026-11-26",
+      "info": "Daarna verdwijnt de knop vanzelf. De dag voor Black Friday, want op de dag zelf gaat de mail al uit."
+    },
+    {
+      "type": "text",
+      "id": "bf_api",
+      "label": "Worker voor de aanmelding",
+      "default": "https://dpv-boodschappen.business-347.workers.dev"
     },
     {
       "type": "text",

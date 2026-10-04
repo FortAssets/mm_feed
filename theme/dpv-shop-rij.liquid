@@ -48,6 +48,7 @@
          data-min="{{ section.settings.min }}"
          data-max="{{ section.settings.max }}"
          data-uitgelicht="{{ section.settings.uitgelicht | strip_newlines | escape }}"
+         data-bf="{% if section.settings.bf_knop %}1{% endif %}"
          hidden>
 
   <div class="dsr-kop">
@@ -75,6 +76,8 @@
 
   <p class="dsr-fijn" data-fijn>&nbsp;</p>
 </section>
+
+{%- if section.settings.bf_knop -%}{%- render 'dpv-bf-knop', api: section.settings.bf_api, tot: section.settings.bf_tot -%}{%- endif -%}
 
 <style>
 #{{ rid }}{--pa:#5b3b8c;--pa2:#F6F4FB;--rd:#E2DCF2;--gr:#10b981;--rood:#e11d48;--ink:#0D1B2A;--mut:#5B6B80;
@@ -161,6 +164,7 @@
   if (!w) return;
   var API = (w.getAttribute('data-api') || '').replace(/\/+$/, '');
   if (!API) return;
+  var BF = w.getAttribute('data-bf') === '1';
   var spoor = w.querySelector('[data-spoor]');
   var fijn = w.querySelector('[data-fijn]');
 
@@ -218,6 +222,7 @@
           ? '<b>' + esc(x.o[0].w) + '</b> &middot; tot ' + eur(x.o[x.o.length - 1].p) + ' elders'
           : '<b>' + esc(x.o[0].w) + '</b>') + '</div>' +
         '<a class="dsr-knop" href="' + ga + '" target="_blank" rel="sponsored noopener">Bekijk</a>' +
+        (BF && window.dpvBf && window.dpvBf.aan ? window.dpvBf.knop(x) : '') +
         '</div></article>';
     }).join('');
 
@@ -505,6 +510,30 @@
         }
       ],
       "default": "verschil"
+    },
+    {
+      "type": "header",
+      "content": "Seintje op Black Friday"
+    },
+    {
+      "type": "checkbox",
+      "id": "bf_knop",
+      "label": "Knop 'Seintje op Black Friday' op elke kaart",
+      "default": true,
+      "info": "De bezoeker krijgt op 27 november een mail over dat product, ook als de prijs niet gezakt is. De aanmeldingen staan op /sm/api/bf-alarmen."
+    },
+    {
+      "type": "text",
+      "id": "bf_tot",
+      "label": "Knop tonen tot en met (JJJJ-MM-DD)",
+      "default": "2026-11-26",
+      "info": "Daarna verdwijnt de knop vanzelf. De dag voor Black Friday, want op de dag zelf gaat de mail al uit."
+    },
+    {
+      "type": "text",
+      "id": "bf_api",
+      "label": "Worker voor de aanmelding",
+      "default": "https://dpv-boodschappen.business-347.workers.dev"
     },
     {
       "type": "textarea",

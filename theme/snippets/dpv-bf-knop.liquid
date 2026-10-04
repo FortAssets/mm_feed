@@ -1,0 +1,222 @@
+{%- comment -%}
+  Seintje op Black Friday, per product.
+
+  Een knop op de productkaart. Wie erop klikt laat zijn adres achter en krijgt
+  op 27 november een mail over dat product: wat het kostte toen hij zich
+  aanmeldde, wat het die dag kost en de laagste prijs die wij gemeten hebben.
+  Ook als er niets gezakt is; dat is de belofte, en daarom staat hij ook zo in
+  de uitleg achter de (i).
+
+  Dit bestand zet alleen het gereedschap klaar: window.dpvBf. De secties die
+  kaarten tekenen (dpv-shop-rij, dpv-shop) vragen daar de knop op. Zo staat de
+  logica op een plek en niet in elke sectie opnieuw.
+
+  Gebruik in een sectie:
+    {% render 'dpv-bf-knop', api: '...', tot: '2026-11-27' %}
+  en in het script van die sectie:
+    if (window.dpvBf && window.dpvBf.aan) html += window.dpvBf.knop(product)
+
+  De bestaande knop "Mail deze deal" wordt door een algemeen script op elke
+  kaart met een affiliatelink gezet. Dat script slaat een kaart over die het
+  kenmerk data-dpv-mail al draagt; de secties zetten dat kenmerk zolang deze
+  knop aanstaat, en zetten er zelf een kleine tekstlink "Mail mij deze deal"
+  onder. Die tekst wordt door hetzelfde algemene script opgepikt, dus de
+  functie blijft werken. Na de einddatum valt alles vanzelf terug.
+
+  Het adres en de gevolgde producten worden in de browser onthouden, zodat de
+  tweede klik geen venster meer nodig heeft. Lukt dat niet (privevenster), dan
+  vraagt hij het adres gewoon opnieuw.
+{%- endcomment -%}
+{%- assign bf_aan = true -%}
+{%- if tot != blank -%}
+  {%- assign bf_nu = 'now' | date: '%s' | times: 1 -%}
+  {%- assign bf_eind = tot | append: ' 23:59:59' | date: '%s' | times: 1 -%}
+  {%- if bf_nu > bf_eind -%}{%- assign bf_aan = false -%}{%- endif -%}
+{%- endif -%}
+{%- if bf_aan -%}
+<style>
+.dpvbf-rij{display:flex;gap:6px;align-items:stretch;margin-top:7px;position:relative}
+.dpvbf{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid #1b1033;background:#1b1033;color:#fff;
+ font:inherit;font-weight:800;font-size:12.5px;line-height:1.2;border-radius:10px;padding:9px 8px;cursor:pointer;text-align:center}
+.dpvbf:hover{background:#2d1b52;border-color:#2d1b52}
+.dpvbf svg{width:14px;height:14px;flex:0 0 14px}
+.dpvbf.aan{background:#ecfdf5;border-color:#a7f3d0;color:#047857;cursor:default}
+.dpvbf-i{flex:0 0 34px;border:1.5px solid #e2dcf2;background:#fff;color:#5b3b8c;border-radius:10px;font:inherit;font-weight:800;font-size:13px;
+ font-style:italic;font-family:Georgia,serif;cursor:pointer;padding:0}
+.dpvbf-i:hover{border-color:#5b3b8c}
+.dpvbf-tip{position:absolute;left:0;right:0;bottom:calc(100% + 8px);z-index:30;background:#0D1B2A;color:#fff;border-radius:12px;padding:12px 13px;
+ font-size:12.5px;line-height:1.5;font-weight:500;text-align:left;box-shadow:0 18px 40px -16px rgba(13,27,42,.6)}
+.dpvbf-tip b{display:block;font-size:13px;margin-bottom:3px}
+.dpvbf-tip[hidden]{display:none}
+.dpvbf-mail{display:block;width:100%;margin-top:6px;background:none;border:0;padding:2px 0;font:inherit;font-size:11.5px;font-weight:600;color:#64748b;
+ text-decoration:underline;cursor:pointer;text-align:center}
+.dpvbf-mail:hover{color:#0D1B2A}
+
+.dpvbf-ov{position:fixed;inset:0;z-index:99999;background:rgba(13,27,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;
+ font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif}
+.dpvbf-ov[hidden]{display:none}
+.dpvbf-doos{background:#fff;border-radius:18px;max-width:430px;width:100%;padding:22px 22px 20px;color:#0D1B2A;position:relative;
+ box-shadow:0 30px 80px -20px rgba(13,27,42,.5)}
+.dpvbf-doos h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;line-height:1.2;font-weight:800;margin:0 30px 6px 0;letter-spacing:-.02em}
+.dpvbf-prod{font-size:13.5px;font-weight:700;color:#5b3b8c;margin:0 0 12px}
+.dpvbf-doos p{font-size:14px;line-height:1.55;color:#42526b;margin:0 0 14px}
+.dpvbf-veld{display:flex;gap:8px}
+.dpvbf-veld input{flex:1;min-width:0;border:1.5px solid #dbe2ee;border-radius:11px;padding:12px 13px;font:inherit;font-size:15px;color:#0D1B2A}
+.dpvbf-veld input:focus{outline:2px solid #c9b6f2;outline-offset:1px}
+.dpvbf-veld button{border:0;background:#10b981;color:#fff;font:inherit;font-weight:800;font-size:14.5px;border-radius:11px;padding:12px 16px;cursor:pointer;white-space:nowrap}
+.dpvbf-veld button:disabled{opacity:.6;cursor:default}
+.dpvbf-val{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.dpvbf-uit{font-size:13.5px;font-weight:700;margin:10px 0 0;min-height:18px}
+.dpvbf-uit.goed{color:#047857}.dpvbf-uit.fout{color:#b91c1c}
+.dpvbf-fijn{font-size:12px !important;color:#8494ab !important;margin:12px 0 0 !important}
+.dpvbf-x{position:absolute;right:12px;top:12px;width:32px;height:32px;border:0;background:#f1f5f9;border-radius:50%;font-size:18px;line-height:1;cursor:pointer;color:#42526b}
+@media(max-width:480px){.dpvbf-veld{flex-direction:column}}
+</style>
+
+<div class="dpvbf-ov" id="dpvbf-ov" hidden role="dialog" aria-modal="true" aria-labelledby="dpvbf-kop">
+  <div class="dpvbf-doos">
+    <button type="button" class="dpvbf-x" data-bf-sluit aria-label="Sluiten">&times;</button>
+    <h3 id="dpvbf-kop">Seintje op Black Friday</h3>
+    <div class="dpvbf-prod" data-bf-naam>&nbsp;</div>
+    <p>Op vrijdag 27 november krijg je van ons één mail over dit product: wat het vandaag kost, wat het dan kost, en de laagste prijs die wij gemeten hebben. <strong>Ook als de prijs niet gezakt is.</strong> Dan weet je zeker of de aanbieding een aanbieding is.</p>
+    <div class="dpvbf-veld">
+      <input type="email" autocomplete="email" placeholder="jouw@email.nl" data-bf-mail aria-label="E-mailadres">
+      <input type="text" name="website" class="dpvbf-val" tabindex="-1" autocomplete="off" data-bf-val aria-hidden="true">
+      <button type="button" data-bf-stuur>Zet het seintje aan</button>
+    </div>
+    <div class="dpvbf-uit" data-bf-uit>&nbsp;</div>
+    <p class="dpvbf-fijn">Je krijgt eerst een mail met één link om te bevestigen. Klik je daarna bij meer producten op de knop, dan komen die in dezelfde mail. Afmelden kan met één klik.</p>
+  </div>
+</div>
+
+<script>
+(function () {
+  if (window.dpvBf) return;
+  var API = {{ api | default: 'https://dpv-boodschappen.business-347.workers.dev' | json }}.replace(/\/+$/, '');
+  var ov = document.getElementById('dpvbf-ov');
+  if (!ov) return;
+  // Het venster hoort direct onder body: binnen een sectie met een transform of
+  // een eigen stapel zou position:fixed zich aan die sectie hechten.
+  document.body.appendChild(ov);
+  var elNaam = ov.querySelector('[data-bf-naam]');
+  var elMail = ov.querySelector('[data-bf-mail]');
+  var elVal = ov.querySelector('[data-bf-val]');
+  var elStuur = ov.querySelector('[data-bf-stuur]');
+  var elUit = ov.querySelector('[data-bf-uit]');
+  var huidig = null;
+
+  function lees(k) { try { return window.localStorage.getItem(k) || ''; } catch (e) { return ''; } }
+  function zet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) {} }
+  function gevolgd() { var s = lees('dpvBfIds'); return s ? s.split(',') : []; }
+  function onthoud(id) { var g = gevolgd(); if (g.indexOf(id) < 0) { g.push(id); zet('dpvBfIds', g.slice(-80).join(',')); } }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  var BEL = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><path d="M6 8a6 6 0 1112 0c0 7 3 8 3 8H3s3-1 3-8zM10 20a2 2 0 004 0"/></svg>';
+  var VINK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" aria-hidden="true"><path d="M5 13l4 4L19 7"/></svg>';
+
+  function knopBinnen(aan) { return aan ? VINK + '<span>Seintje staat aan</span>' : BEL + '<span>Seintje op Black Friday</span>'; }
+
+  function zetAan(id) {
+    var ks = document.querySelectorAll('.dpvbf[data-bf="' + String(id).replace(/"/g, '') + '"]');
+    for (var i = 0; i < ks.length; i++) { ks[i].classList.add('aan'); ks[i].innerHTML = knopBinnen(true); ks[i].disabled = true; }
+  }
+
+  function stuur(p, adres, klaar) {
+    fetch(API + '/sm/api/bf-alarm', {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ email: adres, product: p.id, cat: p.cat, bron: 'bf-' + (document.body.getAttribute('data-template') || location.pathname.split('/')[1] || 'home').replace(/[^a-z0-9]/gi, '').slice(0, 20), website: elVal.value || '' })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) { klaar(d || {}); })
+      .catch(function () { klaar({ ok: false, fout: 'Er ging iets mis. Probeer het later nog eens.' }); });
+  }
+
+  function open(p) {
+    huidig = p;
+    elNaam.textContent = p.naam || '';
+    elUit.className = 'dpvbf-uit'; elUit.innerHTML = '&nbsp;';
+    elStuur.disabled = false; elStuur.textContent = 'Zet het seintje aan';
+    elMail.value = lees('dpvBfMail');
+    ov.hidden = false;
+    setTimeout(function () { elMail.focus(); }, 40);
+  }
+  function sluit() { ov.hidden = true; huidig = null; }
+
+  function verstuurUitVenster() {
+    if (!huidig) return;
+    var adres = (elMail.value || '').trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) {
+      elUit.className = 'dpvbf-uit fout'; elUit.textContent = 'Vul een geldig e-mailadres in.'; elMail.focus(); return;
+    }
+    var p = huidig;
+    elStuur.disabled = true; elStuur.textContent = 'Bezig…';
+    stuur(p, adres, function (d) {
+      if (!d.ok) {
+        elUit.className = 'dpvbf-uit fout'; elUit.textContent = d.fout || 'Er ging iets mis. Probeer het later nog eens.';
+        elStuur.disabled = false; elStuur.textContent = 'Zet het seintje aan'; return;
+      }
+      zet('dpvBfMail', adres); onthoud(p.id); zetAan(p.id);
+      elUit.className = 'dpvbf-uit goed';
+      elUit.textContent = d.status === 'al-actief'
+        ? 'Staat aan. Je hoort van ons op 27 november.'
+        : 'Bijna klaar: wij hebben je een mail gestuurd. Klik daarin op de link om te bevestigen.';
+      elStuur.textContent = 'Gelukt';
+    });
+  }
+
+  elStuur.addEventListener('click', verstuurUitVenster);
+  elMail.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); verstuurUitVenster(); } });
+  ov.addEventListener('click', function (e) { if (e.target === ov || e.target.hasAttribute('data-bf-sluit')) sluit(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !ov.hidden) sluit(); });
+
+  // Een afhandeling voor alle knoppen op de pagina, ook die later geladen worden.
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    var i = t.closest ? t.closest('.dpvbf-i') : null;
+    if (i) {
+      e.preventDefault();
+      var tip = i.parentElement.querySelector('.dpvbf-tip');
+      if (tip) tip.hidden = !tip.hidden;
+      return;
+    }
+    var open_ = document.querySelectorAll('.dpvbf-tip:not([hidden])');
+    for (var k = 0; k < open_.length; k++) open_[k].hidden = true;
+
+    var b = t.closest ? t.closest('.dpvbf') : null;
+    if (!b || b.classList.contains('aan')) return;
+    e.preventDefault();
+    var p = { id: b.getAttribute('data-bf'), cat: b.getAttribute('data-cat') || '', naam: b.getAttribute('data-naam') || '' };
+    var adres = lees('dpvBfMail');
+    // Adres al bekend: geen venster meer, een klik is genoeg.
+    if (adres) {
+      b.disabled = true;
+      stuur(p, adres, function (d) {
+        if (d.ok) { onthoud(p.id); zetAan(p.id); }
+        else { b.disabled = false; open(p); elUit.className = 'dpvbf-uit fout'; elUit.textContent = d.fout || 'Er ging iets mis.'; }
+      });
+      return;
+    }
+    open(p);
+  });
+
+  window.dpvBf = {
+    aan: true,
+    // De knop voor een product uit de vergelijker. p.i is het product-id,
+    // p.c de categorie, p.n de naam.
+    knop: function (p) {
+      var volgt = gevolgd().indexOf(p.i) > -1;
+      return '<div class="dpvbf-rij">' +
+        '<button type="button" class="dpvbf' + (volgt ? ' aan' : '') + '"' + (volgt ? ' disabled' : '') +
+        ' data-bf="' + esc(p.i) + '" data-cat="' + esc(p.c) + '" data-naam="' + esc(p.n) + '">' + knopBinnen(volgt) + '</button>' +
+        '<button type="button" class="dpvbf-i" aria-label="Uitleg over het seintje">i</button>' +
+        '<div class="dpvbf-tip" hidden><b>Hoe werkt het?</b>Op Black Friday, 27 november, mailen wij je over dit product: de prijs van nu, de prijs van dan en de laagste die wij gemeten hebben. Je krijgt dat bericht altijd, ook als de prijs niet zakt.</div>' +
+        '</div>' +
+        '<button type="button" class="dpvbf-mail">Mail mij deze deal</button>';
+    }
+  };
+})();
+</script>
+{%- endif -%}

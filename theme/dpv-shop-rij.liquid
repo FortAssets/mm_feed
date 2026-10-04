@@ -149,6 +149,8 @@
 #{{ rid }} .dsr-wl{margin-top:auto;border:1px solid var(--rd,#e6ebf2);border-radius:11px;overflow:hidden;background:#fff}
 #{{ rid }} .dsr-wr,#{{ rid }} .dsr-wr:visited{display:flex;align-items:center;gap:6px;min-height:40px;padding:6px 9px;border-top:1px solid #eef2f7;font-size:13px;font-weight:700;color:#0D1B2A;text-decoration:none}
 #{{ rid }} .dsr-wr.eerste{border-top:0;background:#ecfdf5}
+#{{ rid }} .dsr-wr.eerste b{color:#047857}
+#{{ rid }} .dsr-wl .dpvmb,#{{ rid }} .dsr-wl > :not(.dsr-wr):not(.dsr-wm){display:none !important}
 #{{ rid }} .dsr-wr:hover{background:#f1f5f9}
 #{{ rid }} .dsr-wr.eerste:hover{background:#d9f7ea}
 #{{ rid }} .dsr-wn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -239,7 +241,6 @@
           ? '<div class="dsr-wl">' + x.o.slice(0, 3).map(function (o, n) {
               return '<a class="dsr-wr' + (n === 0 ? ' eerste' : '') + '" href="' + ga + '&w=' + encodeURIComponent(o.w) +
                 '" target="_blank" rel="sponsored noopener"><span class="dsr-wn">' + esc(o.w) + '</span>' +
-                (n === 0 && o.p < x.o[1].p ? '<em>laagste</em>' : '') +
                 '<b>' + eur(o.p) + '</b><i aria-hidden="true">&rsaquo;</i></a>';
             }).join('') +
             (x.o.length > 3 ? '<a class="dsr-wm" href="/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n) + '">+ ' + (x.o.length - 3) + (x.o.length - 3 === 1 ? ' winkel' : ' winkels') + '</a>' : '') +

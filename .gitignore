@@ -3,3 +3,4 @@ feed.csv.gz
 td_*.json
 node_modules/
 amazon-vps.log
+amazon-debug.html

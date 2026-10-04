@@ -154,7 +154,15 @@ async function bevestigViaEan (asin, kandidaten) {
 function leesProduct (html) {
   if (!html || html.length < 50000) return null
   if (!/id="buybox"/.test(html)) return { fout: 'geen koopblok' }
-  const pr = /"priceAmount":\s*([\d.]+)/.exec(html)
+  // De prijs staat op meer dan een plek, en niet elke bezoeker krijgt dezelfde
+  // opmaak. Eerst het getal uit de paginagegevens, anders het prijsblok zelf.
+  let pr = /"priceAmount":\s*([\d.]+)/.exec(html)
+  if (!pr) {
+    const k = html.indexOf('id="corePrice')
+    const blok = k > -1 ? html.slice(k, k + 4000) : ''
+    const m = /a-price-whole">([\d.]+)[\s\S]{0,200}?a-price-fraction">(\d{2})/.exec(blok)
+    if (m) pr = [0, m[1].replace(/\./g, '') + '.' + m[2]]
+  }
   if (!pr || !(+pr[1] > 0)) return { fout: 'geen prijs' }
   const i = html.indexOf('odf-feature-text-desktop-merchant-info')
   if (i < 0) return { fout: 'geen verkoper' }
@@ -263,6 +271,28 @@ async function main () {
     console.log(n + ' koppelingen in ' + LIJST)
     for (const [ean, asin] of Object.entries(d.ean || {})) console.log('  ' + ean + '  ' + asin + (d.prijs[ean] ? '  EUR ' + d.prijs[ean].p + ' gezien ' + d.prijs[ean].d : ''))
     if (!args.length) console.log('\nGebruik: node amazon.mjs <link> [--ean=<ean>]')
+    return
+  }
+
+  // Wat krijgt deze computer eigenlijk van Amazon? Zet de feiten op een rij
+  // en bewaart de pagina, zodat je kunt zien waarom er geen prijs uitkomt.
+  //   node amazon.mjs --debug=B0FN7ZG39D
+  const dbg = (args.find(a => a.startsWith('--debug=')) || '').slice(8)
+  if (dbg) {
+    const h = haalPagina('https://www.amazon.nl/dp/' + dbg)
+    fs.writeFileSync('amazon-debug.html', h)
+    const heeft = (re) => re.test(h) ? 'ja' : 'nee'
+    console.log('grootte        ' + h.length)
+    console.log('titel          ' + ((/<title>([^<]{0,90})/.exec(h) || [])[1] || '(geen)').trim())
+    console.log('koopblok       ' + heeft(/id="buybox"/))
+    console.log('priceAmount    ' + heeft(/"priceAmount"/))
+    console.log('prijsblok      ' + heeft(/id="corePrice/))
+    console.log('verkoperblok   ' + heeft(/odf-feature-text-desktop-merchant-info/))
+    console.log('niet leverbaar ' + heeft(/id="outOfStock"|Momenteel niet verkrijgbaar|Currently unavailable/))
+    console.log('bezorgadres    ' + ((/id="glow-ingress-line2"[^>]*>\s*([^<]{0,60})/.exec(h) || [])[1] || '(onbekend)').trim())
+    console.log('robotcontrole  ' + heeft(/captcha|Geef de tekens|not a robot/i))
+    console.log('uitkomst       ' + JSON.stringify(leesProduct(h)))
+    console.log('pagina bewaard in amazon-debug.html')
     return
   }
 

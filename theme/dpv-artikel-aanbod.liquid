@@ -110,6 +110,17 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
     Array.prototype.forEach.call(document.querySelectorAll('.ak a[href] img, a[style*="flex:1 1 2"] img'), function (img) {
       var a = img.closest('a'); if (a && img.getAttribute('src')) foto[sleutel(a.getAttribute('href'))] = img.getAttribute('src');
     });
+    // Kaarten zonder link om de foto (abonnementen): dan op naam.
+    var opNaam = [];
+    Array.prototype.forEach.call(document.querySelectorAll('.ak'), function (k) {
+      var img = k.querySelector('img'), n = k.querySelector('.ak-n');
+      if (img && n && img.getAttribute('src')) opNaam.push([n.textContent.toLowerCase().replace(/\s+/g, ' ').trim(), img.getAttribute('src')]);
+    });
+    function viaNaam(cel) {
+      var t = cel.textContent.toLowerCase().replace(/\s+/g, ' ');
+      for (var i = 0; i < opNaam.length; i++) if (opNaam[i][0].length > 5 && t.indexOf(opNaam[i][0]) > -1) return opNaam[i][1];
+      return '';
+    }
     Array.prototype.forEach.call(rijen, function (tr) {
       var cel = tr.cells[0]; if (!cel || cel.querySelector('img')) return;
       var a = tr.querySelector('a[href*="/api/shop/go"], a[href*="/api/go"]'); if (!a) return;
@@ -124,6 +135,7 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
         wrap.appendChild(img); wrap.appendChild(tekst); cel.appendChild(wrap);
       }
       if (foto[k]) return zet(foto[k]);
+      var vn = viaNaam(cel); if (vn) return zet(vn);
       var c = /[?&]cat=([^&#]+)/.exec(href);
       if (href.indexOf('/api/shop/go') < 0 || !c) return;
       fetch('https://shop.deprijsvergelijker.com/api/shop/product?i=' + encodeURIComponent(k) + '&cat=' + c[1])

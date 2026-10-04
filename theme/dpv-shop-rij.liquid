@@ -205,6 +205,7 @@
     if (!items.length) { w.hidden = true; return; }
     spoor.innerHTML = items.map(function (x) {
       var korting = (x.v > x.p) ? Math.round((1 - x.p / x.v) * 100) : 0;
+      if (korting > 70) korting = 0;
       var multi = x.o && x.o.length > 1;
       var laagsteOoit = (typeof x.lp === 'number' && x.mt >= 2 && x.p <= x.lp + 0.005);
       var badge = laagsteOoit ? '<span class="dsr-b laag">Laagste tot nu</span>'
@@ -253,11 +254,57 @@
     stand();
   }
 
+  // Variatie. Gesorteerd op prijsverschil krijg je anders twaalf keer dezelfde
+  // telefoon in een andere kleur, en bijna altijd dezelfde winkel als
+  // goedkoopste. Daarom halen we ruim op en kiezen daaruit: een product per
+  // familie, een paar per categorie en per winkel. Een prijs onder de 60% van
+  // de eerstvolgende winkel slaan we over: dat is vaker een fout in een feed
+  // dan een aanbieding.
+  function familie(x) {
+    return String((x.b || '') + ' ' + (x.n || '')).toLowerCase().replace(/[^a-z0-9 ]+/g, ' ')
+      .replace(/\b\d+ ?(gb|tb|inch|cm|mm)\b/g, ' ').split(/\s+/).filter(Boolean).slice(0, 4).join(' ');
+  }
+  function geloofwaardig(x) {
+    if (!x.o || !x.o.length || !(x.p > 0)) return false;
+    if (x.o.length > 1 && x.o[0].p < x.o[1].p * 0.6) return false;
+    return true;
+  }
+  function mix(items, n) {
+    var goed = items.filter(geloofwaardig), uit = [], gehad = {};
+    [[1, 2, 3], [1, 3, 5], [1, 99, 99]].forEach(function (g) {
+      var fam = {}, per = {}, ct = {};
+      uit.forEach(function (x) { fam[familie(x)] = 1; per[x.o[0].w] = (per[x.o[0].w] || 0) + 1; ct[x.c] = (ct[x.c] || 0) + 1; });
+      goed.forEach(function (x) {
+        if (uit.length >= n || gehad[x.i]) return;
+        var f = familie(x), wk = x.o[0].w;
+        if (fam[f] || (per[wk] || 0) >= g[1] || (ct[x.c] || 0) >= g[2]) return;
+        fam[f] = 1; per[wk] = (per[wk] || 0) + 1; ct[x.c] = (ct[x.c] || 0) + 1; gehad[x.i] = 1; uit.push(x);
+      });
+    });
+    // Om en om per winkel, zodat de eerste kaarten al verschillen.
+    var bak = {}, volg = [], r = [];
+    uit.forEach(function (x) { var k = x.o[0].w; if (!bak[k]) { bak[k] = []; volg.push(k); } bak[k].push(x); });
+    while (r.length < uit.length) volg.forEach(function (k) { if (bak[k].length) r.push(bak[k].shift()); });
+    return r;
+  }
+
   function lijst() {
-    fetch(API + route + '?' + p.toString())
-      .then(function (r) { return r.json(); })
-      .then(function (d) { teken((d && d.items) || [], d && d.gemaakt); })
-      .catch(function () { w.hidden = true; });
+    var n = parseInt(p.get('n'), 10) || 10;
+    if (bron === 'categorie' && p.get('sort') === 'prijs') {
+      return fetch(API + route + '?' + p.toString())
+        .then(function (r) { return r.json(); })
+        .then(function (d) { teken(((d && d.items) || []).filter(geloofwaardig), d && d.gemaakt); })
+        .catch(function () { w.hidden = true; });
+    }
+    p.set('n', '60');
+    Promise.all([1, 2, 3, 4].map(function (pg) {
+      var q = new URLSearchParams(p.toString()); q.set('p', String(pg));
+      return fetch(API + route + '?' + q.toString()).then(function (r) { return r.json(); }).catch(function () { return null; });
+    })).then(function (ds) {
+      var alles = [], gemaakt = '';
+      ds.forEach(function (d) { if (d && d.items) { alles = alles.concat(d.items); gemaakt = gemaakt || d.gemaakt; } });
+      teken(mix(alles, n), gemaakt);
+    }).catch(function () { w.hidden = true; });
   }
 
   // Uitgelicht: een vaste keuze van producten, in jouw volgorde. De gewone

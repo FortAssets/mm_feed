@@ -25,6 +25,7 @@
 
 import fs from 'fs'
 import zlib from 'zlib'
+import { execFileSync } from 'child_process'
 
 const UIT = 'data/shop'
 const LIJST = UIT + '/amazon.json'
@@ -111,21 +112,90 @@ function zoekProduct (titel, alleWoorden) {
 // feed zet) levert bij Amazon niets op, terwijl 0045496321444 wel bij
 // B0F2J4SYJ2 uitkomt. Twee EAN's voor hetzelfde apparaat. Vindt hij niets, dan
 // vraagt hij het gewoon.
-async function bevestigViaEan (asin, kandidaten) {
+// Amazon geeft de fetch van Node een 503 en curl niet; dat zit in de manier
+// waarop de verbinding wordt opgezet, niet in de koppen. Dus curl.
+function haalPagina (url) {
+  try {
+    return execFileSync('curl', ['-s', '--compressed', '--max-time', '30', '-A', UA,
+      '-H', 'Accept-Language: nl-NL,nl;q=0.9', url], { maxBuffer: 20 * 1024 * 1024 }).toString('utf8')
+  } catch (e) { return '' }
+}
+
+// Wat geeft Amazon terug als je op een EAN zoekt? Alleen de gewone
+// resultaten tellen, geen gesponsorde: die staan er los van je zoekterm.
+// Antwoord: lijst van { asin, titel }, of null als de pagina niet kwam.
+function zoekOpEan (ean) {
+  const t = haalPagina('https://www.amazon.nl/s?k=' + encodeURIComponent(ean))
+  if (t.length < 20000) return null
   const uit = []
-  for (const k of kandidaten) {
-    try {
-      const r = await fetch('https://www.amazon.nl/s?k=' + encodeURIComponent(k.ean), { headers: KOP })
-      if (!r.ok) continue
-      const t = await r.text()
-      const asins = new Set((t.match(/data-asin="[A-Z0-9]{10}"/g) || [])
-        .map(s => s.slice(12, 22)))
-      if (asins.has(asin)) uit.push(k)
-    } catch (e) { /* volgende */ }
-    if (uit.length) break
-    await new Promise(s => setTimeout(s, 1500))
+  for (const b of t.split('data-component-type="s-search-result"').slice(1)) {
+    if (/Gesponsord|Sponsored/.test(b.slice(0, 8000))) continue
+    const a = /\/dp\/([A-Z0-9]{10})/.exec(b)
+    if (!a || uit.some(x => x.asin === a[1])) continue
+    const ti = /<h2[^>]*aria-label="([^"]{3,200})/.exec(b)
+    uit.push({ asin: a[1], titel: ti ? ti[1].replace(/&[a-z#0-9]+;/g, ' ') : '' })
   }
   return uit
+}
+
+async function bevestigViaEan (asin, kandidaten) {
+  for (const k of kandidaten) {
+    const r = zoekOpEan(k.ean)
+    if (r && r.some(x => x.asin === asin)) return [k]
+    await new Promise(s => setTimeout(s, 2500))
+  }
+  return []
+}
+
+// Lijkt de titel van Amazon op onze naam? Een EAN dat bij Amazon aan het
+// verkeerde product hangt komt voor, dus een tweede controle: minstens twee
+// woorden gemeen, of het merk.
+function lijktOp (onze, merk, hunne) {
+  const w = x => new Set(String(x).toLowerCase().split(/[^a-z0-9]+/).filter(y => y.length >= 3))
+  const a = w(onze); const b = w(hunne)
+  let n = 0
+  for (const x of a) if (b.has(x)) n++
+  return n >= 2 || (merk && b.has(String(merk).toLowerCase()) && n >= 1)
+}
+
+// Producten uit de vergelijker bij Amazon opzoeken. Eerst wat het meeste
+// oplevert: wat al bij meer winkels ligt, en daarbinnen het duurste.
+// Een koppeling komt er alleen als Amazon precies een gewoon resultaat geeft
+// en de titel op de onze lijkt. Twijfel is overslaan.
+async function matchRonde (d, aantal, cat) {
+  d.geen = d.geen || {}
+  const lijst = []
+  for (const f of fs.readdirSync(UIT).filter(x => x.startsWith('c-') && x.endsWith('.json.gz'))) {
+    if (cat && f !== 'c-' + cat + '.json.gz') continue
+    const c = JSON.parse(zlib.gunzipSync(fs.readFileSync(UIT + '/' + f)).toString('utf8'))
+    for (const p of c.p) {
+      if (!p.e || p.s === 'r' || d.ean[p.e] || d.geen[p.e]) continue
+      if (p.o.length < 2 && p.p < 150) continue
+      lijst.push(p)
+    }
+  }
+  lijst.sort((a, b) => b.o.length - a.o.length || b.p - a.p)
+  console.log(lijst.length + ' producten zonder koppeling, deze ronde ' + Math.min(aantal, lijst.length))
+  let raak = 0; let mis = 0; let twijfel = 0; let dicht = 0
+  const vandaag = new Date().toISOString().slice(0, 10)
+  for (const p of lijst.slice(0, aantal)) {
+    const r = zoekOpEan(p.e)
+    if (r === null) {
+      dicht++
+      if (dicht >= 3) { console.log('  Amazon geeft geen pagina meer, hier stoppen.'); break }
+      await new Promise(s => setTimeout(s, 15000))
+      continue
+    }
+    dicht = 0
+    if (!r.length) { mis++; d.geen[p.e] = vandaag }
+    else if (r.length === 1 && lijktOp(p.n, p.b, r[0].titel)) {
+      d.ean[p.e] = r[0].asin; raak++
+      console.log('  ' + p.e + ' ' + r[0].asin + '  ' + p.n.slice(0, 44) + '  <->  ' + r[0].titel.slice(0, 44))
+    } else { twijfel++; d.geen[p.e] = vandaag }
+    schrijf(d)
+    await new Promise(s => setTimeout(s, 3500 + Math.random() * 2500))
+  }
+  console.log('gekoppeld ' + raak + ', niet bij Amazon ' + mis + ', twijfel overgeslagen ' + twijfel)
 }
 
 async function main () {
@@ -133,11 +203,35 @@ async function main () {
   const d = lees()
 
   if (args.includes('--lijst') || !args.length) {
+    d.prijs = d.prijs || {}
     const n = Object.keys(d.ean || {}).length
     console.log('Partnerlabel: ' + (d.label || '(geen)'))
     console.log(n + ' koppelingen in ' + LIJST)
-    for (const [ean, asin] of Object.entries(d.ean || {})) console.log('  ' + ean + '  ' + asin)
+    for (const [ean, asin] of Object.entries(d.ean || {})) console.log('  ' + ean + '  ' + asin + (d.prijs[ean] ? '  EUR ' + d.prijs[ean].p + ' gezien ' + d.prijs[ean].d : ''))
     if (!args.length) console.log('\nGebruik: node amazon.mjs <link> [--ean=<ean>]')
+    return
+  }
+
+  const m = args.find(a => a.startsWith('--match='))
+  if (m) {
+    const cat = (args.find(a => a.startsWith('--cat=')) || '').slice(6)
+    await matchRonde(d, Number(m.slice(8)) || 40, cat)
+    schrijf(d)
+    console.log(Object.keys(d.ean).length + ' koppelingen in ' + LIJST)
+    return
+  }
+
+  // Een prijs die jij bij Amazon hebt afgelezen. Met de datum erbij, want hij
+  // staat alleen op de pagina zolang hij vers is.
+  //   node amazon.mjs --ean=0711719020837 --prijs=675
+  const prijs = Number((args.find(a => a.startsWith('--prijs=')) || '').slice(8).replace(',', '.')) || 0
+  const eanArg = (args.find(a => a.startsWith('--ean=')) || '').slice(6)
+  if (prijs && eanArg && !args.some(a => /^https?:/.test(a))) {
+    if (!d.ean[eanArg]) throw new Error('voor EAN ' + eanArg + ' is nog geen ASIN bekend, koppel eerst de link')
+    d.prijs = d.prijs || {}
+    d.prijs[eanArg] = { p: prijs, d: new Date().toISOString().slice(0, 10) }
+    schrijf(d)
+    console.log('prijs ' + prijs + ' bij ' + eanArg + ' gezet, gezien op ' + d.prijs[eanArg].d)
     return
   }
 

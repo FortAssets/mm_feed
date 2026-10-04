@@ -113,6 +113,10 @@
 .ds-amz a:hover{border-color:var(--ink)}
 .ds-amzlink{display:inline-block;font-size:11.5px;font-weight:700;color:var(--mut);text-decoration:none;margin:2px 0 4px}
 .ds-amzlink:hover{color:var(--ink)}
+.ds-amzlink small{font-weight:600;opacity:.8}
+.ds-amzlink.lager{color:#0A7A3D}
+.ds-amz.lager{border-color:#0A7A3D}
+.ds-amz.lager b{color:#0A7A3D}
 .ds-winkelrij b{color:var(--ink);font-weight:800}
 .ds-badges{position:absolute;top:8px;left:8px;display:flex;flex-direction:column;gap:4px;align-items:flex-start;z-index:2}
 .ds-badge{font-size:10px;font-weight:800;border-radius:6px;padding:3px 6px;line-height:1.2;letter-spacing:.01em}
@@ -365,6 +369,17 @@
   /* Een EAN is de nauwkeurigste zoekopdracht die Amazon aanneemt; staat er
      geen EAN bij, dan het merk met de productnaam. Een vast ASIN heeft
      voorrang, want dat wijst naar precies het juiste product. */
+  /* Een bij Amazon afgelezen prijs, met de dag waarop. Niet gemeten zoals
+     de rest: iemand heeft hem gezien en genoteerd. Daarom staat de dag er
+     altijd bij, en verdwijnt hij vanzelf na een week (dat regelt de build). */
+  function amzDag(p) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.azd || '');
+    if (!m) return '';
+    var mnd = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+    return (+m[3]) + ' ' + mnd[+m[2] - 1];
+  }
+  function amzGoedkoper(p) { return p.azp > 0 && p.o && p.o.length && p.azp < p.o[0].p; }
+
   function amzLink(p) {
     var asin = (p.az || '').trim();
     if (asin) return 'https://www.amazon.nl/dp/' + encodeURIComponent(asin) + '?tag=' + encodeURIComponent(AMZ);
@@ -671,7 +686,10 @@
        directe link naar precies dit product. Zonder prijs; zie de uitleg bij
        het blok in het overzicht. */
     if (AMZ && p.az) {
-      h += '<a class="ds-amzlink" href="' + esc(amzLink(p)) + '" target="_blank" rel="sponsored nofollow noopener">Ook bij Amazon &rsaquo;</a>';
+      h += '<a class="ds-amzlink' + (amzGoedkoper(p) ? ' lager' : '') + '" href="' + esc(amzLink(p)) + '" target="_blank" rel="sponsored nofollow noopener">' +
+        (p.azp > 0
+          ? (amzGoedkoper(p) ? 'Goedkoper bij Amazon: ' : 'Bij Amazon ') + eur(p.azp) + ' <small>gezien ' + esc(amzDag(p)) + '</small>'
+          : 'Ook bij Amazon') + ' &rsaquo;</a>';
     }
     h += '<div class="ds-kaartknop">';
     h += '<a href="' + API + '/api/shop/go?i=' + encodeURIComponent(p.i) + '&cat=' + encodeURIComponent(p.c) +
@@ -918,21 +936,25 @@
         });
         h += '</div>';
 
-        /* Amazon. Hier staat geen prijs, en dat is geen slordigheid.
-           De voorwaarden van Amazon Partnernet laten alleen prijzen toe die uit
-           hun eigen API komen, en die mogen hoogstens 24 uur bewaard worden en
-           moeten daarna meteen verversd worden. Dat gaat niet samen met een
-           prijslogboek dat maanden teruggaat, en de prijs van de pagina
-           afplukken mag niet. Dus: een link, geen bedrag, en Amazon doet nooit
-           mee in de kolom wie goedkoopst is. Zodra de API-sleutels er zijn kan
-           de prijs erbij, los van het logboek. */
+        /* Amazon. Hun prijs komt niet uit een feed of koppeling: die krijg je
+           pas bij tien verkopen in dertig dagen. Wat hier kan staan is een
+           prijs die met de hand is afgelezen, met de dag erbij. Die doet niet
+           mee in de winkellijst hierboven en gaat niet het prijslogboek in,
+           want hij is gezien en niet gemeten. Is hij lager dan de laagste
+           winkel, dan staat dat erbij. */
         if (AMZ) {
           var direct = !!(pr.az || '').trim();
-          h += '<div class="ds-amz"><div><b>Ook bij Amazon</b><small>' +
-            (direct
+          var tekst;
+          if (pr.azp > 0) {
+            tekst = '<b>' + (amzGoedkoper(pr) ? 'Goedkoper bij Amazon: ' : 'Bij Amazon: ') + eur(pr.azp) + '</b>' +
+              '<small>Deze prijs hebben wij op ' + esc(amzDag(pr)) + ' bij Amazon gezien. Hij wordt niet elke nacht nagemeten zoals de rest, dus kijk daar of hij nog klopt.</small>';
+          } else {
+            tekst = '<b>Ook bij Amazon</b><small>' + (direct
               ? 'Dit product staat ook bij Amazon. Wij meten hun prijs niet, dus kijk zelf wat het daar kost.'
-              : 'Wij meten de prijs van Amazon niet. Deze knop zoekt het product bij hen op.') +
-            '</small></div><a href="' + esc(amzLink(pr)) + '" target="_blank" rel="sponsored nofollow noopener">' +
+              : 'Wij meten de prijs van Amazon niet. Deze knop zoekt het product bij hen op.') + '</small>';
+          }
+          h += '<div class="ds-amz' + (amzGoedkoper(pr) ? ' lager' : '') + '"><div>' + tekst +
+            '</div><a href="' + esc(amzLink(pr)) + '" target="_blank" rel="sponsored nofollow noopener">' +
             (direct ? 'Bekijk bij Amazon' : 'Zoek bij Amazon') + '</a></div>';
         }
 
@@ -1156,7 +1178,7 @@
       "id": "amazon_tag",
       "label": "Amazon partnerlabel",
       "default": "fortassets-21",
-      "info": "Leeg laten betekent geen Amazon op de pagina. Er staat bij Amazon geen prijs: hun voorwaarden laten alleen prijzen uit hun eigen API toe, met een bewaartermijn van 24 uur, en dat gaat niet samen met het prijslogboek."
+      "info": "Leeg laten betekent geen Amazon op de pagina. Een prijs staat er alleen als die met de hand is afgelezen en in amazon.json is gezet, met de dag erbij, en hoogstens een week."
     },
     {
       "type": "text",

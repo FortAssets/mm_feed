@@ -43,6 +43,13 @@ const UIT = 'data/shop'
 // producten waar het om gaat.
 const AMAZON_LIJST = UIT + '/amazon.json'
 const amazonEan = new Map()
+// Een prijs die met de hand bij Amazon is afgelezen, met de dag erbij. Die
+// komt niet uit een koppeling en wordt dus ook niet vanzelf ververst. Daarom
+// staat hij maar een week op de pagina, altijd met "gezien op" erbij, en gaat
+// hij niet het prijslogboek in. Een prijs van drie weken oud die "goedkoper
+// bij Amazon" roept is precies het soort fout dat de rest van de site vermijdt.
+const AMAZON_PRIJS_DAGEN = Number(process.env.AMAZON_PRIJS_DAGEN || 7)
+const amazonPrijs = new Map()
 
 function leesAmazon () {
   try {
@@ -50,7 +57,12 @@ function leesAmazon () {
     for (const [ean, asin] of Object.entries(d.ean || {})) {
       if (/^[A-Z0-9]{10}$/.test(String(asin))) amazonEan.set(String(ean), String(asin))
     }
-    console.log('Amazon: ' + amazonEan.size + ' ASIN-koppelingen')
+    const grens = Date.now() - AMAZON_PRIJS_DAGEN * 864e5
+    for (const [ean, r] of Object.entries(d.prijs || {})) {
+      const t = Date.parse((r && r.d) || '')
+      if (r && r.p > 0 && t && t >= grens && amazonEan.has(String(ean))) amazonPrijs.set(String(ean), { p: +r.p, d: r.d })
+    }
+    console.log('Amazon: ' + amazonEan.size + ' ASIN-koppelingen, ' + amazonPrijs.size + ' met een verse afgelezen prijs')
   } catch (e) { /* nog geen lijst */ }
 }
 
@@ -1235,6 +1247,8 @@ function koppel (items) {
       // Het ASIN bij Amazon, als wij dat weten. Een tweedekansexemplaar krijgt
       // er geen: dat is bij Amazon een ander product.
       az: (beste.ean && beste.staat !== 'refurbished' && amazonEan.get(beste.ean)) || undefined,
+      azp: (beste.ean && beste.staat !== 'refurbished' && amazonPrijs.get(beste.ean) || {}).p,
+      azd: (beste.ean && beste.staat !== 'refurbished' && amazonPrijs.get(beste.ean) || {}).d,
       o: aanbod.map(a => ({
         w: a.winkel,
         vk: a.verkoper || undefined,

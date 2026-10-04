@@ -41,21 +41,71 @@
       "type": "dpv-shop-rij",
       "settings": {
         "api": "https://shop.deprijsvergelijker.com",
-        "alleen_tag": "gta6",
-        "label": "Nu in de winkel",
-        "kop": "GTA 6 en de rest van Rockstar, prijzen vergeleken",
-        "sub": "Elke nacht opnieuw opgehaald bij de winkels die hem in hun feed hebben.",
-        "link_tekst": "Alles in gaming",
-        "link_url": "/pages/vergelijken?cat=gaming&type=games",
         "cat": "gaming",
-        "types": "games",
-        "sort": "prijs-af",
-        "aantal": 12,
+        "types": "",
+        "sort": "prijs",
+        "aantal": 10,
         "alleen_multi": false,
         "alleen_echt": false,
         "alleen_deal": false,
-        "min": "25",
-        "max": ""
+        "min": "",
+        "max": "",
+        "vlak": "vlak",
+        "alleen_tag": "gta6",
+        "label": "Nu in de winkel",
+        "kop": "GTA 6, de consoles en de rest van Rockstar",
+        "sub": "Elke nacht opnieuw gemeten, per winkel.",
+        "link_tekst": "Alles in gaming",
+        "link_url": "/pages/gaming",
+        "uitgelicht": "e5026555439817 e5026555370097 e0711719020837 e0889842651393 e0711719580782 e5026555431897 e5026555366755 e5026555423045 e0711719025429"
+      }
+    },
+    "dpv-gaming-rij": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "cat": "gaming",
+        "types": "",
+        "sort": "prijs",
+        "aantal": 10,
+        "alleen_multi": false,
+        "alleen_echt": false,
+        "alleen_deal": false,
+        "min": "",
+        "max": "",
+        "vlak": "vlak",
+        "alleen_tag": "gaming",
+        "niet_tag": "gta6",
+        "label": "Nu in de winkel",
+        "kop": "Populair in gaming",
+        "sub": "Elke nacht opnieuw gemeten, per winkel.",
+        "link_tekst": "Alles in gaming",
+        "link_url": "/pages/gaming",
+        "uitgelicht": "e0045496337414 e0045496312343 e0045496313067 e0045496453442 e0045496512620 e0711719020837 e5026555439817 e5030935125535 e0815820025252"
+      }
+    },
+    "dpv-bf-rij": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "cat": "",
+        "types": "",
+        "sort": "verschil",
+        "aantal": 12,
+        "alleen_multi": true,
+        "alleen_echt": false,
+        "alleen_deal": false,
+        "min": "150",
+        "max": "2500",
+        "vlak": "vlak",
+        "alleen_tag": "black friday",
+        "niet_tag": "gaming",
+        "bron": "vergelijk",
+        "label": "Vandaag gemeten",
+        "kop": "Zelfde product, andere prijs",
+        "sub": "De grootste verschillen tussen winkels van dit moment.",
+        "link_tekst": "Alles vergelijken",
+        "link_url": "/pages/vergelijken"
       }
     },
     "dpv-gta6-aanmelden": {
@@ -75,17 +125,40 @@
         "fijn": "Dubbele opt-in: je krijgt eerst een mail met een link. Afmelden kan met een klik in elke mail."
       }
     },
-    "dpv-prijskaart": { "type": "dpv-prijskaart", "settings": {} },
-    "dpv-aanbod": { "type": "dpv-artikel-aanbod", "settings": {} },
-    "dpv-merklinks": { "type": "dpv-merklinks", "settings": {} },
-    "dpv-delen": { "type": "dpv-artikel-delen", "settings": {} },
-    "dpv-nieuws": { "type": "dpv-artikel-nieuws", "settings": {} },
-    "dpv-credit": { "type": "dpv-photo-credit", "settings": {} },
-    "dpv-drawer": { "type": "dpv-save-drawer", "settings": {} }
+    "dpv-prijskaart": {
+      "type": "dpv-prijskaart",
+      "settings": {}
+    },
+    "dpv-aanbod": {
+      "type": "dpv-artikel-aanbod",
+      "settings": {}
+    },
+    "dpv-merklinks": {
+      "type": "dpv-merklinks",
+      "settings": {}
+    },
+    "dpv-delen": {
+      "type": "dpv-artikel-delen",
+      "settings": {}
+    },
+    "dpv-nieuws": {
+      "type": "dpv-artikel-nieuws",
+      "settings": {}
+    },
+    "dpv-credit": {
+      "type": "dpv-photo-credit",
+      "settings": {}
+    },
+    "dpv-drawer": {
+      "type": "dpv-save-drawer",
+      "settings": {}
+    }
   },
   "order": [
     "main",
     "dpv-gta6-rij",
+    "dpv-gaming-rij",
+    "dpv-bf-rij",
     "dpv-gta6-aanmelden",
     "dpv-prijskaart",
     "dpv-aanbod",

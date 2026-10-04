@@ -1,0 +1,385 @@
+{%- comment -%}
+  AANBOD BIJ ARTIKELEN, per onderwerp
+
+  Wat het was: onder elk artikel hetzelfde blok met vier merken (KPN, Odido,
+  Vodafone, Mobiel.nl) en een generieke tekst, ook onder een artikel over
+  zorg of zakelijke telefonie. Daaronder de feedbackvraag en daarna het
+  iPhone-pre-orderblok, ook als het artikel nergens over de iPhone ging.
+
+  Wat het nu doet (21 sep):
+  1. Het onderwerp komt uit de tags, het handle en de titel van het artikel:
+     zorg, energie, zakelijk, internet, iphone, telefoon, reizen of sim only.
+  2. Halverwege het artikel, na de eerste alinea's, staat een smalle balk met
+     de laagste prijs van vandaag voor dat onderwerp. Dat is het moment waarop
+     iemand overtuigd is dat het artikel klopt; onderaan is de helft al weg.
+  3. Onderaan de drie laagste deals van vanochtend, live uit de worker, met
+     een knop rechtstreeks naar de aanbieder. De links lopen via
+     deprijsvergelijker.com/go/deal (Shopify-doorverwijzing naar /api/go),
+     zodat er bij het aanwijzen geen workers.dev-adres in beeld komt.
+  4. Zorg krijgt geen deals maar het aanmeldblok voor de premies van 2027;
+     een polis uitlichten is bij zorg een aanbeveling (AFM). Energie gaat naar
+     de energievergelijker. Zakelijk krijgt de drie zakelijke programma's.
+  5. Het iPhone-pre-orderblok (dpv-artikel-nieuws) verschijnt alleen nog bij
+     artikelen over de iPhone. Dat verbergen we hier met CSS, zodat het
+     sjabloon (article.json, via de koppeling niet te schrijven) niet hoeft
+     te veranderen.
+{%- endcomment -%}
+
+{%- if article -%}
+{%- liquid
+  assign spoor = article.tags | join: ' ' | append: ' ' | append: article.handle | append: ' ' | append: article.title | downcase
+  assign onderwerp = 'simonly'
+  if spoor contains 'zorg' or spoor contains 'eigen risico' or spoor contains 'eigen-risico' or spoor contains 'basisverzekering'
+    assign onderwerp = 'zorg'
+  elsif spoor contains 'energie' or spoor contains 'stroom' or spoor contains 'salderen' or spoor contains 'netbeheer' or spoor contains 'zonnepanel'
+    assign onderwerp = 'energie'
+  elsif spoor contains 'zakelijk' or spoor contains 'zzp' or spoor contains 'mkb'
+    assign onderwerp = 'zakelijk'
+  elsif spoor contains 'esim' or spoor contains 'buitenland' or spoor contains 'roaming' or spoor contains 'vakantie'
+    assign onderwerp = 'reizen'
+  elsif spoor contains 'iphone' or spoor contains 'apple'
+    assign onderwerp = 'iphone'
+  elsif spoor contains 'internet' or spoor contains 'glasvezel' or spoor contains 'wifi' or spoor contains 'zender'
+    assign onderwerp = 'internet'
+  elsif spoor contains 'telefoon' or spoor contains 'toestel' or spoor contains 'smartphone' or spoor contains 'samsung' or spoor contains 'galaxy' or spoor contains 'pixel' or spoor contains 'android'
+    assign onderwerp = 'telefoon'
+  elsif spoor contains 'gaming' or spoor contains 'gta' or spoor contains 'playstation' or spoor contains 'nintendo' or spoor contains 'xbox' or spoor contains 'console' or spoor contains 'black friday' or spoor contains 'black-friday' or spoor contains 'boodschappen'
+    assign onderwerp = 'winkel'
+  endif
+-%}
+{%- comment -%}
+  4 okt: onder een artikel over GTA 6 stond "Sim only: de laagste prijzen van
+  vanochtend", en midden in de tekst een kaart van Lebara. Alles wat geen eigen
+  onderwerp had viel terug op sim only. Artikelen over gaming, Black Friday en
+  boodschappen krijgen hier nu niets; daar staat een rij met producten uit de
+  vergelijker onder (dpv-shop-rij in de artikeltemplate), en die past wel.
+  Een gamingartikel over internet valt eerder in de keten al onder internet,
+  en dat is de bedoeling: daar horen providers bij.
+{%- endcomment -%}
+{%- if onderwerp == 'winkel' -%}<style>[id$="__dpv-nieuws"]{display:none !important}</style>{%- endif -%}
+{%- if onderwerp != 'winkel' -%}
+
+{%- comment -%}
+  Update-balk bovenaan artikelen die door het nieuws zijn ingehaald. De tekst
+  van het artikel blijft staan (goed voor Google, en het klopte toen), maar
+  de lezer ziet eerst wat er sindsdien is veranderd, met een link naar waar
+  hij nu kan kopen.
+  - iPhone-artikelen van voor het Apple-event (9 september 2026).
+  - Zorgartikelen van voor Prinsjesdag (15 september 2026).
+{%- endcomment -%}
+{%- assign gepubliceerd = article.published_at | date: '%Y-%m-%d' -%}
+{%- assign update = '' -%}
+{%- if onderwerp == 'iphone' and gepubliceerd < '2026-09-09' -%}
+  {%- capture update -%}<b>Update:</b> Apple heeft de iPhone 18 Pro en Pro Max op 9 september aangekondigd. Bij Apple kost de Pro vanaf &euro;1.479 en de Pro Max vanaf &euro;1.629; met abonnement betaal je per maand. De vouwbare iPhone heet iPhone Duo; de pre-order start op 16 oktober om 14:00 uur. <a href="/pages/iphone-18-pro-abonnement">Vergelijk iPhone 18 Pro-abonnementen</a> &middot; <a href="/pages/iphone-duo-pre-order">Seintje voor de Duo</a>{%- endcapture -%}
+{%- elsif onderwerp == 'zorg' and gepubliceerd < '2026-09-15' -%}
+  {%- capture update -%}<b>Update na Prinsjesdag:</b> het verplicht eigen risico gaat in 2027 naar verwachting naar &euro;400 (voorstel, de Kamer stemt in november). De verhoging naar &euro;455 is uitgesteld naar 2028. <a href="/blogs/advies/eigen-risico-2027-400-euro">Lees wat er verandert</a> &middot; <a href="/pages/zorgverzekering">Premies vergelijken</a>{%- endcapture -%}
+{%- endif -%}
+{%- if update != '' -%}
+<template id="dab-update">{{ update }}</template>
+{%- endif -%}
+
+{%- unless onderwerp == 'iphone' -%}
+<style>[id$="__dpv-nieuws"]{display:none !important}</style>
+{%- endunless -%}
+
+<section class="dab" id="aanbod" data-onderwerp="{{ onderwerp }}" data-handle="{{ article.handle }}">
+  <div class="dab-in">
+    <p class="dab-eyebrow">Advertentie</p>
+
+    {%- case onderwerp -%}
+    {%- when 'zorg' -%}
+      <h2 class="dab-kop">De zorgpremies van 2027 komen uiterlijk 12 november</h2>
+      <p class="dab-sub">Wij mailen je zodra ze er zijn, met alle premies naast elkaar. Hooguit drie berichten, afmelden kan altijd.</p>
+      <form class="dab-mail" id="dab-mail" novalidate>
+        <label for="dab-mail-in" class="dab-weg">E-mailadres</label>
+        <input type="email" id="dab-mail-in" placeholder="jouw@email.nl" autocomplete="email" required>
+        <button type="submit" id="dab-mail-knop">Seintje</button>
+      </form>
+      <p class="dab-uit" id="dab-uit" role="status" hidden></p>
+      <a class="dab-breed" href="/pages/zorgverzekering">Bekijk de premies van nu &rarr;</a>
+
+    {%- when 'energie' -%}
+      <h2 class="dab-kop">Wat kost jouw energie per jaar?</h2>
+      <p class="dab-sub">Vergelijk de hele jaarrekening, inclusief netbeheerkosten en belastingteruggave. Niet alleen de prijs per kWh.</p>
+      <a class="dab-knop-groot" href="/pages/energie">Vergelijk energiecontracten</a>
+
+    {%- when 'zakelijk' -%}
+      <h2 class="dab-kop">Zakelijk abonnement? Hier kun je terecht</h2>
+      <p class="dab-sub">Prijzen excl. btw, bij de zakelijke afdeling van de aanbieder.</p>
+      <div class="dab-rij">
+        <div class="dab-kaart"><div class="dab-hoofd"><img class="dab-logo" alt="" width="40" height="40" loading="lazy" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://odido.nl"><div><p class="dab-naam">Odido Zakelijk</p><p class="dab-spec">Sim only en telefoons, zzp en mkb</p></div></div>
+          <a class="dab-knop" href="/go/odido-zakelijk?bron={{ article.handle | url_encode }}" target="_blank" rel="sponsored nofollow noopener">Bekijk Odido Zakelijk</a></div>
+        <div class="dab-kaart"><div class="dab-hoofd"><img class="dab-logo" alt="" width="40" height="40" loading="lazy" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://kpn.com"><div><p class="dab-naam">KPN Zakelijk</p><p class="dab-spec">Mobiel en internet voor je bedrijf</p></div></div>
+          <a class="dab-knop" href="/go/kpn-zakelijk?bron={{ article.handle | url_encode }}" target="_blank" rel="sponsored nofollow noopener">Bekijk KPN Zakelijk</a></div>
+        <div class="dab-kaart"><div class="dab-hoofd"><img class="dab-logo" alt="" width="40" height="40" loading="lazy" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://vodafone.nl"><div><p class="dab-naam">Vodafone Zakelijk</p><p class="dab-spec">Zakelijke abonnementen en toestellen</p></div></div>
+          <a class="dab-knop" href="/go/vodafone-zakelijk?bron={{ article.handle | url_encode }}" target="_blank" rel="sponsored nofollow noopener">Bekijk Vodafone Zakelijk</a></div>
+      </div>
+      <a class="dab-breed" href="/pages/zakelijke-abonnementen">Vergelijk alle zakelijke abonnementen &rarr;</a>
+
+    {%- when 'reizen' -%}
+      <h2 class="dab-kop">Internet in het buitenland regelen</h2>
+      <p class="dab-sub">Een eSIM voor je reis is vaak goedkoper dan roamen buiten de EU. Vergelijk per land wat je betaalt.</p>
+      <a class="dab-knop-groot" href="/pages/internet-op-vakantie">Vergelijk eSIM's per land</a>
+      <a class="dab-breed" href="/pages/bellen-internet-buitenland">Bellen en internetten in het buitenland &rarr;</a>
+
+    {%- else -%}
+      {%- liquid
+        case onderwerp
+          when 'internet'
+            assign cat = 'internet'
+            assign kop = 'Internet &amp; tv: de laagste prijzen van vanochtend'
+            assign pagina = '/pages/internet-tv'
+            assign alle = 'Vergelijk alle internetaanbieders'
+          when 'telefoon' or 'iphone'
+            assign cat = 'telefoon'
+            assign kop = 'Telefoon met abonnement: wat je nu per maand betaalt'
+            assign pagina = '/pages/telefoonabonnement'
+            assign alle = 'Vergelijk alle telefoondeals'
+          else
+            assign cat = 'simonly'
+            assign kop = 'Sim only: de laagste prijzen van vanochtend'
+            assign pagina = '/pages/sim-only'
+            assign alle = 'Vergelijk alle sim only deals'
+        endcase
+        if onderwerp == 'iphone'
+          assign kop = 'iPhone met abonnement: wat je nu per maand betaalt'
+          assign pagina = '/pages/telefoonabonnement?merk=iphone'
+          assign alle = 'Vergelijk alle iPhone-deals'
+        endif
+      -%}
+      <h2 class="dab-kop">{{ kop }}</h2>
+      <p class="dab-sub">Elke ochtend opnieuw gemeten, gesorteerd op prijs.</p>
+      <div class="dab-rij" id="dab-deals" data-cat="{{ cat }}" data-pagina="{{ pagina }}">
+        <div class="dab-kaart"><div class="dab-skel"></div></div><div class="dab-kaart"><div class="dab-skel"></div></div><div class="dab-kaart"><div class="dab-skel"></div></div>
+      </div>
+      <a class="dab-breed" href="{{ pagina }}">{{ alle }} &rarr;</a>
+    {%- endcase -%}
+
+    <p class="dab-fijn">Klik je door en sluit je iets af, dan ontvangen wij een vergoeding van de aanbieder. Jij betaalt hetzelfde. Prijzen en voorwaarden controleer je bij de aanbieder zelf.</p>
+  </div>
+</section>
+
+<style>
+.dab{max-width:860px;margin:10px auto 30px;padding:0 16px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0D1B2A}
+.dab *{box-sizing:border-box}
+.dab-in{background:#F6F8FB;border:1px solid #E6EBF2;border-radius:18px;padding:20px}
+.dab-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#64748B;margin:0 0 6px}
+.dab-kop{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:0 0 6px;color:#0D1B2A}
+.dab-sub{font-size:14.5px;color:#5B6B80;margin:0 0 14px;line-height:1.5}
+.dab-rij{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.dab-kaart{background:#fff;border:1px solid #E6EBF2;border-radius:14px;padding:14px;display:flex;flex-direction:column;min-height:170px}
+.dab-kaart.dab-eerste{border-color:#10b981;box-shadow:0 0 0 1px #10b981}
+.dab-vlag{align-self:flex-start;font-size:11px;font-weight:800;border-radius:99px;padding:3px 9px;margin:0 0 10px;background:#F1F5F9;color:#5B6B80}
+.dab-eerste .dab-vlag{background:#E7F6EF;color:#0b7d5c}
+.dab-hoofd{display:flex;align-items:center;gap:10px}
+.dab-logo{width:40px;height:40px;flex:0 0 40px;border-radius:10px;border:1px solid #E6EBF2;background:#fff;object-fit:contain;padding:4px}
+.dab-naam{font-size:15px;font-weight:800;margin:0;line-height:1.25;color:#0D1B2A}
+.dab-spec{font-size:12.5px;color:#5B6B80;margin:2px 0 0}
+.dab-prijs{margin:12px 0 2px}
+.dab-prijs b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.02em;color:#0D1B2A}
+.dab-prijs span{font-size:12.5px;color:#5B6B80;margin-left:3px}
+.dab-onder{font-size:12px;color:#5B6B80;margin:0 0 12px}
+.dab a.dab-knop,.dab a.dab-knop:visited{display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:auto;background:#10b981;color:#fff !important;border-radius:11px;font-size:14.5px;font-weight:800;text-decoration:none !important;text-align:center;padding:0 8px}
+.dab a.dab-knop:hover{background:#0fa876}
+.dab a.dab-knop-groot,.dab a.dab-knop-groot:visited{display:flex;align-items:center;justify-content:center;min-height:50px;background:#10b981;color:#fff !important;border-radius:12px;font-size:15.5px;font-weight:800;text-decoration:none !important;max-width:380px}
+.dab a.dab-breed,.dab a.dab-breed:visited{display:inline-block;margin:14px 0 0;font-size:14px;font-weight:800;color:#1B3FA0 !important;text-decoration:none !important}
+.dab a.dab-breed:hover{text-decoration:underline !important}
+.dab-skel{background:#EEF2F7;border-radius:10px;height:130px;animation:dabP 1.2s ease-in-out infinite alternate}
+@keyframes dabP{from{opacity:.55}to{opacity:1}}
+.dab-mail{display:flex;gap:8px;max-width:520px;margin:0}
+.dab-mail input{flex:1;min-width:0;height:48px !important;min-height:48px !important;margin:0 !important;border:1.5px solid #CBD5E1 !important;border-radius:11px !important;padding:0 13px !important;font-size:15px !important;background:#fff !important;color:#0D1B2A !important;box-shadow:none}
+.dab-mail button{flex:0 0 auto;height:48px;border:0;border-radius:11px;padding:0 20px;background:#10b981;color:#fff;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit}
+.dab-uit{margin:9px 0 0;font-size:13.5px;font-weight:700}
+.dab-weg{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.dab-fijn{font-size:11.5px;color:#94A3B8;margin:16px 0 0;line-height:1.5}
+.dab :focus-visible{outline:3px solid #10b981;outline-offset:2px}
+@media(max-width:760px){.dab-rij{grid-template-columns:1fr}.dab-kaart{min-height:0}}
+@media(max-width:420px){.dab-mail{flex-direction:column}}
+
+/* De balk halverwege het artikel */
+.dpv-update{background:#FFF7E6;border:1px solid #F5D9A8;border-radius:12px;padding:13px 15px;margin:0 0 22px;font-size:14.5px;line-height:1.55;color:#5B4A1E;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.dpv-update b{color:#3D2F0B}
+.dpv-update a{color:#1B3FA0;font-weight:700}
+.dpv-inline-merken{flex:1 1 100%;margin:4px 0 0;font-size:13px;color:#5B6B80}
+.dpv-inline-merken a{color:#1B3FA0;font-weight:700;text-decoration:underline;text-underline-offset:2px}
+.dpv-inline{display:flex;flex-wrap:wrap;align-items:center;gap:12px;background:#F6F8FB;border:1px solid #E6EBF2;border-left:4px solid #10b981;border-radius:12px;padding:12px 14px;margin:22px 0;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.dpv-inline img{width:34px;height:34px;flex:0 0 34px;border-radius:8px;border:1px solid #E6EBF2;background:#fff;object-fit:contain;padding:3px}
+.dpv-inline-tx{flex:1;min-width:0;font-size:14px;line-height:1.4;color:#334155}
+.dpv-inline-tx b{color:#0D1B2A}
+.dpv-inline-tx small{display:block;font-size:11px;color:#94A3B8;margin-top:1px}
+.dpv-inline a.dpv-inline-k,.dpv-inline a.dpv-inline-k:visited{flex:0 0 auto;background:#10b981;color:#fff !important;border-radius:10px;padding:10px 14px;font-size:13.5px;font-weight:800;text-decoration:none !important;white-space:nowrap}
+@media(max-width:520px){.dpv-inline{flex-wrap:wrap}.dpv-inline a.dpv-inline-k{flex:1 1 100%;text-align:center}}
+</style>
+
+<script>
+(function () {
+  var blok = document.getElementById('aanbod');
+  if (!blok) return;
+  var ONDERWERP = blok.getAttribute('data-onderwerp');
+  var HANDLE = blok.getAttribute('data-handle');
+  var W = 'https://awin.business-347.workers.dev';
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function euro(n) { var v = Math.round(Number(n) * 100) / 100; return '\u20ac' + (v % 1 === 0 ? v.toLocaleString('nl-NL') + ',-' : v.toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 })); }
+  var DOM = { odido: 'odido.nl', kpn: 'kpn.com', vodafone: 'vodafone.nl', ben: 'ben.nl', simyo: 'simyo.nl', youfone: 'youfone.nl', lebara: 'lebara.nl',
+    simpel: 'simpel.nl', hollandsnieuwe: 'hollandsnieuwe.nl', ziggo: 'ziggo.nl', delta: 'deltafiber.nl', caiway: 'caiway.nl', freedom: 'freedom.nl', 'online.nl': 'online.nl', mobiel: 'mobiel.nl' };
+  function logo(naam) { var m = String(naam || '').toLowerCase(); for (var k in DOM) if (m.indexOf(k) > -1) return 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=128&url=https://' + DOM[k]; return ''; }
+  function mnd(c) { return parseInt(String(c.contract || '').replace(/\D/g, ''), 10) || 0; }
+
+  // Link via ons eigen domein: /go/deal is een doorverwijzing naar /api/go.
+  function link(c, cat) {
+    var u = c.url || '';
+    var m = /[?&]u=([^&]+)/.exec(u);
+    if (m && u.indexOf('/api/go') > -1) u = decodeURIComponent(m[1]);
+    return '/go/deal?u=' + encodeURIComponent(u) + '&cat=artikel-' + cat + '&p=' + encodeURIComponent(c.provider || '') + '&bron=' + encodeURIComponent(HANDLE);
+  }
+  function velden(cat, c) {
+    var l = mnd(c), r = {};
+    if (cat === 'telefoon') {
+      r.naam = c.device || 'Telefoon';
+      r.spec = (c.storage ? c.storage + ' \u00b7 ' : '') + 'bij ' + c.provider;
+      r.prijs = (Number(c.deviceMonthly) || 0) + (Number(c.bundleMonthly) || 0) || Number(c.price);
+      r.onder = (Number(c.downPayment) > 0 ? '+ ' + euro(c.downPayment) + ' eenmalig' : 'zonder aanbetaling') + (l ? ' \u00b7 ' + l + ' mnd' : '');
+      r.beeld = c.image || logo(c.provider);
+    } else if (cat === 'internet') {
+      r.naam = c.provider; r.spec = (c.speed || '') + (c.tv ? ' \u00b7 met tv' : '');
+      r.prijs = Number(c.price); r.onder = l ? euro(r.prijs * l) + ' over ' + l + ' maanden' : '';
+      r.beeld = logo(c.provider);
+    } else {
+      r.naam = c.provider; r.spec = (c.unlimited ? 'Onbeperkt' : c.dataGB + ' GB') + (c.minutes ? ' \u00b7 ' + c.minutes : '');
+      r.prijs = Number(c.price); r.onder = l ? euro(r.prijs * l) + ' over ' + l + ' maanden' : '';
+      r.beeld = logo(c.provider);
+    }
+    return r;
+  }
+
+  var vak = document.getElementById('dab-deals');
+  var cat = vak ? vak.getAttribute('data-cat') : '';
+
+  function inline(c) {
+    // Balk na de eerste paar alinea's, alleen in langere artikelen.
+    var romp = document.querySelector('.article-template__content, article .rte, [itemprop="articleBody"]');
+    if (!romp) return;
+    var alineas = romp.querySelectorAll(':scope > p');
+    if (alineas.length < 3) return;
+    var na = romp.querySelectorAll(':scope > h2')[1] || alineas[2];
+    var div = document.createElement('div');
+    div.className = 'dpv-inline';
+    if (c) {
+      var v = velden(cat, c);
+      div.innerHTML = (v.beeld ? '<img src="' + esc(v.beeld) + '" alt="" loading="lazy">' : '') +
+        '<div class="dpv-inline-tx">' + (cat === 'telefoon' ? 'Populair vandaag: ' : 'Laagste prijs vandaag: ') + '<b>' + esc(v.naam) + ' ' + euro(v.prijs) + ' per maand</b>' +
+        '<small>Advertentie \u00b7 vanochtend gemeten</small></div>' +
+        '<a class="dpv-inline-k" href="' + link(c, cat) + '" target="_blank" rel="sponsored nofollow noopener">Bekijk</a>';
+    } else if (ONDERWERP === 'zorg') {
+      div.innerHTML = '<div class="dpv-inline-tx"><b>Premies 2027 op 12 november.</b> Wij mailen je zodra ze er zijn.</div>' +
+        '<a class="dpv-inline-k" href="#aanbod">Seintje</a>';
+    } else if (ONDERWERP === 'reizen') {
+      div.innerHTML = '<div class="dpv-inline-tx"><b>Op reis?</b> Een eSIM is buiten de EU vaak goedkoper dan roamen.</div>' +
+        '<a class="dpv-inline-k" href="/pages/internet-op-vakantie">Vergelijk eSIM\'s</a>';
+    } else if (vak) {
+      div.innerHTML = '<div class="dpv-inline-tx"><b>Wat kost het vandaag?</b> Bekijk de actuele prijzen, elke ochtend gemeten.</div>' +
+        '<a class="dpv-inline-k" href="' + vak.getAttribute('data-pagina') + '">Vergelijk</a>';
+    } else if (ONDERWERP === 'zakelijk') {
+      div.innerHTML = '<div class="dpv-inline-tx"><b>Zakelijk abonnement nodig?</b> Vergelijk prijzen excl. btw.</div>' +
+        '<a class="dpv-inline-k" href="/pages/zakelijke-abonnementen">Vergelijk</a>';
+    } else if (ONDERWERP === 'energie') {
+      div.innerHTML = '<div class="dpv-inline-tx"><b>Vergelijk je hele jaarrekening</b>, niet alleen de prijs per kWh.</div>' +
+        '<a class="dpv-inline-k" href="/pages/energie">Vergelijk</a>';
+    } else return;
+    // Aanbieders direct onder de balk: merknamen met hun affiliate-link.
+    var MERK = {
+      simonly: [['KPN', 'kpn-simonly'], ['Odido', 'odido-simonly'], ['Vodafone', 'vodafone-simonly'], ['Simyo', 'simyo-simonly'], ['Youfone', 'youfone']],
+      telefoon: [['KPN', 'kpn-telefoon'], ['Odido', 'odido-telefoon'], ['Vodafone', 'vodafone-telefoon'], ['Mobiel.nl', 'mobielnl-telefoon']],
+      iphone: [['KPN', 'kpn-iphone'], ['Odido', 'odido-telefoon'], ['Vodafone', 'vodafone-telefoon'], ['Mobiel.nl', 'mobielnl-iphone']],
+      internet: [['KPN', 'kpn-internet'], ['Odido', 'odido-internet'], ['Youfone', 'youfone']],
+      zakelijk: [['KPN Zakelijk', 'kpn-zakelijk'], ['Odido Zakelijk', 'odido-zakelijk'], ['Vodafone Zakelijk', 'vodafone-zakelijk']]
+    }[ONDERWERP];
+    if (MERK) {
+      div.insertAdjacentHTML('beforeend', '<p class="dpv-inline-merken">Direct naar: ' + MERK.map(function (m) {
+        return '<a href="/go/' + m[1] + '?bron=' + encodeURIComponent(HANDLE) + '" target="_blank" rel="sponsored nofollow noopener">' + m[0] + '</a>';
+      }).join(' \u00b7 ') + '</p>');
+    }
+    na.parentNode.insertBefore(div, na);
+  }
+
+  // Update-balk bovenaan het artikel.
+  var tpl = document.getElementById('dab-update');
+  var romp0 = document.querySelector('.article-template__content, article .rte, [itemprop="articleBody"]');
+  if (tpl && romp0) {
+    var up = document.createElement('div');
+    up.className = 'dpv-update';
+    up.innerHTML = tpl.innerHTML;
+    romp0.insertBefore(up, romp0.firstChild);
+  }
+
+  // Eén keer opnieuw proberen: bij drukte geeft de worker soms even niets.
+  function haal() {
+    var u = W + '/api/cards/' + cat + '?limit=' + (ONDERWERP === 'iphone' ? 20 : 3);
+    return fetch(u, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .catch(function () { return new Promise(function (ok) { setTimeout(ok, 1500); }).then(function () { return fetch(u).then(function (r) { return r.json(); }); }); });
+  }
+  if (vak) {
+    haal()
+      .then(function (res) {
+        var kaarten = (res && res.cards) || [];
+        if (ONDERWERP === 'iphone') {
+          var ip = kaarten.filter(function (c) { return /iphone/i.test(c.device || ''); });
+          if (ip.length) kaarten = ip;
+        }
+        kaarten = kaarten.slice(0, 3);
+        if (!kaarten.length) throw 0;
+        vak.innerHTML = kaarten.map(function (c, i) {
+          var v = velden(cat, c);
+          return '<div class="dab-kaart' + (i === 0 && cat !== 'telefoon' ? ' dab-eerste' : '') + '">' +
+            // Bij telefoons zijn dit de populairste toestellen, niet per se de
+            // goedkoopste; het label zegt dus ook niet "laagste prijs".
+            '<span class="dab-vlag">' + (cat === 'telefoon' ? 'Populair' : (i === 0 ? 'Laagste prijs' : 'Nr. ' + (i + 1))) + '</span>' +
+            '<div class="dab-hoofd">' + (v.beeld ? '<img class="dab-logo" src="' + esc(v.beeld) + '" alt="" loading="lazy" width="40" height="40" onerror="this.onerror=null;this.src=\'' + esc(logo(c.provider)) + '\'">' : '') +
+            '<div style="min-width:0"><p class="dab-naam">' + esc(v.naam) + '</p><p class="dab-spec">' + esc(v.spec) + '</p></div></div>' +
+            '<div class="dab-prijs"><b>' + euro(v.prijs) + '</b><span>per maand</span></div>' +
+            '<p class="dab-onder">' + esc(v.onder) + '</p>' +
+            '<a class="dab-knop" href="' + link(c, cat) + '" target="_blank" rel="sponsored nofollow noopener">Bekijk bij ' + esc(c.provider) + '</a></div>';
+        }).join('');
+        inline(kaarten[0]);
+      })
+      .catch(function () {
+        vak.innerHTML = '<div class="dab-kaart" style="grid-column:1/-1;min-height:0"><a class="dab-knop" href="' + vak.getAttribute('data-pagina') + '">Bekijk de actuele prijzen</a></div>';
+        inline(null);
+      });
+  } else {
+    inline(null);
+  }
+
+  // Aanmelden bij zorg: zelfde lijst als de zorgpagina.
+  var form = document.getElementById('dab-mail');
+  if (form) {
+    var veld = document.getElementById('dab-mail-in'), knop = document.getElementById('dab-mail-knop'), uit = document.getElementById('dab-uit');
+    var zeg = function (t, goed) { uit.textContent = t; uit.style.color = goed ? '#0b7d5c' : '#b42318'; uit.hidden = false; };
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var adres = (veld.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) { zeg('Vul een geldig e-mailadres in.', false); veld.focus(); return; }
+      knop.disabled = true;
+      fetch('https://mijn.deprijsvergelijker.com/api/mc/aanmelden', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: adres, lijst: 'zorgpremies-2027', bron: 'artikel-' + HANDLE }) })
+        .then(function (r) { return r.json(); })
+        .then(function (res) { if (res && res.ok) { zeg('Gelukt. Je hoort van ons zodra de premies van 2027 bekend zijn.', true); veld.value = ''; } else zeg('Er ging iets mis. Probeer het later nog eens.', false); })
+        .catch(function () { zeg('Er ging iets mis. Probeer het later nog eens.', false); })
+        .then(function () { knop.disabled = false; });
+    });
+  }
+})();
+</script>
+{%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Aanbod bij artikel",
+  "settings": [
+    { "type": "paragraph", "content": "Kiest zelf het aanbod op basis van het onderwerp van het artikel (tags, handle en titel)." }
+  ],
+  "presets": [ { "name": "Aanbod bij artikel" } ]
+}
+{% endschema %}

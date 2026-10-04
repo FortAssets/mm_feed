@@ -24,6 +24,13 @@
   {%- assign toon = false -%}
   {%- if article and article.tags contains tag -%}{%- assign toon = true -%}{%- endif -%}
 {%- endif -%}
+{%- comment -%}
+  En het omgekeerde: niet tonen bij een tag. Een artikel over GTA 6 draagt ook
+  de tag gaming, en dan stonden de GTA-rij en de algemene gamingrij allebei
+  onder hetzelfde artikel.
+{%- endcomment -%}
+{%- assign niet = section.settings.niet_tag | strip -%}
+{%- if niet != blank and article and article.tags contains niet -%}{%- assign toon = false -%}{%- endif -%}
 
 {%- if toon -%}
 {%- assign rid = 'dsr-' | append: section.id -%}
@@ -365,6 +372,12 @@
       "id": "alleen_tag",
       "label": "Alleen bij artikelen met deze tag",
       "info": "Leeg laten om hem altijd te tonen. Zet je deze sectie in het artikeltemplate, vul dan een tag in, bijvoorbeeld gta6. De rij verschijnt dan alleen onder artikelen met die tag."
+    },
+    {
+      "type": "text",
+      "id": "niet_tag",
+      "label": "Niet bij artikelen met deze tag",
+      "info": "Voor als twee rijen elkaar overlappen."
     },
     {
       "type": "header",

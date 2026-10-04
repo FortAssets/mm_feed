@@ -1,0 +1,154 @@
+{%- comment -%}
+  MERKNAMEN IN ARTIKELEN AUTOMATISCH KOPPELEN
+
+  De eerste vermelding van een aanbieder in een artikel wordt een link naar
+  die aanbieder (affiliate). Alleen de eerste, anders leest het als spam.
+
+  21 sep, drie fouten eruit:
+
+  1. "simpel" en "ben" als gewoon woord werden gelinkt. De zoekopdracht was
+     hoofdletterongevoelig, dus "de vuistregel is simpel" werd een link naar
+     Simpel. Nu: alleen met hoofdletter, en voor Simpel en Ben ook niet aan
+     het begin van een zin ("Simpel gezegd", "Ben je"). Midden in een zin is
+     een hoofdletter-Simpel altijd het merk.
+  2. De link toonde awin.business-347.workers.dev als je eroverheen ging. Dat
+     ziet eruit als een spamlink en daar klikt niemand op. Nu gaat elke link
+     via een eigen adres: deprijsvergelijker.com/go/odido-simonly. Dat is een
+     Shopify-doorverwijzing naar /api/go (klik geteld) en dan naar het
+     netwerk. ?bron=<artikel> gaat mee, zodat je per artikel ziet wat klikt.
+  3. Odido sim only en Odido telefoons gingen naar pagina's die niet meer
+     bestaan (404). De doorverwijzingen wijzen nu naar
+     /mobiel-abonnement/sim-only en /shop/alle-telefoons.
+
+  In zakelijke artikelen gaan KPN, Odido en Vodafone naar de zakelijke
+  programma's (KPN Zakelijk, Odido Zakelijk, Vodafone Zakelijk).
+
+  Een nieuw merk toevoegen: maak eerst in Shopify een doorverwijzing
+  /go/<slug> aan (Online Store > Navigatie > URL-doorverwijzingen), daarna
+  hieronder een regel.
+{%- endcomment -%}
+
+{%- if article -%}
+<script>
+(function () {
+  var HANDLE = {{ article.handle | json }};
+  var SPOOR = ({{ article.tags | join: ' ' | json }} + ' ' + HANDLE + ' ' + {{ article.title | json }}).toLowerCase();
+
+  function heeft(w) { for (var i = 0; i < w.length; i++) if (SPOOR.indexOf(w[i]) > -1) return true; return false; }
+  var onderwerp =
+    heeft(['zakelijk', 'zzp', 'mkb']) ? 'zakelijk' :
+    heeft(['iphone', 'apple']) ? 'iphone' :
+    heeft(['internet', 'glasvezel', 'wifi', 'zender', ' tv']) ? 'internet' :
+    heeft(['telefoon', 'toestel', 'smartphone', 'samsung', 'galaxy', 'pixel', 'android']) ? 'telefoon' :
+    heeft(['sim only', 'simonly', 'sim-only', 'bundel', 'data', '5g']) ? 'simonly' : '';
+
+  // slug: basis van /go/<slug>. paden: welke onderwerpvarianten bestaan.
+  // twijfel: alleen linken midden in een zin (Simpel, Ben).
+  var MERKEN = [
+    { naam: 'Odido', slug: 'odido', paden: ['simonly', 'telefoon', 'internet', 'zakelijk'] },
+    { naam: 'Vodafone', slug: 'vodafone', paden: ['simonly', 'telefoon', 'zakelijk'] },
+    { naam: 'KPN', slug: 'kpn', paden: ['simonly', 'telefoon', 'internet', 'iphone', 'zakelijk'] },
+    { naam: 'Mobiel.nl', slug: 'mobielnl', paden: ['simonly', 'telefoon', 'iphone'] },
+    { naam: 'Simyo', slug: 'simyo', paden: ['simonly'] },
+    { naam: 'Youfone', slug: 'youfone', paden: [] },
+    { naam: 'hollandsnieuwe', slug: 'hollandsnieuwe', paden: [], ookHoofdletter: true },
+    { naam: 'Simpel', slug: 'simpel', paden: [], twijfel: true },
+    { naam: 'Ben', slug: 'ben', paden: ['simonly'], twijfel: true },
+    { naam: 'Coolblue Energie', slug: 'coolblue-energie', paden: [] },
+    // Zonder affiliate-programma: naar onze eigen vergelijker.
+    { naam: 'Ziggo', url: '/pages/internet-tv' },
+    { naam: 'Belsimpel', url: '/pages/telefoonabonnement' }
+  ];
+
+  function bestemming(m) {
+    if (m.url) return m.url;
+    var slug = m.slug;
+    if (onderwerp && m.paden.indexOf(onderwerp) > -1) slug += '-' + onderwerp;
+    return '/go/' + slug + '?bron=' + encodeURIComponent(HANDLE);
+  }
+
+  function esc(s) { return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+
+  function klaar() {
+    var romp = document.querySelector('.article-template__content, article .rte, [itemprop="articleBody"]');
+    if (!romp) return;
+
+    // Links die in de artikeltekst zelf staan en rechtstreeks naar de worker
+    // gaan (awin.business-347.workers.dev/api/go?...), omzetten naar ons eigen
+    // adres /go/deal?... Zelfde bestemming, maar geen workers.dev in beeld.
+    Array.prototype.forEach.call(romp.querySelectorAll('a[href*="workers.dev/api/go"]'), function (a) {
+      var q = a.href.split('?')[1] || '';
+      a.href = '/go/deal?' + q + (q.indexOf('bron=') > -1 ? '' : '&bron=' + encodeURIComponent(HANDLE));
+      a.rel = 'sponsored nofollow noopener';
+    });
+    var gedaan = {};
+
+    MERKEN.forEach(function (m) {
+      var namen = m.ookHoofdletter ? m.naam + '|' + m.naam.charAt(0).toUpperCase() + m.naam.slice(1) : esc(m.naam);
+      // Hoofdlettergevoelig: "simpel" is een woord, "Simpel" het merk.
+      var patroon = new RegExp('(^|[\\s(,;:\u2014\u2013\u201c"\'])(' + namen + ')(?=[\\s),.;:!?\u2014\u2013\u201d"\']|$)');
+
+      var lopen = document.createTreeWalker(romp, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (n) {
+          if (!n.nodeValue || n.nodeValue.length < 2) return NodeFilter.FILTER_REJECT;
+          for (var o = n.parentNode; o && o !== romp; o = o.parentNode) {
+            if (/^(A|H1|H2|H3|H4|CODE|PRE|BUTTON|FIGCAPTION|TH)$/.test(o.tagName)) return NodeFilter.FILTER_REJECT;
+            if (o.classList && (o.classList.contains('dpv-inline') || o.classList.contains('dab'))) return NodeFilter.FILTER_REJECT;
+          }
+          return patroon.test(n.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT;
+        }
+      });
+
+      for (var knoop = lopen.nextNode(); knoop; knoop = lopen.nextNode()) {
+        var tref = patroon.exec(knoop.nodeValue);
+        if (!tref) continue;
+        var start = tref.index + tref[1].length;
+        if (m.twijfel) {
+          // Begin van een zin? Dan is het waarschijnlijk een gewoon woord.
+          var ervoor = knoop.nodeValue.slice(0, start).replace(/\s+$/, '');
+          var blokStart = !ervoor && (!knoop.previousSibling);
+          if (blokStart || /[.!?:]$/.test(ervoor)) continue;
+        }
+        var na = knoop.splitText(start);
+        na.splitText(tref[2].length);
+        var a = document.createElement('a');
+        a.href = bestemming(m);
+        a.className = 'dpv-merklink';
+        a.textContent = na.nodeValue;
+        if (!m.url) { a.target = '_blank'; a.rel = 'sponsored nofollow noopener'; }
+        na.parentNode.replaceChild(a, na);
+        gedaan[m.naam] = !m.url;
+        break;
+      }
+    });
+
+    var betaald = Object.keys(gedaan).some(function (k) { return gedaan[k]; });
+    if (betaald && !/ontvangen wij een vergoeding/i.test(romp.textContent)) {
+      var p = document.createElement('p');
+      p.className = 'dpv-merkmelding';
+      p.textContent = 'Sommige merknamen in dit artikel zijn links naar de aanbieder. Sluit je daar iets af, dan ontvangen wij een vergoeding; jij betaalt hetzelfde.';
+      romp.appendChild(p);
+    }
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', klaar);
+  else klaar();
+})();
+</script>
+
+<style>
+.dpv-merklink{color:#1B3FA0;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:2px}
+.dpv-merklink:hover{color:#0D1B2A}
+.dpv-merkmelding{margin-top:22px;font-size:12.5px;color:#94A3B8;font-style:italic}
+</style>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Merknamen koppelen",
+  "settings": [
+    { "type": "paragraph", "content": "Maakt de eerste vermelding van een aanbieder in elk artikel klikbaar, via een eigen /go/-adres. Alleen met hoofdletter; Simpel en Ben niet aan het begin van een zin." }
+  ],
+  "presets": [ { "name": "Merknamen koppelen" } ]
+}
+{% endschema %}

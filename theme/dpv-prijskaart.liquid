@@ -1,0 +1,119 @@
+{%- comment -%}
+  Prijskaart in artikelen (23 sep).
+
+  Wat het doet: in een adviesartikel zoekt dit script naar merken die deze week
+  ergens in de aanbieding zijn, en zet op die plek één kaart met de actuele
+  prijzen van de drie goedkoopste winkels. Zo krijgt een lezer die over een merk
+  leest meteen te zien waar het nu het voordeligst is.
+
+  Waarom terughoudend:
+  - hooguit twee kaarten per artikel, en nooit twee keer hetzelfde merk;
+  - alleen in de artikeltekst, niet in koppen, menu's of de voettekst;
+  - de gegevens worden pas opgehaald als de lezer in de buurt van de plek komt,
+    zodat de laadtijd en de Google-scores niet lijden;
+  - een merk moet als los woord voorkomen ("Robijn"), niet als deel van een
+    ander woord.
+
+  Kliks lopen via /go/deal met cat=boodschappen en bron=artikel-prijskaart,
+  zodat je in het dashboard ziet wat deze plek oplevert.
+{%- endcomment -%}
+
+{%- if template contains 'article' -%}
+<style>
+.dpk{border:1px solid #E6EBF2;border-radius:14px;padding:14px 16px;margin:22px 0;background:#fff;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0D1B2A}
+.dpk-kop{display:flex;align-items:center;gap:10px;margin:0 0 4px}
+.dpk-kop img{width:34px;height:34px;object-fit:contain;flex:none}
+.dpk-kop b{font-size:15.5px;font-weight:800;line-height:1.2}
+.dpk-sub{font-size:11.5px;letter-spacing:.05em;text-transform:uppercase;color:#94A3B8;font-weight:800;margin:0 0 8px}
+.dpk-r{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid #F1F5F9;text-decoration:none;color:inherit}
+.dpk-l{display:flex;align-items:center;gap:8px;min-width:0;font-size:12.5px;color:#5B6B80}
+.dpk-w{display:inline-block;font-size:11px;font-weight:800;line-height:1;padding:4px 7px;border-radius:6px;white-space:nowrap}
+.dpk-p{text-align:right;white-space:nowrap}
+.dpk-p b{display:block;font-size:15px;font-weight:800}
+.dpk-p small{font-size:11.5px;color:#0b7d5c;font-weight:700}
+.dpk-p em{font-style:normal;font-size:13.5px;font-weight:800;color:#E11D48}
+.dpk-meer{display:inline-block;margin-top:10px;font-size:13px;font-weight:800;color:#2563EB;text-decoration:none}
+.dpk-fijn{font-size:11px;color:#94A3B8;margin:8px 0 0}
+</style>
+<script>
+(function () {
+  var API = '{{ section.settings.worker | default: "https://dpv-boodschappen.business-347.workers.dev" }}';
+  var MAX = {{ section.settings.max | default: 2 }};
+  var KLEUR = { ah: ['#00A0E2', '#fff'], jumbo: ['#FFC800', '#1A1A1A'], plus: ['#6AA521', '#fff'], dirk: ['#E30613', '#fff'],
+    lidl: ['#0050AA', '#FFF000'], aldi: ['#00005F', '#fff'], hoogvliet: ['#009A44', '#fff'], vomar: ['#D1001C', '#fff'],
+    kruidvat: ['#E3000F', '#fff'], etos: ['#1A1A1A', '#fff'], da: ['#E6007E', '#fff'], trekpleister: ['#F18A00', '#fff'], action: ['#0B64B4', '#fff'] };
+
+  function e(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function eu(n) { return n == null ? '' : '\u20ac' + Number(n).toFixed(2).replace('.', ','); }
+  function tot(s) { if (!s) return ''; var d = new Date(s + 'T12:00:00'); if (isNaN(d)) return '';
+    var D = ['zo','ma','di','wo','do','vr','za'], M = ['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
+    return 't/m ' + D[d.getDay()] + ' ' + d.getDate() + ' ' + M[d.getMonth()]; }
+
+  var tekstvak = document.querySelector('.article-content, .rte, article .prose, main article') || document.querySelector('main');
+  if (!tekstvak) return;
+
+  function plaats(kaart, alinea) {
+    var goedkoopst = kaart.winkels.filter(function (w) { return w.perEenheid; })[0];
+    var d = document.createElement('div');
+    d.className = 'dpk';
+    d.innerHTML =
+      '<div class="dpk-kop">' + (kaart.afbeelding ? '<img src="' + e(kaart.afbeelding) + '" alt="" loading="lazy" onerror="this.remove()">' : '') +
+      '<b>' + e(kaart.naam) + '</b></div>' +
+      '<p class="dpk-sub">Deze week in de aanbieding bij ' + kaart.aantal + (kaart.aantal === 1 ? ' winkel' : ' winkels') + '</p>' +
+      kaart.winkels.map(function (w) {
+        var k = KLEUR[w.winkel] || ['#334155', '#fff'];
+        return '<a class="dpk-r" href="/go/deal?u=' + encodeURIComponent(w.url) + '&cat=boodschappen&p=' + encodeURIComponent(w.winkelNaam) + '&bron=artikel-prijskaart" target="_blank" rel="sponsored nofollow noopener">' +
+          '<span class="dpk-l"><span class="dpk-w" style="background:' + k[0] + ';color:' + k[1] + '">' + e(w.winkelNaam) + '</span>' + (w.geldigTot ? tot(w.geldigTot) : '') + '</span>' +
+          '<span class="dpk-p">' + (w.prijs ? '<b>' + (w.groep ? 'vanaf ' : '') + eu(w.prijs) + '</b>' : '<em>' + e(w.actie) + '</em>') +
+          (w.perEenheid ? '<small>' + eu(w.perEenheid) + ' per ' + e(kaart.eenheid) + '</small>' : '') + '</span></a>';
+      }).join('') +
+      '<a class="dpk-meer" href="/pages/boodschappen#merk-' + e(kaart.id) + '">Alle winkels en prijzen vergelijken \u2192</a>' +
+      '<p class="dpk-fijn">Actieprijzen van deze week' + (goedkoopst ? ', goedkoopst per ' + e(kaart.eenheid) + ' bij ' + e(goedkoopst.winkelNaam) : '') + '. Prijzen kunnen per filiaal verschillen.</p>';
+    alinea.parentNode.insertBefore(d, alinea.nextSibling);
+  }
+
+  function zoekEnPlaats(lijst) {
+    var alineas = [].slice.call(tekstvak.querySelectorAll('p')).filter(function (p) { return p.textContent.trim().length > 60 && !p.closest('.dpk'); });
+    var gedaan = {}, aantal = 0;
+    for (var i = 0; i < alineas.length && aantal < MAX; i++) {
+      var tekst = alineas[i].textContent;
+      for (var j = 0; j < lijst.length; j++) {
+        var k = lijst[j];
+        if (gedaan[k.id]) continue;
+        // Los woord, niet als deel van een ander woord.
+        var naam = (k.merk || k.naam).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        if (!new RegExp('(^|[^a-z0-9])' + naam + '([^a-z0-9]|$)', 'i').test(tekst)) continue;
+        plaats(k, alineas[i]);
+        gedaan[k.id] = 1; aantal++;
+        break;
+      }
+    }
+  }
+
+  // Pas ophalen als de lezer in de buurt van de tekst komt.
+  var gestart = false;
+  function start() {
+    if (gestart) return; gestart = true;
+    fetch(API + '/sm/api/kaarten').then(function (r) { return r.json(); }).then(function (j) {
+      if (j && j.ok && j.kaarten && j.kaarten.length) zoekEnPlaats(j.kaarten.filter(function (k) { return !k.huismerk; }));
+    }).catch(function () {});
+  }
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(function (items, obs) {
+      items.forEach(function (it) { if (it.isIntersecting) { start(); obs.disconnect(); } });
+    }, { rootMargin: '600px' }).observe(tekstvak);
+  } else { setTimeout(start, 1200); }
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Prijskaart in artikel",
+  "settings": [
+    { "type": "text", "id": "worker", "label": "Worker", "default": "https://dpv-boodschappen.business-347.workers.dev" },
+    { "type": "range", "id": "max", "label": "Maximaal aantal kaarten per artikel", "min": 1, "max": 3, "step": 1, "default": 2 }
+  ],
+  "presets": [ { "name": "Prijskaart in artikel" } ]
+}
+{% endschema %}

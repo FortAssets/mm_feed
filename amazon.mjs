@@ -198,7 +198,8 @@ async function prijsRonde (d, aantal) {
       continue
     }
     dicht = 0
-    if (r.fout) { weg++; delete d.prijs[ean]; console.log('  ' + ean + ' ' + d.ean[ean] + ': ' + r.fout) } else {
+    // Een mislukte lezing gooit de vorige prijs niet weg; die verloopt vanzelf.
+    if (r.fout) { weg++; console.log('  ' + ean + ' ' + d.ean[ean] + ': ' + r.fout) } else {
       d.prijs[ean] = { p: r.prijs, d: vandaag, vk: r.verkoper, eigen: r.eigen }
       ok++
       console.log('  ' + ean + ' ' + d.ean[ean] + '  EUR ' + r.prijs + '  ' + (r.eigen ? 'Amazon' : 'partner: ' + r.verkoper))

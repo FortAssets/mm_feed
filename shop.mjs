@@ -87,7 +87,7 @@ const MM_TOKEN = process.env.MM_TOKEN || ''
 //    Simyo Handset (64283) en PLUS FamilyBlend (92549). De eerste twee horen
 //    hier thuis en zijn toegevoegd. PLUS zijn boodschappen en hoort bij de
 //    boodschappenpagina, dus die laat ik hier weg.
-const AWIN_FIDS = '19979,61111,65453,82771,89758,95829,95830,95831,95833,95834,95835,95836,95839,95886,95887,95888,95889,95890,95892,95893,95894,95895,95896,95897,95898,95902,95903,95904,95927,95929,95932,95938,95939,95940,96487,96636,99064,101992,111946,115421,116143,117541,117569,19975,64283'
+const AWIN_FIDS = '19979,61111,65453,82771,89758,95829,95830,95831,95833,95834,95835,95836,95839,95886,95887,95888,95889,95890,95892,95893,95894,95895,95896,95897,95898,95902,95903,95904,95927,95929,95932,95938,95939,95940,96487,96636,99064,101992,111946,115421,116143,117541,117569,19975'
 
 // Winkels waar geen goedgekeurde Awin-samenwerking mee is. Een klik daar levert
 // niets op. Zet AWIN_ALLEEN_AANGESLOTEN=1 om ze helemaal weg te laten.
@@ -106,7 +106,14 @@ const ALLEEN_AANGESLOTEN = process.env.AWIN_ALLEEN_AANGESLOTEN === '1'
 // Bazta (nl.bazta.com) en Workliving zijn wel Nederlands, dus die blijven
 // staan tot de aanmelding bij Awin rond is. De links werken; getest op
 // 3 oktober, alle drie gaven een 302 naar de juiste productpagina.
-const UIT_DE_FEED = new Set(['Goedkoopste-Kantoorartikelen'])
+// Simyo gaat er ook uit, om een andere reden. De feed "Simyo Handset" (64283)
+// die ik op 3 oktober toevoegde zet in het prijsveld het bedrag per maand van
+// het abonnement, en in het veld voor de oude prijs wat het toestel in totaal
+// kost. In de vergelijker stond daardoor een iPhone 16 voor €6,50 met 99
+// procent korting, naast €849 bij de andere winkels. Dat is geen prijs van een
+// toestel. Toestellen met abonnement horen in de telecomvergelijker, waar het
+// bedrag per maand en de looptijd erbij staan.
+const UIT_DE_FEED = new Set(['Goedkoopste-Kantoorartikelen', 'Simyo'])
 const AWIN_KOLOMMEN = 'aw_deep_link,product_name,merchant_image_url,search_price,merchant_name,merchant_id,category_name,merchant_category,brand_name,product_type,merchant_product_category_path,rrp_price,store_price,in_stock,ean,data_feed_id,condition,colour,delivery_cost,product_price_old'
 
 // MediaMarkt-feeds. 117525 (telco) zit er niet bij: die houdt generate.mjs,
@@ -1148,6 +1155,8 @@ function uitMm (q, feed) {
 // ------------------------------------------------------------------ koppelen
 
 let ongecontroleerdUitVergelijking = 0
+let onmogelijkePrijzen = 0
+let onmogelijkeKortingen = 0
 
 function koppel (items) {
   // Eerst de EAN-groepen, en per naamsleutel bijhouden welke EAN daarbij hoort.
@@ -1190,6 +1199,8 @@ function koppel (items) {
   }
   if (viaBrug) console.log('  ' + viaBrug + ' aanbiedingen zonder EAN op naam aan een EAN-groep gekoppeld')
   ongecontroleerdUitVergelijking = 0
+  onmogelijkePrijzen = 0
+  onmogelijkeKortingen = 0
 
   // Binnen een naamgroep nog splitsen op merk: staat er bij twee producten een
   // verschillend merk, dan zijn het twee producten. Een leeg merk doet mee met
@@ -1226,6 +1237,19 @@ function koppel (items) {
     // MediaMarkt staan: dan doet een marktplaatsverkoper mee alsof het de prijs
     // van bol zelf is, en bepaalt hij wie "goedkoopst" heet. Ligt het product
     // alleen bij bol, dan valt er niets te vergelijken en blijft hij staan.
+    // Vangnet voor een prijs die niet bij dit product kan horen. Staat een
+    // product bij drie of meer winkels en zit er een onder een derde van de
+    // middelste prijs, bij iets van honderd euro of meer, dan is dat geen
+    // aanbieding maar een ander soort bedrag: een maandprijs, een aanbetaling,
+    // een los onderdeel. Zo'n regel hoort niet in de vergelijking, en al
+    // helemaal niet bovenaan als goedkoopste.
+    if (aanbod.length >= 3) {
+      const midden = aanbod[Math.floor(aanbod.length / 2)].prijs
+      if (midden >= 100) {
+        const over = aanbod.filter(a => a.prijs >= midden / 3)
+        if (over.length < aanbod.length && over.length) { onmogelijkePrijzen += aanbod.length - over.length; aanbod = over }
+      }
+    }
     if (aanbod.length > 1 && aanbod.some(a => a.bolOnbekend)) {
       const schoon = aanbod.filter(a => !a.bolOnbekend)
       if (schoon.length) { ongecontroleerdUitVergelijking += aanbod.length - schoon.length; aanbod = schoon }
@@ -1243,7 +1267,10 @@ function koppel (items) {
       c: beste.cat,
       t: nettSoort(metType.type, beste.cat, ''),
       p: Math.round(beste.prijs * 100) / 100,
-      v: beste.van ? Math.round(beste.van * 100) / 100 : 0,
+      // Een doorgestreepte prijs die meer dan vijf keer de prijs is (meer dan
+      // tachtig procent korting) nemen wij niet over. Dat komt in de feeds
+      // alleen voor als er iets anders in het veld staat dan een oude prijs.
+      v: (beste.van && beste.van <= beste.prijs * 5) ? Math.round(beste.van * 100) / 100 : ((beste.van ? onmogelijkeKortingen++ : 0), 0),
       im: metAfb.afb,
       e: beste.ean,
       s: beste.staat === 'refurbished' ? 'r' : 'n',
@@ -1258,7 +1285,7 @@ function koppel (items) {
         w: a.winkel,
         vk: a.verkoper || undefined,
         p: Math.round(a.prijs * 100) / 100,
-        v: a.van ? Math.round(a.van * 100) / 100 : 0,
+        v: (a.van && a.van <= a.prijs * 5) ? Math.round(a.van * 100) / 100 : 0,
         u: a.url,
         vz: a.verzend || 0,
         vr: a.voorraad
@@ -1572,6 +1599,8 @@ async function main () {
   const producten = koppel(rauw)
   console.log('Na koppelen:', producten.length, 'producten,',
     producten.filter(p => p.o.length > 1).length, 'met meer dan een winkel')
+  if (onmogelijkePrijzen) console.log('  ' + onmogelijkePrijzen + ' prijzen uit een vergelijking gehouden omdat ze onder een derde van de middelste prijs lagen')
+  if (onmogelijkeKortingen) console.log('  ' + onmogelijkeKortingen + ' doorgestreepte prijzen niet overgenomen (meer dan 80 procent korting)')
   if (ongecontroleerdUitVergelijking) {
     console.log('  ' + ongecontroleerdUitVergelijking + ' bol-prijzen uit een vergelijking gehouden ' +
       'omdat de verkoper niet gecontroleerd was')

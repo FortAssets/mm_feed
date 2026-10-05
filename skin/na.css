@@ -630,3 +630,7 @@ html:not(#x) .rte a.dpv-inline-k,html:not(#x) a.dpv-inline-k,html:not(#x) .rte a
 html:not(#x) [style*="Plus Jakarta"],html:not(#x) [style*="Bricolage"]{font-family:'Montserrat',system-ui,sans-serif !important}
 /* Witte winkelnaam op het groen van PLUS en Hoogvliet was net te licht: iets zwaarder. */
 html:not(#x) .dpk-w{font-weight:800 !important}
+/* Uit de controle van alle 275 pagina's (5 okt): de laatste regels die te licht waren. */
+html:not(#x) .pvz2-price .per,html:not(#x) .pvz2-price .promo,html:not(#x) .pvz2-btw,html:not(#x) .pvz2-note,html:not(#x) .dhc-voorbeeld{color:#5B6B80 !important}
+html:not(#x) .pvtv-best,html:not(#x) .zc-vb.zc-g{color:#17764E !important}
+html:not(#x) .pvbel button,html:not(#x) [style*="Inter, sans-serif"],html:not(#x) [style*="Inter,sans-serif"]{font-family:'Montserrat',system-ui,sans-serif !important}

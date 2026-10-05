@@ -1,0 +1,178 @@
+<!doctype html>
+<html class="no-js" lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    {%- comment -%}
+      Travelpayouts Drive (22 sep). Zet reislinks om naar affiliatelinks en
+      plaatst reisaanbiedingen op reispagina's (eSIM, buitenland, vluchten).
+      Travelpayouts vraagt hem bovenaan te zetten, boven de andere scripts.
+    {%- endcomment -%}
+    <script nowprocket data-noptimize="1" data-cfasync="false" data-wpfc-render="false" seraph-accel-crit="1" data-no-defer="1" data-cmp-ab="2">
+      (function () {
+          var script = document.createElement("script");
+          script.async = 1;
+          script.setAttribute("data-cmp-ab","2");
+          script.src = 'https://emrldtp.com/NTc2NjU5.js?t=576659';
+          document.head.appendChild(script);
+      })();
+    </script>
+    <meta name="theme-color" content="#1B3FA0">
+    <meta name="impact-site-verification" value="36a88566-5476-4596-b3f3-2d16ec078a96">
+    {%- comment -%} 22 sep: tweede Impact-verificatie, voor de aanmelding bij Yesim (Genesis Group AG) {%- endcomment -%}
+    <meta name='impact-site-verification' value='da90b137-72d0-4c4a-b3cb-ac448beda448'>
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
+    {%- comment -%} Favicon — merk-eigen SVG, met PNG-fallback uit theme settings indien geupload {%- endcomment -%}
+    <link rel="icon" type="image/svg+xml" href="{{ 'pv-favicon.svg' | asset_url }}">
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | img_url: '32x32' }}">
+      <link rel="apple-touch-icon" href="{{ settings.favicon | img_url: '180x180' }}">
+    {%- else -%}
+      <link rel="apple-touch-icon" href="{{ 'pv-favicon.svg' | asset_url }}">
+    {%- endif -%}
+    {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
+      <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
+    {%- endunless -%}
+    {% render 'pv-seo' %}
+    {% render 'pv-seo-fonts' %}
+    {% render 'pv-hero-boost' %}
+    {% render 'meta-tags' %}
+    <script src="{{ 'constants.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'pubsub.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'global.js' | asset_url }}" defer="defer"></script>
+    {{ content_for_header }}
+    {{ 'base.css' | asset_url | stylesheet_tag }}
+    {{ 'pv-global.css' | asset_url | stylesheet_tag }}
+    {{ 'pvx-helder.css' | asset_url | stylesheet_tag }}
+    {{ 'pv-pages.css' | asset_url | stylesheet_tag }}
+    {{ 'pv-mobile.css' | asset_url | stylesheet_tag }}
+    {{ 'pv-herofix.css' | asset_url | stylesheet_tag }}
+    <script src="{{ 'pv-logos.js' | asset_url }}"></script>
+    {%- comment -%} Handmatige zakelijke sim only-bundels; moet vóór de vergelijker laden {%- endcomment -%}
+    {% render 'dpv-zakelijk-simonly' %}
+    {%- unless settings.type_body_font.system? -%}
+      <link rel="preload" as="font" href="{{ settings.type_body_font | font_url }}" type="font/woff2" crossorigin>
+    {%- endunless -%}
+    {%- unless settings.type_header_font.system? -%}
+      <link rel="preload" as="font" href="{{ settings.type_header_font | font_url }}" type="font/woff2" crossorigin>
+    {%- endunless -%}
+    <script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');</script>
+  </head>
+  <body>
+    <a class="skip-to-content-link button visually-hidden" href="#MainContent">{{ "accessibility.skip_to_text" | t }}</a>
+    {% section 'pv-header' %}
+    {%- comment -%}
+      Het uitklapmenu hoort direct onder de header. Het stond eerst bij de
+      overlay-secties onderaan de body: dan rendert het wel, maar helemaal
+      onder aan de pagina — terwijl het de linkrij in de header al verborg.
+      Gevolg: bovenaan helemaal geen menu.
+    {%- endcomment -%}
+    {% section 'dpv-mega-nav' %}
+    {%- comment -%} Knop naar Mijn contracten; hangt zichzelf achter Zakelijk in de menubalk {%- endcomment -%}
+    {% section 'dpv-contract-knop' %}
+    {%- comment -%} Energie in de menubalk en in het mobiele menu; haakt zichzelf achter Internet & TV {%- endcomment -%}
+    {% section 'dpv-energie-menu' %}
+    {%- comment -%} Dagdeals wordt Zorgverzekering; doet niets als die link er niet is {%- endcomment -%}
+    {% section 'dpv-menu-swap' %}
+    {%- comment -%} Klik&Klaar achter Internet & TV; doet niets als dat item er niet is {%- endcomment -%}
+    {% section 'dpv-menu-extra' %}
+    {%- comment -%} Omslagvak op 16:9, zodat onze omslagen niet worden bijgesneden {%- endcomment -%}
+    {% section 'dpv-cover-fix' %}
+    {%- comment -%} Alle homepageblokken op dezelfde breedte {%- endcomment -%}
+    {% section 'dpv-breedte' %}
+    {%- comment -%} In artikelen verhuist het pre-orderblok naar onder de titel {%- endcomment -%}
+    {% section 'dpv-preorder-boven' %}
+    {%- comment -%} Zet filters uit de URL in de vergelijker; doet niets zonder die parameters {%- endcomment -%}
+    {% section 'dpv-diepe-link' %}
+    {%- comment -%} Blogstrips als veegbare rij; raakt dpv-blog-strip zelf niet aan {%- endcomment -%}
+    {% section 'dpv-blog-slider' %}
+    {%- comment -%}
+      Tijdelijke balk onder het menu naar de iPhone 18 pre-orderpagina.
+      Hoort hier, tussen de blogslider en main: de sectie-wrapper is sticky en
+      moet direct onder de header zitten. 12 sep: was per ongeluk weggevallen
+      toen het zorg-aanmeldblok werd toegevoegd vanuit een oudere kopie van dit
+      bestand. Verdwijnt zelf na de datum in de sectie-instellingen.
+    {%- endcomment -%}
+    {%- comment -%} 5 okt: de twee balken (iPhone 18 Pro en iPhone Duo) zijn uitgezet. Terugzetten: section 'dpv-preorder-balk' op deze plek. {%- endcomment -%}
+    <main id="MainContent" role="main" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+    {%- comment -%}
+      13 sep: het pre-orderblok onder de iPhone-artikelen is hier weggehaald.
+      Het kondigde aan dat de pre-orders zouden opengaan ("Wij mailen je zodra
+      bestellen kan", zaterdag 12 september 09:00) en toonde iPhone 17-prijzen
+      als voorproefje. Sinds 12 september 14:00 kan bestellen gewoon, dus die
+      tekst klopte niet meer en de aanmeldknop leidde mensen weg van de
+      bestelknoppen.
+
+      De sectie sections/dpv-preorder.liquid blijft bestaan voor een volgende
+      lancering, bijvoorbeeld de iPhone Duo in oktober. Terugzetten is één
+      regel op deze plek.
+    {%- endcomment -%}
+    {%- comment -%}
+      Knop naar de zorgvergelijker; verschijnt alleen onder artikelen met de tag
+      zorg. Staat hier en niet in de artikelen zelf, omdat bij het nalopen van
+      de vijf zorgartikelen bleek dat er twee geen link naar de vergelijker
+      hadden en twee geen affiliatelink. Zo geldt het ook voor elk zorgartikel
+      dat er later nog bij komt.
+    {%- endcomment -%}
+    {%- comment -%}
+      Zorgblok op de homepage. Hoort eigenlijk in templates/index.json, maar
+      schrijven naar dat sjabloon komt via onze koppeling niet door: Shopify
+      meldt succes en het bestand verandert niet, in twee thema's getest.
+      De sectie toont zichzelf alleen op de homepage en schuift zichzelf naar
+      de plek onder de dagprijzen.
+    {%- endcomment -%}
+        {% section 'dpv-zorg-home' %}
+    {%- comment -%}
+      Vooruitblik op de premie van 2027, onder elk artikel met de tag
+      'premie 2027'. Staat als sectie en niet in de zes verzekeraarsartikelen
+      zelf, zodat je op 12 november één blok aanpast in plaats van zes.
+    {%- endcomment -%}
+    {%- comment -%}
+      Herkomst van de bezoeker vasthouden en meegeven aan de affiliatelinks.
+      Stond eerst als los script in dit bestand, omdat de sectie niet wilde
+      landen. Dat bleek aan de naamlengte in het schema te liggen; nu het een
+      gewone sectie is, staat hij hier als sectie.
+    {%- endcomment -%}
+    {% section 'dpv-herkomst' %}
+    {% section 'dpv-zorgpremie-2027' %}
+    {% section 'dpv-zorg-cta' %}
+    {%- comment -%}
+      Aanmeldblok voor de premies van 2027, onder elk artikel met de tag zorg.
+      De lijst zorgpremies-2027 stond op nul echte aanmeldingen omdat het blok
+      alleen op de zorgpagina en in één artikel stond. Schakelt na 12 november
+      vanzelf om naar een knop naar de vergelijker.
+    {%- endcomment -%}
+    {% section 'dpv-zorg-alert' %}
+    {% section 'pv-footer' %}
+    {% section 'dpv-social' %}
+    {% section 'dpv-whatsapp' %}
+    {%- comment -%} Logo-reparatie + mailknop op elke dealkaart, sitebreed {%- endcomment -%}
+    {% section 'dpv-deal-tools' %}
+    {%- comment -%}
+      Verbetert het venster van dpv-deal-tools zodra het opengaat: HTML-mail
+      met een knop in plaats van een uitgeschreven affiliatelink, strengere
+      adrescontrole met een melding die zegt wat er mis is, een tijdslimiet
+      zodat de knop niet op 'Bezig' blijft staan, en het adres gaat naar de
+      lijst deal-alert in plaats van alleen naar Shopify.
+
+      Staat hier en niet per pagina: die knoppen worden sitebreed geplaatst
+      door deal-tools, dus de verbetering moet overal meelopen. Per template
+      toevoegen ging eerder mis, want dan werkte de ene pagina wel en de
+      andere niet. Moet ná deal-tools staan.
+    {%- endcomment -%}
+    {% section 'dpv-mail-hook' %}
+    {%- comment -%} AI-zoekbalk boven de vergelijker {%- endcomment -%}
+    {% section 'dpv-ai-zoek' %}
+    {% render 'pv-langselect' %}
+    <script>
+      window.shopUrl = '{{ shop.url }}';
+      window.routes = {cart_url:'{{ routes.cart_url }}',cart_add_url:'{{ routes.cart_add_url }}',cart_change_url:'{{ routes.cart_change_url }}',cart_update_url:'{{ routes.cart_update_url }}',predictive_search_url:'{{ routes.predictive_search_url }}'};
+      Shopify.money_format = "{{ shop.money_format }}";
+    </script>
+    {%- comment -%} Awin Publisher MasterTag (tracking + plug-ins zoals Bounceless). Publisher ID 1528789. {%- endcomment -%}
+    <script src="https://www.dwin2.com/pub.1528789.min.js" defer="defer"></script>
+  </body>
+</html>

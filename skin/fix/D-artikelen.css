@@ -1,0 +1,11 @@
+/* Artikelen en blog (uit de automatische controle op alle 180 artikelpagina's, 5 okt). */
+/* Kleine grijze letters (#94a3b8) op wit waren te licht om te lezen: bronregels, voetnoten, datums. */
+html:not(#x) .dab-fijn,html:not(#x) .dpv-inline-tx small,html:not(#x) .dpv-merkmelding,html:not(#x) .ak-f,html:not(#x) .vg-f,
+html:not(#x) .dpk-sub,html:not(#x) .dpk-fijn,html:not(#x) .dpv-credit,html:not(#x) .pvbi-date,html:not(#x) .dzc-fijn,html:not(#x) .zpa-fijn{color:#5B6B80 !important}
+html:not(#x) [style*="color:#94a3b8"],html:not(#x) [style*="color: #94a3b8"],html:not(#x) [style*="color:#94A3B8"]{color:#5B6B80 !important}
+/* Knoppen in de tekst: het vlak werd blauw en de linkkleur van het artikel ook, dus blauw op blauw. */
+html:not(#x) .rte a.dpv-inline-k,html:not(#x) a.dpv-inline-k,html:not(#x) .rte a.ak-k,html:not(#x) a.ak-k,html:not(#x) td a.ak-k{color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important}
+/* Blokken met vaste opmaak in de tekst hielden de oude letter. */
+html:not(#x) [style*="Plus Jakarta"],html:not(#x) [style*="Bricolage"]{font-family:'Montserrat',system-ui,sans-serif !important}
+/* Witte winkelnaam op het groen van PLUS en Hoogvliet was net te licht: iets zwaarder. */
+html:not(#x) .dpk-w{font-weight:800 !important}

@@ -1,0 +1,26 @@
+{
+  "sections": {
+    "product": {
+      "type": "dpv-product",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com"
+      }
+    },
+    "aanmelden": {
+      "type": "dpv-prijsalarm",
+      "settings": {
+        "vorm": "blok",
+        "oog": "Gratis",
+        "kop": "Wij mailen je als een prijs echt zakt",
+        "tekst": "Wij meten elke nacht de prijzen van ruim 50.000 producten. Zakt er een onder de laagste prijs die wij ooit gemeten hebben, dan laten wij het weten.",
+        "knop": "Aanmelden",
+        "bron": "productpagina",
+        "fijn": "Hoogstens een mail per week. Afmelden kan met een klik in elke mail."
+      }
+    }
+  },
+  "order": [
+    "product",
+    "aanmelden"
+  ]
+}

@@ -1,0 +1,288 @@
+{%- comment -%}
+  Productpagina (/pages/product/<handle>), een pagina per product.
+
+  De gegevens komen uit het metaobject "productpagina". Naam, foto, prijzen
+  per winkel en de gestructureerde gegevens staan in de HTML zelf, zodat een
+  zoekmachine ze leest zonder script. Daarna haalt het script de actuele
+  prijzen, het prijsverloop en ons oordeel op bij de shop-worker en vervangt
+  de momentopname. Valt de worker weg, dan blijft de momentopname staan, met
+  de peildatum erbij.
+
+  Stijl: huisstijl "2-rond". Geel is alleen voor de knop naar de winkel.
+{%- endcomment -%}
+{%- liquid
+  assign m = metaobject
+  assign api = section.settings.api | default: 'https://shop.deprijsvergelijker.com'
+  assign naam = m.naam.value
+  assign cat = m.categorie.value
+  assign id = m.shop_id.value
+  assign aanbod = m.aanbod.value
+  assign specs = m.specs.value
+  assign go = api | append: '/api/shop/go?i=' | append: id | append: '&cat=' | append: cat | append: '&bron=productpagina'
+-%}
+{%- capture prijs_tekst -%}
+  {%- if m.prijs.value -%}
+    {%- assign c = m.prijs.value | times: 100 | round -%}
+    {%- assign e = c | divided_by: 100 -%}
+    {%- assign r = c | modulo: 100 -%}
+    €{{ e }}{% if r > 0 %},{% if r < 10 %}0{% endif %}{{ r }}{% endif %}
+  {%- endif -%}
+{%- endcapture -%}
+{%- assign prijs_tekst = prijs_tekst | strip -%}
+
+<style>
+.dpp{font-family:'Montserrat',system-ui,sans-serif;color:#0D1B2A;background:linear-gradient(180deg,#E3ECFF 0,#F4F7FF 420px,#fff 421px)}
+.dpp *{box-sizing:border-box}
+.dpp-in{max-width:1120px;margin:0 auto;padding:18px 16px 40px}
+.dpp-kruim{font-size:12.5px;font-weight:600;color:#5B6B80;margin:0 0 14px;display:flex;flex-wrap:wrap;gap:6px}
+.dpp-kruim a{color:#2456D6;text-decoration:none}
+.dpp-top{display:grid;gap:18px}
+.dpp-foto{background:#fff;border:1px solid #E6EBF2;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:22px;min-height:240px}
+.dpp-foto img{max-width:100%;max-height:300px;object-fit:contain}
+.dpp-merk{font-size:12.5px;font-weight:800;color:#2456D6;letter-spacing:.04em;text-transform:uppercase;margin:0 0 6px}
+.dpp h1{font-size:25px;line-height:1.12;letter-spacing:-.025em;font-weight:800;margin:0 0 10px;color:#0D1B2A}
+.dpp-van{font-size:14px;font-weight:600;color:#4A5A70;margin:0 0 14px}
+.dpp-van b{font-size:30px;font-weight:800;color:#0D1B2A;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-right:6px}
+.dpp-kaart{background:#fff;border:1px solid #E6EBF2;border-radius:18px;padding:14px;box-shadow:8px 8px 0 #3FAE7A}
+.dpp-kaart h2{font-size:15px;font-weight:800;margin:0 0 10px}
+.dpp-rij{display:flex;align-items:center;gap:10px;border:1px solid #E6EBF2;border-radius:12px;padding:10px 12px;margin-top:8px}
+.dpp-rij.beste{border-color:#2456D6;background:#F3F7FF}
+.dpp-rij-n{flex:1;min-width:0;font-size:14.5px;font-weight:800}
+.dpp-rij-n small{display:block;font-size:12px;font-weight:600;color:#5B6B80;margin-top:2px}
+.dpp-lab{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.05em;background:#E3F4EB;color:#1F8F5F;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.dpp-rij-p{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dpp-rij-p s{display:block;font-size:12px;font-weight:600;color:#5B6B80;text-align:right}
+.dpp a.dpp-knop{background:#F9C31F;color:#0D1B2A;font-size:14px;font-weight:800;text-decoration:none;border-radius:10px;padding:11px 14px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center}
+.dpp a.dpp-knop:hover{background:#EDB50C}
+.dpp-peil{font-size:12px;font-weight:600;color:#5B6B80;margin:10px 0 0}
+.dpp-blok{background:#fff;border:1px solid #E6EBF2;border-radius:16px;padding:16px;margin-top:18px}
+.dpp-blok h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0 0 10px}
+.dpp-blok p{font-size:14.5px;line-height:1.6;color:#0D1B2A;margin:0 0 8px}
+.dpp-blok p:last-child{margin:0}
+.dpp-ja{color:#1F8F5F;font-weight:800}.dpp-nee{color:#B42318;font-weight:800}
+.dpp-graf svg{display:block;width:100%;height:120px;background:#F4F7FF;border-radius:12px}
+.dpp-graf-vt{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#5B6B80;margin-top:6px}
+.dpp-specs{width:100%;border-collapse:collapse;font-size:14px}
+.dpp-specs th{text-align:left;font-weight:600;color:#4A5A70;padding:9px 10px 9px 0;width:44%;vertical-align:top}
+.dpp-specs td{font-weight:700;padding:9px 0}
+.dpp-specs tr+tr th,.dpp-specs tr+tr td{border-top:1px solid #E6EBF2}
+.dpp-meer{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.dpp-meer a{display:block;background:#fff;border:1px solid #E6EBF2;border-radius:14px;padding:10px;text-decoration:none;color:#0D1B2A}
+.dpp-meer img{display:block;width:100%;height:90px;object-fit:contain;margin-bottom:8px}
+.dpp-meer b{display:block;font-size:13px;font-weight:700;line-height:1.3;max-height:3.9em;overflow:hidden}
+.dpp-meer span{display:block;font-size:14px;font-weight:800;margin-top:4px}
+.dpp-link{display:inline-block;margin-top:12px;font-size:14px;font-weight:800;color:#2456D6;text-decoration:none}
+@media(min-width:800px){
+  .dpp-in{padding:26px 24px 56px}
+  .dpp-top{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px;align-items:start}
+  .dpp h1{font-size:34px}
+  .dpp-foto{min-height:380px}.dpp-foto img{max-height:380px}
+  .dpp-kaart{padding:18px;box-shadow:10px 10px 0 #3FAE7A}
+  .dpp-meer{grid-template-columns:repeat(4,1fr)}
+  .dpp-blok{padding:22px}
+}
+</style>
+
+<div class="dpp" id="dpp" data-api="{{ api | escape }}" data-id="{{ id | escape }}" data-cat="{{ cat | escape }}" data-soort="{{ m.soort.value | escape }}" data-handle="{{ m.system.handle | escape }}">
+  <div class="dpp-in">
+    <nav class="dpp-kruim" aria-label="Kruimelpad">
+      <a href="/">Home</a><span>›</span>
+      <a href="/pages/vergelijken">Producten vergelijken</a>
+      {%- if m.categorie_naam.value != blank -%}<span>›</span><a href="/pages/vergelijken?cat={{ cat | url_encode }}">{{ m.categorie_naam.value | escape }}</a>{%- endif -%}
+    </nav>
+
+    <div class="dpp-top">
+      <div class="dpp-foto">
+        {%- if m.afbeelding.value != blank -%}
+          <img src="{{ m.afbeelding.value | escape }}" alt="{{ naam | escape }}" width="380" height="380" fetchpriority="high">
+        {%- endif -%}
+      </div>
+
+      <div>
+        {%- if m.merk.value != blank -%}<p class="dpp-merk">{{ m.merk.value | escape }}</p>{%- endif -%}
+        <h1>{{ naam | escape }}</h1>
+        <p class="dpp-van" id="dpp-van">
+          {%- if prijs_tekst != blank -%}<b>{{ prijs_tekst }}</b>laagste prijs{% if m.winkels.value > 1 %} bij {{ m.winkels.value }} winkels{% endif %}{%- endif -%}
+        </p>
+
+        <div class="dpp-kaart">
+          <h2>Prijzen per winkel</h2>
+          <div id="dpp-winkels">
+            {%- for o in aanbod -%}
+              {%- assign c = o.p | times: 100 | round -%}
+              {%- assign e = c | divided_by: 100 -%}
+              {%- assign r = c | modulo: 100 -%}
+              <div class="dpp-rij{% if forloop.first %} beste{% endif %}">
+                <div class="dpp-rij-n">{{ o.w | escape }}{% if forloop.first and aanbod.size > 1 %}<span class="dpp-lab">LAAGSTE</span>{% endif %}</div>
+                <span class="dpp-rij-p">€{{ e }}{% if r > 0 %},{% if r < 10 %}0{% endif %}{{ r }}{% endif %}</span>
+                <a class="dpp-knop" href="{{ go }}&w={{ o.w | url_encode }}" target="_blank" rel="sponsored noopener">Bekijk ›</a>
+              </div>
+            {%- endfor -%}
+          </div>
+          <p class="dpp-peil" id="dpp-peil">{% if m.peildatum.value %}Prijzen gemeten op {{ m.peildatum.value | date: '%-d-%-m-%Y' }}. {% endif %}De prijs bij de winkel is leidend.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dpp-blok">
+      <h2>Wat wij van deze prijs weten</h2>
+      <div id="dpp-oordeel"><p>Wij meten de prijs van dit product elke nacht bij de winkels hierboven. Hier staat of de huidige prijs laag is vergeleken met wat wij eerder hebben gemeten.</p></div>
+    </div>
+
+    <div class="dpp-blok" id="dpp-verloop" hidden>
+      <h2>Prijsverloop</h2>
+      <div id="dpp-graf"></div>
+    </div>
+
+    {%- if specs != blank -%}
+      <div class="dpp-blok">
+        <h2>Specificaties</h2>
+        <table class="dpp-specs">
+          {%- for s in specs -%}<tr><th scope="row">{{ s[0] | escape }}</th><td>{{ s[1] | escape }}</td></tr>{%- endfor -%}
+        </table>
+      </div>
+    {%- endif -%}
+
+    <div class="dpp-blok">
+      <h2>{{ naam | escape }} kopen: waar let je op?</h2>
+      {%- if m.tekst.value != blank -%}{{ m.tekst.value | escape | newline_to_br | prepend: '<p>' | append: '</p>' }}{%- endif -%}
+      <p>Wij zetten de prijs van {{ naam | escape }} bij {% if m.winkels.value > 1 %}{{ m.winkels.value }} winkels{% else %}de winkel{% endif %} naast elkaar en meten die elke nacht opnieuw. Kijk bij het vergelijken ook naar verzendkosten en levertijd: die staan bij elke winkel vermeld zodra de actuele prijzen geladen zijn.</p>
+      <p>Via de knoppen ga je naar de winkel. Koop je daar iets, dan krijgen wij soms een vergoeding. Dat verandert de prijs niet en ook niet de volgorde: de laagste prijs staat altijd bovenaan.</p>
+      {%- if m.ean.value != blank -%}<p style="font-size:12.5px;color:#5B6B80">EAN {{ m.ean.value | escape }}</p>{%- endif -%}
+    </div>
+
+    <div class="dpp-blok" id="dpp-meer-blok" hidden>
+      <h2>Vergelijkbare producten</h2>
+      <div class="dpp-meer" id="dpp-meer"></div>
+      <a class="dpp-link" href="/pages/vergelijken?cat={{ cat | url_encode }}">Alles in {{ m.categorie_naam.value | default: 'deze categorie' | escape }} ›</a>
+    </div>
+  </div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ naam | json }},
+  {%- if m.afbeelding.value != blank %}"image": {{ m.afbeelding.value | json }},{% endif -%}
+  {%- if m.merk.value != blank %}"brand": {"@type": "Brand", "name": {{ m.merk.value | json }}},{% endif -%}
+  {%- if m.ean.value != blank %}"gtin13": {{ m.ean.value | json }},{% endif -%}
+  "url": {{ shop.url | append: '/pages/product/' | append: m.system.handle | json }}
+  {%- if m.prijs.value -%},
+  "offers": {
+    "@type": "AggregateOffer",
+    "priceCurrency": "EUR",
+    "lowPrice": {{ m.prijs.value | json }},
+    "highPrice": {{ m.hoogste.value | default: m.prijs.value | json }},
+    "offerCount": {{ m.winkels.value | default: 1 }}
+  }
+  {%- endif %}
+}
+</script>
+
+<script>
+(function () {
+  var W = document.getElementById('dpp'); if (!W) return;
+  var API = W.getAttribute('data-api'), ID = W.getAttribute('data-id'), CAT = W.getAttribute('data-cat');
+  var SOORT = W.getAttribute('data-soort'), HANDLE = W.getAttribute('data-handle');
+  var KAART = 'https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/productpaginas.json';
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function eur(n) { n = Number(n) || 0; return '€' + n.toLocaleString('nl-NL', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }); }
+  function dag(s) { var p = String(s || '').split('-'); return p.length === 3 ? Number(p[2]) + '-' + Number(p[1]) + '-' + p[0] : esc(s); }
+  function meet(naam, extra) { try { if (window.gtag) window.gtag('event', naam, extra || {}); } catch (e) {} }
+
+  function graf(reeks) {
+    if (!reeks || reeks.length < 2) return '';
+    var H = 40, B = 100, t0 = Date.parse(reeks[0].dag), t1 = Date.now();
+    if (!(t1 > t0)) return '';
+    var ps = reeks.map(function (e) { return e.prijs; }), min = Math.min.apply(null, ps), max = Math.max.apply(null, ps);
+    if (max === min) { max += 1; min -= 1; }
+    function x(t) { return ((Date.parse(t) - t0) / (t1 - t0)) * B; }
+    function y(p) { return H - ((p - min) / (max - min)) * (H - 10) - 5; }
+    var d = '';
+    reeks.forEach(function (e, i) {
+      var xa = x(e.dag), xb = (i + 1 < reeks.length) ? x(reeks[i + 1].dag) : B;
+      d += (i === 0 ? 'M' : ' L') + xa.toFixed(2) + ' ' + y(e.prijs).toFixed(2) + ' L' + xb.toFixed(2) + ' ' + y(e.prijs).toFixed(2);
+    });
+    var nu = reeks[reeks.length - 1];
+    return '<div class="dpp-graf"><svg viewBox="0 0 100 ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
+      '<path d="' + d + '" fill="none" stroke="#2456D6" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>' +
+      '<div class="dpp-graf-vt"><span>sinds ' + dag(reeks[0].dag) + ' · hoogste ' + eur(Math.max.apply(null, ps)) + '</span><span>nu ' + eur(nu.prijs) + '</span></div></div>';
+  }
+
+  function oordeel(o, beste) {
+    if (!o || o.metingen < 2) return '<p>Wij volgen deze prijs sinds kort. Zodra er meer metingen zijn, staat hier of de huidige prijs laag is vergeleken met eerder.</p>';
+    var h = '';
+    if (o.isLaagsteOoit) h += '<p><span class="dpp-ja">Dit is de laagste prijs</span> die wij voor dit product hebben gemeten, in ' + o.metingen + ' metingen sinds ' + dag(o.eersteMeting) + '.</p>';
+    else h += '<p>Wij hebben dit product goedkoper gezien: <b>' + eur(o.laagsteOoit) + '</b> op ' + dag(o.laagsteOp) + '. Nu staat hij op ' + eur(beste.p) + '.</p>';
+    if (beste.v > 0) {
+      if (o.vanPrijsGemeten === true) h += '<p>De winkel noemt ' + eur(beste.v) + ' als eerdere prijs, en <span class="dpp-ja">die hebben wij ook gemeten</span>.</p>';
+      else if (o.vanPrijsGemeten === false) h += '<p>De winkel noemt ' + eur(beste.v) + ' als eerdere prijs, maar <span class="dpp-nee">zo hoog hebben wij hem nooit gezien</span>. Het hoogste dat wij meten is ' + eur(o.hoogsteOoit) + '.</p>';
+    }
+    var d = o.dagenOpDezePrijs;
+    if (d >= 14) h += '<p>Deze prijs staat er al ' + d + ' dagen, dus dit is geen tijdelijke actie.</p>';
+    else if (d <= 2 && d >= 0) h += '<p>De prijs is ' + (d === 0 ? 'vandaag' : d === 1 ? 'gisteren' : d + ' dagen terug') + ' veranderd.</p>';
+    return h;
+  }
+
+  fetch(API + '/api/shop/product?i=' + encodeURIComponent(ID) + '&cat=' + encodeURIComponent(CAT))
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (!d || d.fout || !d.product || !d.product.o || !d.product.o.length) throw new Error('weg');
+      var pr = d.product, go = API + '/api/shop/go?i=' + encodeURIComponent(pr.i) + '&cat=' + encodeURIComponent(d.cat || CAT) + '&bron=productpagina';
+      var h = '';
+      pr.o.forEach(function (o, i) {
+        var sub = [];
+        if (o.vk) sub.push('verkocht door ' + esc(o.vk));
+        sub.push(o.vz > 0 ? eur(o.vz) + ' verzending' : 'gratis verzending');
+        if (!o.vr) sub.push('voorraad onbekend');
+        h += '<div class="dpp-rij' + (i === 0 ? ' beste' : '') + '"><div class="dpp-rij-n">' + esc(o.w) +
+          (i === 0 && pr.o.length > 1 ? '<span class="dpp-lab">LAAGSTE</span>' : '') + '<small>' + sub.join(' · ') + '</small></div>' +
+          '<span class="dpp-rij-p">' + eur(o.p) + (o.v > o.p ? '<s>' + eur(o.v) + '</s>' : '') + '</span>' +
+          '<a class="dpp-knop" data-w="' + esc(o.w) + '" href="' + go + '&w=' + encodeURIComponent(o.w) + '" target="_blank" rel="sponsored noopener">Bekijk ›</a></div>';
+      });
+      document.getElementById('dpp-winkels').innerHTML = h;
+      var n = pr.o.length;
+      document.getElementById('dpp-van').innerHTML = '<b>' + eur(pr.o[0].p) + '</b>laagste prijs' + (n > 1 ? ' bij ' + n + ' winkels' : '');
+      document.getElementById('dpp-peil').textContent = 'Prijzen van vannacht gemeten. De prijs bij de winkel is leidend.';
+      document.getElementById('dpp-oordeel').innerHTML = oordeel(d.oordeel, pr.o[0]);
+      var g = graf((d.logboek || {})[pr.o[0].w] || []);
+      if (g) { document.getElementById('dpp-graf').innerHTML = g; document.getElementById('dpp-verloop').hidden = false; }
+    })
+    .catch(function () {
+      var p = document.getElementById('dpp-peil');
+      if (p) p.textContent = p.textContent.replace('De prijs bij de winkel is leidend.', 'De actuele prijzen konden niet geladen worden. Kijk bij de winkel voor de prijs van nu.');
+    });
+
+  W.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a.dpp-knop');
+    if (a) meet('dpp_klik', { winkel: a.getAttribute('data-w') || '', product: HANDLE });
+  });
+
+  // Vergelijkbare producten: eerst met een eigen pagina, de rest naar de vergelijker.
+  Promise.all([
+    fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + (SOORT ? '&type=' + encodeURIComponent(SOORT) : '') + '&limit=24').then(function (r) { return r.json(); }),
+    fetch(KAART).then(function (r) { return r.json(); }).catch(function () { return {}; })
+  ]).then(function (uit) {
+    var items = (uit[0] && uit[0].items) || [], kaart = uit[1] || {};
+    items = items.filter(function (x) { return x.i !== ID && x.im; });
+    items.sort(function (a, b) { return (kaart[b.i] ? 1 : 0) - (kaart[a.i] ? 1 : 0); });
+    items = items.slice(0, 8);
+    if (!items.length) return;
+    document.getElementById('dpp-meer').innerHTML = items.map(function (x) {
+      var href = kaart[x.i] ? '/pages/product/' + kaart[x.i] : '/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n);
+      return '<a href="' + href + '"><img loading="lazy" src="' + esc(x.im) + '" alt=""><b>' + esc(x.n) + '</b><span>' + eur(x.p) + '</span></a>';
+    }).join('');
+    document.getElementById('dpp-meer-blok').hidden = false;
+  }).catch(function () {});
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Productpagina",
+  "settings": [
+    { "type": "text", "id": "api", "label": "Adres van de shop-worker", "default": "https://shop.deprijsvergelijker.com" }
+  ]
+}
+{% endschema %}

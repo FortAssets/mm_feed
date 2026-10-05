@@ -1,0 +1,164 @@
+{%- comment -%}
+  Kiezer en live prijzen voor de vergelijkingsartikelen (blog "vergelijk").
+
+  Elke combinatie van twee modellen is een eigen, vooraf geschreven artikel met
+  een vaste URL; daar rankt het op. Deze sectie zet er twee keuzelijsten boven.
+  Kiest iemand een andere combinatie, dan gaat hij naar het artikel van die
+  combinatie. De lijst met combinaties komt uit de tags van de artikelen zelf
+  ("A|slug|Naam", "B|slug|Naam", "cat|slug|Naam"), dus een nieuw artikel staat
+  vanzelf in de keuzelijsten, en je kunt alleen kiezen binnen dezelfde soort.
+
+  De prijzen en winkels in het artikel staan er als vaste tekst in, zodat de
+  pagina ook zonder script klopt, en worden hier ververst uit de vergelijker.
+{%- endcomment -%}
+{%- if article and blog.handle == 'vergelijk' -%}
+{%- paginate blog.articles by 250 -%}
+<script type="application/json" id="vgk-index">[{%- for a in blog.articles -%}{"h":{{ a.handle | json }},"t":{{ a.tags | json }}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]</script>
+{%- endpaginate -%}
+
+<div class="vgk" id="vgk" hidden>
+  <p class="vgk-eb">Vergelijk zelf</p>
+  <div class="vgk-tabs" id="vgk-tabs" role="tablist" aria-label="Soort product"></div>
+  <div class="vgk-rij">
+    <label class="vgk-sel"><span>Model 1</span><select id="vgk-a" aria-label="Eerste model"></select></label>
+    <span class="vgk-vs" aria-hidden="true">vs</span>
+    <label class="vgk-sel"><span>Model 2</span><select id="vgk-b" aria-label="Tweede model"></select></label>
+  </div>
+  <p class="vgk-uit" id="vgk-uit" role="status"></p>
+</div>
+
+<style>
+.vgk{max-width:820px;margin:18px auto 0;padding:16px 18px;border:1px solid #e6ebf2;border-radius:18px;background:#f8fafc;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:#0D1B2A}
+.vgk *{box-sizing:border-box}
+.vgk-eb{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#6d28d9;margin:0 0 9px}
+.vgk-tabs{display:flex;gap:7px;overflow-x:auto;margin:0 0 11px;scrollbar-width:none}
+.vgk-tabs::-webkit-scrollbar{display:none}
+.vgk-tabs button{flex:0 0 auto;min-height:38px;padding:0 14px;border:1px solid #d7deea;border-radius:99px;background:#fff;font:inherit;font-size:13.5px;font-weight:700;color:#0D1B2A;cursor:pointer}
+.vgk-tabs button[aria-selected="true"]{background:#0D1B2A;border-color:#0D1B2A;color:#fff}
+.vgk-rij{display:grid;grid-template-columns:1fr 34px 1fr;align-items:center}
+.vgk-vs{text-align:center;font-weight:800;color:#94a3b8;font-size:14px}
+.vgk-sel{display:block;border:1.5px solid #10b981;border-radius:13px;background:#fff;padding:7px 12px 6px;min-width:0}
+.vgk-sel span{display:block;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#64748b}
+.vgk-sel select{width:100%;border:0;background:transparent;font:inherit;font-size:15.5px;font-weight:800;color:#0D1B2A;padding:2px 0;min-height:30px;cursor:pointer}
+.vgk-sel select:focus-visible{outline:3px solid #10b981;outline-offset:3px}
+.vgk-uit{font-size:13.5px;line-height:1.5;margin:10px 0 0;color:#475569}
+.vgk-uit:empty{display:none}
+.vgk-uit a{color:#059669;font-weight:700}
+@media(max-width:640px){.vgk{margin:12px 12px 0;padding:13px}.vgk-rij{grid-template-columns:1fr;gap:6px}.vgk-vs{display:none}}
+</style>
+
+<script>
+(function () {
+  var API = 'https://shop.deprijsvergelijker.com';
+  var vg = document.querySelector('[data-vg]');
+  var doos = document.getElementById('vgk');
+
+  function eur(n) {
+    var v = Math.round(n * 100) / 100, s = v % 1 === 0 ? String(v) : v.toFixed(2).replace('.', ',');
+    var d = s.split(','); d[0] = d[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    return '€' + d.join(',');
+  }
+  function esc(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function winkel(w) { return w === 'bol.com partner' ? 'bol.com (partner)' : w; }
+
+  // ---- 1. Keuzelijsten ----
+  (function kiezer() {
+    var bron = document.getElementById('vgk-index');
+    if (!bron || !doos) return;
+    var lijst; try { lijst = JSON.parse(bron.textContent); } catch (e) { return; }
+    var cats = {}, modellen = {}, paren = {}, perModel = {};
+    lijst.forEach(function (art) {
+      var c = null, a = null, b = null;
+      (art.t || []).forEach(function (t) {
+        var d = String(t).split('|'); if (d.length < 3) return;
+        if (d[0] === 'cat') c = d; else if (d[0] === 'A') a = d; else if (d[0] === 'B') b = d;
+      });
+      if (!c || !a || !b) return;
+      cats[c[1]] = c[2];
+      modellen[c[1]] = modellen[c[1]] || {};
+      modellen[c[1]][a[1]] = a[2]; modellen[c[1]][b[1]] = b[2];
+      paren[a[1] + '|' + b[1]] = art.h; paren[b[1] + '|' + a[1]] = art.h;
+      [a, b].forEach(function (m, n) {
+        var ander = n === 0 ? b : a;
+        (perModel[m[1]] = perModel[m[1]] || []).push([ander[2], art.h, m[2]]);
+      });
+    });
+    var catLijst = Object.keys(cats); if (!catLijst.length) return;
+    var cat = (vg && vg.getAttribute('data-cat')) || catLijst[0];
+    if (!cats[cat]) cat = catLijst[0];
+    var selA = document.getElementById('vgk-a'), selB = document.getElementById('vgk-b');
+    var tabs = document.getElementById('vgk-tabs'), uit = document.getElementById('vgk-uit');
+
+    function vul(huidigA, huidigB) {
+      var m = modellen[cat], sl = Object.keys(m).sort(function (x, y) { return m[x].localeCompare(m[y], 'nl', { numeric: true }); });
+      function opties(kies) { return sl.map(function (s) { return '<option value="' + esc(s) + '"' + (s === kies ? ' selected' : '') + '>' + esc(m[s]) + '</option>'; }).join(''); }
+      selA.innerHTML = opties(huidigA || sl[0]); selB.innerHTML = opties(huidigB || sl[1] || sl[0]);
+    }
+    function tekenTabs() {
+      if (catLijst.length < 2) { tabs.hidden = true; return; }
+      tabs.innerHTML = catLijst.map(function (c) { return '<button type="button" role="tab" data-c="' + esc(c) + '" aria-selected="' + (c === cat) + '">' + esc(cats[c]) + '</button>'; }).join('');
+    }
+    function gekozen() {
+      var a = selA.value, b = selB.value;
+      if (a === b) { uit.textContent = 'Kies twee verschillende modellen.'; return; }
+      var h = paren[a + '|' + b];
+      if (h) { if (location.pathname.split('/').pop() !== h) location.href = '/blogs/vergelijk/' + h; else uit.textContent = ''; return; }
+      // Geen artikel voor deze combinatie: laat zien wat er wel is.
+      var m = modellen[cat], opties = (perModel[a] || []).concat(perModel[b] || []), gezien = {};
+      var links = opties.filter(function (o) { if (gezien[o[1]]) return false; gezien[o[1]] = 1; return true; }).slice(0, 6)
+        .map(function (o) { return '<a href="/blogs/vergelijk/' + esc(o[1]) + '">' + esc(o[2]) + ' vs ' + esc(o[0]) + '</a>'; });
+      uit.innerHTML = 'De ' + esc(m[a]) + ' en de ' + esc(m[b]) + ' hebben wij nog niet naast elkaar gezet. Wel: ' + links.join(' · ') + '.';
+    }
+    tabs.addEventListener('click', function (e) {
+      var b = e.target.closest('button[data-c]'); if (!b) return;
+      cat = b.getAttribute('data-c'); tekenTabs(); vul(); gekozen();
+    });
+    selA.addEventListener('change', gekozen); selB.addEventListener('change', gekozen);
+    tekenTabs(); vul(vg && vg.getAttribute('data-sa'), vg && vg.getAttribute('data-sb'));
+    doos.hidden = false;
+  })();
+
+  // ---- 2. Live prijzen ----
+  if (!vg) return;
+  var cat = vg.getAttribute('data-cat'), ids = { a: vg.getAttribute('data-a'), b: vg.getAttribute('data-b') };
+  function haal(i) {
+    return fetch(API + '/api/shop/product?i=' + encodeURIComponent(i) + '&cat=' + encodeURIComponent(cat))
+      .then(function (r) { return r.ok ? r.json() : null; })
+      .then(function (d) { return d && d.product && d.product.o && d.product.o.length ? d.product : null; })
+      .catch(function () { return null; });
+  }
+  Promise.all([haal(ids.a), haal(ids.b)]).then(function (ps) {
+    var P = { a: ps[0], b: ps[1] };
+    ['a', 'b'].forEach(function (k) {
+      var p = P[k]; if (!p) return;
+      var vak = vg.querySelector('[data-vgw="' + k + '"]');
+      if (vak) {
+        vak.innerHTML = p.o.slice(0, 4).map(function (o, n) {
+          return '<a class="vg-wr' + (n === 0 ? ' eerste' : '') + '" href="' + API + '/api/shop/go?cat=' + encodeURIComponent(cat) + '&i=' + encodeURIComponent(p.i) + '&w=' + encodeURIComponent(o.w) +
+            '" target="_blank" rel="sponsored nofollow noopener"><span>' + esc(winkel(o.w)) + '</span><b>' + eur(o.p) + '</b><i>›</i></a>';
+        }).join('');
+      }
+      Array.prototype.forEach.call(vg.querySelectorAll('[data-vgt="prijs_' + k + '"]'), function (e) { e.textContent = eur(p.o[0].p); });
+      Array.prototype.forEach.call(vg.querySelectorAll('[data-vgt="winkel_' + k + '"]'), function (e) { e.textContent = winkel(p.o[0].w); });
+      var cel = vg.querySelector('[data-vgp="' + k + '"]'); if (cel) cel.textContent = eur(p.o[0].p);
+    });
+    if (P.a && P.b) {
+      var pa = P.a.o[0].p, pb = P.b.o[0].p;
+      Array.prototype.forEach.call(vg.querySelectorAll('[data-vgt="verschil"]'), function (e) { e.textContent = eur(Math.abs(pa - pb)).replace('€', ''); });
+      var ca = vg.querySelector('[data-vgp="a"]'), cb = vg.querySelector('[data-vgp="b"]');
+      if (ca && cb) { ca.classList.toggle('win', pa < pb); cb.classList.toggle('win', pb < pa); }
+    }
+  });
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Vergelijk: kiezer",
+  "settings": [
+    { "type": "paragraph", "content": "Toont twee keuzelijsten boven artikelen in de blog 'vergelijk' en ververst de prijzen in het artikel. Op andere artikelen toont deze sectie niets." }
+  ],
+  "presets": [ { "name": "Vergelijk: kiezer" } ]
+}
+{% endschema %}

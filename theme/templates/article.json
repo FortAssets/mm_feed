@@ -152,9 +152,14 @@
     "dpv-drawer": {
       "type": "dpv-save-drawer",
       "settings": {}
+    },
+    "dpv-vg-kiezer": {
+      "type": "dpv-vergelijk-kiezer",
+      "settings": {}
     }
   },
   "order": [
+    "dpv-vg-kiezer",
     "main",
     "dpv-gta6-rij",
     "dpv-gaming-rij",

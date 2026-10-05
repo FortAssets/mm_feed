@@ -1,0 +1,253 @@
+{%- comment -%}
+  Hero: wat het vandaag kost.
+
+  Nu staan de prijzen voorop. Dat is het enige wat wij kunnen tonen en de rest
+  niet: echte bedragen uit de feeds, vanochtend gemeten.
+
+  Onder elk bedrag staat wat het over de hele looptijd kost. Bij zorg staat er
+  het eigen risico bij, want de goedkoopste polis heeft er een van 885 euro.
+
+  De bedragen komen live uit de worker. Valt die uit, dan blijven de waarden
+  staan die hieronder als instelling zijn ingevuld.
+
+  20 sep:
+  - "Bekijk alle prijzen" ging naar de telefoonvergelijker, terwijl de hero vijf
+    categorieën toont. Nu naar /pages/alle-prijzen, met per categorie de
+    laagste deals en affiliate-knoppen. De link staat in een NIEUWE instelling
+    (knop_url_2): de oude waarde staat vast in index.json, en dat bestand is via
+    de API niet te schrijven. Een nieuwe id krijgt gewoon zijn standaardwaarde.
+  - "Of zoek zelf" ging naar sim only. Nu een zoekbalk: die opent de Zoekhulp
+    (dpv-ai-zoek) met de vraag al ingevuld, zodat je in gewone taal kunt zoeken
+    in alle categorieën. Is de Zoekhulp er niet, dan valt hij terug op de
+    zoekpagina van de winkel.
+{%- endcomment -%}
+
+{%- assign peil = section.settings.peildatum -%}
+
+<section class="dhr" data-worker="{{ section.settings.worker_url }}">
+  <div class="dhr-in">
+
+    <div class="dhr-links">
+      <p class="dhr-eyebrow">{{ section.settings.eyebrow }}</p>
+      <h1>{{ section.settings.kop }}</h1>
+      <p class="dhr-sub">{{ section.settings.sub }}</p>
+
+      <div class="dhr-knoppen">
+        <a class="dhr-knop" href="{{ section.settings.knop_url_2 }}">{{ section.settings.knop_tekst }}</a>
+      </div>
+
+      <form class="dhr-zoek" id="dhr-zoek" action="/search" method="get" role="search">
+        <label for="dhr-zoek-in" class="dhr-verborgen">Zoek zelf</label>
+        <svg class="dhr-zoek-ic" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="dhr-zoek-in" name="q" type="search" autocomplete="off" placeholder="{{ section.settings.zoek_placeholder }}">
+        <button type="submit">Zoek</button>
+      </form>
+
+      {%- if section.settings.merken != blank -%}
+      <div class="dhr-merken">
+        <p class="dhr-merken-kop">{{ section.settings.merken_kop }}</p>
+        <div class="dhr-logos">
+          {%- assign merken = section.settings.merken | split: ',' -%}
+          {%- for m in merken -%}
+            {%- assign d = m | strip -%}
+            {%- if d != blank -%}
+              <img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://{{ d }}"
+                   alt="{{ d | split: '.' | first | capitalize }}" loading="lazy" width="22" height="22"
+                   onerror="this.style.display='none'">
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if section.settings.merken_rest != blank -%}
+            <span class="dhr-rest">{{ section.settings.merken_rest }}</span>
+          {%- endif -%}
+        </div>
+      </div>
+      {%- endif -%}
+    </div>
+
+    <div class="dhr-rechts" id="dhr-rijen">
+      {%- assign rijen = section.settings.rijen | newline_to_br | split: '<br />' -%}
+      {%- for r in rijen -%}
+        {%- assign d = r | strip | split: '|' -%}
+        {%- if d.size >= 4 -%}
+          <a class="dhr-rij" href="{{ d[4] | default: '#' | strip }}" data-cat="{{ d[0] | strip }}">
+            <span class="dhr-bovenop">
+              <span class="dhr-naam">{{ d[1] | strip }}</span>
+              <span class="dhr-prijs" data-veld="prijs">{{ d[2] | strip }}</span>
+            </span>
+            <span class="dhr-onder" data-veld="onder">{{ d[3] | strip }}</span>
+          </a>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+  </div>
+  <p class="dhr-fijn">{{ section.settings.fijn | replace: '[peil]', peil }}</p>
+</section>
+
+<style>
+.dhr{background:#0B1B33;background-image:radial-gradient(900px 560px at 18% 20%,#16305C 0%,transparent 72%);
+  color:#fff;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.dhr *{box-sizing:border-box}
+.dhr-in{max-width:1180px;margin:0 auto;padding:34px 20px 10px;display:grid;gap:26px}
+@media(min-width:900px){.dhr-in{grid-template-columns:1.05fr 1fr;gap:44px;padding:52px 20px 16px;align-items:start}}
+
+.dhr-eyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#7FE3BC;font-weight:800;margin:0 0 9px}
+.dhr h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:31px;line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:0 0 10px;color:#fff}
+@media(min-width:900px){.dhr h1{font-size:44px}}
+.dhr-sub{font-size:15px;line-height:1.55;color:#9FB0C4;margin:0 0 20px;max-width:46ch}
+
+.dhr-knoppen{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 12px}
+.dhr a.dhr-knop,.dhr a.dhr-knop:visited{display:flex;align-items:center;justify-content:center;min-height:50px;padding:0 24px;
+  background:#10b981;color:#fff !important;border-radius:12px;font-size:15px;font-weight:800;text-decoration:none !important}
+.dhr a.dhr-knop:hover{background:#0fa876}
+@media(max-width:560px){.dhr a.dhr-knop{width:100%}}
+
+.dhr-zoek{position:relative;display:flex;align-items:center;gap:0;margin:0 0 22px;max-width:520px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:4px 4px 4px 0}
+.dhr-zoek:focus-within{border-color:#7FE3BC;background:rgba(255,255,255,.12)}
+.dhr-zoek-ic{flex:0 0 auto;margin:0 8px 0 14px;color:#9FB0C4}
+.dhr-zoek input{flex:1;min-width:0;height:42px;border:0;background:transparent;color:#fff;font-size:15px;font-family:inherit;outline:none}
+.dhr-zoek input::placeholder{color:#8FA0B4}
+.dhr-zoek input::-webkit-search-cancel-button{display:none}
+.dhr-zoek button{flex:0 0 auto;height:42px;border:0;border-radius:9px;padding:0 18px;background:#fff;color:#0B1B33;font-weight:800;font-size:14.5px;cursor:pointer;font-family:inherit}
+.dhr-zoek button:hover{background:#E7F6EF}
+.dhr-verborgen{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.dhr-merken{padding-top:16px;border-top:1px solid rgba(255,255,255,.12)}
+.dhr-merken-kop{font-size:10.5px;color:#8FA0B4;margin:0 0 9px}
+.dhr-logos{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.dhr-logos img{width:22px;height:22px;border-radius:5px;object-fit:contain;filter:grayscale(1);opacity:.72;transition:filter .15s,opacity .15s}
+.dhr-logos img:hover{filter:none;opacity:1}
+.dhr-rest{font-size:11px;color:#8FA0B4}
+
+.dhr-rechts{display:grid;gap:8px;align-content:start}
+.dhr a.dhr-rij,.dhr a.dhr-rij:visited{display:block;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
+  border-radius:12px;padding:13px 15px;text-decoration:none !important;color:#fff !important;transition:background .14s,border-color .14s}
+.dhr a.dhr-rij:hover{background:rgba(255,255,255,.12);border-color:rgba(127,227,188,.5)}
+.dhr-bovenop{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.dhr-naam{font-size:14.5px;font-weight:700}
+.dhr-prijs{font-size:15.5px;font-weight:800;color:#7FE3BC;white-space:nowrap}
+.dhr-onder{display:block;font-size:11.5px;color:#8FA0B4;margin-top:3px;line-height:1.4}
+
+.dhr-fijn{max-width:1180px;margin:0 auto;padding:0 20px 26px;font-size:11px;color:#6F819A;line-height:1.5}
+.dhr :focus-visible{outline:3px solid #7FE3BC;outline-offset:2px}
+</style>
+
+<script>
+(function () {
+  var wortel = document.querySelector('.dhr');
+  if (!wortel) return;
+
+  // Zoekbalk: naar de Zoekhulp met de vraag al ingevuld. De Zoekhulp zet zijn
+  // veld in een paneel dat pas bestaat na het openen, dus eerst openen via de
+  // zwevende knop, dan het veld vullen en op zoeken drukken.
+  var form = document.getElementById('dhr-zoek');
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      var v = (document.getElementById('dhr-zoek-in').value || '').trim();
+      if (!v) { e.preventDefault(); document.getElementById('dhr-zoek-in').focus(); return; }
+      var fab = document.querySelector('.dpvai-fab');
+      if (!fab) return; // geen Zoekhulp: gewone zoekpagina
+      e.preventDefault();
+      fab.click();
+      var pogingen = 0;
+      (function vul() {
+        var pan = document.getElementById('dpvai-paneel');
+        var inp = pan && pan.querySelector('#dpvai-in');
+        var go = pan && pan.querySelector('#dpvai-go');
+        if (inp && go) { inp.value = v; go.click(); return; }
+        if (++pogingen < 20) setTimeout(vul, 60); else location.href = '/search?q=' + encodeURIComponent(v);
+      })();
+    });
+  }
+
+  var WORKER = wortel.getAttribute('data-worker') || '';
+  if (!WORKER) return;
+
+  var BRON = {
+    simonly:  '/api/cards/simonly',
+    telefoon: '/api/cards/telefoon',
+    internet: '/api/cards/internet'
+  };
+
+  function euro(v) {
+    var r = Math.round(v * 100) / 100;
+    return '\u20ac' + (r % 1 === 0 ? r.toFixed(0) : r.toFixed(2).replace('.', ','));
+  }
+
+  function vul(cat, kaart) {
+    var rij = wortel.querySelector('.dhr-rij[data-cat="' + cat + '"]');
+    if (!rij || !kaart) return;
+    var p = parseFloat(kaart.price || kaart.monthly || 0);
+    if (!p) return;
+    var mnd = parseInt(kaart.contractMonths || (kaart.contract || '').replace(/\D/g, ''), 10) || 24;
+    var een = parseFloat(kaart.downPayment || kaart.initialCost || 0) || 0;
+    var totaal = p * mnd + een;
+
+    var pv = rij.querySelector('[data-veld="prijs"]');
+    var ov = rij.querySelector('[data-veld="onder"]');
+    if (pv) pv.textContent = euro(p) + ' p/m';
+
+    var naam = (kaart.device || kaart.name || '').trim();
+    var staart = euro(totaal) + ' over ' + mnd + ' maanden';
+    // 5 okt: bij telefoon met abonnement zei de regel alleen het totaal over de
+    // looptijd. Nu wat het toestel kost en wat het abonnement kost, los van
+    // elkaar, want dat is wat mensen willen weten. Geeft de feed die twee niet
+    // apart, dan blijft de oude regel staan.
+    if (cat === 'telefoon' && naam) {
+      var toestel = parseFloat(kaart.deviceTotal || 0), abbo = parseFloat(kaart.bundleMonthly || 0);
+      if (toestel > 0 && abbo > 0) {
+        staart = naam + ' \u00b7 toestel ' + euro(toestel) + (een > 0 ? ' (waarvan ' + euro(een) + ' vooraf)' : '') +
+          ' + ' + (kaart.provider ? kaart.provider + '-abonnement ' : 'abonnement ') + euro(abbo) + ' p/m';
+      } else staart = naam + ' \u00b7 ' + staart;
+    }
+    if (ov) ov.textContent = staart;
+  }
+
+  Object.keys(BRON).forEach(function (cat) {
+    fetch(WORKER + BRON[cat] + '?limit=8')
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        var kaarten = (j && j.cards) || [];
+        if (!kaarten.length) return;
+        var beste = null;
+        kaarten.forEach(function (k) {
+          var p = parseFloat(k.price || k.monthly || 0);
+          if (!p) return;
+          if (!beste || p < parseFloat(beste.price || beste.monthly || 0)) beste = k;
+        });
+        vul(cat, beste);
+      })
+      .catch(function () {});
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Hero prijzen",
+  "settings": [
+    { "type": "text", "id": "worker_url", "label": "Worker", "default": "https://awin.business-347.workers.dev" },
+    { "type": "text", "id": "peildatum", "label": "Peildatum", "default": "19 september 2026" },
+    { "type": "text", "id": "eyebrow", "label": "Bovenregel", "default": "Onafhankelijk \u00b7 vanochtend gemeten" },
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Wat het vandaag kost" },
+    { "type": "textarea", "id": "sub", "label": "Ondertitel", "default": "De laagste prijs per categorie bij 200 aanbieders, met erbij wat je over de hele looptijd betaalt. Want een laag maandbedrag zegt niets." },
+
+    { "type": "header", "content": "Knop en zoekbalk" },
+    { "type": "text", "id": "knop_tekst", "label": "Knop", "default": "Bekijk alle prijzen" },
+    { "type": "text", "id": "knop_url_2", "label": "Link", "default": "/pages/alle-prijzen" },
+    { "type": "text", "id": "zoek_placeholder", "label": "Tekst in zoekbalk", "default": "Of zoek zelf in gewone taal" },
+
+    { "type": "header", "content": "Prijsregels" },
+    { "type": "textarea", "id": "rijen", "label": "Regels", "info": "categorie|naam|prijs|onderregel|link", "default": "simonly|Sim only|\u20ac3,00 p/m|\u20ac72 over 24 maanden|/pages/sim-only\ntelefoon|Telefoon met abonnement|\u20ac8,00 p/m|\u20ac96 over 12 maanden|/pages/telefoonabonnement\ninternet|Internet & TV|\u20ac9,50 p/m|\u20ac228 over 24 maanden|/pages/internet-tv\nenergie|Energie|\u20ac1.412 p/j|hele rekening, incl. belastingteruggave|/pages/energie\nzorg|Zorgpremie 2026|\u20ac122,89 p/m|let op: \u20ac885 eigen risico|/pages/zorgverzekering" },
+
+    { "type": "header", "content": "Merken" },
+    { "type": "text", "id": "merken_kop", "label": "Kopje", "default": "Wij vergelijken onder andere" },
+    { "type": "text", "id": "merken", "label": "Domeinen", "default": "kpn.com, odido.nl, vodafone.nl, ziggo.nl, simyo.nl, ben.nl, youfone.nl" },
+    { "type": "text", "id": "merken_rest", "label": "Slot", "default": "+194 andere" },
+
+    { "type": "textarea", "id": "fijn", "label": "Kleine letters", "default": "Prijzen van telecom komen uit de feeds van de aanbieders en worden elke ochtend bijgewerkt; energie en zorg houden wij handmatig bij, laatst gecontroleerd op [peil]. Wij sorteren op prijs; wat je kiest bepaal je zelf." }
+  ],
+  "presets": [ { "name": "Hero prijzen" } ]
+}
+{% endschema %}

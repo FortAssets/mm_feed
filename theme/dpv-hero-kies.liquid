@@ -1,0 +1,462 @@
+{%- comment -%}
+  Hero: tik en zie de uitkomst.
+
+  5 okt. Gebouwd na het deskonderzoek naar conversie (onderzoek-conversie.md):
+  - geen verplicht veld voor de uitkomst: het aanbod staat er direct;
+  - tikknoppen in plaats van keuzelijsten;
+  - een "beste keuze" bovenaan, de alternatieven blijven gewoon zichtbaar en
+    klikbaar;
+  - onder de uitkomst staat hoe wij kiezen en dat wij een vergoeding krijgen
+    (ACM Leidraad 2024, hoofdstuk 8);
+  - geen vaste knop onderaan: die wint op homepages in tests niet.
+
+  Eerste stap: alleen Sim only en Producten werken als tabblad. De andere
+  categorieen zijn gewone links naar hun eigen pagina.
+
+  Sim only komt uit de telecom-worker (een bundel per aanbieder), producten uit
+  de shop-worker. Valt een van beide uit, dan blijft de link naar de volledige
+  vergelijker staan.
+
+  Elke klik naar een aanbieder gaat als gebeurtenis "dhk_klik" naar gtag of
+  dataLayer als die er zijn, met tabblad, keuze en positie. Daarmee is later te
+  meten of de beste keuze of een alternatief wordt gekozen.
+{%- endcomment -%}
+
+<section class="dhk" id="dhk"
+  data-worker="{{ section.settings.worker_url }}"
+  data-shop="{{ section.settings.shop_url }}">
+  <div class="dhk-in">
+
+    <div class="dhk-kop">
+      <p class="dhk-eyebrow">{{ section.settings.eyebrow }}</p>
+      <h1>{{ section.settings.kop }} <em>{{ section.settings.kop_accent }}</em></h1>
+      <p class="dhk-sub">{{ section.settings.sub }}</p>
+    </div>
+
+    <div class="dhk-app">
+      <div class="dhk-tabs" role="tablist" aria-label="Wat wil je vergelijken?">
+        <button type="button" class="dhk-tab aan" role="tab" aria-selected="true" aria-controls="dhk-p-sim" id="dhk-t-sim" data-tab="sim">Sim only</button>
+        <button type="button" class="dhk-tab" role="tab" aria-selected="false" aria-controls="dhk-p-prod" id="dhk-t-prod" data-tab="prod" tabindex="-1">Producten</button>
+        {%- assign links = section.settings.links | newline_to_br | split: '<br />' -%}
+        {%- for l in links -%}
+          {%- assign d = l | strip | split: '|' -%}
+          {%- if d.size == 2 -%}
+            <a class="dhk-tab dhk-link" href="{{ d[1] | strip }}">{{ d[0] | strip }}</a>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} Sim only {%- endcomment -%}
+      <div class="dhk-paneel" id="dhk-p-sim" role="tabpanel" aria-labelledby="dhk-t-sim">
+        <p class="dhk-vraag">Wat is voor jou belangrijk?</p>
+        <div class="dhk-chips" id="dhk-sim-chips">
+          <button type="button" class="dhk-chip aan" data-f="alles" aria-pressed="true">Laagste prijs</button>
+          <button type="button" class="dhk-chip" data-f="data" aria-pressed="false">Onbeperkt data</button>
+          <button type="button" class="dhk-chip" data-f="bellen" aria-pressed="false">Onbeperkt bellen</button>
+          <button type="button" class="dhk-chip" data-f="jaar" aria-pressed="false">1 jaar contract</button>
+        </div>
+        <div class="dhk-uit" id="dhk-sim-uit" aria-live="polite">
+          <div class="dhk-laad" aria-hidden="true"><i></i><i></i><i></i></div>
+          <noscript><a class="dhk-knop" href="{{ section.settings.sim_url }}">Bekijk alle sim only</a></noscript>
+        </div>
+        <p class="dhk-regel" id="dhk-sim-regel">{{ section.settings.sim_regel }}</p>
+        <a class="dhk-alle" href="{{ section.settings.sim_url }}">Alle sim only vergelijken ›</a>
+        {%- if section.settings.seintje_url != blank -%}
+        <a class="dhk-sein" href="{{ section.settings.seintje_url }}">
+          <span class="dhk-sein-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7 2.5 7h-17S6 15 6 9Z"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg></span>
+          <span><b>{{ section.settings.seintje_kop }}</b><br>{{ section.settings.seintje_tekst }}</span>
+          <span class="dhk-pijl" aria-hidden="true">›</span>
+        </a>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Producten {%- endcomment -%}
+      <div class="dhk-paneel" id="dhk-p-prod" role="tabpanel" aria-labelledby="dhk-t-prod" hidden>
+        <form class="dhk-zoek" action="{{ section.settings.prod_url }}" method="get" role="search">
+          <label for="dhk-q" class="dhk-verborgen">Zoek een product</label>
+          <input id="dhk-q" name="q" type="search" autocomplete="off" placeholder="Zoek op merk of model" enterkeyhint="search">
+          <button type="submit">Zoek</button>
+        </form>
+        <div class="dhk-chips" id="dhk-prod-chips">
+          {%- assign groepen = section.settings.groepen | newline_to_br | split: '<br />' -%}
+          {%- for g in groepen -%}
+            {%- assign d = g | strip | split: '|' -%}
+            {%- if d.size >= 3 -%}
+              <button type="button" class="dhk-chip{% if forloop.first %} aan{% endif %}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
+                data-ids="{{ d[2] | strip }}" data-meer="{{ d[1] | strip }}">{{ d[0] | strip }}</button>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        <div class="dhk-uit" id="dhk-prod-uit" aria-live="polite">
+          <div class="dhk-laad" aria-hidden="true"><i></i><i></i><i></i></div>
+        </div>
+        <p class="dhk-regel">{{ section.settings.prod_regel }}</p>
+        <a class="dhk-alle" id="dhk-prod-alle" href="{{ section.settings.prod_url }}">Alle producten vergelijken ›</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+.dhk{background:#0B1B33;background-image:radial-gradient(900px 560px at 18% 12%,#16305C 0%,transparent 72%);
+  color:#fff;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.dhk *{box-sizing:border-box}
+.dhk [hidden]{display:none !important}
+.dhk-in{max-width:1180px;margin:0 auto;padding:24px 16px 22px;display:grid;gap:16px}
+@media(min-width:900px){.dhk-in{grid-template-columns:.9fr 1.1fr;gap:48px;padding:52px 20px 34px;align-items:start}}
+
+.dhk-eyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#7FE3BC;font-weight:800;margin:0 0 8px}
+.dhk h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:29px;line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:0;color:#fff;text-wrap:balance}
+.dhk h1 em{font-style:normal;color:#7FE3BC}
+.dhk-sub{display:none;font-size:15.5px;line-height:1.55;color:#9FB0C4;margin:14px 0 0;max-width:42ch}
+@media(min-width:900px){.dhk h1{font-size:46px}.dhk-sub{display:block}.dhk-kop{padding-top:56px}}
+
+.dhk-app{min-width:0}
+
+/* tabbladen: schuiven opzij op een telefoon */
+.dhk-tabs{display:flex;gap:7px;overflow-x:auto;margin:0 -16px 12px;padding:2px 16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.dhk-tabs::-webkit-scrollbar{display:none}
+@media(min-width:900px){.dhk-tabs{margin:0 0 12px;padding:2px 0;flex-wrap:wrap;overflow:visible}}
+.dhk .dhk-tab,.dhk a.dhk-tab:visited{flex:0 0 auto;display:inline-flex;align-items:center;min-height:44px;padding:0 17px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#D5DEEA !important;
+  font:800 14.5px/1 'Plus Jakarta Sans',system-ui,sans-serif;text-decoration:none !important;cursor:pointer;white-space:nowrap}
+.dhk .dhk-tab.aan{background:#fff;color:#0B1B33 !important;border-color:#fff}
+.dhk .dhk-tab:hover{border-color:rgba(127,227,188,.6)}
+.dhk a.dhk-link::after{content:'›';margin-left:6px;opacity:.6}
+
+.dhk-paneel{background:#fff;color:#0B1B33;border-radius:18px;padding:14px 14px 12px;box-shadow:0 18px 40px -18px rgba(0,0,0,.55)}
+@media(min-width:900px){.dhk-paneel{padding:20px 20px 16px}}
+.dhk-vraag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:#5B6B80;margin:0 0 8px}
+
+.dhk-chips{display:flex;gap:7px;overflow-x:auto;margin:0 -14px 12px;padding:1px 14px;scrollbar-width:none}
+.dhk-chips::-webkit-scrollbar{display:none}
+@media(min-width:900px){.dhk-chips{margin:0 0 14px;padding:1px 0;flex-wrap:wrap;overflow:visible}}
+.dhk-chip{flex:0 0 auto;min-height:44px;padding:0 15px;border-radius:12px;border:1.5px solid #D8E0EA;background:#fff;color:#0B1B33;
+  font:800 14px/1 'Plus Jakarta Sans',system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.dhk-chip.aan{border-color:#059669;background:#ECFDF5;color:#065F46}
+.dhk-chip[disabled]{opacity:.4;cursor:default}
+
+/* beste keuze */
+.dhk-best{border:1.5px solid #10b981;background:#ECFDF5;border-radius:16px;padding:13px 13px 13px}
+.dhk-lab{display:inline-block;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:800;color:#fff;background:#059669;border-radius:6px;padding:4px 8px;margin:0 0 9px}
+.dhk-best-rij{display:flex;align-items:flex-start;gap:10px}
+.dhk-logo{flex:0 0 auto;width:36px;height:36px;border-radius:9px;background:#fff;border:1px solid #D8E0EA;object-fit:contain;padding:5px}
+.dhk-best-naam{flex:1;min-width:0}
+.dhk-best-naam b{display:block;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:19px;line-height:1.15;font-weight:800}
+.dhk-best-naam span{display:block;font-size:13.5px;line-height:1.4;color:#334155;margin-top:3px}
+.dhk-prijs{flex:0 0 auto;text-align:right;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;color:#047857;white-space:nowrap;line-height:1}
+.dhk-best .dhk-prijs{font-size:27px}
+.dhk-prijs small{display:block;font:700 11.5px/1.2 'Plus Jakarta Sans',system-ui,sans-serif;color:#5B6B80;margin-top:4px}
+.dhk-totaal{font-size:12.5px;color:#334155;margin:9px 0 11px}
+.dhk a.dhk-knop,.dhk a.dhk-knop:visited{display:flex;align-items:center;justify-content:center;min-height:52px;padding:0 16px;border-radius:13px;
+  background:#059669;color:#fff !important;font:800 16px/1.15 'Plus Jakarta Sans',system-ui,sans-serif;text-decoration:none !important;text-align:center}
+.dhk a.dhk-knop:hover{background:#047857}
+
+/* alternatieven: hele regel is de knop */
+.dhk-alt{margin-top:4px}
+.dhk a.dhk-alt-rij,.dhk a.dhk-alt-rij:visited{display:flex;align-items:center;gap:10px;min-height:62px;padding:10px 2px;border-bottom:1px solid #E7ECF2;
+  color:#0B1B33 !important;text-decoration:none !important}
+.dhk a.dhk-alt-rij:last-child{border-bottom:0}
+.dhk-alt-rij .dhk-logo{width:30px;height:30px;padding:4px}
+.dhk-alt-naam{flex:1;min-width:0}
+.dhk-alt-naam b{display:block;font-size:15.5px;font-weight:800;line-height:1.2}
+.dhk-alt-naam span{display:block;font-size:12.5px;color:#5B6B80;line-height:1.35;margin-top:2px}
+.dhk-alt-rij .dhk-prijs{font-size:19px}
+.dhk-ga{flex:0 0 auto;font-size:13px;font-weight:800;color:#047857;border:1.5px solid #A7F3D0;border-radius:10px;padding:9px 11px;white-space:nowrap}
+.dhk a.dhk-alt-rij:hover .dhk-ga{background:#ECFDF5}
+
+.dhk-leeg{font-size:14px;color:#5B6B80;padding:14px 2px}
+.dhk-regel{font-size:11.5px;line-height:1.5;color:#5B6B80;margin:10px 0 0;padding-top:10px;border-top:1px solid #E7ECF2}
+.dhk a.dhk-alle,.dhk a.dhk-alle:visited{display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:6px;
+  font-size:14.5px;font-weight:800;color:#047857 !important;text-decoration:none !important}
+.dhk a.dhk-alle:hover{text-decoration:underline !important}
+
+.dhk a.dhk-sein,.dhk a.dhk-sein:visited{display:flex;align-items:center;gap:11px;margin-top:6px;padding:12px;border-radius:13px;background:#0B1B33;
+  color:#C9D4E2 !important;text-decoration:none !important;font-size:12.5px;line-height:1.4}
+.dhk-sein b{color:#fff;font-size:14px}
+.dhk-sein-ic{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:rgba(127,227,188,.14);color:#7FE3BC;display:flex;align-items:center;justify-content:center}
+.dhk-sein-ic svg{width:19px;height:19px}
+.dhk-pijl{margin-left:auto;font-size:20px;color:#7FE3BC}
+
+/* producten */
+.dhk-zoek{display:flex;gap:0;margin:0 0 10px;border:1.5px solid #D8E0EA;border-radius:13px;padding:4px;background:#fff}
+.dhk-zoek:focus-within{border-color:#059669}
+.dhk-zoek input{flex:1;min-width:0;height:44px;border:0;background:transparent;padding:0 10px;font:600 16px 'Plus Jakarta Sans',system-ui,sans-serif;color:#0B1B33;outline:none}
+.dhk-zoek input::-webkit-search-cancel-button{display:none}
+.dhk-zoek button{flex:0 0 auto;height:44px;border:0;border-radius:10px;padding:0 18px;background:#059669;color:#fff;font:800 15px 'Plus Jakarta Sans',system-ui,sans-serif;cursor:pointer}
+.dhk-verborgen{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+.dhk-prod{display:grid;grid-template-columns:76px 1fr;gap:4px 12px;padding:13px 0;border-bottom:1px solid #E7ECF2}
+.dhk-prod:first-child{padding-top:2px}
+.dhk-prod:last-child{border-bottom:0}
+.dhk-prod-im{grid-row:1 / span 2;width:76px;height:76px;border-radius:12px;background:#F4F7FA;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.dhk-prod-im img{max-width:66px;max-height:66px;object-fit:contain;mix-blend-mode:multiply}
+.dhk-prod-n{font-size:15px;font-weight:800;line-height:1.25;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dhk-prod-w{min-width:0}
+.dhk a.dhk-w,.dhk a.dhk-w:visited{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:0 11px;margin-top:6px;border-radius:11px;
+  border:1.5px solid #D8E0EA;color:#0B1B33 !important;text-decoration:none !important;font-size:14px;font-weight:700}
+.dhk a.dhk-w b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;white-space:nowrap}
+.dhk a.dhk-w b::after{content:' ›';font-weight:700}
+.dhk a.dhk-w.eerste,.dhk a.dhk-w.eerste:visited{background:#059669;border-color:#059669;color:#fff !important;min-height:48px;font-weight:800}
+.dhk a.dhk-w.eerste:hover{background:#047857}
+.dhk a.dhk-w:not(.eerste):hover{border-color:#10b981;background:#ECFDF5}
+.dhk-w span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dhk-w i{font-style:normal;font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;background:rgba(255,255,255,.22);border-radius:5px;padding:3px 6px;margin-left:7px}
+.dhk a.dhk-meer{display:inline-block;margin-top:7px;font-size:13px;font-weight:800;color:#047857 !important;text-decoration:none !important;padding:6px 0}
+
+/* laden */
+.dhk-laad i{display:block;height:58px;border-radius:13px;margin-bottom:8px;background:linear-gradient(90deg,#EEF2F6 0%,#F7F9FB 50%,#EEF2F6 100%);background-size:200% 100%;animation:dhk-l 1.2s linear infinite}
+.dhk-laad i:first-child{height:150px}
+@keyframes dhk-l{to{background-position:-200% 0}}
+@media(prefers-reduced-motion:reduce){.dhk-laad i{animation:none}}
+
+.dhk :focus-visible{outline:3px solid #7FE3BC;outline-offset:2px}
+.dhk-paneel :focus-visible{outline-color:#059669}
+</style>
+
+<script>
+(function () {
+  var wortel = document.getElementById('dhk');
+  if (!wortel) return;
+  var WORKER = wortel.getAttribute('data-worker') || '';
+  var SHOP = wortel.getAttribute('data-shop') || '';
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+  function euro(v) {
+    var r = Math.round(v * 100) / 100;
+    var s = r % 1 === 0 ? String(r) : r.toFixed(2).replace('.', ',');
+    return '€' + s.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+  function meet(naam, extra) {
+    try {
+      var d = extra || {};
+      if (typeof window.gtag === 'function') window.gtag('event', naam, d);
+      else if (window.dataLayer && window.dataLayer.push) { d.event = naam; window.dataLayer.push(d); }
+    } catch (e) {}
+  }
+
+  /* ---------- tabbladen ---------- */
+  var tabs = [].slice.call(wortel.querySelectorAll('button.dhk-tab'));
+  var prodGeladen = false;
+  function kiesTab(naam, focus) {
+    tabs.forEach(function (t) {
+      var aan = t.getAttribute('data-tab') === naam;
+      t.classList.toggle('aan', aan);
+      t.setAttribute('aria-selected', aan ? 'true' : 'false');
+      t.tabIndex = aan ? 0 : -1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden = !aan;
+      if (aan && focus) t.focus();
+    });
+    if (naam === 'prod' && !prodGeladen) { prodGeladen = true; laadProd(); }
+    try { sessionStorage.setItem('dhk-tab', naam); } catch (e) {}
+  }
+  tabs.forEach(function (t, n) {
+    t.addEventListener('click', function () { kiesTab(t.getAttribute('data-tab')); meet('dhk_tab', { tab: t.getAttribute('data-tab') }); });
+    t.addEventListener('keydown', function (e) {
+      if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+      e.preventDefault();
+      var v = tabs[(n + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
+      kiesTab(v.getAttribute('data-tab'), true);
+    });
+  });
+
+  /* ---------- sim only ---------- */
+  var DOMEIN = { lebara: 'lebara.nl', youfone: 'youfone.nl', hollandsnieuwe: 'hollandsnieuwe.nl', simyo: 'simyo.nl', ben: 'ben.nl',
+    kpn: 'kpn.com', odido: 'odido.nl', vodafone: 'vodafone.nl', budget: 'budgetmobiel.nl', '50plus': '50plusmobiel.nl' };
+  function logo(provider, klein) {
+    var k = String(provider || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    var d = DOMEIN[k] || DOMEIN[k.replace('mobiel', '')];
+    if (!d) return '';
+    return '<img class="dhk-logo" alt="" loading="lazy" width="36" height="36" onerror="this.style.display=\'none\'" ' +
+      'src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://' + d + '">';
+  }
+  var FILTER = {
+    alles:  { test: function () { return true; }, wat: 'laagste maandprijs' },
+    data:   { test: function (k) { return !!k.unlimited; }, wat: 'laagste maandprijs met onbeperkt data' },
+    bellen: { test: function (k) { return /onbeperkt/i.test(k.minutes || ''); }, wat: 'laagste maandprijs met onbeperkt bellen' },
+    jaar:   { test: function (k) { return mnd(k) === 12; }, wat: 'laagste maandprijs met een contract van 1 jaar' }
+  };
+  function mnd(k) { return parseInt(String(k.contract || '').replace(/\D/g, ''), 10) || 24; }
+  function bundel(k) {
+    var d = k.unlimited ? 'Onbeperkt data' : (k.dataGB ? k.dataGB + ' GB' : '');
+    var b = /onbeperkt/i.test(k.minutes || '') ? 'onbeperkt bellen' : (k.minutes || '');
+    var j = mnd(k) === 12 ? '1 jaar' : mnd(k) === 24 ? '2 jaar' : mnd(k) + ' maanden';
+    return [d, b, j].filter(Boolean).join(' · ');
+  }
+  function ga(k) { return WORKER + '/api/go?u=' + encodeURIComponent(k.url) + '&cat=simonly&p=' + encodeURIComponent(k.provider || ''); }
+
+  var kaarten = [], simKeuze = 'alles';
+  var simUit = document.getElementById('dhk-sim-uit');
+  var simChips = [].slice.call(document.querySelectorAll('#dhk-sim-chips .dhk-chip'));
+
+  function tekenSim() {
+    var f = FILTER[simKeuze];
+    var lijst = kaarten.filter(f.test).sort(function (a, b) {
+      return (a.price - b.price) || ((b.unlimited ? 9999 : b.dataGB || 0) - (a.unlimited ? 9999 : a.dataGB || 0));
+    });
+    if (!lijst.length) { simUit.innerHTML = '<p class="dhk-leeg">Hiervoor hebben wij nu geen aanbod. Kies een andere optie.</p>'; return; }
+    var b = lijst[0];
+    var net = b.network && String(b.network).toLowerCase() !== String(b.provider).toLowerCase() ? ' · netwerk van ' + esc(b.network) : '';
+    var h = '<div class="dhk-best">' +
+      '<span class="dhk-lab">Beste keuze · ' + esc(f.wat) + '</span>' +
+      '<div class="dhk-best-rij">' + logo(b.provider) +
+        '<div class="dhk-best-naam"><b>' + esc(b.provider) + '</b><span>' + esc(bundel(b)) + net + '</span></div>' +
+        '<div class="dhk-prijs">' + euro(b.price) + '<small>per maand</small></div>' +
+      '</div>' +
+      '<p class="dhk-totaal">' + euro(b.price * mnd(b)) + ' over ' + mnd(b) + ' maanden</p>' +
+      '<a class="dhk-knop" rel="nofollow sponsored noopener" target="_blank" href="' + esc(ga(b)) + '" data-pos="1" data-naam="' + esc(b.provider) + '">Bekijk bij ' + esc(b.provider) + ' ›</a>' +
+      '</div>';
+    var rest = lijst.slice(1, 3);
+    if (rest.length) {
+      h += '<div class="dhk-alt">' + rest.map(function (k, n) {
+        return '<a class="dhk-alt-rij" rel="nofollow sponsored noopener" target="_blank" href="' + esc(ga(k)) + '" data-pos="' + (n + 2) + '" data-naam="' + esc(k.provider) + '">' +
+          logo(k.provider) +
+          '<span class="dhk-alt-naam"><b>' + esc(k.provider) + '</b><span>' + esc(bundel(k)) + '</span></span>' +
+          '<span class="dhk-prijs">' + euro(k.price) + '<small>per maand</small></span>' +
+          '<span class="dhk-ga">Bekijk ›</span></a>';
+      }).join('') + '</div>';
+    }
+    simUit.innerHTML = h;
+  }
+
+  simChips.forEach(function (c) {
+    c.addEventListener('click', function () {
+      if (c.disabled) return;
+      simKeuze = c.getAttribute('data-f');
+      simChips.forEach(function (x) { var a = x === c; x.classList.toggle('aan', a); x.setAttribute('aria-pressed', a ? 'true' : 'false'); });
+      tekenSim();
+      meet('dhk_keuze', { tab: 'sim', keuze: simKeuze });
+    });
+  });
+
+  function simFout() {
+    simUit.innerHTML = '<p class="dhk-leeg">De prijzen laden nu niet. De volledige vergelijker werkt wel.</p>';
+  }
+  if (WORKER) {
+    fetch(WORKER + '/api/cards/simonly?limit=60')
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        kaarten = ((j && j.cards) || []).map(function (k) { k.price = parseFloat(k.price || 0); return k; })
+          .filter(function (k) { return k.price > 0 && k.url && k.provider; });
+        if (!kaarten.length) return simFout();
+        simChips.forEach(function (c) {
+          if (!kaarten.some(FILTER[c.getAttribute('data-f')].test)) c.hidden = true;
+        });
+        tekenSim();
+      })
+      .catch(simFout);
+  } else simFout();
+
+  /* ---------- producten ---------- */
+  var prodUit = document.getElementById('dhk-prod-uit');
+  var prodChips = [].slice.call(document.querySelectorAll('#dhk-prod-chips .dhk-chip'));
+  var prodAlle = document.getElementById('dhk-prod-alle');
+  var prodBasis = prodAlle ? prodAlle.getAttribute('href') : '/pages/vergelijken';
+  var cache = {};
+
+  function haal(id, cat) {
+    var s = id + '|' + cat;
+    if (!cache[s]) {
+      cache[s] = fetch(SHOP + '/api/shop/product?i=' + encodeURIComponent(id) + '&cat=' + encodeURIComponent(cat))
+        .then(function (r) { return r.json(); })
+        .then(function (j) { return (j && j.product) || null; })
+        .catch(function () { return null; });
+    }
+    return cache[s];
+  }
+  function winkel(o) { return o.w === 'bol.com partner' ? 'bol.com (partner)' : o.w; }
+  function goed(x) {
+    // Zelfde rem als in de productrijen: een winkel die meer dan 40% onder de
+    // volgende zit, heeft bijna altijd een fout in de feed.
+    if (!x || !x.o || !x.o.length || !(x.p > 0)) return false;
+    if (x.o.length > 1 && x.o[0].p < x.o[1].p * 0.6) return false;
+    return true;
+  }
+  function tekenProd(items, chip) {
+    items = items.filter(goed);
+    if (!items.length) { prodUit.innerHTML = '<p class="dhk-leeg">De prijzen laden nu niet. De productvergelijker werkt wel.</p>'; return; }
+    prodUit.innerHTML = items.map(function (x, pn) {
+      var link = SHOP + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c);
+      var o = x.o.slice().sort(function (a, b) { return a.p - b.p; });
+      var rijen = o.slice(0, 3).map(function (w, n) {
+        return '<a class="dhk-w' + (n === 0 ? ' eerste' : '') + '" rel="nofollow sponsored noopener" target="_blank" href="' + esc(link + '&w=' + encodeURIComponent(w.w)) + '"' +
+          ' data-pos="' + (pn + 1) + '.' + (n + 1) + '" data-naam="' + esc(w.w) + '">' +
+          '<span>' + (n === 0 ? 'Bekijk bij ' : '') + esc(winkel(w)) + (n === 0 && o.length > 1 ? '<i>laagste</i>' : '') + '</span><b>' + euro(w.p) + '</b></a>';
+      }).join('');
+      var meer = o.length > 3
+        ? '<a class="dhk-meer" href="' + esc(prodBasis + '?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n)) + '">+ ' + (o.length - 3) + (o.length - 3 === 1 ? ' winkel' : ' winkels') + ' ›</a>' : '';
+      return '<div class="dhk-prod">' +
+        '<div class="dhk-prod-im">' + (x.im ? '<img src="' + esc(x.im) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') + '</div>' +
+        '<p class="dhk-prod-n">' + esc(x.n) + '</p>' +
+        '<div class="dhk-prod-w">' + rijen + meer + '</div></div>';
+    }).join('');
+  }
+  var prodVraag = 0;
+  function laadProd(chip) {
+    chip = chip || prodChips[0];
+    if (!chip || !SHOP) return;
+    var mijn = ++prodVraag;
+    var ids = (chip.getAttribute('data-ids') || '').split(',').map(function (s) { return s.trim().split(':'); })
+      .filter(function (d) { return d.length === 2 && d[0]; });
+    var meer = chip.getAttribute('data-meer') || '';
+    if (prodAlle) {
+      prodAlle.href = meer ? prodBasis + '?cat=' + encodeURIComponent(meer) : prodBasis;
+      prodAlle.textContent = (meer ? 'Alle ' + chip.textContent.trim().toLowerCase() : 'Alle producten') + ' vergelijken ›';
+    }
+    Promise.all(ids.map(function (d) { return haal(d[0], d[1]); })).then(function (r) {
+      if (mijn !== prodVraag) return;
+      tekenProd(r.filter(Boolean), chip);
+    });
+  }
+  prodChips.forEach(function (c) {
+    c.addEventListener('click', function () {
+      prodChips.forEach(function (x) { var a = x === c; x.classList.toggle('aan', a); x.setAttribute('aria-pressed', a ? 'true' : 'false'); });
+      prodUit.innerHTML = '<div class="dhk-laad" aria-hidden="true"><i></i><i></i><i></i></div>';
+      laadProd(c);
+      meet('dhk_keuze', { tab: 'prod', keuze: c.textContent.trim() });
+    });
+  });
+
+  /* ---------- meten ---------- */
+  wortel.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[data-pos]') : null;
+    if (!a) return;
+    var tab = a.closest('#dhk-p-prod') ? 'prod' : 'sim';
+    meet('dhk_klik', { tab: tab, keuze: tab === 'sim' ? simKeuze : '', positie: a.getAttribute('data-pos'), aanbieder: a.getAttribute('data-naam') });
+  });
+
+  try { if (sessionStorage.getItem('dhk-tab') === 'prod') kiesTab('prod'); } catch (e) {}
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Hero kiezer",
+  "settings": [
+    { "type": "text", "id": "worker_url", "label": "Worker telecom", "default": "https://awin.business-347.workers.dev" },
+    { "type": "text", "id": "shop_url", "label": "Worker producten", "default": "https://shop.deprijsvergelijker.com" },
+    { "type": "text", "id": "eyebrow", "label": "Bovenregel", "default": "Onafhankelijk · elke dag bijgewerkt" },
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Tik en zie direct" },
+    { "type": "text", "id": "kop_accent", "label": "Kop, gekleurd deel", "default": "wat het kost." },
+    { "type": "textarea", "id": "sub", "label": "Ondertitel (alleen op een breed scherm)", "default": "Geen formulier vooraf. Je ziet meteen de laagste prijs, met de alternatieven eronder, en je gaat met een tik naar de aanbieder." },
+    { "type": "textarea", "id": "links", "label": "Overige categorieën", "info": "naam|link, een per regel", "default": "Telefoon|/pages/telefoonabonnement\nInternet|/pages/internet-tv\nEnergie|/pages/energie\nZorg|/pages/zorgverzekering\nBoodschappen|/pages/boodschappen\nGaming|/pages/gaming" },
+
+    { "type": "header", "content": "Sim only" },
+    { "type": "text", "id": "sim_url", "label": "Link alle sim only", "default": "/pages/sim-only" },
+    { "type": "textarea", "id": "sim_regel", "label": "Uitleg onder de uitkomst", "default": "Zo kiezen wij: de laagste maandprijs binnen jouw keuze, bij een gelijke prijs de grootste bundel. Aanbieders betalen niet voor een plek. Wij krijgen een vergoeding als je via ons afsluit; jij betaalt daardoor niets extra." },
+    { "type": "text", "id": "seintje_url", "label": "Link seintje", "default": "/pages/mijn-contracten" },
+    { "type": "text", "id": "seintje_kop", "label": "Seintje, kop", "default": "Zit je nog vast aan je contract?" },
+    { "type": "text", "id": "seintje_tekst", "label": "Seintje, tekst", "default": "Krijg een mail op de dag dat je kunt overstappen." },
+
+    { "type": "header", "content": "Producten" },
+    { "type": "text", "id": "prod_url", "label": "Link productvergelijker", "default": "/pages/vergelijken" },
+    { "type": "textarea", "id": "groepen", "label": "Snelkeuzes", "info": "naam|categorie voor de link 'alle'|product-id:categorie, gescheiden door komma's. Laat de categorie leeg voor alle producten.", "default": "Populair||e0045496337414:gaming,e8806097827481:telefoons,e0195950643589:telefoons\nTelefoons|telefoons|e0195950643589:telefoons,e8806097827481:telefoons,e0195950627442:telefoons\nLaptops|laptops|e0195950687408:laptops,e4711121778834:laptops,e4711636476805:laptops\nTv's|tv-beeld|e8806096360576:tv-beeld,e4548736183001:tv-beeld,e5901292530365:tv-beeld\nGaming|gaming|e0045496337414:gaming,e0045496453442:gaming,e0045496337544:gaming" },
+    { "type": "textarea", "id": "prod_regel", "label": "Uitleg onder de uitkomst", "default": "Per product staan de winkels op prijs, de laagste bovenaan. Winkels betalen niet voor een plek. Wij krijgen een vergoeding als je via ons koopt; jij betaalt daardoor niets extra." }
+  ],
+  "presets": [ { "name": "Hero kiezer" } ]
+}
+{% endschema %}

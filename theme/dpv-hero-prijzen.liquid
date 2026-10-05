@@ -24,9 +24,14 @@
 
 {%- assign peil = section.settings.peildatum -%}
 
-<section class="dhr" data-worker="{{ section.settings.worker_url }}">
+{%- comment -%} 5 okt: compact. Staat de kiezer erboven, dan toont dit blok alleen nog de
+   tegels, met een kleine kop in plaats van de grote kop, knop en zoekbalk. {%- endcomment -%}
+<section class="dhr{% if section.settings.compact %} dhr-compact{% endif %}" data-worker="{{ section.settings.worker_url }}">
   <div class="dhr-in">
 
+    {%- if section.settings.compact -%}
+    <h2 class="dhr-ckop">{{ section.settings.compact_kop }}</h2>
+    {%- else -%}
     <div class="dhr-links">
       <p class="dhr-eyebrow">{{ section.settings.eyebrow }}</p>
       <h1>{{ section.settings.kop }}</h1>
@@ -63,6 +68,7 @@
       </div>
       {%- endif -%}
     </div>
+    {%- endif -%}
 
     <div class="dhr-rechts" id="dhr-rijen">
       {%- assign rijen = section.settings.rijen | newline_to_br | split: '<br />' -%}
@@ -146,6 +152,10 @@
 .dhr-prijs{margin-top:auto;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:#7FE3BC;white-space:nowrap}
 @media(min-width:900px){.dhr-naam{font-size:16px}.dhr-prijs{font-size:18px}}
 
+.dhr-compact{background-image:none}
+.dhr-compact .dhr-in{display:block;padding:6px 16px 10px}
+@media(min-width:900px){.dhr-compact .dhr-in{padding:0 20px 16px}.dhr-compact .dhr-rechts{grid-template-columns:repeat(4,1fr)}}
+.dhr-ckop{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.02em;color:#fff;margin:0 0 12px}
 .dhr-fijn{max-width:1180px;margin:0 auto;padding:0 20px 26px;font-size:11px;color:#6F819A;line-height:1.5}
 .dhr :focus-visible{outline:3px solid #7FE3BC;outline-offset:2px}
 </style>
@@ -245,6 +255,8 @@
   "name": "Hero prijzen",
   "settings": [
     { "type": "text", "id": "worker_url", "label": "Worker", "default": "https://awin.business-347.workers.dev" },
+    { "type": "checkbox", "id": "compact", "label": "Alleen de tegels tonen", "info": "Voor als de Hero kiezer erboven staat.", "default": false },
+    { "type": "text", "id": "compact_kop", "label": "Kop boven de tegels", "default": "Alle categorie\u00ebn, met de laagste prijs van vandaag" },
     { "type": "text", "id": "peildatum", "label": "Peildatum", "default": "19 september 2026" },
     { "type": "text", "id": "eyebrow", "label": "Bovenregel", "default": "Onafhankelijk \u00b7 vanochtend gemeten" },
     { "type": "text", "id": "kop", "label": "Kop", "default": "Wat het vandaag kost" },

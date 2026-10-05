@@ -15,6 +15,8 @@ const prijs = (sel) => /prijs|price|bedrag|euro|-pr\b|\.pr\b|-p\b|amount|kosten|
 
 // soort: tekst | vlak | rand | schaduw
 function kleur(r, g, b, a, soort, sel) {
+  // Het lichte grijs voor kleine letters (#94a3b8 en lichter) was op wit niet te lezen. Op donker blijft het.
+  if (soort === 'tekst' && ((r === 148 && g === 163 && b === 184) || (r === 192 && g === 204 && b === 216) || (r === 156 && g === 163 && b === 175)) && !/\.pvf|\.pvs|dpb|donker|\.bfr|dark|\.dan-|hero/.test(sel)) return hex('#5B6B80', a);
   const [h, s, l] = hsl(r, g, b);
   if ((r === 63 && g === 174 && b === 122) || (r === 74 && g === 191 && b === 135)) return null; // het groen van het logo blijft
   const groen = h >= 135 && h <= 178 && s >= 0.25 && l >= 0.16;

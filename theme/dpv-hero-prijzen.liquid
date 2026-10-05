@@ -251,16 +251,28 @@
   }
 
   Object.keys(BRON).forEach(function (cat) {
-    fetch(WORKER + BRON[cat] + '?limit=8')
+    fetch(WORKER + BRON[cat] + '?limit=60')
       .then(function (r) { return r.json(); })
       .then(function (j) {
         var kaarten = (j && j.cards) || [];
         if (!kaarten.length) return;
+        // 5 okt: de tegel keek alleen naar de eerste acht kaarten en naar het kale
+        // maandbedrag, en toonde bij telefoon daardoor een ander toestel dan de
+        // kiezer erboven. Nu dezelfde rangschikking: bij telefoon de totale
+        // kosten per maand (toestel, abonnement en bijbetaling samen).
+        function rang(k) {
+          var p = parseFloat(k.price || k.monthly || 0);
+          if (!p) return 0;
+          if (cat !== 'telefoon') return p;
+          var m = parseInt(String(k.contract || '').replace(/\D/g, ''), 10) || 24;
+          var t = parseFloat(k.totalPrice || 0) || (p * m + (parseFloat(k.downPayment || 0) || 0));
+          return t / m;
+        }
         var beste = null;
         kaarten.forEach(function (k) {
-          var p = parseFloat(k.price || k.monthly || 0);
-          if (!p) return;
-          if (!beste || p < parseFloat(beste.price || beste.monthly || 0)) beste = k;
+          var r = rang(k);
+          if (!r) return;
+          if (!beste || r < rang(beste)) beste = k;
         });
         vul(cat, beste);
       })

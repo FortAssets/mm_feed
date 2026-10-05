@@ -16,7 +16,8 @@ const prijs = (sel) => /prijs|price|bedrag|euro|-pr\b|\.pr\b|-p\b|amount|kosten|
 // soort: tekst | vlak | rand | schaduw
 function kleur(r, g, b, a, soort, sel) {
   const [h, s, l] = hsl(r, g, b);
-  const groen = h >= 135 && h <= 178 && s >= 0.25;
+  if ((r === 63 && g === 174 && b === 122) || (r === 74 && g === 191 && b === 135)) return null; // het groen van het logo blijft
+  const groen = h >= 135 && h <= 178 && s >= 0.25 && l >= 0.16;
   const blauw = h >= 205 && h <= 240 && l >= 0.30 && (l > 0.8 ? s >= 0.55 : s >= 0.35);
   const paars = h > 240 && h <= 300 && s >= 0.14;
   if (!groen && !blauw && !paars) return null;
@@ -44,6 +45,7 @@ function soortVan(prop) {
   if (/^(border|outline|column-rule|accent-color)/.test(prop)) return 'rand';
   return null;
 }
+const HEX6 = /#([0-9a-fA-F]{6})\b/g, hexRgb = (m, x) => { const n = parseInt(x, 16); return `rgb(${n >> 16}, ${(n >> 8) & 255}, ${n & 255})`; };
 const RGB = /rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)/g;
 function vervang(waarde, soort, sel) {
   let anders = false;
@@ -54,6 +56,27 @@ function hoger(sel) { // zelfde selector, maar sterker dan het origineel
   sel = sel.trim();
   if (/^(html|:root)\b/.test(sel)) return sel.replace(/^(html|:root)/, '$1:not(#x)');
   return 'html:not(#x) ' + sel;
+}
+// Donkere blokken die licht worden. WORTEL: de selector van het vlak zelf en wat het wordt.
+const TOP = 'linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%)';
+const WORTEL = [[/^\.zhb-in$/, '#F4F7FF'], [/^\.dan-in$/, '#F4F7FF'], [/^\.ap-hero$/, TOP], [/^\.dg-hero$/, TOP], [/^\.dg-hero::after$/, 'none']];
+const LICHT = /\.zhb|\.ap-hero|\.ap-eyebrow|\.ap-sprong|\.dg-hero|\.dg-eyebrow|\.dg-sub|\.dg-c\b|\.dan-/;
+function eigenVlak(rule) { // heeft deze regel zelf een gekleurd vlak (een knop)? dan blijft de tekst zoals hij is
+  let ja = false;
+  rule.walkDecls(/^background(-color)?$/, (d) => { const m = RGB.exec(d.value); RGB.lastIndex = 0; if (!m) return; const a = m[4] === undefined ? 1 : +m[4]; const [, sat, l] = hsl(+m[1], +m[2], +m[3]); if (a > 0.5 && l < 0.7 && sat > 0.3) ja = true; });
+  return ja;
+}
+function licht(waarde, soort, knop) {
+  let anders = false;
+  const uit = waarde.replace(RGB, (m, r, g, b, a) => {
+    a = a === undefined ? 1 : +a; const [h, sat, l] = hsl(+r, +g, +b);
+    let n = null;
+    if (soort === 'vlak') { if (l > 0.6 && a < 0.5) n = '#FFFFFF'; }
+    else if (soort === 'tekst') { if (!knop && l > 0.6) n = (sat > 0.3 && l < 0.92 && !(h > 195 && h < 235 && sat < 0.45)) ? BLAUW : (a < 1 || l < 0.9 ? '#4A5A70' : INKT); }
+    else if (soort === 'rand') { if (l > 0.6 && a < 0.6) n = sat > 0.3 ? '#C9D8FA' : '#D9E1EC'; }
+    if (n === null) return m; anders = true; return n;
+  });
+  return anders ? uit : null;
 }
 const teller = { regels: 0, decls: 0 }, gezien = new Set();
 const uitRoot = postcss.root();
@@ -67,8 +90,16 @@ for (const [h, blad] of Object.entries(B)) {
     if (!sels.length) return;
     const sel = sels.join(',');
     const nieuw = [];
+    const wortel = WORTEL.find((w) => sels.some((x) => w[0].test(x.trim())));
+    const isLicht = LICHT.test(sel), knop = isLicht && !wortel && eigenVlak(rule);
     rule.walkDecls((d) => {
       if (d.parent !== rule) return;
+      if (wortel && /^background(-image)?$/.test(d.prop)) { nieuw.push([d.prop, wortel[1]]); return; }
+      if (wortel && d.prop === 'color') { nieuw.push(['color', INKT]); return; }
+      if (isLicht && !d.prop.startsWith('--') && d.prop !== 'font-family') {
+        const so = soortVan(d.prop);
+        if (so) { const lv = licht(d.value, so, knop); if (lv) { nieuw.push([d.prop, vervang(lv.replace(HEX6, hexRgb), so, sel) || lv]); return; } }
+      }
       if (d.prop === 'font-family') {
         if (/Jakarta|Bricolage|Inter\b|Syne|--font-(body|heading)-family|Playfair|Lato|Source Sans|Noto Sans|Roboto/.test(d.value)) nieuw.push(['font-family', FONT]);
         return;
@@ -80,6 +111,9 @@ for (const [h, blad] of Object.entries(B)) {
       const soort = soortVan(d.prop); if (!soort) return;
       const v = vervang(d.value, soort, sel); if (v) nieuw.push([d.prop, v]);
     });
+    if (nieuw.some(([p, v]) => /^background/.test(p) && (v.includes(BLAUW) || v.includes(BLAUW_D)) && !v.includes('gradient'))) {
+      rule.walkDecls('color', (d) => { const m = RGB.exec(d.value); RGB.lastIndex = 0; if (!m) return; const [, , l] = hsl(+m[1], +m[2], +m[3]); if (l < 0.3 && !nieuw.some((n) => n[0] === 'color')) nieuw.push(['color', '#FFFFFF']); });
+    }
     if (!nieuw.length) return;
     // keten van @media en dergelijke bewaren
     const keten = []; let p = rule.parent; while (p && p.type === 'atrule') { keten.unshift(p); p = p.parent; }

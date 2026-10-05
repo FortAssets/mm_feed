@@ -273,10 +273,10 @@
       // een smalle kaart alleen op een nieuwe regel.
       // Het merk alleen tonen als het niet al vooraan in de naam staat.
       var merk = x.b && String(x.n || '').toLowerCase().indexOf(String(x.b).toLowerCase()) !== 0 ? '<span class="dsr-merk">' + esc(x.b) + '</span>' : '';
-      return '<article class="dsr-k">' +
-        '<div class="dsr-afb">' + badge + (x.im ? '<img src="' + esc(x.im) + '" alt="' + esc(x.n) + '" loading="lazy" decoding="async">' : '&nbsp;') + '</div>' +
+      return '<article class="dsr-k" data-pp="' + esc(x.i) + '">' +
+        '<div class="dsr-afb" data-pp-foto>' + badge + (x.im ? '<img src="' + esc(x.im) + '" alt="' + esc(x.n) + '" loading="lazy" decoding="async">' : '&nbsp;') + '</div>' +
         '<div class="dsr-in">' + merk +
-        '<p class="dsr-naam">' + esc(x.n) + '</p>' +
+        '<p class="dsr-naam" data-pp-naam>' + esc(x.n) + '</p>' +
         (multi
           // Meer dan een winkel: elke winkel is te bereiken. Eerst was alleen de
           // goedkoopste te bereiken; de andere stonden er als "tot X elders"
@@ -288,7 +288,7 @@
             }).join('') + '</div>' +
             '<div class="dsr-voet">' +
             '<a class="dsr-knop" href="' + ga + '&w=' + encodeURIComponent(top[0].w) + '" target="_blank" rel="sponsored noopener">Bekijk bij ' + esc(winkel(top[0].w)) + ' · ' + eur(top[0].p) + '\u00a0›</a>' +
-            '<a class="dsr-meer" href="/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n) + '">Prijsverloop en alle winkels\u00a0›</a>'
+            '<a class="dsr-meer" data-pp-link href="/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n) + '">Prijsverloop en alle winkels\u00a0›</a>'
           : '<p class="dsr-van"><b>' + eur(x.p) + '</b>' +
             (korting ? ' <s>' + eur(x.v) + '</s> <span class="dsr-kt">-' + korting + '%</span>' : '') + '</p>' +
             '<div class="dsr-voet">' +

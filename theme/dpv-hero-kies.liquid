@@ -266,6 +266,7 @@
 /* Op een telefoon past het label "laagste" niet naast een lange winkelnaam en
    werd het afgesneden. De gele knop staat bovenaan en zegt het al. */
 @media(max-width:480px){.dhk-w i{display:none}}
+.dhk a.dhk-meer[hidden]{display:none}
 .dhk a.dhk-meer{display:inline-block;margin-top:7px;font-size:13px;font-weight:800;color:#2456D6 !important;text-decoration:none !important;padding:6px 0}
 
 /* laden */
@@ -551,7 +552,7 @@
   function shopKaart(x) {
     var link = SHOP + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c);
     var o = x.o.slice().sort(function (a, b) { return a.p - b.p; });
-    return { naam: x.n, im: x.im,
+    return { naam: x.n, im: x.im, id: x.i,
       rijen: o.slice(0, 3).map(function (w) {
         return { winkel: w.w === 'bol.com partner' ? 'bol.com (partner)' : w.w, ruw: w.w, prijs: euro(w.p), url: link + '&w=' + encodeURIComponent(w.w), aff: true };
       }),
@@ -667,10 +668,10 @@
             '<span>' + (n === 0 ? 'Bekijk bij ' : '') + esc(w.winkel) + (n === 0 && x.rijen.length > 1 ? '<i>laagste</i>' : '') + '</span>' +
             '<b>' + w.prijs + (w.klein ? '<small>' + esc(w.klein) + '</small>' : '') + '</b></a>';
         }).join('');
-        return '<div class="dhk-prod">' +
-          '<div class="dhk-prod-im">' + (x.im ? '<img src="' + esc(x.im) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') + '</div>' +
-          '<p class="dhk-prod-n">' + esc(x.naam) + (x.sub ? '<span class="dhk-prod-s">' + esc(x.sub) + '</span>' : '') + '</p>' +
-          '<div class="dhk-prod-w">' + rijen + (x.meer ? '<a class="dhk-meer" href="' + esc(x.meer[1]) + '">' + esc(x.meer[0]) + ' ›</a>' : '') + '</div></div>';
+        return '<div class="dhk-prod"' + (x.id ? ' data-pp="' + esc(x.id) + '"' : '') + '>' +
+          '<div class="dhk-prod-im" data-pp-foto>' + (x.im ? '<img src="' + esc(x.im) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') + '</div>' +
+          '<p class="dhk-prod-n"><span data-pp-naam>' + esc(x.naam) + '</span>' + (x.sub ? '<span class="dhk-prod-s">' + esc(x.sub) + '</span>' : '') + '</p>' +
+          '<div class="dhk-prod-w">' + rijen + (x.meer ? '<a class="dhk-meer" data-pp-link href="' + esc(x.meer[1]) + '">' + esc(x.meer[0]) + ' ›</a>' : (x.id ? '<a class="dhk-meer" data-pp-link hidden href="/pages/vergelijken"></a>' : '')) + '</div></div>';
       }).join('');
     }).catch(function () { fout(naam); });
   }

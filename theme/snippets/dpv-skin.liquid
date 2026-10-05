@@ -56,3 +56,48 @@
   }
 })();
 </script>
+{%- comment -%}
+  Productpagina's (/pages/product/<handle>). Een productkaart die een eigen
+  pagina heeft, krijgt een link op de foto en de naam, en de tekstregel onder
+  de winkels gaat erheen. Welke producten een pagina hebben staat in
+  data/productpaginas.json in de repo. Een kaart doet mee met data-pp="<id>",
+  en daarbinnen data-pp-foto, data-pp-naam en eventueel data-pp-link.
+  De knoppen naar de winkel blijven rechtstreeks naar de winkel gaan.
+{%- endcomment -%}
+<style>a.dpv-pp-a{color:inherit;text-decoration:none}a.dpv-pp-a:hover{text-decoration:underline}a.dpv-pp-a i{font-style:normal;color:#2456D6;white-space:nowrap}</style>
+<script>
+(function () {
+  var URL_ = 'https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/productpaginas.json', kaart = null, bezig = false;
+  function haal(klaar) {
+    if (kaart) return klaar();
+    try { var c = JSON.parse(sessionStorage.getItem('dpvPP') || 'null'); if (c && Date.now() - c.t < 36e5) { kaart = c.k; return klaar(); } } catch (e) {}
+    if (bezig) return; bezig = true;
+    fetch(URL_).then(function (r) { return r.json(); }).then(function (k) {
+      kaart = k || {}; try { sessionStorage.setItem('dpvPP', JSON.stringify({ t: Date.now(), k: kaart })); } catch (e) {}
+      klaar();
+    }).catch(function () { kaart = {}; });
+  }
+  function koppel() {
+    var k = document.querySelectorAll('[data-pp]:not([data-pp-ok])');
+    if (!k.length) return;
+    haal(function () {
+      for (var i = 0; i < k.length; i++) {
+        var el = k[i]; el.setAttribute('data-pp-ok', '1');
+        var h = kaart[el.getAttribute('data-pp')]; if (!h) continue;
+        var href = '/pages/product/' + h;
+        var img = el.querySelector('[data-pp-foto] img');
+        if (img && !img.closest('a')) { var a = document.createElement('a'); a.href = href; a.className = 'dpv-pp-a'; a.setAttribute('aria-hidden', 'true'); a.tabIndex = -1; img.parentNode.insertBefore(a, img); a.appendChild(img); }
+        var n = el.querySelector('[data-pp-naam]');
+        if (n && !n.querySelector('a')) { var b = document.createElement('a'); b.href = href; b.className = 'dpv-pp-a'; while (n.firstChild) b.appendChild(n.firstChild); var p = document.createElement('i'); p.textContent = '\u00a0›'; b.appendChild(p); n.appendChild(b); }
+        var l = el.querySelector('[data-pp-link]');
+        if (l) { l.href = href; l.textContent = 'Prijsverloop en prijsalarm\u00a0›'; l.hidden = false; l.removeAttribute('target'); }
+      }
+    });
+  }
+  var w = 0; function plan() { if (w) return; w = setTimeout(function () { w = 0; koppel(); }, 200); }
+  document.addEventListener('DOMContentLoaded', function () {
+    koppel();
+    if (window.MutationObserver) new MutationObserver(plan).observe(document.body, { childList: true, subtree: true });
+  });
+})();
+</script>

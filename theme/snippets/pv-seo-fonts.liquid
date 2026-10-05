@@ -1,0 +1,17 @@
+{%- comment -%}
+  PV SEO font-fix overrides. Rendered after pv-seo-slot to correct the
+  'Syne'/'Inter' fallbacks to the Helder display stack (Bricolage Grotesque +
+  Plus Jakarta Sans), matching the rest of the redesign. Loaded via theme.liquid.
+{%- endcomment -%}
+<style>
+#pv-seo-slot .pv-seo-content{font-family:'Plus Jakarta Sans',system-ui,sans-serif!important}
+#pv-seo-slot .pv-seo-content h2.pv-seo-h2-main,
+#pv-seo-slot .pv-seo-content .pv-seo-sec h3,
+#pv-seo-slot .pv-seo-faq h2,
+#pv-seo-slot .pv-seo-also h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif!important}
+</style>
+{%- comment -%}
+  5 okt: de huisstijllaag "2-rond" hangt hier, omdat dit snippet in de head van
+  elke pagina wordt geladen en layout/theme.liquid zelf niet in de repo staat.
+{%- endcomment -%}
+{% render 'dpv-skin' %}

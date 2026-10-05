@@ -1,0 +1,20 @@
+/* ===== Huisstijllaag 2-rond, het handgeschreven deel =====
+   5 okt. De rest van dit bestand komt uit skin.cjs (kleuren en letters per bestaande regel).
+   Hier staat wat geen bestaande regel had: de basisletter, de gele doorklikknop en de
+   uitzonderingen die bij het nalopen van de pagina's nodig bleken. */
+:root:not(#x){--font-body-family:'Montserrat',system-ui,sans-serif;--font-heading-family:'Montserrat',system-ui,sans-serif;
+  --dpv-inkt:#0D1B2A;--dpv-blauw:#2456D6;--dpv-geel:#F9C31F;--dpv-groen:#3FAE7A;--dpv-tint:#EAF1FF;--dpv-tint2:#F4F7FF}
+html:not(#x) body{font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif}
+html:not(#x) body :is(h1,h2,h3,h4,h5,h6,button,input,select,textarea){font-family:'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif}
+/* Het woordmerk is het logo en houdt zijn eigen letter. */
+html:not(#x) .pvnav-woord,html:not(#x) .pvf-logo{font-family:'Bricolage Grotesque','Montserrat',sans-serif !important}
+
+/* Geel is er alleen voor de doorklik naar een aanbieder of winkel. Het script in dpv-skin.liquid
+   zet deze klasse op elke gekleurde knop waarvan de link naar een aanbieder gaat. */
+html:not(#x) a.dpv-geel,html:not(#x) a.dpv-geel:visited{background:#F9C31F !important;background-image:none !important;
+  color:#0D1B2A !important;border-color:#F9C31F !important;box-shadow:none !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x) a.dpv-geel *{color:#0D1B2A !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x) a.dpv-geel svg{stroke:currentColor}
+html:not(#x) a.dpv-geel:hover{background:#EDB50C !important;border-color:#EDB50C !important}
+html:not(#x) :focus-visible{outline-color:#2456D6}
+html:not(#x) ::selection{background:#DCE7FF;color:#0D1B2A}

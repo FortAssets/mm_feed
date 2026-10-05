@@ -1,0 +1,56 @@
+{%- comment -%}
+  Huisstijl "2-rond" voor de hele site.
+
+  5 okt. De site bestaat uit ruim honderd secties die elk hun eigen opmaak
+  meebrengen. In plaats van die allemaal te herschrijven ligt hier een laag
+  overheen: assets/dpv-skin.css zet per bestaande regel de kleur en de letter
+  om naar de nieuwe huisstijl. Dat bestand wordt gemaakt door skin/skin.cjs in
+  de repo, uit de opmaak die de pagina's echt gebruiken.
+
+  De secties die al in de nieuwe stijl zijn gebouwd (de kiezer, de tegels, de
+  productrijen, "zo werkt het") slaat die laag over.
+
+  Het script zet de gele kleur op knoppen die naar een aanbieder of winkel
+  gaan. Geel is in deze huisstijl alleen voor die doorklik; alle andere
+  knoppen zijn blauw. Welke knop naar een aanbieder gaat staat niet in de
+  opmaak maar in de link, daarom doet een script dit.
+{%- endcomment -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+{{ 'dpv-skin.css' | asset_url | stylesheet_tag }}
+<script>
+(function () {
+  var UIT = /\/api\/go\b|\/go\/deal|\/api\/shop\/go|\/sm\/go|awin1\.com|tradedoubler\.com|partner\.bol\.com|lt45\.net|daisycon|tradetracker|prf\.hn|tp\.media|tp\.st|emrldtp/i;
+  function tint(kleur) {
+    var m = (kleur || '').match(/[\d.]+/g);
+    if (!m || m.length < 3) return null;
+    if (m.length > 3 && +m[3] < 0.5) return null;
+    var r = +m[0], g = +m[1], b = +m[2], mx = Math.max(r, g, b), mn = Math.min(r, g, b);
+    var l = (mx + mn) / 510, s = mx === mn ? 0 : (mx - mn) / (l > 0.5 ? 510 - mx - mn : mx + mn);
+    return { l: l, s: s };
+  }
+  function loop() {
+    var a = document.querySelectorAll('a[href]:not(.dpv-geel)');
+    for (var i = 0; i < a.length; i++) {
+      var el = a[i];
+      if (!UIT.test(el.getAttribute('href'))) continue;
+      if (el.offsetHeight > 96 || el.offsetHeight === 0) continue;
+      var cs = getComputedStyle(el), t = tint(cs.backgroundColor);
+      if (!t && cs.backgroundImage && cs.backgroundImage !== 'none') t = tint((cs.backgroundImage.match(/rgba?\([^)]*\)/) || [])[0]);
+      // Alleen een gekleurde knop wordt geel. Een tekstlink of een witte kaart die als geheel klikbaar is niet.
+      if (!t || t.l > 0.72 || t.s < 0.25) continue;
+      el.classList.add('dpv-geel');
+    }
+  }
+  var wacht = 0;
+  function plan() { if (wacht) return; wacht = setTimeout(function () { wacht = 0; loop(); }, 120); }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loop); else loop();
+  window.addEventListener('load', loop);
+  if (window.MutationObserver) {
+    document.addEventListener('DOMContentLoaded', function () {
+      new MutationObserver(plan).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['href'] });
+    });
+  }
+})();
+</script>

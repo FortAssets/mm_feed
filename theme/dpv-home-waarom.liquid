@@ -1,82 +1,83 @@
 {%- comment -%}
-  Waarom onze prijzen anders zijn.
+  Zo werkt het, en zo verdienen wij.
 
-  Vervangt "Zo werkt het" (dpv-home-steps). Die sectie vertelde wat elke
-  vergelijker vertelt: kies, vergelijk, stap over. Dat weet de bezoeker al, en
-  het onderscheidt je van niemand.
+  Was "Waarom onze prijzen anders zijn": vier kaarten met een groot cijfer en
+  een lange tekst (4 okt).
 
-  4 okt: de site vergelijkt inmiddels ook producten (consoles, tv's, laptops,
-  huishoudelijk) en de tekst ging alleen over abonnementen en energie. Er is
-  een kaart bij over het prijslogboek, en de laatste kaart noemt nu ook
-  producten.
+  5 okt, huisstijl "2-rond" (STIJLGIDS.md): drie korte stappen op een
+  lichtblauwe band, elk met een blauw rond nummer. De derde stap zegt waar ons
+  geld vandaan komt; dat hoort op de homepage te staan (ACM Leidraad 2024) en
+  stond eerst weggestopt in de vierde kaart. De teksten zijn instellingen. De
+  link onderaan is er nog, maar staat standaard uit: het contract-seintje staat
+  al in de kiezer bovenaan.
 {%- endcomment -%}
+
+<script>if(!document.getElementById('dpv-mont')){var l=document.createElement('link');l.id='dpv-mont';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap';document.head.appendChild(l);}</script>
 
 <section class="dwa">
   <div class="dwa-in">
     <h2 class="dwa-kop">{{ section.settings.kop }}</h2>
-    {%- if section.settings.sub != blank -%}<p class="dwa-sub">{{ section.settings.sub }}</p>{%- endif -%}
 
-    <div class="dwa-grid">
+    <ol class="dwa-grid">
+      {%- for n in (1..3) -%}
+        {%- assign k = 's' | append: n | append: '_kop' -%}
+        {%- assign t = 's' | append: n | append: '_tekst' -%}
+        {%- if section.settings[k] != blank -%}
+        <li class="dwa-kaart">
+          <span class="dwa-nr" aria-hidden="true">{{ n }}</span>
+          <b>{{ section.settings[k] }}</b>
+          <p>{{ section.settings[t] }}</p>
+        </li>
+        {%- endif -%}
+      {%- endfor -%}
+    </ol>
 
-      <div class="dwa-kaart">
-        <span class="dwa-cijfer">60.000</span>
-        <b>Wij meten elke nacht de prijs</b>
-        <p>Van ruim 60.000 producten leggen wij elke nacht vast wat ze kosten bij Coolblue, MediaMarkt, bol.com en andere winkels. Zo zie je bij een aanbieding of de korting echt is, en bij welke winkel hetzelfde product het minst kost.</p>
-      </div>
-
-      <div class="dwa-kaart">
-        <span class="dwa-cijfer">&euro;18</span>
-        <b>Wij tonen wat het echt kost</b>
-        <p>Een abonnement van &euro;1 in de eerste twaalf maanden en &euro;35 daarna kost je gemiddeld &euro;18 per maand. Wij rekenen dat door en zetten de actieprijs erbij. Bij een toestel met abonnement tonen wij het totaal over de looptijd, bij energie alles inclusief belasting en netbeheer.</p>
-      </div>
-
-      <div class="dwa-kaart">
-        <span class="dwa-cijfer">120</span>
-        <b>Wij weten wanneer je mag</b>
-        <p>Bij telecom kun je 120 dagen voor je einddatum overstappen zonder dubbel te betalen, bij energie zes tot acht weken. Leg je contracten vast en je hoort het op de dag dat het mag. Voor producten zet je een prijsalarm en krijg je bericht als de prijs zakt.</p>
-      </div>
-
-      <div class="dwa-kaart">
-        <span class="dwa-cijfer">0%</span>
-        <b>Wij zeggen waar ons geld vandaan komt</b>
-        <p>Koop je via ons een product of sluit je een abonnement of energiecontract af, dan ontvangen wij een vergoeding van de winkel of aanbieder. Dat verandert niets aan wat jij betaalt en niets aan de volgorde: die is altijd op prijs.</p>
-      </div>
-
-    </div>
-
-    {%- if section.settings.cta_tekst != blank -%}
-      <a class="dwa-cta" href="{{ section.settings.cta_url }}">{{ section.settings.cta_tekst }} &rarr;</a>
+    {%- if section.settings.cta_tekst != blank and section.settings.cta_url != blank -%}
+      <a class="dwa-cta" href="{{ section.settings.cta_url }}">{{ section.settings.cta_tekst }} &rsaquo;</a>
     {%- endif -%}
-    <a class="dwa-cta dwa-cta2" href="/pages/vergelijken">Vergelijk producten &rarr;</a>
   </div>
 </section>
 
 <style>
-.dwa{padding:34px 0}
-.dwa-in{max-width:1200px;margin:0 auto;padding:0 16px}
-.dwa-kop{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;letter-spacing:-.03em;
-  font-size:clamp(24px,3.6vw,34px);line-height:1.1;margin:0 0 6px}
-.dwa-sub{color:#64748b;font-size:15.5px;margin:0 0 22px;max-width:60ch}
-.dwa-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:13px}
-.dwa-kaart{background:#fff;border:1px solid #e8edf5;border-radius:16px;padding:20px}
-.dwa-cijfer{display:inline-block;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
-  font-size:30px;letter-spacing:-.04em;line-height:1;color:#059669;margin-bottom:11px}
-.dwa-kaart b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;
-  font-size:16.5px;letter-spacing:-.015em;margin-bottom:5px}
-.dwa-kaart p{margin:0;font-size:14.5px;line-height:1.6;color:#475569}
-.dwa-cta{display:inline-block;margin-top:18px;margin-right:22px;font-weight:700;font-size:15px;color:#059669;text-decoration:none}
-.dwa-cta:hover{text-decoration:underline}
+.dwa{background:#F4F7FF;padding:26px 0 28px;margin:26px 0 0;font-family:'Montserrat',system-ui,sans-serif;color:#0D1B2A;-webkit-font-smoothing:antialiased}
+.dwa *{box-sizing:border-box}
+.dwa-in{max-width:1180px;margin:0 auto;padding:0 16px}
+.dwa-kop{font-family:'Montserrat',system-ui,sans-serif;font-weight:800;letter-spacing:-.025em;font-size:21px;line-height:1.2;margin:0 0 12px;color:#0D1B2A}
+.dwa-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:minmax(0,1fr);gap:9px}
+.dwa-kaart{background:#fff;border:1px solid #E6EBF2;border-radius:16px;padding:18px;margin:0}
+.dwa-nr{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:#2456D6;color:#fff;
+  font-weight:800;font-size:15px;line-height:1;margin-bottom:10px}
+.dwa-kaart b{display:block;font-weight:800;font-size:17px;line-height:1.25;letter-spacing:-.01em;margin-bottom:5px;color:#0D1B2A}
+.dwa-kaart p{margin:0;font-size:13.5px;line-height:1.5;font-weight:500;color:#4A5A70}
+.dwa a.dwa-cta,.dwa a.dwa-cta:visited{display:inline-block;margin-top:16px;font-weight:800;font-size:14px;color:#2456D6;text-decoration:none}
+.dwa a.dwa-cta:hover{color:#1B45B4;text-decoration:underline}
+.dwa :focus-visible{outline:3px solid #2456D6;outline-offset:2px}
+@media(min-width:900px){
+  .dwa{padding:34px 0 36px;margin-top:30px}
+  .dwa-in{padding:0 20px}
+  .dwa-kop{font-size:26px;margin-bottom:14px}
+  .dwa-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+}
 </style>
 
 {% schema %}
 {
-  "name": "Waarom wij anders zijn",
+  "name": "Zo werkt het",
   "settings": [
-    { "type": "text", "id": "kop", "label": "Kop", "default": "Waarom onze prijzen anders zijn" },
-    { "type": "text", "id": "sub", "label": "Ondertitel", "default": "Vier dingen die wij anders doen dan de rest, en waarom dat je geld scheelt." },
-    { "type": "text", "id": "cta_tekst", "label": "Link onderaan", "default": "Leg je contracten vast" },
-    { "type": "text", "id": "cta_url", "label": "URL", "default": "https://dpv-contracten.business-347.workers.dev/mijn-contracten?van=waarom" }
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Zo werkt het, en zo verdienen wij" },
+    { "type": "header", "content": "Stap 1" },
+    { "type": "text", "id": "s1_kop", "label": "Kop", "default": "Tik je keuze aan" },
+    { "type": "textarea", "id": "s1_tekst", "label": "Tekst", "default": "Geen formulier en geen account. Je ziet direct de laagste prijs en de alternatieven." },
+    { "type": "header", "content": "Stap 2" },
+    { "type": "text", "id": "s2_kop", "label": "Kop", "default": "Vergelijk de hele rekening" },
+    { "type": "textarea", "id": "s2_tekst", "label": "Tekst", "default": "Maandprijs, looptijd en wat je in totaal betaalt, per aanbieder en per winkel." },
+    { "type": "header", "content": "Stap 3" },
+    { "type": "text", "id": "s3_kop", "label": "Kop", "default": "Ga naar de aanbieder" },
+    { "type": "textarea", "id": "s3_tekst", "label": "Tekst", "default": "Sluit je daar af, dan krijgen wij een vergoeding. De volgorde blijft op prijs en jij betaalt niets extra." },
+    { "type": "header", "content": "Link onderaan (optioneel)" },
+    { "type": "text", "id": "cta_tekst", "label": "Linktekst", "info": "Leeg = geen link." },
+    { "type": "text", "id": "cta_url", "label": "URL" }
   ],
-  "presets": [ { "name": "Waarom wij anders zijn" } ]
+  "presets": [ { "name": "Zo werkt het" } ]
 }
 {% endschema %}

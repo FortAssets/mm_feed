@@ -35,41 +35,45 @@
 {%- endif -%}
 {%- if bf_aan -%}
 <style>
+/* 5 okt, huisstijl "2-rond": de knop was donkerpaars en trok meer aandacht dan
+   de knop naar de winkel. Nu een rustige witte knop met blauwe rand en blauwe
+   tekst; geel blijft voor de doorklik. Alleen de opmaak is veranderd. */
 .dpvbf-rij{display:flex;gap:6px;align-items:stretch;margin-top:7px;position:relative}
-.dpvbf{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid #1b1033;background:#1b1033;color:#fff;
- font:inherit;font-weight:800;font-size:12.5px;line-height:1.2;border-radius:10px;padding:9px 8px;cursor:pointer;text-align:center}
-.dpvbf:hover{background:#2d1b52;border-color:#2d1b52}
+.dpvbf{flex:1;min-width:0;display:flex;align-items:center;justify-content:center;gap:6px;border:1.5px solid #2456D6;background:#fff;color:#2456D6;
+ font:inherit;font-weight:800;font-size:12.5px;line-height:1.2;border-radius:10px;padding:9px 8px;min-height:40px;cursor:pointer;text-align:center}
+.dpvbf:hover{background:#EAF1FF;border-color:#1B45B4;color:#1B45B4}
 .dpvbf svg{width:14px;height:14px;flex:0 0 14px}
-.dpvbf.aan{background:#ecfdf5;border-color:#a7f3d0;color:#047857;cursor:default}
-.dpvbf-i{flex:0 0 34px;border:1.5px solid #e2dcf2;background:#fff;color:#5b3b8c;border-radius:10px;font:inherit;font-weight:800;font-size:13px;
+.dpvbf.aan,.dpvbf.aan:hover{background:#E3F4EB;border-color:#E3F4EB;color:#0D1B2A;cursor:default;opacity:1}
+.dpvbf-i{flex:0 0 36px;border:1.5px solid #D9E1EC;background:#fff;color:#2456D6;border-radius:10px;font:inherit;font-weight:800;font-size:13px;
  font-style:italic;font-family:Georgia,serif;cursor:pointer;padding:0}
-.dpvbf-i:hover{border-color:#5b3b8c}
+.dpvbf-i:hover{border-color:#2456D6}
 .dpvbf-tip{position:absolute;left:0;right:0;bottom:calc(100% + 8px);z-index:30;background:#0D1B2A;color:#fff;border-radius:12px;padding:12px 13px;
- font-size:12.5px;line-height:1.5;font-weight:500;text-align:left;box-shadow:0 18px 40px -16px rgba(13,27,42,.6)}
+ font-size:12.5px;line-height:1.5;font-weight:500;text-align:left}
 .dpvbf-tip b{display:block;font-size:13px;margin-bottom:3px}
 .dpvbf-tip[hidden]{display:none}
-.dpvbf-mail{display:block;width:100%;margin-top:6px;background:none;border:0;padding:2px 0;font:inherit;font-size:11.5px;font-weight:600;color:#64748b;
+.dpvbf-mail{display:block;width:100%;margin-top:6px;background:none;border:0;padding:2px 0;font:inherit;font-size:11.5px;font-weight:600;color:#5B6B80;
  text-decoration:underline;cursor:pointer;text-align:center}
 .dpvbf-mail:hover{color:#0D1B2A}
 
 .dpvbf-ov{position:fixed;inset:0;z-index:99999;background:rgba(13,27,42,.55);display:flex;align-items:center;justify-content:center;padding:16px;
- font-family:'Plus Jakarta Sans','Inter',system-ui,sans-serif}
+ font-family:'Montserrat',system-ui,sans-serif}
 .dpvbf-ov[hidden]{display:none}
-.dpvbf-doos{background:#fff;border-radius:18px;max-width:430px;width:100%;padding:22px 22px 20px;color:#0D1B2A;position:relative;
- box-shadow:0 30px 80px -20px rgba(13,27,42,.5)}
-.dpvbf-doos h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;line-height:1.2;font-weight:800;margin:0 30px 6px 0;letter-spacing:-.02em}
-.dpvbf-prod{font-size:13.5px;font-weight:700;color:#5b3b8c;margin:0 0 12px}
-.dpvbf-doos p{font-size:14px;line-height:1.55;color:#42526b;margin:0 0 14px}
+.dpvbf-doos{background:#fff;border-radius:18px;max-width:430px;width:100%;padding:22px 22px 20px;color:#0D1B2A;position:relative}
+.dpvbf-doos h3{font-family:'Montserrat',system-ui,sans-serif;font-size:21px;line-height:1.2;font-weight:800;margin:0 30px 6px 0;letter-spacing:-.025em;color:#0D1B2A}
+.dpvbf-prod{font-size:13.5px;font-weight:700;color:#2456D6;margin:0 0 12px}
+.dpvbf-doos p{font-size:14px;line-height:1.55;font-weight:500;color:#4A5A70;margin:0 0 14px}
 .dpvbf-veld{display:flex;gap:8px}
-.dpvbf-veld input{flex:1;min-width:0;border:1.5px solid #dbe2ee;border-radius:11px;padding:12px 13px;font:inherit;font-size:15px;color:#0D1B2A}
-.dpvbf-veld input:focus{outline:2px solid #c9b6f2;outline-offset:1px}
-.dpvbf-veld button{border:0;background:#10b981;color:#fff;font:inherit;font-weight:800;font-size:14.5px;border-radius:11px;padding:12px 16px;cursor:pointer;white-space:nowrap}
+.dpvbf-veld input{flex:1;min-width:0;border:1.5px solid #D9E1EC;border-radius:12px;padding:12px 13px;font:inherit;font-size:16px;color:#0D1B2A}
+.dpvbf-veld input:focus{outline:2px solid #2456D6;outline-offset:1px}
+/* aanmelden is een interne knop: blauw met witte tekst */
+.dpvbf-veld button{border:0;background:#2456D6;color:#fff;font:inherit;font-weight:800;font-size:14.5px;border-radius:12px;padding:12px 16px;min-height:48px;cursor:pointer;white-space:nowrap}
+.dpvbf-veld button:hover{background:#1B45B4}
 .dpvbf-veld button:disabled{opacity:.6;cursor:default}
 .dpvbf-val{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
 .dpvbf-uit{font-size:13.5px;font-weight:700;margin:10px 0 0;min-height:18px}
-.dpvbf-uit.goed{color:#047857}.dpvbf-uit.fout{color:#b91c1c}
-.dpvbf-fijn{font-size:12px !important;color:#8494ab !important;margin:12px 0 0 !important}
-.dpvbf-x{position:absolute;right:12px;top:12px;width:32px;height:32px;border:0;background:#f1f5f9;border-radius:50%;font-size:18px;line-height:1;cursor:pointer;color:#42526b}
+.dpvbf-uit.goed{color:#1F8F5F}.dpvbf-uit.fout{color:#b91c1c}
+.dpvbf-fijn{font-size:12px !important;color:#5B6B80 !important;margin:12px 0 0 !important}
+.dpvbf-x{position:absolute;right:12px;top:12px;width:32px;height:32px;border:0;background:#F4F7FF;border-radius:50%;font-size:18px;line-height:1;cursor:pointer;color:#4A5A70}
 @media(max-width:480px){.dpvbf-veld{flex-direction:column}}
 </style>
 

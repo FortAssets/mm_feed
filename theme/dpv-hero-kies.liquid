@@ -26,7 +26,32 @@
 
   Elke klik naar een aanbieder gaat als gebeurtenis "dhk_klik" naar gtag of
   dataLayer als die er zijn, met tabblad, keuze en positie.
+
+  5 okt, huisstijl "2-rond" (STIJLGIDS.md): licht bovenste vlak, Montserrat,
+  blauw als accent en geel alleen op de knop naar de aanbieder. Erbij: drie
+  vertrouwenspunten (breed scherm: onder de ondertitel; telefoon: als blok
+  onder het vlak, zodat de eerste prijs in beeld blijft) en een strook met
+  logo's onderaan het vlak. Looptijd en totaalbedrag staan als kleine pillen
+  onder de beste keuze. De logica en de klikmeting zijn niet aangeraakt.
 {%- endcomment -%}
+
+{%- comment -%} De vertrouwenspunten staan twee keer in de pagina (breed en smal); een van
+   de twee is altijd verborgen. Een regel per punt: vet|toelichting. {%- endcomment -%}
+{%- capture dhk_punten -%}
+  {%- assign punten = section.settings.punten | newline_to_br | split: '<br />' -%}
+  <ul class="dhk-punten">
+  {%- for r in punten -%}
+    {%- assign d = r | strip | split: '|' -%}
+    {%- if d[0] != blank -%}
+      <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg><span><b>{{ d[0] | strip | escape }}</b> {{ d[1] | strip | escape }}</span></li>
+    {%- endif -%}
+  {%- endfor -%}
+  </ul>
+{%- endcapture -%}
+
+{%- comment -%} Montserrat staat nog niet in het thema. Een keer per pagina laden, ook als
+   er meer secties in de nieuwe stijl op staan. {%- endcomment -%}
+<script>if(!document.getElementById('dpv-mont')){var l=document.createElement('link');l.id='dpv-mont';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap';document.head.appendChild(l);}</script>
 
 <section class="dhk" id="dhk"
   data-worker="{{ section.settings.worker_url }}"
@@ -37,12 +62,14 @@
   data-prod="{{ section.settings.groepen | escape }}"
   data-gaming="{{ section.settings.gaming_groepen | escape }}"
   data-seintje="{{ section.settings.seintje_url }}">
+  <div class="dhk-top">
   <div class="dhk-in">
 
     <div class="dhk-kop">
-      <p class="dhk-eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- if section.settings.eyebrow != blank -%}<p class="dhk-eyebrow"><i aria-hidden="true"></i>{{ section.settings.eyebrow }}</p>{%- endif -%}
       <h1>{{ section.settings.kop }} <em>{{ section.settings.kop_accent }}</em></h1>
       <p class="dhk-sub">{{ section.settings.sub }}</p>
+      {{ dhk_punten }}
     </div>
 
     <div class="dhk-app">
@@ -67,139 +94,203 @@
       </div>
     </div>
 
+    {%- assign logos = section.settings.logos | split: ',' -%}
+    {%- if logos.size > 0 -%}
+    <div class="dhk-strook">
+      <p class="dhk-strook-kop">{{ section.settings.logos_kop }}</p>
+      <div class="dhk-logos">
+        {%- for m in logos -%}
+          {%- assign d = m | strip -%}
+          {%- if d != blank -%}
+            <img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://{{ d | escape }}"
+                 alt="{{ d | split: '.' | first | capitalize | escape }}" loading="lazy" width="38" height="38" onerror="this.style.display='none'">
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+    {%- endif -%}
+
   </div>
+  </div>
+
+  <div class="dhk-onder">{{ dhk_punten }}</div>
 </section>
 
 <style>
-.dhk{background:#0B1B33;background-image:radial-gradient(900px 560px at 18% 12%,#16305C 0%,transparent 72%);
-  color:#fff;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+/* 5 okt, huisstijl "2-rond": licht bovenste vlak in plaats van donkerblauw,
+   Montserrat, blauw als accent en geel alleen op de knop naar de aanbieder.
+   De opbouw (kop links, kiezer rechts) is gelijk gebleven; erbij gekomen zijn
+   de drie vertrouwenspunten en de strook met logo's. */
+.dhk{background:#fff;color:#0D1B2A;font-family:'Montserrat',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 .dhk *{box-sizing:border-box}
 .dhk [hidden]{display:none !important}
-.dhk-in{max-width:1180px;margin:0 auto;padding:24px 16px 22px;display:grid;gap:16px}
-@media(min-width:900px){.dhk-in{grid-template-columns:.9fr 1.1fr;gap:48px;padding:52px 20px 34px;align-items:start}}
+.dhk-top{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%)}
+.dhk-in{max-width:1180px;margin:0 auto;padding:14px 16px 16px;display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.dhk-in{grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:28px 48px;padding:44px 20px 30px;align-items:start}}
 
-.dhk-eyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#7FE3BC;font-weight:800;margin:0 0 8px}
-.dhk h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:29px;line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:0;color:#fff;text-wrap:balance}
-.dhk h1 em{font-style:normal;color:#7FE3BC}
-.dhk-sub{display:none;font-size:15.5px;line-height:1.55;color:#9FB0C4;margin:14px 0 0;max-width:42ch}
-@media(min-width:900px){.dhk h1{font-size:46px}.dhk-sub{display:block}.dhk-kop{padding-top:56px}}
+.dhk-eyebrow{display:inline-flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:6px 12px;font-size:11.5px;line-height:1.2;
+  font-weight:800;color:#2456D6;margin:0 0 9px;letter-spacing:0;text-transform:none}
+.dhk-eyebrow i{flex:0 0 8px;width:8px;height:8px;border-radius:50%;background:#3FAE7A}
+.dhk h1{font-family:'Montserrat',system-ui,sans-serif;font-size:28px;line-height:1.05;letter-spacing:-.03em;font-weight:800;margin:0;color:#0D1B2A;text-wrap:balance}
+.dhk h1 em{font-style:normal;color:#2456D6}
+.dhk-sub{display:none;font-size:17px;line-height:1.55;color:#4A5A70;font-weight:500;margin:16px 0 24px;max-width:400px}
+@media(min-width:900px){.dhk-eyebrow{font-size:12.5px;padding:7px 13px;margin-bottom:14px}.dhk h1{font-size:48px}.dhk-sub{display:block}.dhk-kop{padding-top:44px}}
+
+/* vertrouwenspunten: op een breed scherm onder de ondertitel, op een telefoon
+   als blok onder het bovenste vlak. Zo blijft de eerste prijs daar in beeld. */
+.dhk-punten{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.dhk-punten li{display:flex;align-items:center;gap:10px;margin:0;padding:0;font-size:13px;line-height:1.3;color:#4A5A70;font-weight:600}
+.dhk-punten svg{flex:0 0 22px;width:22px;height:22px;padding:4px;border-radius:50%;background:#3FAE7A;color:#0D1B2A}
+.dhk-punten b{display:block;font-size:14px;color:#0D1B2A;font-weight:800}
+.dhk-kop .dhk-punten{display:none}
+.dhk-onder{max-width:1180px;margin:0 auto;padding:14px 16px 0}
+.dhk-onder .dhk-punten{gap:9px;background:#F4F7FF;border-radius:14px;padding:13px}
+.dhk-onder .dhk-punten li{font-size:12.5px}
+.dhk-onder .dhk-punten b{display:inline;font-size:13px;margin-right:5px}
+@media(min-width:900px){.dhk-kop .dhk-punten{display:grid}.dhk-onder{display:none}}
 
 .dhk-app{min-width:0}
 
 /* tabbladen: schuiven opzij op een telefoon */
-.dhk-tabs{display:flex;gap:7px;overflow-x:auto;margin:0 -16px 12px;padding:2px 16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.dhk-tabs{display:flex;gap:7px;overflow-x:auto;margin:0 -16px 10px;padding:2px 16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .dhk-tabs::-webkit-scrollbar{display:none}
 @media(min-width:900px){.dhk-tabs{margin:0 0 12px;padding:2px 0;flex-wrap:wrap;overflow:visible}}
-.dhk .dhk-tab,.dhk a.dhk-tab:visited{flex:0 0 auto;display:inline-flex;align-items:center;min-height:44px;padding:0 17px;border-radius:999px;
-  border:1px solid rgba(255,255,255,.16);background:rgba(255,255,255,.08);color:#D5DEEA !important;
-  font:800 14.5px/1 'Plus Jakarta Sans',system-ui,sans-serif;text-decoration:none !important;cursor:pointer;white-space:nowrap}
-.dhk .dhk-tab.aan{background:#fff;color:#0B1B33 !important;border-color:#fff}
-.dhk .dhk-tab:hover{border-color:rgba(127,227,188,.6)}
+.dhk .dhk-tab,.dhk a.dhk-tab:visited{flex:0 0 auto;display:inline-flex;align-items:center;min-height:42px;padding:0 16px;border-radius:999px;
+  border:1px solid #D9E1EC;background:#fff;color:#0D1B2A !important;
+  font:800 14px/1 'Montserrat',system-ui,sans-serif;text-decoration:none !important;cursor:pointer;white-space:nowrap}
+.dhk .dhk-tab.aan{background:#2456D6;color:#fff !important;border-color:#2456D6}
+.dhk .dhk-tab:not(.aan):hover{border-color:#2456D6}
 .dhk a.dhk-link::after{content:'›';margin-left:6px;opacity:.6}
 
-.dhk-paneel{background:#fff;color:#0B1B33;border-radius:18px;padding:14px 14px 12px;box-shadow:0 18px 40px -18px rgba(0,0,0,.55)}
-@media(min-width:900px){.dhk-paneel{padding:20px 20px 16px}}
-.dhk-vraag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;font-weight:800;color:#5B6B80;margin:0 0 8px}
+/* De kaart van de kiezer is de belangrijkste kaart van de pagina en krijgt
+   daarom het verschoven groene vlak. De marge rechts en onder houdt dat vlak
+   binnen het scherm. */
+.dhk-paneel{background:#fff;color:#0D1B2A;border:1px solid #E6EBF2;border-radius:18px;padding:12px 12px 11px;
+  box-shadow:8px 8px 0 #3FAE7A;margin:0 8px 8px 0}
+@media(min-width:900px){.dhk-paneel{padding:18px 18px 14px;box-shadow:10px 10px 0 #3FAE7A;margin:0 10px 10px 0}}
+.dhk-vraag{font-size:11px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;color:#5B6B80;margin:0 0 7px}
 
-.dhk-chips{display:flex;gap:7px;overflow-x:auto;margin:0 -14px 12px;padding:1px 14px;scrollbar-width:none}
+.dhk-chips{display:flex;gap:7px;overflow-x:auto;margin:0 -12px 10px;padding:1px 12px;scrollbar-width:none}
 .dhk-chips::-webkit-scrollbar{display:none}
-@media(min-width:900px){.dhk-chips{margin:0 0 14px;padding:1px 0;flex-wrap:wrap;overflow:visible}}
-.dhk-chip{flex:0 0 auto;min-height:44px;padding:0 15px;border-radius:12px;border:1.5px solid #D8E0EA;background:#fff;color:#0B1B33;
-  font:800 14px/1 'Plus Jakarta Sans',system-ui,sans-serif;cursor:pointer;white-space:nowrap}
-.dhk-chip.aan{border-color:#059669;background:#ECFDF5;color:#065F46}
+@media(min-width:900px){.dhk-chips{margin:0 0 12px;padding:1px 0;flex-wrap:wrap;overflow:visible}}
+.dhk-chip{flex:0 0 auto;min-height:40px;padding:0 13px;border-radius:999px;border:1.5px solid #D9E1EC;background:#fff;color:#0D1B2A;
+  font:700 13px/1 'Montserrat',system-ui,sans-serif;cursor:pointer;white-space:nowrap}
+.dhk-chip:hover{border-color:#2456D6}
+.dhk-chip.aan{border-color:#2456D6;background:#EAF1FF;color:#2456D6}
 .dhk-chip[disabled]{opacity:.4;cursor:default}
 
 /* beste keuze */
-.dhk-best{border:1.5px solid #10b981;background:#ECFDF5;border-radius:16px;padding:13px 13px 13px}
-.dhk-lab{display:inline-block;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;font-weight:800;color:#fff;background:#059669;border-radius:6px;padding:4px 8px;margin:0 0 9px}
-.dhk-best-rij{display:flex;align-items:flex-start;gap:10px}
-.dhk-logo{flex:0 0 auto;width:36px;height:36px;border-radius:9px;background:#fff;border:1px solid #D8E0EA;object-fit:contain;padding:5px}
+.dhk-best{border:2px solid #2456D6;background:#F3F7FF;border-radius:14px;padding:12px}
+@media(min-width:900px){.dhk-best{padding:14px}}
+.dhk-lab{display:inline-flex;align-items:center;gap:5px;font-size:11px;line-height:1.25;font-weight:800;color:#fff;background:#2456D6;
+  border-radius:999px;padding:5px 10px 5px 7px;margin:0 0 10px;letter-spacing:0;text-transform:none}
+.dhk-lab svg{flex:0 0 14px;width:14px;height:14px}
+.dhk-best-rij{display:flex;align-items:center;gap:11px}
+.dhk-logo{flex:0 0 auto;width:44px;height:44px;border-radius:11px;background:#fff;border:1px solid #E6EBF2;object-fit:contain;padding:6px}
 .dhk-best-naam{flex:1;min-width:0}
-.dhk-best-naam b{display:block;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:19px;line-height:1.15;font-weight:800}
-.dhk-best-naam span{display:block;font-size:13.5px;line-height:1.4;color:#334155;margin-top:3px}
-.dhk-prijs{flex:0 0 auto;text-align:right;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;color:#047857;white-space:nowrap;line-height:1}
-.dhk-best .dhk-prijs{font-size:27px}
-.dhk-prijs small{display:block;font:700 11.5px/1.2 'Plus Jakarta Sans',system-ui,sans-serif;color:#5B6B80;margin-top:4px}
-.dhk-totaal{font-size:12.5px;color:#334155;margin:9px 0 11px}
-.dhk a.dhk-knop,.dhk a.dhk-knop:visited{display:flex;align-items:center;justify-content:center;min-height:52px;padding:0 16px;border-radius:13px;
-  background:#059669;color:#fff !important;font:800 16px/1.15 'Plus Jakarta Sans',system-ui,sans-serif;text-decoration:none !important;text-align:center}
-.dhk a.dhk-knop:hover{background:#047857}
+.dhk-best-naam b{display:block;font-family:'Montserrat',system-ui,sans-serif;font-size:19px;line-height:1.12;font-weight:800;letter-spacing:-.01em}
+.dhk-best-naam span{display:block;font-size:13.5px;line-height:1.35;color:#4A5A70;font-weight:600;margin-top:2px}
+.dhk-prijs{flex:0 0 auto;text-align:right;font-family:'Montserrat',system-ui,sans-serif;font-weight:800;color:#0D1B2A;white-space:nowrap;line-height:1;
+  letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.dhk-best .dhk-prijs{font-size:28px}
+@media(min-width:900px){.dhk-best-naam b{font-size:21px}.dhk-best .dhk-prijs{font-size:30px}}
+.dhk-prijs small{display:block;font:700 11px/1.2 'Montserrat',system-ui,sans-serif;color:#5B6B80;margin-top:4px;letter-spacing:0}
+/* looptijd en totaalbedrag als kleine pillen onder de regel */
+.dhk-tags{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 12px;padding:0;min-height:1px}
+.dhk-tags span{background:#fff;border:1px solid #D9E1EC;border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.3;font-weight:700;color:#4A5A70}
+.dhk a.dhk-knop,.dhk a.dhk-knop:visited{display:flex;align-items:center;justify-content:center;min-height:50px;padding:0 16px;border-radius:12px;
+  background:#F9C31F;color:#0D1B2A !important;font:800 16px/1.15 'Montserrat',system-ui,sans-serif;text-decoration:none !important;text-align:center}
+.dhk a.dhk-knop:hover{background:#EDB50C}
 
 /* alternatieven: hele regel is de knop */
-.dhk-alt{margin-top:4px}
-.dhk a.dhk-alt-rij,.dhk a.dhk-alt-rij:visited{display:flex;align-items:center;gap:10px;min-height:62px;padding:10px 2px;border-bottom:1px solid #E7ECF2;
-  color:#0B1B33 !important;text-decoration:none !important}
+.dhk-alt{margin-top:2px}
+.dhk a.dhk-alt-rij,.dhk a.dhk-alt-rij:visited{display:flex;align-items:center;gap:10px;min-height:60px;padding:10px 2px;border-bottom:1px solid #E6EBF2;
+  color:#0D1B2A !important;text-decoration:none !important}
 .dhk a.dhk-alt-rij:last-of-type{border-bottom:0}
-.dhk-alt-rij .dhk-logo{width:30px;height:30px;padding:4px}
+.dhk-alt-rij .dhk-logo{width:34px;height:34px;padding:4px;border-radius:9px}
 .dhk-alt-naam{flex:1;min-width:0}
-.dhk-alt-naam b{display:block;font-size:15.5px;font-weight:800;line-height:1.2}
-.dhk-alt-naam span{display:block;font-size:12.5px;color:#5B6B80;line-height:1.35;margin-top:2px}
-.dhk-alt-rij .dhk-prijs{font-size:19px}
-.dhk-ga{flex:0 0 auto;font-size:13px;font-weight:800;color:#047857;border:1.5px solid #A7F3D0;border-radius:10px;padding:9px 11px;white-space:nowrap}
-.dhk a.dhk-alt-rij:hover .dhk-ga{background:#ECFDF5}
+.dhk-alt-naam b{display:block;font-size:15px;font-weight:800;line-height:1.2}
+.dhk-alt-naam span{display:block;font-size:12px;color:#5B6B80;font-weight:600;line-height:1.35;margin-top:2px}
+.dhk-alt-rij .dhk-prijs{font-size:20px}
+.dhk-ga{flex:0 0 auto;font-size:12.5px;font-weight:800;color:#0D1B2A;background:#F9C31F;border-radius:10px;padding:9px 11px;white-space:nowrap}
+.dhk a.dhk-alt-rij:hover .dhk-ga{background:#EDB50C}
 
-.dhk-leeg{font-size:14px;color:#5B6B80;padding:14px 2px}
-.dhk-regel{font-size:11.5px;line-height:1.5;color:#5B6B80;margin:10px 0 0;padding-top:10px;border-top:1px solid #E7ECF2}
-.dhk a.dhk-alle,.dhk a.dhk-alle:visited{display:flex;align-items:center;justify-content:center;min-height:46px;margin-top:6px;
-  font-size:14.5px;font-weight:800;color:#047857 !important;text-decoration:none !important}
-.dhk a.dhk-alle:hover{text-decoration:underline !important}
+.dhk-leeg{font-size:14px;color:#4A5A70;font-weight:600;padding:14px 2px}
+.dhk-regel{font-size:11.5px;line-height:1.5;color:#5B6B80;font-weight:600;margin:8px 0 0;padding-top:10px;border-top:1px solid #E6EBF2}
+.dhk-hoe{color:#2456D6;font-weight:800;border-bottom:1.5px solid #C9D6EA}
+.dhk a.dhk-alle,.dhk a.dhk-alle:visited{display:flex;align-items:center;justify-content:center;min-height:44px;margin-top:4px;
+  font-size:14px;font-weight:800;color:#2456D6 !important;text-decoration:none !important}
+.dhk a.dhk-alle:hover{color:#1B45B4 !important;text-decoration:underline !important}
 
-.dhk a.dhk-sein,.dhk a.dhk-sein:visited{display:flex;align-items:center;gap:11px;margin-top:6px;padding:12px;border-radius:13px;background:#0B1B33;
-  color:#C9D4E2 !important;text-decoration:none !important;font-size:12.5px;line-height:1.4}
-.dhk-sein b{color:#fff;font-size:14px}
-.dhk-sein-ic{flex:0 0 auto;width:34px;height:34px;border-radius:10px;background:rgba(127,227,188,.14);color:#7FE3BC;display:flex;align-items:center;justify-content:center}
+.dhk a.dhk-sein,.dhk a.dhk-sein:visited{display:flex;align-items:center;gap:11px;margin-top:4px;padding:12px;border-radius:12px;background:#EAF1FF;
+  color:#4A5A70 !important;text-decoration:none !important;font-size:12.5px;font-weight:600;line-height:1.4}
+.dhk a.dhk-sein:hover{background:#DDE8FF}
+.dhk-sein b{color:#0D1B2A;font-size:14px;font-weight:800}
+.dhk-sein-ic{flex:0 0 auto;width:36px;height:36px;border-radius:10px;background:#fff;color:#2456D6;display:flex;align-items:center;justify-content:center}
 .dhk-sein-ic svg{width:19px;height:19px}
-.dhk-pijl{margin-left:auto;font-size:20px;color:#7FE3BC}
+.dhk-pijl{margin-left:auto;font-size:20px;font-weight:800;color:#2456D6}
 
 /* producten */
-.dhk-zoek{display:flex;gap:0;margin:0 0 10px;border:1.5px solid #D8E0EA;border-radius:13px;padding:4px;background:#fff}
-.dhk-zoek:focus-within{border-color:#059669}
-.dhk-zoek input{flex:1;min-width:0;height:44px;border:0;background:transparent;padding:0 10px;font:600 16px 'Plus Jakarta Sans',system-ui,sans-serif;color:#0B1B33;outline:none}
+.dhk-zoek{display:flex;gap:0;margin:0 0 10px;border:1.5px solid #D9E1EC;border-radius:12px;padding:4px;background:#fff}
+.dhk-zoek:focus-within{border-color:#2456D6}
+.dhk-zoek input{flex:1;min-width:0;height:44px;border:0;background:transparent;padding:0 10px;font:600 16px 'Montserrat',system-ui,sans-serif;color:#0D1B2A;outline:none;box-shadow:none}
+.dhk-zoek input::placeholder{color:#5B6B80}
 .dhk-zoek input::-webkit-search-cancel-button{display:none}
-.dhk-zoek button{flex:0 0 auto;height:44px;border:0;border-radius:10px;padding:0 18px;background:#059669;color:#fff;font:800 15px 'Plus Jakarta Sans',system-ui,sans-serif;cursor:pointer}
+/* zoeken is een interne knop en dus blauw; geel is er alleen voor de doorklik */
+.dhk-zoek button{flex:0 0 auto;height:44px;border:0;border-radius:10px;padding:0 18px;background:#2456D6;color:#fff;font:800 15px 'Montserrat',system-ui,sans-serif;cursor:pointer}
+.dhk-zoek button:hover{background:#1B45B4}
 .dhk-verborgen{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.dhk-prod{display:grid;grid-template-columns:60px 1fr;gap:6px 12px;align-items:center;padding:13px 0;border-bottom:1px solid #E7ECF2}
+.dhk-prod{display:grid;grid-template-columns:60px minmax(0,1fr);gap:6px 12px;align-items:center;padding:13px 0;border-bottom:1px solid #E6EBF2}
 .dhk-prod:first-child{padding-top:2px}
 .dhk-prod:last-child{border-bottom:0}
-.dhk-prod-im{width:60px;height:60px;border-radius:12px;background:#F4F7FA;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.dhk-prod-im img{max-width:52px;max-height:52px;object-fit:contain;mix-blend-mode:multiply}
-.dhk-prod-n{font-size:15px;font-weight:800;line-height:1.25;margin:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dhk-prod-im{width:60px;height:60px;border-radius:12px;background:#F4F7FF;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.dhk-prod-im img{max-width:50px;max-height:50px;object-fit:contain;mix-blend-mode:multiply}
+.dhk-prod-n{font-size:15px;font-weight:800;line-height:1.25;margin:0;color:#0D1B2A;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .dhk-prod-w{min-width:0;grid-column:1 / -1}
-@media(min-width:900px){.dhk-prod{grid-template-columns:84px 1fr;align-items:start}.dhk-prod-im{grid-row:1 / span 2;width:84px;height:84px}.dhk-prod-im img{max-width:72px;max-height:72px}.dhk-prod-w{grid-column:2}}
+@media(min-width:900px){.dhk-prod{grid-template-columns:84px minmax(0,1fr);align-items:start}.dhk-prod-im{grid-row:1 / span 2;width:84px;height:84px}.dhk-prod-im img{max-width:70px;max-height:70px}.dhk-prod-w{grid-column:2}}
 /* Een algemeen script zet op elke kaart een knop "Mail deze deal". Hier niet:
    onder de uitkomst staat al het seintje, en de knop leidt af van de klik. */
 .dhk .dpvmb{display:none !important}
-.dhk a.dhk-w,.dhk a.dhk-w:visited{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:0 11px;margin-top:6px;border-radius:11px;
-  border:1.5px solid #D8E0EA;color:#0B1B33 !important;text-decoration:none !important;font-size:14px;font-weight:700}
-.dhk a.dhk-w b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:16px;font-weight:800;white-space:nowrap}
-.dhk a.dhk-w b::after{content:' ›';font-weight:700}
-.dhk a.dhk-w.eerste,.dhk a.dhk-w.eerste:visited{background:#059669;border-color:#059669;color:#fff !important;min-height:48px;font-weight:800}
-.dhk a.dhk-w.eerste:hover{background:#047857}
-.dhk a.dhk-w:not(.eerste):hover{border-color:#10b981;background:#ECFDF5}
+.dhk a.dhk-w,.dhk a.dhk-w:visited{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:44px;padding:0 12px;margin-top:6px;border-radius:12px;
+  border:1.5px solid #D9E1EC;background:#fff;color:#0D1B2A !important;text-decoration:none !important;font-size:14px;font-weight:700}
+.dhk a.dhk-w b{font-family:'Montserrat',system-ui,sans-serif;font-size:15.5px;font-weight:800;white-space:nowrap;font-variant-numeric:tabular-nums}
+.dhk a.dhk-w b::after{content:' ›';font-weight:800}
+/* de goedkoopste winkel is de doorklik: geel met donkere tekst */
+.dhk a.dhk-w.eerste,.dhk a.dhk-w.eerste:visited{background:#F9C31F;border-color:#F9C31F;color:#0D1B2A !important;min-height:48px;font-weight:800}
+.dhk a.dhk-w.eerste:hover{background:#EDB50C;border-color:#EDB50C}
+.dhk a.dhk-w:not(.eerste):hover{border-color:#2456D6;background:#F3F7FF}
 .dhk-w span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center}
 .dhk-w i{flex:0 0 auto}
-.dhk-w i{font-style:normal;font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:800;background:rgba(255,255,255,.22);border-radius:5px;padding:3px 6px;margin-left:7px}
-.dhk a.dhk-meer{display:inline-block;margin-top:7px;font-size:13px;font-weight:800;color:#047857 !important;text-decoration:none !important;padding:6px 0}
+.dhk-w i{font-style:normal;font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:800;background:rgba(13,27,42,.12);color:#0D1B2A;border-radius:999px;padding:3px 7px;margin-left:7px}
+.dhk a.dhk-meer{display:inline-block;margin-top:7px;font-size:13px;font-weight:800;color:#2456D6 !important;text-decoration:none !important;padding:6px 0}
 
 /* laden */
-.dhk-laad i{display:block;height:58px;border-radius:13px;margin-bottom:8px;background:linear-gradient(90deg,#EEF2F6 0%,#F7F9FB 50%,#EEF2F6 100%);background-size:200% 100%;animation:dhk-l 1.2s linear infinite}
+.dhk-laad i{display:block;height:58px;border-radius:12px;margin-bottom:8px;background:linear-gradient(90deg,#EAF1FF 0%,#F4F7FF 50%,#EAF1FF 100%);background-size:200% 100%;animation:dhk-l 1.2s linear infinite}
 .dhk-laad i:first-child{height:150px}
 @keyframes dhk-l{to{background-position:-200% 0}}
 @media(prefers-reduced-motion:reduce){.dhk-laad i{animation:none}}
 
-.dhk :focus-visible{outline:3px solid #7FE3BC;outline-offset:2px}
-.dhk-paneel :focus-visible{outline-color:#059669}
+.dhk :focus-visible{outline:3px solid #2456D6;outline-offset:2px}
 
 /* 5 okt, tweede stap: alle categorieen als tabblad */
-.dhk-foto{flex:0 0 auto;width:54px;height:64px;border-radius:10px;background:#fff;border:1px solid #D8E0EA;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.dhk-foto{flex:0 0 auto;width:54px;height:64px;border-radius:11px;background:#fff;border:1px solid #E6EBF2;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .dhk-foto img{max-width:46px;max-height:56px;object-fit:contain}
-.dhk-alt-rij .dhk-foto{width:40px;height:48px}.dhk-alt-rij .dhk-foto img{max-width:34px;max-height:42px}
-.dhk-let{font-size:12.5px;line-height:1.45;color:#92400E;background:#FEF3C7;border-radius:9px;padding:8px 10px;margin:0 0 11px}
+.dhk-alt-rij .dhk-foto{width:40px;height:48px;border-radius:9px}.dhk-alt-rij .dhk-foto img{max-width:34px;max-height:42px}
+/* de waarschuwing blijft een eigen melding en wordt geen pil: die moet opvallen */
+.dhk-let{font-size:12.5px;line-height:1.45;font-weight:600;color:#6B4A00;background:#FFF3CC;border-radius:10px;padding:8px 10px;margin:0 0 11px}
 .dhk-prod-s{display:block;font-size:12px;font-weight:600;color:#5B6B80;margin-top:2px}
-.dhk-w small{font:600 11.5px 'Plus Jakarta Sans',system-ui,sans-serif;opacity:.8;margin-left:3px}
+.dhk-w small{font:600 11.5px 'Montserrat',system-ui,sans-serif;opacity:.85;margin-left:3px}
 .dhk-links{display:flex;flex-wrap:wrap;gap:8px}
-.dhk-links a{color:#047857;font-weight:800;font-size:14px}
+.dhk-links a{color:#2456D6;font-weight:800;font-size:14px}
+
+/* strook met logo's, onderaan in het bovenste vlak (variant H2) */
+.dhk-strook{min-width:0;border-top:1px solid #CFDAF0;padding-top:12px;margin-top:2px}
+.dhk-strook-kop{font-size:11.5px;line-height:1.2;font-weight:800;color:#5B6B80;text-transform:uppercase;letter-spacing:.08em;margin:0 0 8px;white-space:nowrap}
+.dhk-logos{display:flex;gap:7px;flex-wrap:nowrap;overflow:hidden;min-width:0}
+.dhk-logos img{flex:0 0 34px;width:34px;height:34px;border-radius:10px;border:1px solid #D9E1EC;background:#fff;padding:5px;object-fit:contain}
+@media(min-width:900px){.dhk-strook{grid-column:1 / -1;display:flex;align-items:center;gap:18px;padding-top:18px;margin-top:0}
+  .dhk-strook-kop{margin:0}.dhk-logos{gap:9px}.dhk-logos img{flex-basis:38px;width:38px;height:38px;border-radius:11px;padding:6px}}
 </style>
 <script>
 (function () {
@@ -233,8 +324,8 @@
     budgetmobiel: 'budgetmobiel.nl', delta: 'delta.nl' };
   function logo(dom) {
     if (!dom) return '';
-    return '<img class="dhk-logo" alt="" loading="lazy" width="36" height="36" onerror="this.style.display=\'none\'" ' +
-      'src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://' + esc(dom) + '">';
+    return '<img class="dhk-logo" alt="" loading="lazy" width="44" height="44" onerror="this.style.display=\'none\'" ' +
+      'src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://' + esc(dom) + '">';
   }
   function merkLogo(provider) { return logo(DOMEIN[String(provider || '').toLowerCase().replace(/[^a-z0-9]/g, '')]); }
   function foto(src) {
@@ -254,7 +345,12 @@
   /* =====================================================================
      Tabbladen met een aanbod: een beste keuze en twee alternatieven.
      Elk item: naam, sub, prijs, per, onder, let, url, knop, beeld, aff.
+     5 okt, nieuwe stijl: tags (kleine pillen onder de beste keuze, meestal
+     looptijd en totaalbedrag) en kort (de kenmerken zonder de looptijd, want
+     die staat dan al in een pil). Ontbreken ze, dan valt de kaart terug op
+     onder en sub.
      ===================================================================== */
+  var VINK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
   var AANBOD = {
     sim: {
       vraag: 'Wat is voor jou belangrijk?',
@@ -272,6 +368,7 @@
             var b = /onbeperkt/i.test(k.minutes || '') ? 'onbeperkt bellen' : (k.minutes || '');
             var net = k.network && String(k.network).toLowerCase() !== String(k.provider).toLowerCase() ? 'netwerk van ' + k.network : '';
             return { k: k, naam: k.provider, sub: [d, b, duur(k), net].filter(Boolean).join(' · '), prijs: p, per: 'per maand',
+              kort: [d, b, net].filter(Boolean).join(' · '), tags: [duur(k), euro(p * m) + ' over ' + m + ' maanden'],
               rang2: -(k.unlimited ? 9999 : k.dataGB || 0),
               onder: euro(p * m) + ' over ' + m + ' maanden', url: ga(k, 'simonly'), knop: k.provider, beeld: merkLogo(k.provider), aff: true };
           });
@@ -303,6 +400,8 @@
             return { k: k, naam: k.device, sub: [k.provider, d, k.minutes, duur(k)].filter(Boolean).join(' · '),
               prijs: p, per: een > 0 ? 'per maand + ' + euro(een) + ' vooraf' : 'per maand',
               rang: totaal / m, onder: onder + ' · samen ' + euro(totaal) + ' over ' + m + ' maanden',
+              tags: (toestel > 0 && abbo > 0 ? ['Toestel ' + euro(toestel), 'Abonnement ' + euro(abbo) + ' per maand'] : [])
+                .concat(['Samen ' + euro(totaal) + ' over ' + m + ' maanden']),
               url: ga(k, 'telefoon'), knop: k.provider, beeld: foto(k.image) || merkLogo(k.provider), aff: true };
           });
         });
@@ -325,6 +424,8 @@
             var p = parseFloat(k.price), m = mnd(k);
             return { k: k, naam: k.provider, sub: [k.speed, k.tv ? 'met tv' : 'alleen internet', duur(k)].filter(Boolean).join(' · '),
               prijs: p, per: 'per maand', rang2: -(k.speedMbit || 0),
+              kort: [k.speed, k.tv ? 'met tv' : 'alleen internet'].filter(Boolean).join(' · '),
+              tags: [duur(k)].concat(m ? [euro(p * m) + ' over ' + m + ' maanden'] : []),
               onder: m ? euro(p * m) + ' over ' + m + ' maanden' : '', url: ga(k, 'internet'), knop: k.provider, beeld: merkLogo(k.provider), aff: true };
           });
         });
@@ -350,6 +451,7 @@
             (h.items || []).forEach(function (i) {
               uit.push({ hh: h.id, naam: i.naam, sub: i.soort, prijs: i.maand, per: 'per maand', rang: i.jaar,
                 onder: euro(i.jaar) + ' per jaar, de hele rekening: levering, belasting en netbeheer',
+                tags: [euro(i.jaar) + ' per jaar', 'Hele rekening: levering, belasting en netbeheer'],
                 let: i.korting ? 'Inclusief ' + i.korting + '. Die geldt alleen in het eerste jaar.' : '',
                 url: i.url, knop: i.naam, beeld: logo(i.dom), aff: !!i.aff });
             });
@@ -407,12 +509,12 @@
     function rel(x) { return x.aff ? 'nofollow sponsored noopener' : 'nofollow noopener'; }
     var b = lijst[0];
     var h = '<div class="dhk-best">' +
-      '<span class="dhk-lab">Beste keuze · ' + esc(chip.wat) + '</span>' +
+      '<span class="dhk-lab">' + VINK + 'Beste keuze · ' + esc(chip.wat) + '</span>' +
       '<div class="dhk-best-rij">' + (b.beeld || '') +
-        '<div class="dhk-best-naam"><b>' + esc(b.naam) + '</b><span>' + esc(b.sub) + '</span></div>' +
+        '<div class="dhk-best-naam"><b>' + esc(b.naam) + '</b><span>' + esc(b.tags && b.kort ? b.kort : b.sub) + '</span></div>' +
         '<div class="dhk-prijs">' + euro(b.prijs) + '<small>' + esc(b.per) + '</small></div>' +
       '</div>' +
-      (b.onder ? '<p class="dhk-totaal">' + esc(b.onder) + '</p>' : '<p class="dhk-totaal"></p>') +
+      '<p class="dhk-tags">' + (b.tags || (b.onder ? [b.onder] : [])).map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('') + '</p>' +
       (b.let ? '<p class="dhk-let">' + esc(b.let) + '</p>' : '') +
       '<a class="dhk-knop" rel="' + rel(b) + '" target="_blank" href="' + esc(b.url) + '" data-pos="1" data-naam="' + esc(b.knop) + '">Bekijk bij ' + esc(b.knop) + ' ›</a>' +
       '</div>';
@@ -595,6 +697,10 @@
       '<span><b>Zit je nog vast aan je contract?</b><br>Krijg een mail op de dag dat je kunt overstappen.</span>' +
       '<span class="dhk-pijl" aria-hidden="true">›</span></a>';
   }
+  // "Hoe is deze lijst bepaald?" staat nu voor de uitleg. De aanhef "Zo kiezen
+  // wij:" zou dan dubbel zijn en valt weg; de rest van de tekst is ongewijzigd.
+  var HOE = '<b class="dhk-hoe">Hoe is deze lijst bepaald?</b> ';
+  function uitleg(t) { t = String(t || '').replace(/^Zo kiezen wij:\s*/, ''); return esc(t.charAt(0).toUpperCase() + t.slice(1)); }
   function bouw(naam) {
     var st = staat[naam];
     if (AANBOD[naam]) {
@@ -602,7 +708,7 @@
       var chips = t.chips.filter(function (c) { return st.items.some(c.test); });
       paneel.innerHTML = '<p class="dhk-vraag">' + esc(t.vraag) + '</p>' + chipsHtml(chips, st.keuze) +
         '<div class="dhk-uit" aria-live="polite"></div>' +
-        '<p class="dhk-regel"><span class="dhk-voet"></span>' + esc(t.regel) + '</p>' +
+        '<p class="dhk-regel">' + HOE + '<span class="dhk-voet"></span>' + uitleg(t.regel) + '</p>' +
         '<a class="dhk-alle" href="' + esc(t.alle[1]) + '">' + esc(t.alle[0]) + ' ›</a>' + (t.sein ? sein() : '');
       tekenAanbod(naam);
     } else {
@@ -612,7 +718,7 @@
           '<input id="dhk-q" name="q" type="search" autocomplete="off" placeholder="Zoek op merk of model" enterkeyhint="search">' +
           '<button type="submit">Zoek</button></form>' : '') +
         chipsHtml(p.chips, st.keuze) + '<div class="dhk-uit" aria-live="polite"></div>' +
-        '<p class="dhk-regel">' + esc(p.regel) + '</p><a class="dhk-alle" href="' + esc(PAGINA[naam]) + '"></a>';
+        '<p class="dhk-regel">' + HOE + uitleg(p.regel) + '</p><a class="dhk-alle" href="' + esc(PAGINA[naam]) + '"></a>';
       tekenProd(naam);
     }
   }
@@ -680,11 +786,16 @@
 {
   "name": "Hero kiezer",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Bovenregel", "default": "Onafhankelijk · elke dag bijgewerkt" },
+    { "type": "text", "id": "eyebrow", "label": "Bovenregel", "info": "De pil boven de kop, met een groene stip ervoor.", "default": "Onafhankelijk · prijzen van vandaag" },
     { "type": "text", "id": "kop", "label": "Kop", "default": "Tik en zie direct" },
     { "type": "text", "id": "kop_accent", "label": "Kop, gekleurd deel", "default": "wat het kost." },
     { "type": "textarea", "id": "sub", "label": "Ondertitel (alleen op een breed scherm)", "default": "Geen formulier vooraf. Je ziet meteen de laagste prijs, met de alternatieven eronder, en je gaat met een tik naar de aanbieder." },
     { "type": "text", "id": "seintje_url", "label": "Link contract-seintje", "info": "Staat onder sim only, telefoon en internet. Leeg = niet tonen.", "default": "/pages/mijn-contracten" },
+
+    { "type": "header", "content": "Vertrouwenspunten en logo's" },
+    { "type": "textarea", "id": "punten", "label": "Vertrouwenspunten", "info": "Een per regel: vet|toelichting. Breed scherm: onder de ondertitel. Telefoon: als blok onder de kiezer.", "default": "Volgorde op prijs|niet op vergoeding\nPrijzen van vandaag|elke dag bijgewerkt\nGratis en onafhankelijk|geen account nodig" },
+    { "type": "text", "id": "logos_kop", "label": "Logo's: kopje", "default": "Wij vergelijken onder andere" },
+    { "type": "text", "id": "logos", "label": "Logo's: domeinen", "info": "Met komma's ertussen. Leeg = geen strook. Een logo dat niet laadt verdwijnt vanzelf.", "default": "kpn.com, odido.nl, vodafone.nl, ziggo.nl, lebara.nl, youfone.nl, ben.nl, coolblue.nl, mediamarkt.nl, bol.com, essent.nl, vattenfall.nl" },
 
     { "type": "header", "content": "Producten en gaming" },
     { "type": "textarea", "id": "groepen", "label": "Snelkeuzes producten", "info": "naam|categorie voor de link 'alle'|bron. Bron is product-id:categorie met komma's ertussen, of lijst:categorie:type:minimumprijs.", "default": "Populair||e0045496337414:gaming,e8806097827481:telefoons,e0195950643589:telefoons\nTelefoons|telefoons|e0195950643589:telefoons,e8806097827481:telefoons,e0195950627442:telefoons\nLaptops|laptops|e0195950687408:laptops,e4711121778834:laptops,e4711636476805:laptops\nTv's|tv-beeld|e8806096360576:tv-beeld,e4548736183001:tv-beeld,e5901292530365:tv-beeld\nAudio|audio|lijst:audio::80" },

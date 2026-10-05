@@ -20,7 +20,14 @@
     (dpv-ai-zoek) met de vraag al ingevuld, zodat je in gewone taal kunt zoeken
     in alle categorieën. Is de Zoekhulp er niet, dan valt hij terug op de
     zoekpagina van de winkel.
+
+  5 okt, huisstijl "2-rond" (STIJLGIDS.md): licht in plaats van donkerblauw.
+  In de compacte stand heet het blok "Alle vergelijkers" en heeft elke tegel
+  een naam met een regel eronder. Bij sim only, telefoon en internet staat er
+  "vanaf" voor het bedrag, want dat is de laagste prijs uit de feed.
 {%- endcomment -%}
+
+<script>if(!document.getElementById('dpv-mont')){var l=document.createElement('link');l.id='dpv-mont';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap';document.head.appendChild(l);}</script>
 
 {%- assign peil = section.settings.peildatum -%}
 
@@ -85,13 +92,14 @@
                 {%- when 'energie' -%}<path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/>
                 {%- when 'zorg' -%}<path d="M12 2.5l8 3v6c0 5-3.5 8.3-8 10-4.5-1.7-8-5-8-10v-6z"/><path d="M12 8v7M8.5 11.5h7"/>
                 {%- when 'boodschappen' -%}<path d="M3 9h18l-2 10.5H5L3 9zM8 9l3-5M16 9l-3-5"/>
+                {%- when 'producten' -%}<rect x="3" y="4.5" width="18" height="12" rx="1.8"/><path d="M8 20h8M12 16.5V20"/>
                 {%- when 'gaming' -%}<path d="M7.5 7.5h9a5 5 0 0 1 4.9 4l.9 4.6a2.4 2.4 0 0 1-4.2 2l-1.9-2.1H7.8l-1.9 2.1a2.4 2.4 0 0 1-4.2-2l.9-4.6a5 5 0 0 1 4.9-4Z"/><path d="M7.2 10.6v3M5.7 12.1h3"/>
                 {%- else -%}<path d="M12 4v16M5 7h14M5 7l-2.5 6a2.8 2.8 0 0 0 5 0L5 7ZM19 7l-2.5 6a2.8 2.8 0 0 0 5 0L19 7ZM8.5 20h7"/>
               {%- endcase -%}
             </svg></span>
             <span class="dhr-naam">{{ d[1] | strip }}{%- if d[5] != blank %} <i class="dhr-nw">{{ d[5] | strip }}</i>{% endif -%}</span>
             <span class="dhr-onder" data-veld="onder">{{ d[3] | strip }}</span>
-            <span class="dhr-prijs" data-veld="prijs">{{ d[2] | strip }}</span>
+            <span class="dhr-regel">{%- if cat == 'simonly' or cat == 'telefoon' or cat == 'internet' -%}vanaf {% endif -%}<span class="dhr-prijs" data-veld="prijs">{{ d[2] | strip }}</span></span>
           </a>
         {%- endif -%}
       {%- endfor -%}
@@ -102,62 +110,73 @@
 </section>
 
 <style>
-.dhr{background:#0B1B33;background-image:radial-gradient(900px 560px at 18% 20%,#16305C 0%,transparent 72%);
-  color:#fff;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+/* 5 okt, huisstijl "2-rond": dit blok was donkerblauw en is nu licht. Op de
+   homepage staat het in de compacte stand: een raster met acht tegels onder de
+   kiezer, afwisselend blauw en groen getint. De gewone stand (grote kop, knop
+   en zoekbalk) wordt niet meer gebruikt en is alleen leesbaar licht gemaakt. */
+.dhr{background:#fff;color:#0D1B2A;font-family:'Montserrat',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
 .dhr *{box-sizing:border-box}
-.dhr-in{max-width:1180px;margin:0 auto;padding:34px 20px 10px;display:grid;gap:26px}
-@media(min-width:900px){.dhr-in{grid-template-columns:1.05fr 1fr;gap:44px;padding:52px 20px 16px;align-items:start}}
+.dhr-in{max-width:1180px;margin:0 auto;padding:30px 16px 10px;display:grid;gap:24px;grid-template-columns:minmax(0,1fr)}
+@media(min-width:900px){.dhr-in{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:44px;padding:44px 20px 16px;align-items:start}}
 
-.dhr-eyebrow{font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:#7FE3BC;font-weight:800;margin:0 0 9px}
-.dhr h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:31px;line-height:1.06;letter-spacing:-.035em;font-weight:800;margin:0 0 10px;color:#fff}
-@media(min-width:900px){.dhr h1{font-size:44px}}
-.dhr-sub{font-size:15px;line-height:1.55;color:#9FB0C4;margin:0 0 20px;max-width:46ch}
+.dhr-eyebrow{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#5B6B80;font-weight:800;margin:0 0 9px}
+.dhr h1{font-family:'Montserrat',system-ui,sans-serif;font-size:28px;line-height:1.05;letter-spacing:-.03em;font-weight:800;margin:0 0 10px;color:#0D1B2A}
+@media(min-width:900px){.dhr h1{font-size:46px}}
+.dhr-sub{font-size:15px;line-height:1.55;color:#4A5A70;font-weight:500;margin:0 0 20px;max-width:46ch}
 
+/* de knop gaat naar een eigen pagina en niet naar een aanbieder: blauw */
 .dhr-knoppen{display:flex;gap:9px;flex-wrap:wrap;margin:0 0 12px}
 .dhr a.dhr-knop,.dhr a.dhr-knop:visited{display:flex;align-items:center;justify-content:center;min-height:50px;padding:0 24px;
-  background:#10b981;color:#fff !important;border-radius:12px;font-size:15px;font-weight:800;text-decoration:none !important}
-.dhr a.dhr-knop:hover{background:#0fa876}
+  background:#2456D6;color:#fff !important;border-radius:12px;font-size:15px;font-weight:800;text-decoration:none !important}
+.dhr a.dhr-knop:hover{background:#1B45B4}
 @media(max-width:560px){.dhr a.dhr-knop{width:100%}}
 
 .dhr-zoek{position:relative;display:flex;align-items:center;gap:0;margin:0 0 22px;max-width:520px;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.28);border-radius:12px;padding:4px 4px 4px 0}
-.dhr-zoek:focus-within{border-color:#7FE3BC;background:rgba(255,255,255,.12)}
-.dhr-zoek-ic{flex:0 0 auto;margin:0 8px 0 14px;color:#9FB0C4}
-.dhr-zoek input{flex:1;min-width:0;height:42px;border:0;background:transparent;color:#fff;font-size:15px;font-family:inherit;outline:none}
-.dhr-zoek input::placeholder{color:#8FA0B4}
+  background:#fff;border:1.5px solid #D9E1EC;border-radius:12px;padding:4px 4px 4px 0}
+.dhr-zoek:focus-within{border-color:#2456D6}
+.dhr-zoek-ic{flex:0 0 auto;margin:0 8px 0 14px;color:#5B6B80}
+.dhr-zoek input{flex:1;min-width:0;height:42px;border:0;background:transparent;color:#0D1B2A;font-size:15px;font-family:inherit;outline:none;box-shadow:none}
+.dhr-zoek input::placeholder{color:#5B6B80}
 .dhr-zoek input::-webkit-search-cancel-button{display:none}
-.dhr-zoek button{flex:0 0 auto;height:42px;border:0;border-radius:9px;padding:0 18px;background:#fff;color:#0B1B33;font-weight:800;font-size:14.5px;cursor:pointer;font-family:inherit}
-.dhr-zoek button:hover{background:#E7F6EF}
+.dhr-zoek button{flex:0 0 auto;height:42px;border:0;border-radius:10px;padding:0 18px;background:#2456D6;color:#fff;font-weight:800;font-size:14.5px;cursor:pointer;font-family:inherit}
+.dhr-zoek button:hover{background:#1B45B4}
 .dhr-verborgen{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-.dhr-merken{padding-top:16px;border-top:1px solid rgba(255,255,255,.12)}
-.dhr-merken-kop{font-size:10.5px;color:#8FA0B4;margin:0 0 9px}
+.dhr-merken{padding-top:16px;border-top:1px solid #E6EBF2}
+.dhr-merken-kop{font-size:11.5px;font-weight:700;color:#5B6B80;margin:0 0 9px}
 .dhr-logos{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-.dhr-logos img{width:22px;height:22px;border-radius:5px;object-fit:contain;filter:grayscale(1);opacity:.72;transition:filter .15s,opacity .15s}
-.dhr-logos img:hover{filter:none;opacity:1}
-.dhr-rest{font-size:11px;color:#8FA0B4}
+.dhr-logos img{width:22px;height:22px;border-radius:5px;object-fit:contain}
+.dhr-rest{font-size:11.5px;font-weight:600;color:#5B6B80}
 
 /* 5 okt: tegels in twee kolommen met een pictogram, in plaats van een lijst.
-   Korter op een telefoon, en producten, gaming en boodschappen passen erbij. */
-.dhr-rechts{display:grid;grid-template-columns:1fr 1fr;gap:9px;align-content:start}
-.dhr a.dhr-rij,.dhr a.dhr-rij:visited{display:flex;flex-direction:column;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);
-  border-radius:14px;padding:13px 13px 12px;text-decoration:none !important;color:#fff !important;transition:background .14s,border-color .14s;min-width:0}
-.dhr a.dhr-rij:hover{background:rgba(255,255,255,.12);border-color:rgba(127,227,188,.5)}
-.dhr-ic{width:38px;height:38px;border-radius:11px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;color:#7FE3BC;
-  background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.05));border:1px solid rgba(255,255,255,.2)}
+   Korter op een telefoon, en producten, gaming en boodschappen passen erbij.
+   Nieuwe stijl: geen rand, om en om blauw en groen getint. */
+.dhr-rechts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:9px;align-content:start}
+.dhr a.dhr-rij,.dhr a.dhr-rij:visited{display:flex;flex-direction:column;background:#EAF1FF;border:0;
+  border-radius:16px;padding:15px;text-decoration:none !important;color:#0D1B2A !important;transition:background .14s;min-width:0}
+.dhr a.dhr-rij:nth-child(even){background:#E3F4EB}
+.dhr a.dhr-rij:hover{background:#DDE8FF}
+.dhr a.dhr-rij:nth-child(even):hover{background:#D5EEE1}
+.dhr-ic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:10px;color:#2456D6;background:#fff}
 .dhr-ic svg{width:22px;height:22px}
-.dhr-naam{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:15px;font-weight:800;line-height:1.2}
-.dhr-nw{font-style:normal;font-family:'Plus Jakarta Sans',sans-serif;font-size:9.5px;font-weight:800;letter-spacing:.04em;background:#6d28d9;color:#fff;border-radius:5px;padding:2px 5px;vertical-align:middle;white-space:nowrap}
-.dhr-onder{display:block;font-size:11.5px;color:#9FB0C4;margin:3px 0 8px;line-height:1.35}
-.dhr-prijs{margin-top:auto;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;color:#7FE3BC;white-space:nowrap}
-@media(min-width:900px){.dhr-naam{font-size:16px}.dhr-prijs{font-size:18px}}
+.dhr-naam{font-family:'Montserrat',system-ui,sans-serif;font-size:16px;font-weight:800;line-height:1.2;letter-spacing:-.01em}
+.dhr-nw{font-style:normal;font-family:'Montserrat',system-ui,sans-serif;font-size:9.5px;font-weight:800;letter-spacing:.04em;background:#2456D6;color:#fff;border-radius:999px;padding:2px 7px;vertical-align:middle;white-space:nowrap}
+.dhr-onder{display:block;font-size:12px;font-weight:600;color:#4A5A70;margin:3px 0 8px;line-height:1.35}
+.dhr-regel{margin-top:auto;font-size:12.5px;line-height:1.4;font-weight:700;color:#4A5A70;font-variant-numeric:tabular-nums}
+.dhr-prijs{font-weight:700}
+@media(min-width:900px){.dhr-rechts{gap:12px}.dhr-naam{font-size:17px}}
 
-.dhr-compact{background-image:none}
-.dhr-compact .dhr-in{display:block;padding:6px 16px 10px}
-@media(min-width:900px){.dhr-compact .dhr-in{padding:0 20px 16px}.dhr-compact .dhr-rechts{grid-template-columns:repeat(4,1fr)}}
-.dhr-ckop{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;letter-spacing:-.02em;color:#fff;margin:0 0 12px}
-.dhr-fijn{max-width:1180px;margin:0 auto;padding:0 20px 26px;font-size:11px;color:#6F819A;line-height:1.5}
-.dhr :focus-visible{outline:3px solid #7FE3BC;outline-offset:2px}
+/* compact: naam met een regel eronder. De lange onderregel (totaal over de
+   looptijd) staat al in de kiezer erboven en blijft hier weg. */
+.dhr-compact .dhr-in{display:block;padding:26px 16px 10px}
+@media(min-width:900px){.dhr-compact .dhr-in{padding:34px 20px 14px}.dhr-compact .dhr-rechts{grid-template-columns:repeat(4,minmax(0,1fr))}}
+.dhr-compact .dhr-onder{display:none}
+.dhr-compact .dhr-regel{margin-top:3px}
+.dhr-ckop{font-family:'Montserrat',system-ui,sans-serif;font-size:21px;line-height:1.2;font-weight:800;letter-spacing:-.025em;color:#0D1B2A;margin:0 0 11px}
+@media(min-width:900px){.dhr-ckop{font-size:26px;margin-bottom:14px}}
+.dhr-fijn{max-width:1180px;margin:0 auto;padding:0 16px 22px;font-size:11.5px;font-weight:500;color:#5B6B80;line-height:1.5}
+@media(min-width:900px){.dhr-fijn{padding:0 20px 26px}}
+.dhr :focus-visible{outline:3px solid #2456D6;outline-offset:2px}
 </style>
 
 <script>
@@ -256,7 +275,7 @@
   "settings": [
     { "type": "text", "id": "worker_url", "label": "Worker", "default": "https://awin.business-347.workers.dev" },
     { "type": "checkbox", "id": "compact", "label": "Alleen de tegels tonen", "info": "Voor als de Hero kiezer erboven staat.", "default": false },
-    { "type": "text", "id": "compact_kop", "label": "Kop boven de tegels", "default": "Alle categorie\u00ebn, met de laagste prijs van vandaag" },
+    { "type": "text", "id": "compact_kop", "label": "Kop boven de tegels", "default": "Alle vergelijkers" },
     { "type": "text", "id": "peildatum", "label": "Peildatum", "default": "19 september 2026" },
     { "type": "text", "id": "eyebrow", "label": "Bovenregel", "default": "Onafhankelijk \u00b7 vanochtend gemeten" },
     { "type": "text", "id": "kop", "label": "Kop", "default": "Wat het vandaag kost" },
@@ -268,7 +287,7 @@
     { "type": "text", "id": "zoek_placeholder", "label": "Tekst in zoekbalk", "default": "Of zoek zelf in gewone taal" },
 
     { "type": "header", "content": "Prijsregels" },
-    { "type": "textarea", "id": "rijen", "label": "Regels", "info": "categorie|naam|prijs|onderregel|link|label (label is optioneel, bijvoorbeeld NIEUW)", "default": "simonly|Sim only|\u20ac3,00 p/m|\u20ac72 over 24 maanden|/pages/sim-only\ntelefoon|Telefoon met abonnement|\u20ac8,00 p/m|\u20ac96 over 12 maanden|/pages/telefoonabonnement\ninternet|Internet & TV|\u20ac9,50 p/m|\u20ac228 over 24 maanden|/pages/internet-tv\nenergie|Energie|\u20ac1.412 p/j|hele rekening, incl. belastingteruggave|/pages/energie\nzorg|Zorgpremie 2026|\u20ac122,89 p/m|let op: \u20ac885 eigen risico|/pages/zorgverzekering" },
+    { "type": "textarea", "id": "rijen", "label": "Regels", "info": "categorie|naam|prijs|onderregel|link|label (label is optioneel, bijvoorbeeld NIEUW). In de compacte stand staat alleen naam en prijs op de tegel; bij producten, gaming en boodschappen zet je in het prijsveld een korte omschrijving.", "default": "simonly|Sim only|\u20ac3,00 p/m|\u20ac72 over 24 maanden|/pages/sim-only\ntelefoon|Telefoon met abonnement|\u20ac8,00 p/m|\u20ac96 over 12 maanden|/pages/telefoonabonnement\ninternet|Internet & TV|\u20ac9,50 p/m|\u20ac228 over 24 maanden|/pages/internet-tv\nenergie|Energie|\u20ac1.412 p/j|hele rekening, incl. belastingteruggave|/pages/energie\nzorg|Zorgpremie 2026|\u20ac122,89 p/m|let op: \u20ac885 eigen risico|/pages/zorgverzekering" },
 
     { "type": "header", "content": "Merken" },
     { "type": "text", "id": "merken_kop", "label": "Kopje", "default": "Wij vergelijken onder andere" },

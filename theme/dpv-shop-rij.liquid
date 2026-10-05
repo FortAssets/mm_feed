@@ -16,6 +16,14 @@
 
   Let op: dit thema verbergt lege divs (div:empty). Lege plekken krijgen daarom
   &nbsp; in plaats van niets.
+
+  5 okt, huisstijl "2-rond" (STIJLGIDS.md): nieuwe kaart. Foto in een
+  lichtblauw vlak, groen label "scheelt €X" (het verschil tussen de laagste en
+  de hoogste getoonde winkel), de overige winkels als regels en onderaan de
+  gele knop naar de goedkoopste winkel. De donkere band is donkerblauw in
+  plaats van paars. Staat "Black Friday" in de kop of het label, dan krijgt die
+  band het verschoven gele vlak. De bronnen, de keuze van producten (mix,
+  geloofwaardig) en het lui laden zijn niet aangeraakt.
 {%- endcomment -%}
 
 {%- assign toon = true -%}
@@ -34,9 +42,13 @@
 
 {%- if toon -%}
 {%- assign rid = 'dsr-' | append: section.id -%}
+{%- assign bf_tekst = section.settings.kop | append: ' ' | append: section.settings.label | downcase -%}
+{%- assign bf_rij = false -%}
+{%- if bf_tekst contains 'black friday' -%}{%- assign bf_rij = true -%}{%- endif -%}
 
 {%- if section.settings.anker != blank -%}<span id="{{ section.settings.anker | handleize }}" style="display:block;position:relative;top:-80px;visibility:hidden"></span>{%- endif -%}
-<section class="dsr dsr-{{ section.settings.vlak }}" id="{{ rid }}"
+<script>if(!document.getElementById('dpv-mont')){var l=document.createElement('link');l.id='dpv-mont';l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap';document.head.appendChild(l);}</script>
+<section class="dsr dsr-{{ section.settings.vlak }}{% if bf_rij %} dsr-bf{% endif %}" id="{{ rid }}"
          data-api="{{ section.settings.api }}"
          data-bron="{{ section.settings.bron }}"
          data-cat="{{ section.settings.cat }}"
@@ -84,96 +96,112 @@
 {%- if section.settings.bf_knop -%}{%- render 'dpv-bf-knop', api: section.settings.bf_api, tot: section.settings.bf_tot -%}{%- endif -%}
 
 <style>
-#{{ rid }}{--pa:#5b3b8c;--pa2:#F6F4FB;--rd:#E2DCF2;--gr:#10b981;--rood:#e11d48;--ink:#0D1B2A;--mut:#5B6B80;
- max-width:1180px;margin:0 auto;padding:18px 0 10px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
-/* Een band eromheen. Op de homepage staan er drie blokken met kaarten onder
-   elkaar (de iPhone-strip, de Black Friday-strip en deze rij) en dan loopt
-   alles in elkaar over. Met een eigen vlak is het een blok in plaats van nog
-   een rij. De band loopt over de volle breedte, de inhoud blijft in het midden. */
-#{{ rid }}.dsr-vlak,#{{ rid }}.dsr-donker{max-width:none;padding:26px 0 18px;margin:18px 0}
-#{{ rid }}.dsr-vlak{background:var(--pa2);border-top:1px solid var(--rd);border-bottom:1px solid var(--rd)}
-#{{ rid }}.dsr-donker{background:linear-gradient(135deg,#1b1033,#2d1b52 60%,#3d2370);border:0}
-#{{ rid }}.dsr-vlak .dsr-kop,#{{ rid }}.dsr-vlak .dsr-spoor,#{{ rid }}.dsr-vlak .dsr-fijn,
-#{{ rid }}.dsr-donker .dsr-kop,#{{ rid }}.dsr-donker .dsr-spoor,#{{ rid }}.dsr-donker .dsr-fijn{
- max-width:1180px;margin-left:auto;margin-right:auto}
+/* 5 okt, huisstijl "2-rond" (STIJLGIDS.md): geen paars en geen fel groen meer.
+   Kaarten met de foto in een lichtblauw vlak, een groen label "scheelt",
+   de winkels als regels en onderaan de gele knop naar de goedkoopste winkel. */
+#{{ rid }}{--bl:#2456D6;--bl2:#1B45B4;--tint:#EAF1FF;--licht:#F4F7FF;--rd:#E6EBF2;--rd2:#D9E1EC;--gr:#3FAE7A;--geel:#F9C31F;--ink:#0D1B2A;--mut:#4A5A70;--mut2:#5B6B80;
+ max-width:1180px;margin:0 auto;padding:22px 0 8px;font-family:'Montserrat',system-ui,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+/* Een band eromheen. Op de homepage staan er meerdere blokken met kaarten
+   onder elkaar en dan loopt alles in elkaar over. Met een eigen vlak is het
+   een blok in plaats van nog een rij. De lichte band loopt over de volle
+   breedte, de inhoud blijft in het midden. */
+#{{ rid }}.dsr-vlak{max-width:none;padding:26px 0 18px;margin:22px 0;background:var(--licht)}
+#{{ rid }}.dsr-vlak .dsr-kop,#{{ rid }}.dsr-vlak .dsr-spoor,#{{ rid }}.dsr-vlak .dsr-fijn{max-width:1180px;margin-left:auto;margin-right:auto}
+/* De donkere band was paars en liep over de volle breedte. Nu donkerblauw met
+   ronde hoeken, even breed als de rest van de pagina. Een Black Friday-rij
+   krijgt het verschoven gele vlak; dat past in de marge naast de band. */
+#{{ rid }}.dsr-donker{width:calc(100% - 32px);max-width:1140px;margin:24px auto;padding:22px 0 16px;background:#0D1B2A;border:0;border-radius:18px}
+#{{ rid }}.dsr-donker.dsr-bf{box-shadow:8px 8px 0 var(--geel);margin-bottom:32px}
+@media(min-width:900px){#{{ rid }}.dsr-donker{width:calc(100% - 40px);margin:30px auto;padding:26px 0 18px}
+  #{{ rid }}.dsr-donker.dsr-bf{box-shadow:10px 10px 0 var(--geel);margin-bottom:40px}}
 #{{ rid }}.dsr-donker h2{color:#fff}
-#{{ rid }}.dsr-donker .dsr-eyebrow{color:#c3aef0}
-#{{ rid }}.dsr-donker .dsr-sub{color:#ddd3f5}
-#{{ rid }}.dsr-donker .dsr-alles,#{{ rid }}.dsr-donker .dsr-alles:visited{color:#fff}
-#{{ rid }}.dsr-donker .dsr-fijn{color:#a899c9}
+#{{ rid }}.dsr-donker .dsr-eyebrow{color:#B9C7DB}
+#{{ rid }}.dsr-donker .dsr-sub{color:#D5DEEA}
+#{{ rid }}.dsr-donker .dsr-alles,#{{ rid }}.dsr-donker .dsr-alles:visited,
+#{{ rid }}.dsr-donker .dsr-gids,#{{ rid }}.dsr-donker .dsr-gids:visited{color:#fff}
+#{{ rid }}.dsr-donker .dsr-fijn{color:#B9C7DB}
 #{{ rid }} *{box-sizing:border-box}
-#{{ rid }} .dsr-kop{display:flex;align-items:flex-end;gap:12px;padding:0 16px;margin:0 0 12px}
-#{{ rid }} .dsr-kop>div{flex:1;min-width:0}
-#{{ rid }} .dsr-eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--pa);font-weight:800;margin:0 0 5px}
-#{{ rid }} h2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;line-height:1.2;
- letter-spacing:-.025em;font-weight:800;margin:0}
-#{{ rid }} .dsr-sub{font-size:13.5px;line-height:1.55;color:var(--mut);margin:5px 0 0;max-width:60ch}
+#{{ rid }} .dsr-kop{display:flex;align-items:flex-end;flex-wrap:wrap;gap:8px 12px;padding:0 16px;margin:0 0 12px}
+#{{ rid }} .dsr-kop>div{flex:1 1 240px;min-width:0}
+#{{ rid }} .dsr-eyebrow{font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--mut2);font-weight:800;margin:0 0 5px}
+#{{ rid }} h2{font-family:'Montserrat',system-ui,sans-serif;font-size:21px;line-height:1.2;letter-spacing:-.025em;font-weight:800;margin:0;color:var(--ink)}
+#{{ rid }} .dsr-sub{font-size:13.5px;line-height:1.55;font-weight:500;color:var(--mut);margin:5px 0 0;max-width:60ch}
 #{{ rid }} .dsr-alles,#{{ rid }} .dsr-alles:visited{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
- font-size:13.5px;font-weight:800;color:var(--pa);text-decoration:none;white-space:nowrap}
-#{{ rid }} .dsr-gids,#{{ rid }} .dsr-gids:visited{display:inline-block;margin-top:7px;font-size:13.5px;font-weight:700;color:#059669;text-decoration:underline;text-underline-offset:3px}
-#{{ rid }}.dsr-donker .dsr-gids{color:#7FE3BC}
+ font-size:14px;font-weight:800;color:var(--bl);text-decoration:none;white-space:nowrap}
+#{{ rid }} .dsr-gids,#{{ rid }} .dsr-gids:visited{display:inline-block;margin-top:7px;font-size:13.5px;font-weight:700;color:var(--bl);text-decoration:underline;text-underline-offset:3px}
 #{{ rid }} .dsr-alles svg{width:15px;height:15px}
 #{{ rid }} .dsr-alles:hover{text-decoration:underline}
+@media(min-width:900px){#{{ rid }} h2{font-size:26px}#{{ rid }} .dsr-kop{padding:0 20px;margin-bottom:14px}}
 
-#{{ rid }} .dsr-spoor{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 14px;scroll-snap-type:x mandatory;
+#{{ rid }} .dsr-spoor{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 14px;scroll-snap-type:x mandatory;scroll-padding-left:16px;
  scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;scroll-behavior:smooth}
+@media(min-width:900px){#{{ rid }} .dsr-spoor{gap:14px;padding:4px 20px 14px;scroll-padding-left:20px}}
 /* De schuifbalk van de browser stond als een grijze streep onder de kaarten.
    Schuiven kan nog steeds, met de vinger, het muiswiel of de pijlen in de kop. */
 #{{ rid }} .dsr-spoor::-webkit-scrollbar{display:none}
 #{{ rid }} .dsr-kop>.dsr-pijlen{flex:0 0 auto;display:flex;gap:6px;margin-left:6px}
 #{{ rid }} .dsr-kop>.dsr-pijlen[hidden]{display:none}
-#{{ rid }} .dsr-pijlen button{width:34px;height:34px;border-radius:50%;border:1px solid var(--rd);background:#fff;color:var(--pa);
+#{{ rid }} .dsr-pijlen button{width:36px;height:36px;border-radius:50%;border:1px solid var(--rd2);background:#fff;color:var(--bl);
  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+#{{ rid }} .dsr-pijlen button:hover{border-color:var(--bl)}
 #{{ rid }} .dsr-pijlen button svg{width:16px;height:16px}
 #{{ rid }} .dsr-pijlen button:disabled{opacity:.35;cursor:default}
-#{{ rid }}.dsr-donker .dsr-pijlen button{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff}
+#{{ rid }}.dsr-donker .dsr-pijlen button{background:transparent;border-color:rgba(255,255,255,.35);color:#fff}
 @media(max-width:640px){#{{ rid }} .dsr-kop>.dsr-pijlen{display:none}}
-#{{ rid }} .dsr-k{flex:0 0 160px;scroll-snap-align:start;display:flex;flex-direction:column;background:#fff;
- border:1px solid var(--rd);border-radius:14px;overflow:hidden;position:relative;
- transition:box-shadow .14s,border-color .14s}
-@media(min-width:620px){#{{ rid }} .dsr-k{flex-basis:186px}}
-#{{ rid }} .dsr-k:hover{border-color:#cdc2e8;box-shadow:0 6px 18px rgba(13,27,42,.07)}
+
+/* de kaart: op een telefoon anderhalve kaart in beeld, breed vier naast elkaar */
+#{{ rid }} .dsr-k{flex:0 0 238px;min-width:0;scroll-snap-align:start;display:flex;flex-direction:column;background:#fff;color:var(--ink);
+ border:1px solid var(--rd);border-radius:16px;padding:12px;position:relative;transition:border-color .14s}
+@media(min-width:620px){#{{ rid }} .dsr-k{flex-basis:252px}}
+@media(min-width:1000px){#{{ rid }} .dsr-k{flex-basis:calc((100% - 42px) / 4)}}
+#{{ rid }} .dsr-k:hover{border-color:#C9D6EA}
+#{{ rid }}.dsr-donker .dsr-k{border-color:#fff}
 /* Vaste hoogte voor het plaatje. Een staande hoes (een game) trok de kaart
    anders langer dan een liggende foto (een console) en dan stond de prijs bij
    elke kaart op een andere hoogte. */
-#{{ rid }} .dsr-afb{aspect-ratio:1/1;position:relative;background:#fff;overflow:hidden}
-#{{ rid }} .dsr-afb img{position:absolute;inset:10px;width:calc(100% - 20px);height:calc(100% - 20px);object-fit:contain}
-#{{ rid }} .dsr-in{padding:0 10px 10px;display:flex;flex-direction:column;flex:1;gap:4px}
-#{{ rid }} .dsr-merk{font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut);font-weight:800}
-#{{ rid }} .dsr-naam{font-size:12.5px;line-height:1.35;font-weight:700;margin:0;display:-webkit-box;
+#{{ rid }} .dsr-afb{flex:0 0 auto;height:140px;position:relative;background:var(--licht);border-radius:12px;overflow:hidden;margin-bottom:11px}
+@media(min-width:900px){#{{ rid }} .dsr-afb{height:170px}}
+#{{ rid }} .dsr-afb img{position:absolute;inset:16px;width:calc(100% - 32px);height:calc(100% - 32px);object-fit:contain;mix-blend-mode:multiply}
+#{{ rid }} .dsr-in{display:flex;flex-direction:column;flex:1;min-width:0}
+#{{ rid }} .dsr-merk{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--mut2);font-weight:800;margin-bottom:2px}
+#{{ rid }} .dsr-naam{font-size:16px;line-height:1.2;font-weight:800;letter-spacing:-.01em;margin:0;color:var(--ink);display:-webkit-box;
  -webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-#{{ rid }} .dsr-pr{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
-#{{ rid }} .dsr-p{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.02em}
-#{{ rid }} .dsr-v{font-size:11.5px;color:var(--mut);text-decoration:line-through}
-#{{ rid }} .dsr-kt{font-size:10px;font-weight:800;color:#fff;background:var(--rood);border-radius:5px;padding:2px 4px}
-#{{ rid }} .dsr-wl{margin-top:auto;border:1px solid var(--rd,#e6ebf2);border-radius:11px;overflow:hidden;background:#fff}
-#{{ rid }} .dsr-wr,#{{ rid }} .dsr-wr:visited{display:flex;align-items:center;gap:6px;min-height:40px;padding:6px 9px;border-top:1px solid #eef2f7;font-size:13px;font-weight:700;color:#0D1B2A;text-decoration:none}
-#{{ rid }} .dsr-wr.eerste{border-top:0;background:#ecfdf5}
-#{{ rid }} .dsr-wr.eerste b{color:#047857}
-#{{ rid }} .dsr-wl .dpvmb,#{{ rid }} .dsr-wl > :not(.dsr-wr):not(.dsr-wm){display:none !important}
-#{{ rid }} .dsr-wr:hover{background:#f1f5f9}
-#{{ rid }} .dsr-wr.eerste:hover{background:#d9f7ea}
+@media(min-width:900px){#{{ rid }} .dsr-naam{font-size:17px}}
+#{{ rid }} .dsr-van{font-size:12.5px;line-height:1.3;color:var(--mut);font-weight:700;margin:3px 0 8px}
+#{{ rid }} .dsr-van b{font-size:20px;font-weight:800;color:var(--ink);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+#{{ rid }} .dsr-van s{font-size:12px;color:var(--mut2);font-weight:600}
+#{{ rid }} .dsr-kt{display:inline-block;font-size:11px;font-weight:800;color:var(--ink);background:#E3F4EB;border-radius:999px;padding:2px 7px;vertical-align:2px}
+/* de overige winkels: naam links, prijs rechts, elk een link naar die winkel */
+#{{ rid }} .dsr-wl .dpvmb,#{{ rid }} .dsr-wl > :not(.dsr-wr){display:none !important}
+#{{ rid }} .dsr-wr,#{{ rid }} .dsr-wr:visited{display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:34px;padding:6px 0;border-top:1px solid var(--rd);
+ font-size:13px;font-weight:700;color:var(--mut);text-decoration:none}
+#{{ rid }} .dsr-wr:hover .dsr-wn{color:var(--bl);text-decoration:underline}
 #{{ rid }} .dsr-wn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#{{ rid }} .dsr-wr em{font-style:normal;font-size:10px;font-weight:800;background:#10b981;color:#fff;border-radius:5px;padding:1px 5px;flex:0 0 auto}
-#{{ rid }} .dsr-wr b{margin-left:auto;font-weight:800;white-space:nowrap}
-#{{ rid }} .dsr-wr i{font-style:normal;color:#059669;font-weight:800;font-size:15px}
-#{{ rid }} .dsr-wm,#{{ rid }} .dsr-wm:visited{display:block;text-align:center;padding:7px;border-top:1px solid #eef2f7;font-size:12px;font-weight:700;color:#059669;text-decoration:none}
-#{{ rid }} .dsr-w{font-size:11px;color:var(--mut);font-weight:600;min-height:15px}
-#{{ rid }} .dsr-w b{color:var(--ink);font-weight:800}
-#{{ rid }} .dsr-knop,#{{ rid }} .dsr-knop:visited{display:flex;align-items:center;justify-content:center;min-height:36px;
- margin-top:6px;background:var(--gr);color:#fff !important;border-radius:9px;font-size:12.5px;font-weight:800;
+#{{ rid }} .dsr-wr b{flex:0 0 auto;font-weight:800;color:var(--ink);white-space:nowrap;font-variant-numeric:tabular-nums}
+/* knop, link en seintje staan onderaan, zodat ze in een rij op een lijn staan */
+#{{ rid }} .dsr-voet{margin-top:auto;padding-top:2px}
+#{{ rid }} .dsr-knop,#{{ rid }} .dsr-knop:visited{display:flex;align-items:center;justify-content:center;min-height:44px;padding:8px 10px;
+ background:var(--geel);color:var(--ink) !important;border-radius:12px;font-size:13.5px;line-height:1.25;font-weight:800;text-align:center;
  text-decoration:none !important}
-#{{ rid }} .dsr-knop:hover{background:#0fa876}
-#{{ rid }} .dsr-b{position:absolute;top:7px;left:7px;font-size:9.5px;font-weight:800;border-radius:5px;padding:3px 5px;
- line-height:1.2;z-index:2}
-#{{ rid }} .dsr-b.laag{background:var(--gr);color:#fff}
-#{{ rid }} .dsr-b.multi{background:var(--pa);color:#fff}
-#{{ rid }} .dsr-fijn{padding:0 16px;margin:0;font-size:11.5px;color:var(--mut);line-height:1.5}
-#{{ rid }} .dsr-sk{flex:0 0 160px;border:1px solid var(--rd);border-radius:14px;overflow:hidden}
-#{{ rid }} .dsr-sk i{display:block;aspect-ratio:1/1;background:linear-gradient(90deg,#f4f1fa,#faf9fd,#f4f1fa);
+#{{ rid }} .dsr-knop:hover{background:#EDB50C}
+/* De productpagina's met prijsverloop bestaan nog niet; tot die tijd gaat deze
+   link naar de vergelijker met het product al ingevuld. */
+#{{ rid }} .dsr-meer,#{{ rid }} .dsr-meer:visited{display:block;text-align:center;font-size:12.5px;font-weight:800;color:var(--bl);text-decoration:none;margin-top:5px;padding:5px 0}
+#{{ rid }} .dsr-meer:hover{color:var(--bl2);text-decoration:underline}
+#{{ rid }} .dsr-b{position:absolute;top:9px;left:9px;font-size:11px;font-weight:800;border-radius:999px;padding:4px 9px;line-height:1.2;z-index:2}
+/* wit op dit groen leest slecht: donkere tekst */
+#{{ rid }} .dsr-b.scheelt{background:var(--gr);color:var(--ink)}
+#{{ rid }} .dsr-b.laag{background:var(--bl);color:#fff}
+#{{ rid }} .dsr-fijn{padding:0 16px;margin:0;font-size:11.5px;font-weight:500;color:var(--mut2);line-height:1.5}
+@media(min-width:900px){#{{ rid }} .dsr-fijn{padding:0 20px}}
+#{{ rid }} .dsr-sk{flex:0 0 238px;border:1px solid var(--rd);border-radius:16px;overflow:hidden;background:#fff;padding:12px}
+#{{ rid }} .dsr-sk i{display:block;height:140px;border-radius:12px;background:linear-gradient(90deg,#EAF1FF,#F4F7FF,#EAF1FF);
  background-size:200% 100%;animation:dsr-golf 1.2s linear infinite}
-#{{ rid }} .dsr-sk u{display:block;height:10px;margin:9px 10px;border-radius:5px;background:#f0ecf8}
+#{{ rid }} .dsr-sk u{display:block;height:10px;margin:10px 0 0;border-radius:5px;background:#EAF1FF}
 @keyframes dsr-golf{0%{background-position:100% 0}100%{background-position:-100% 0}}
+@media(prefers-reduced-motion:reduce){#{{ rid }} .dsr-sk i{animation:none}}
+#{{ rid }} :focus-visible{outline:3px solid var(--bl);outline-offset:2px}
+#{{ rid }}.dsr-donker :focus-visible{outline-color:var(--geel)}
 </style>
 
 <script>
@@ -189,8 +217,10 @@
   function eur(n) {
     if (n == null || isNaN(n)) return '';
     var v = Math.round(n * 100) / 100;
-    return '€' + (v % 1 === 0 ? String(v) : v.toFixed(2).replace('.', ','));
+    // 5 okt: punt bij duizendtallen (€1.349), zoals in de kiezer bovenaan.
+    return '€' + (v % 1 === 0 ? String(v) : v.toFixed(2).replace('.', ',')).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
+  function winkel(w) { return w === 'bol.com partner' ? 'bol.com (partner)' : w; }
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
@@ -224,34 +254,41 @@
     spoor.innerHTML = items.map(function (x) {
       var korting = (x.v > x.p) ? Math.round((1 - x.p / x.v) * 100) : 0;
       if (korting > 70) korting = 0;
-      var multi = x.o && x.o.length > 1;
+      // Winkels op prijs, de laagste eerst. Op de kaart staan er hooguit drie:
+      // de goedkoopste op de gele knop, de twee volgende als regel erboven.
+      var o = x.o.slice().sort(function (a, b) { return a.p - b.p; });
+      var multi = o.length > 1, top = o.slice(0, 3);
+      // "scheelt": laagste tegenover de hoogste getoonde winkel, hele euro's.
+      // Onder de euro zeggen wij niets; dat is geen verschil om voor te klikken.
+      var scheelt = multi ? Math.round(top[top.length - 1].p - top[0].p) : 0;
       var laagsteOoit = (typeof x.lp === 'number' && x.mt >= 2 && x.p <= x.lp + 0.005);
-      var badge = laagsteOoit ? '<span class="dsr-b laag">Laagste tot nu</span>'
-        : (multi ? '<span class="dsr-b multi">' + x.o.length + ' winkels</span>' : '');
+      var badge = scheelt >= 1 ? '<span class="dsr-b scheelt">scheelt ' + eur(scheelt) + '</span>'
+        : (laagsteOoit ? '<span class="dsr-b laag">Laagste tot nu</span>' : '');
       var ga = API + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c);
-      return '<article class="dsr-k">' + badge +
-        '<div class="dsr-afb">' + (x.im ? '<img src="' + esc(x.im) + '" alt="' + esc(x.n) + '" loading="lazy" decoding="async">' : '') + '</div>' +
-        '<div class="dsr-in">' +
-        '<span class="dsr-merk">' + (x.b ? esc(x.b) : '&nbsp;') + '</span>' +
+      // Het merk alleen tonen als het niet al vooraan in de naam staat.
+      var merk = x.b && String(x.n || '').toLowerCase().indexOf(String(x.b).toLowerCase()) !== 0 ? '<span class="dsr-merk">' + esc(x.b) + '</span>' : '';
+      return '<article class="dsr-k">' +
+        '<div class="dsr-afb">' + badge + (x.im ? '<img src="' + esc(x.im) + '" alt="' + esc(x.n) + '" loading="lazy" decoding="async">' : '&nbsp;') + '</div>' +
+        '<div class="dsr-in">' + merk +
         '<p class="dsr-naam">' + esc(x.n) + '</p>' +
         (multi
-          // Meer dan een winkel: elke winkel een eigen regel met prijs, allemaal
-          // klikbaar. Eerst was alleen de goedkoopste te bereiken; de andere
-          // stonden er als "tot X elders" zonder link.
-          ? '<div class="dsr-wl">' + x.o.slice(0, 3).map(function (o, n) {
-              return '<a class="dsr-wr' + (n === 0 ? ' eerste' : '') + '" href="' + ga + '&w=' + encodeURIComponent(o.w) +
-                '" target="_blank" rel="sponsored noopener"><span class="dsr-wn">' + esc(o.w) + '</span>' +
-                '<b>' + eur(o.p) + '</b><i aria-hidden="true">&rsaquo;</i></a>';
-            }).join('') +
-            (x.o.length > 3 ? '<a class="dsr-wm" href="/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n) + '">+ ' + (x.o.length - 3) + (x.o.length - 3 === 1 ? ' winkel' : ' winkels') + '</a>' : '') +
-            '</div>'
-          : '<div class="dsr-pr"><span class="dsr-p">' + eur(x.p) + '</span>' +
-            (korting ? '<span class="dsr-v">' + eur(x.v) + '</span><span class="dsr-kt">-' + korting + '%</span>' : '') +
-            '</div>' +
-            '<div class="dsr-w"><b>' + esc(x.o[0].w) + '</b></div>' +
-            '<a class="dsr-knop" href="' + ga + '" target="_blank" rel="sponsored noopener">Bekijk bij ' + esc(x.o[0].w) + '</a>') +
+          // Meer dan een winkel: elke winkel is te bereiken. Eerst was alleen de
+          // goedkoopste te bereiken; de andere stonden er als "tot X elders"
+          // zonder link.
+          ? '<p class="dsr-van">vanaf <b>' + eur(top[0].p) + '</b> · ' + o.length + ' winkels</p>' +
+            '<div class="dsr-wl">' + top.slice(1).map(function (w) {
+              return '<a class="dsr-wr" href="' + ga + '&w=' + encodeURIComponent(w.w) +
+                '" target="_blank" rel="sponsored noopener"><span class="dsr-wn">' + esc(winkel(w.w)) + '</span><b>' + eur(w.p) + '</b></a>';
+            }).join('') + '</div>' +
+            '<div class="dsr-voet">' +
+            '<a class="dsr-knop" href="' + ga + '&w=' + encodeURIComponent(top[0].w) + '" target="_blank" rel="sponsored noopener">Bekijk bij ' + esc(winkel(top[0].w)) + ' · ' + eur(top[0].p) + ' ›</a>' +
+            '<a class="dsr-meer" href="/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n) + '">Prijsverloop en alle winkels ›</a>'
+          : '<p class="dsr-van"><b>' + eur(x.p) + '</b>' +
+            (korting ? ' <s>' + eur(x.v) + '</s> <span class="dsr-kt">-' + korting + '%</span>' : '') + '</p>' +
+            '<div class="dsr-voet">' +
+            '<a class="dsr-knop" href="' + ga + '" target="_blank" rel="sponsored noopener">Bekijk bij ' + esc(winkel(o[0].w)) + ' · ' + eur(x.p) + ' ›</a>') +
         (BF && window.dpvBf && window.dpvBf.aan ? window.dpvBf.knop(x) : '') +
-        '</div></article>';
+        '</div></div></article>';
     }).join('');
 
     var dag = gemaakt ? String(gemaakt).slice(0, 10).split('-').reverse().join('-') : '';

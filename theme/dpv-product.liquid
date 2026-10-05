@@ -30,6 +30,7 @@
 {%- endcapture -%}
 {%- assign prijs_tekst = prijs_tekst | strip -%}
 
+{%- render 'dpv-bf-knop', api: section.settings.bf_api, tot: section.settings.bf_tot -%}
 <style>
 .dpp{font-family:'Montserrat',system-ui,sans-serif;color:#0D1B2A;background:linear-gradient(180deg,#E3ECFF 0,#F4F7FF 420px,#fff 421px)}
 .dpp *{box-sizing:border-box}
@@ -56,6 +57,11 @@
 .dpp-rij-p s{display:block;font-size:12px;font-weight:600;color:#5B6B80;text-align:right}
 .dpp a.dpp-knop{background:#F9C31F;color:#0D1B2A;font-size:14px;font-weight:800;text-decoration:none;border-radius:10px;padding:11px 14px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center}
 .dpp a.dpp-knop:hover{background:#EDB50C}
+.dpp-volg{margin-top:12px;border-top:1px solid #E6EBF2;padding-top:12px}.dpp-volg>b{display:block;font-size:14px;font-weight:800;margin-bottom:8px}
+.dpp-volg .dpvbf-mail{display:none !important}
+.dpp-var{margin:0 0 12px}.dpp-var>span{display:block;font-size:12.5px;font-weight:700;color:#5B6B80;margin-bottom:6px}
+.dpp-var a{display:inline-block;font-size:13px;font-weight:700;color:#0D1B2A;text-decoration:none;background:#fff;border:1px solid #D9E1EC;border-radius:999px;padding:7px 12px;margin:0 6px 6px 0}
+.dpp-var a:hover{border-color:#2456D6;color:#2456D6}
 .dpp-peil{font-size:12px;font-weight:600;color:#5B6B80;margin:10px 0 0}
 .dpp-blok{background:#fff;border:1px solid #E6EBF2;border-radius:16px;padding:16px;margin-top:18px}
 .dpp-blok h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0 0 10px}
@@ -110,6 +116,7 @@
         {%- if m.merk.value != blank -%}<p class="dpp-merk">{{ m.merk.value | escape }}</p>{%- endif -%}
         <h1>{{ naam | escape }}</h1>
         {%- if specs.score -%}<p class="dpp-score"><span aria-hidden="true">★</span> {{ specs.score | round: 1 | replace: '.', ',' }} van 5 bij bol.com{% if specs.g.size > 0 %} · <a href="#specificaties">Specificaties</a>{% endif %}</p>{%- endif -%}
+        <div class="dpp-var" id="dpp-var" hidden><span>Andere uitvoeringen</span><div id="dpp-var-lijst"></div></div>
         <p class="dpp-van" id="dpp-van">
           {%- if prijs_tekst != blank -%}<b>{{ prijs_tekst }}</b>laagste prijs{% if m.winkels.value > 1 %} bij {{ m.winkels.value }} winkels{% endif %}{%- endif -%}
         </p>
@@ -128,6 +135,7 @@
               </div>
             {%- endfor -%}
           </div>
+          <div class="dpp-volg" id="dpp-volg" hidden><b>Wacht je op een lagere prijs?</b><div id="dpp-volg-knop"></div></div>
           <p class="dpp-peil" id="dpp-peil">{% if m.peildatum.value %}Prijzen gemeten op {{ m.peildatum.value | date: '%-d-%-m-%Y' }}. {% endif %}De prijs bij de winkel is leidend.</p>
         </div>
       </div>
@@ -269,6 +277,24 @@
       if (p) p.textContent = p.textContent.replace('De prijs bij de winkel is leidend.', 'De actuele prijzen konden niet geladen worden. Kijk bij de winkel voor de prijs van nu.');
     });
 
+  // Seintje per product (bestaande Black Friday-melding van de worker).
+  try {
+    if (window.dpvBf && window.dpvBf.aan) {
+      document.getElementById('dpp-volg-knop').innerHTML = window.dpvBf.knop({ i: ID, c: CAT, n: (W.querySelector('h1') || {}).textContent || '' });
+      document.getElementById('dpp-volg').hidden = false;
+    }
+  } catch (e) {}
+
+  // Andere uitvoeringen van hetzelfde model (kleur, opslag).
+  fetch('https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/product-varianten.json').then(function (r) { return r.json(); }).then(function (v) {
+    var l = (v || {})[HANDLE]; if (!l || !l.length) return;
+    document.getElementById('dpp-var-lijst').innerHTML = l.map(function (a) {
+      var href = a[2] ? '/pages/product/' + a[2] : '/pages/vergelijken?cat=' + encodeURIComponent(a[3]) + '&q=' + encodeURIComponent(a[4]);
+      return '<a href="' + href + '">' + esc(a[1]) + '</a>';
+    }).join('');
+    document.getElementById('dpp-var').hidden = false;
+  }).catch(function () {});
+
   W.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a.dpp-knop');
     if (a) meet('dpp_klik', { winkel: a.getAttribute('data-w') || '', product: HANDLE });
@@ -297,7 +323,9 @@
 {
   "name": "Productpagina",
   "settings": [
-    { "type": "text", "id": "api", "label": "Adres van de shop-worker", "default": "https://shop.deprijsvergelijker.com" }
+    { "type": "text", "id": "api", "label": "Adres van de shop-worker", "default": "https://shop.deprijsvergelijker.com" },
+    { "type": "text", "id": "bf_api", "label": "Worker voor het seintje", "default": "https://dpv-boodschappen.business-347.workers.dev" },
+    { "type": "text", "id": "bf_tot", "label": "Seintje op Black Friday tonen tot en met (JJJJ-MM-DD)", "default": "2026-11-26" }
   ]
 }
 {% endschema %}

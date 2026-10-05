@@ -11,7 +11,9 @@
   "sections": {
     "dpv-hero-prijzen": {
       "type": "dpv-hero-prijzen",
-      "settings": {}
+      "settings": {
+        "rijen": "simonly|Sim only|€3,00 p/m|€72 over 24 maanden|/pages/sim-only\ntelefoon|Telefoon met abonnement|€8,00 p/m|€96 over 12 maanden|/pages/telefoonabonnement\ninternet|Internet & TV|€9,50 p/m|€228 over 24 maanden|/pages/internet-tv\nenergie|Energie|€1.412 p/j|hele rekening, incl. belastingteruggave|/pages/energie\nzorg|Zorgpremie 2026|€122,89 p/m|let op: €885 eigen risico|/pages/zorgverzekering\nboodschappen|Boodschappen|deze week|aanbiedingen van 12 winkels, per kilo|/pages/boodschappen\ngaming|Gaming|3 winkels|consoles en games per winkel|/pages/gaming|NIEUW\nproducten|Producten|54.000|tv, laptop, audio, huishouden|/pages/vergelijken|NIEUW"
+      }
     },
     "dpv-deals": {
       "type": "dpv-home-deals",

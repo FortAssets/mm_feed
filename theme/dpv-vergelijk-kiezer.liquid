@@ -44,6 +44,10 @@
 .vgk-uit{font-size:13.5px;line-height:1.5;margin:10px 0 0;color:#475569}
 .vgk-uit:empty{display:none}
 .vgk-uit a{color:#059669;font-weight:700}
+/* De artikelstijl van het thema maakt afbeeldingen schermbreed; in de kaarten niet. */
+.vg .vg-k img.vg-im{height:170px !important;width:100% !important;max-width:100% !important;object-fit:contain !important;margin:0 auto 8px !important;border-radius:0 !important}
+.vg .vg-k .dpvmb{margin-top:8px}
+@media(max-width:640px){.vg .vg-k img.vg-im{height:120px !important}}
 @media(max-width:640px){.vgk{margin:12px 12px 0;padding:13px}.vgk-rij{grid-template-columns:1fr;gap:6px}.vgk-vs{display:none}}
 </style>
 
@@ -81,6 +85,8 @@
       cats[c[1]] = c[2];
       modellen[c[1]] = modellen[c[1]] || {};
       modellen[c[1]][a[1]] = a[2]; modellen[c[1]][b[1]] = b[2];
+      // article.handle is in Liquid "blog/handle"; alleen het laatste stuk is de URL.
+      art.h = String(art.h).split('/').pop();
       paren[a[1] + '|' + b[1]] = art.h; paren[b[1] + '|' + a[1]] = art.h;
       [a, b].forEach(function (m, n) {
         var ander = n === 0 ? b : a;

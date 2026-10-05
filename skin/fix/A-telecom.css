@@ -1,0 +1,129 @@
+/* Groep A-telecom: herstel na de automatische huisstijllaag (2-rond). */
+
+/* Alle vergelijkers (sim only, internet-tv, telefoon, providerpagina's): de doorklikknop "Bekijk aanbieding"
+   kreeg wel de klasse dpv-geel maar bleef blauw met donkere tekst, omdat de regel voor .pvx-grid .pvx-go zwaarder woog. */
+html:not(#x) body a.dpv-geel.dpv-geel.dpv-geel[class],html:not(#x) body a.dpv-geel.dpv-geel.dpv-geel[class]:visited{background:#F9C31F !important;background-image:none !important;color:#0D1B2A !important;border-color:#F9C31F !important;box-shadow:none !important;-webkit-text-fill-color:#0D1B2A !important;text-decoration:none !important}
+html:not(#x) body a.dpv-geel.dpv-geel.dpv-geel[class]:hover{background:#EDB50C !important;border-color:#EDB50C !important}
+
+/* Alle pagina's met "Zoek in gewone taal" bovenaan: het blok was donker gebleven en de voorbeeldknoppen waren
+   lichtblauw op lichtblauw. Nu een witte kaart met donkere tekst. */
+html:not(#x) .dpvai-blok{background:#FFFFFF !important;background-image:none !important;border:1px solid #E6EBF2 !important;border-radius:16px !important;box-shadow:none !important}
+html:not(#x) .dpvai-blok .kp,html:not(#x) .dpvai-blok .kp b{color:#0D1B2A !important}
+html:not(#x) .dpvai-blok .sub{color:#4A5A70 !important}
+html:not(#x) .dpvai-blok .pil{background:#EAF1FF !important;color:#2456D6 !important;border-radius:999px !important}
+html:not(#x) .dpvai-blok .dpvai-veld{background:#FFFFFF !important;border:1.5px solid #D9E1EC !important;border-radius:12px !important;box-shadow:none !important}
+html:not(#x) .dpvai-blok .dpvai-veld input{color:#0D1B2A !important;background:transparent !important}
+html:not(#x) .dpvai-blok .dpvai-go{background:#2456D6 !important;color:#FFFFFF !important;border-radius:10px !important}
+html:not(#x) .dpvai-blok .dpvai-hint button{color:#2456D6 !important;background:#EAF1FF !important;border:1px solid #D9E1EC !important;border-radius:999px !important}
+
+/* Alle pagina's met de rijen "Beste ... nu": de rij was breder dan het scherm, de mailknop viel rechts weg. */
+html:not(#x) .dpv-altgrid{grid-template-columns:minmax(0,1fr) !important}
+@media (max-width:600px){
+html:not(#x) .dpv-alt{min-width:0 !important;gap:8px !important;padding:12px !important;box-sizing:border-box !important}
+html:not(#x) .dpv-alt .dpv-altmid{min-width:0 !important;flex:1 1 0 !important}
+}
+
+/* Alle pagina's met het aanmeldblok "Mis geen scherp ...": was een vol blauw vlak met een blauwe knop erop.
+   Nu licht, zoals het aanmeldblok in het ontwerp van de homepage. */
+html:not(#x) .dpvc-box{background:#F4F7FF !important;background-image:none !important;border:1px solid #E6EBF2 !important;border-radius:16px !important;box-shadow:none !important;color:#0D1B2A !important}
+html:not(#x) .dpvc-box h3{color:#0D1B2A !important}
+html:not(#x) .dpvc-box p{color:#4A5A70 !important}
+html:not(#x) .dpvc-box .dpvc-redenen span{color:#0D1B2A !important}
+html:not(#x) .dpvc-box .dpvc-redenen span::before{color:#1F8F5F !important}
+html:not(#x) .dpvc-box .dpvc-fine{color:#5B6B80 !important}
+html:not(#x) .dpvc-box .dpvc-form input{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important;border-radius:12px !important}
+html:not(#x) .dpvc-box .dpvc-form button{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important;box-shadow:none !important}
+
+/* Voet op alle pagina's: was blauw verloop geworden, hoort donker (inkt) te zijn. */
+html:not(#x) .pvf{background:#0D1B2A !important;background-image:none !important}
+
+/* Tekstpagina's (sim only vergelijken, telefoonabonnement vergelijken, internet vergelijken, gratis toestel, providerpagina's,
+   deze-maand-pagina's): de blauwe knop in de tekst had blauwe letters op blauw en was dus leeg. */
+html:not(#x) .rte a[style*="color:#fff"],html:not(#x) .rte a[style*="color: #fff"],html:not(#x) .rte a[style*="color:white"]{color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;text-decoration:none !important;border-bottom:0 !important;border-radius:12px !important}
+
+/* Providerpagina's (KPN, Odido, Vodafone, Ben, Simyo): de hoofdknop "... sim only" was blauw op blauw. */
+html:not(#x) .rte .pv-cta a.primary{color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;background:#2456D6 !important;border-color:#2456D6 !important;text-decoration:none !important;border-radius:12px !important}
+html:not(#x) .rte .pv-cta a{text-decoration:none !important;border-radius:12px !important}
+
+/* Zakelijke abonnementen en Tv-zenders per provider: de bovenkant was een vol blauw vlak met witte tekst.
+   Nu het lichte verloop met donkere tekst. */
+html:not(#x) .pvz-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;color:#0D1B2A !important}
+html:not(#x) .pvz-hero .pvz-hero-grid,html:not(#x) .pvz-hero .pvz-hero-grid>div,html:not(#x) .pvz-hero .pvz-wrap,html:not(#x) .pvz-hero .pvz-titlerow,html:not(#x) .pvz-hero .pvz-h1{color:#0D1B2A !important}
+html:not(#x) .pvz-hero .pvz-bc,html:not(#x) .pvz-hero .pvz-bc a,html:not(#x) .pvz-hero .pvz-bc span{color:#5B6B80 !important}
+html:not(#x) .pvz-hero .pvz-sub{color:#4A5A70 !important}
+html:not(#x) .pvz-hero .pvz-ico{background:#FFFFFF !important;color:#2456D6 !important;border:1px solid #E6EBF2 !important}
+html:not(#x) .pvz-hero .pvz-ico svg,html:not(#x) .pvz-hero .pvz-ico svg *{color:#2456D6 !important}
+html:not(#x) .pvz-hero .pvz-eyebrow{background:#FFFFFF !important;color:#2456D6 !important;border:1px solid #D9E1EC !important;border-radius:999px !important;display:inline-flex !important;width:auto !important;padding:5px 12px !important}
+html:not(#x) .pvz-hero .pvz-btn-pri{background:#2456D6 !important;color:#FFFFFF !important;border-color:#2456D6 !important;border-radius:12px !important}
+html:not(#x) .pvz-hero .pvz-btn-sec{background:#FFFFFF !important;color:#0D1B2A !important;border:1px solid #D9E1EC !important;border-radius:12px !important}
+html:not(#x) .pvz-hero .pvz-trust{background:#FFFFFF !important;border:1px solid #E6EBF2 !important;border-radius:16px !important}
+html:not(#x) .pvz-hero .pvz-trust-item{color:#0D1B2A !important;border-color:#E6EBF2 !important}
+html:not(#x) .pvz-hero .pvz-trust-item svg,html:not(#x) .pvz-hero .pvz-trust-item::before{color:#1F8F5F !important;stroke:#1F8F5F !important}
+/* Zakelijke abonnementen: het slotblok "Klaar om zakelijk te besparen?" was blauw met een blauwe knop erop. */
+html:not(#x) .pvz-final{background:#F4F7FF !important;background-image:none !important;border:1px solid #E6EBF2 !important;border-radius:16px !important;color:#0D1B2A !important}
+html:not(#x) .pvz-final h2{color:#0D1B2A !important}
+html:not(#x) .pvz-final p{color:#4A5A70 !important}
+html:not(#x) .pvz-final .pvz-btn-pri{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+
+/* Bellen en internetten in het buitenland: bovenkant was vol blauw. */
+html:not(#x) .pvl-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;color:#0D1B2A !important}
+html:not(#x) .pvl-hero .pvl-wrap,html:not(#x) .pvl-hero .pvl-h1{color:#0D1B2A !important}
+html:not(#x) .pvl-hero .pvl-bc,html:not(#x) .pvl-hero .pvl-bc a,html:not(#x) .pvl-hero .pvl-bc span{color:#5B6B80 !important}
+html:not(#x) .pvl-hero .pvl-eyebrow{color:#2456D6 !important}
+html:not(#x) .pvl-hero p{color:#4A5A70 !important}
+/* Bellen in het buitenland: het donkere blok "Ga je op reis?" licht gemaakt. */
+html:not(#x) .dpv-eb{background:#F4F7FF !important;background-image:none !important;border:1px solid #E6EBF2 !important;border-radius:16px !important;box-shadow:none !important;color:#0D1B2A !important}
+html:not(#x) .dpv-eb .dpv-eb-kop,html:not(#x) .dpv-eb h2,html:not(#x) .dpv-eb .dpv-eb-landen,html:not(#x) .dpv-eb .lijst{color:#0D1B2A !important}
+html:not(#x) .dpv-eb p{color:#4A5A70 !important}
+html:not(#x) .dpv-eb .dpv-eb-kop .lbl{background:#EAF1FF !important;color:#2456D6 !important;border-radius:999px !important}
+html:not(#x) .dpv-eb .dpv-eb-landen .lbl{color:#5B6B80 !important}
+html:not(#x) .dpv-eb .dpv-eb-landen{border-color:#E6EBF2 !important}
+html:not(#x) .dpv-eb a.pri{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .dpv-eb a.sec{background:#FFFFFF !important;color:#0D1B2A !important;border:1px solid #D9E1EC !important;border-radius:12px !important}
+html:not(#x) .dpv-eb .lijst a{background:#FFFFFF !important;color:#2456D6 !important;border:1px solid #D9E1EC !important;border-radius:999px !important}
+
+/* Internet op vakantie: bovenkant was een turquoise verloop. */
+html:not(#x) .pvv-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;color:#0D1B2A !important}
+html:not(#x) .pvv-hero .pvv-wrap,html:not(#x) .pvv-hero .pvv-h1{color:#0D1B2A !important}
+html:not(#x) .pvv-hero .pvv-bc,html:not(#x) .pvv-hero .pvv-bc a,html:not(#x) .pvv-hero .pvv-bc span{color:#5B6B80 !important}
+html:not(#x) .pvv-hero .pvv-eyebrow{color:#2456D6 !important}
+html:not(#x) .pvv-hero p{color:#4A5A70 !important}
+/* Internet op vakantie: de eSIM-kaarten (Airalo, Yesim, Saily) gaan naar de aanbieder; de knop erin was blauw,
+   bij twee kaarten met blauwe letters op blauw. Nu geel met donkere tekst. */
+html:not(#x) a.deo-card .deo-cta,html:not(#x) a.deo-card .deo-cta.alt{background:#F9C31F !important;background-image:none !important;color:#0D1B2A !important;border-color:#F9C31F !important;box-shadow:none !important;border-radius:12px !important}
+
+/* Toestellen: prijs en label "Goedkoopst" waren fel groen. */
+html:not(#x) .pvtv-price.best{color:#1F8F5F !important}
+html:not(#x) .pvtv-best{color:#1F8F5F !important;background:#E3F4EB !important}
+
+/* Odido Klik&Klaar: het aanbodblok was donker, en de doorklikknop naar Odido was blauw met donkere tekst
+   (de gele klasse verloor het van de regel voor links in de tekst; zie de eerste regel van dit bestand). */
+html:not(#x) .kk-blok{background:#F4F7FF !important;background-image:none !important;border:1px solid #E6EBF2 !important;border-radius:16px !important;color:#0D1B2A !important;box-shadow:none !important}
+html:not(#x) .kk-blok .lab{color:#2456D6 !important}
+html:not(#x) .kk-blok .prijs{color:#0D1B2A !important}
+html:not(#x) .kk-blok .per,html:not(#x) .kk-blok .kk-na{color:#5B6B80 !important}
+html:not(#x) .kk-blok ul,html:not(#x) .kk-blok li{color:#0D1B2A !important}
+html:not(#x) .kk-blok li::marker{color:#3FAE7A !important}
+html:not(#x) .kk-blok a.kk-go{border-radius:12px !important}
+
+/* iPhone 18 Pro met abonnement: knop "Vergelijk iPhones" (naar onze eigen vergelijker) was blauw op donkerblauw. */
+html:not(#x) .ip-kaart a.ip-go:not(.dpv-geel){background:#2456D6 !important;color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;border-color:#2456D6 !important;text-decoration:none !important;border-radius:12px !important}
+
+/* iPhone 18 zakelijk: felgroene rand en felgroene knoppen. Kaarten die naar een aanbieder gaan krijgen de gele knop,
+   de kaart naar onze eigen vergelijker een blauwe. De donkere knop onderaan had blauwe letters op donker. */
+html:not(#x) .zk .zk-vak.zk-goed{border-color:#2456D6 !important;background:#F4F7FF !important}
+html:not(#x) .zk a.zk-kaart{text-decoration:none !important;border-bottom:0 !important}
+html:not(#x) .zk a.zk-kaart .zk-knop{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .zk a.zk-kaart[href*="/go/"] .zk-knop,html:not(#x) .zk a.zk-kaart[href^="http"]:not([href*="deprijsvergelijker.com"]) .zk-knop{background:#F9C31F !important;color:#0D1B2A !important}
+html:not(#x) .zk a.zk-vgl{background:#2456D6 !important;color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;text-decoration:none !important;border-radius:12px !important;border-bottom:0 !important}
+
+/* Zakelijk internet, zakelijk sim only, zakelijk telefoon: de gekozen keuzeknop had een felgroene rand. */
+html:not(#x) .zkv .zkv-chip.aan{border-color:#2456D6 !important;background:#EAF1FF !important;color:#2456D6 !important}
+/* iPhone 18 zakelijk: het donkere blok bovenaan licht gemaakt. */
+html:not(#x) .zk .zk-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;border:1px solid #E6EBF2 !important;border-radius:16px !important;color:#0D1B2A !important;box-shadow:none !important}
+html:not(#x) .zk .zk-hero .zk-eyebrow,html:not(#x) .zk .zk-hero .zk-h1 em{color:#2456D6 !important}
+html:not(#x) .zk .zk-hero .zk-h1{color:#0D1B2A !important}
+html:not(#x) .zk .zk-hero .zk-sub{color:#4A5A70 !important}
+
+/* Toestellen: het paarse winkelstipje wordt het groen uit het logo (klein label). */
+html:not(#x) .pvtv-dot[style*="#8b5cf6"]{background:#3FAE7A !important}

@@ -1,0 +1,272 @@
+/* ===== Herstel huisstijl 2-rond, groep B-overig =====
+   Zorg, energie, boodschappen, wc-papier, alle prijzen, productvergelijker, gaming, Black Friday,
+   mijn contracten, aanmelden en afmelden, studenten, dagelijkse deals, besparen, iPhone 18 en iPhone Duo. */
+
+/* Alle pagina's: de gele doorklik verloor het van regels met een zwaardere selector
+   (studenten: blauwe tekst op blauw, boodschappen: blauw vlak, iPhone: blauwe tekst op geel). */
+html:not(#x) body a.dpv-geel.dpv-geel.dpv-geel,html:not(#x) body a.dpv-geel.dpv-geel.dpv-geel:link,html:not(#x) body a.dpv-geel.dpv-geel.dpv-geel:visited{background:#F9C31F !important;background-image:none !important;color:#0D1B2A !important;-webkit-text-fill-color:#0D1B2A !important;border-color:#F9C31F !important;box-shadow:none !important}
+html:not(#x) body a.dpv-geel.dpv-geel.dpv-geel:hover{background:#EDB50C !important;border-color:#EDB50C !important}
+html:not(#x) body a.dpv-geel.dpv-geel.dpv-geel *{color:#0D1B2A !important;-webkit-text-fill-color:#0D1B2A !important}
+
+/* Blok "seintje / aanmelden" (.pa) en de balk bovenaan boodschappen (.pab): op gaming, Black Friday, vergelijken,
+   boodschappen, bevestigen, afmelden en mijn aanbiedingen nog oud groen (rand, vlak, label, knop). */
+html:not(#x) .pa,html:not(#x) .pab{--groen:#2456D6 !important;--groen-d:#1B45B4 !important;--groen-t:#F3F7FF !important;--line:#E6EBF2 !important}
+html:not(#x) .pa-blok{border:2px solid #2456D6 !important;background:#F3F7FF !important;border-radius:16px !important}
+html:not(#x) .pa-oog{background:#2456D6 !important;color:#FFFFFF !important;border-radius:999px !important}
+html:not(#x) .pa-knop,html:not(#x) .pab-knop{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .pa-knop:hover,html:not(#x) .pab-knop:hover{background:#1B45B4 !important}
+html:not(#x) .pa-vink,html:not(#x) .pa-ow-tel{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .pa-mail,html:not(#x) .pab-mail,html:not(#x) .pa-ow-knop,html:not(#x) .pa-cat{border-color:#D9E1EC !important}
+html:not(#x) .pa-cat[aria-pressed="true"]{background:#2456D6 !important;border-color:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .pab{background:#F3F7FF !important;border-bottom:1px solid #E6EBF2 !important}
+
+/* Zorgverzekering (.zc): de hele sectie was overgeslagen. Donkere bovenkant, oude letter, groene knoppen en randen. */
+html:not(#x) .zc{--groen:#2456D6 !important;--groen-l:#2456D6 !important;--groen-t:#F3F7FF !important;--blauw:#2456D6 !important;--nacht:#0D1B2A !important;--soft:#4A5A70 !important;font-family:'Montserrat',system-ui,sans-serif !important}
+html:not(#x) .zc :is(h1,h2,h3,button,input,select,b,strong){font-family:'Montserrat',system-ui,sans-serif !important}
+html:not(#x) .zc-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;color:#0D1B2A !important}
+html:not(#x) .zc-hero h1{color:#0D1B2A !important;font-family:'Montserrat',system-ui,sans-serif !important}
+html:not(#x) .zc-hero p{color:#4A5A70 !important}
+html:not(#x) .zc-vertrouw{color:#0D1B2A !important}
+html:not(#x) .zc-vertrouw svg{color:#3FAE7A !important;stroke:#3FAE7A !important}
+/* Zorg: tussen knoppen zijn intern en dus blauw; gekozen keuze blauw in plaats van zwart. */
+html:not(#x) .zc-nu-f button,html:not(#x) .zc-ab-f button,html:not(#x) .zc-dok-go,html:not(#x) .zc-paneel-sluit{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .zc-chip[aria-pressed="true"],html:not(#x) .zc-sw button[aria-pressed="true"]{background:#2456D6 !important;border-color:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .zc-chip.zc-filterknop{background:#EAF1FF !important;border-color:#2456D6 !important;color:#2456D6 !important}
+html:not(#x) .zc-chip.zc-filterknop b{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .zc-lint{background:#2456D6 !important;color:#FFFFFF !important;border-radius:999px !important}
+html:not(#x) .zc-kaart{border-radius:16px !important}
+html:not(#x) .zc-kaart.zc-eerste{border-color:#2456D6 !important;background:#F4F7FF !important}
+html:not(#x) .zc-ini{background:#EAF1FF !important;color:#2456D6 !important}
+/* Zorg: de premiebalk en "goedkoopste" mogen het groen uit het logo houden; besparing in leesbaar groen. */
+html:not(#x) .zc-sp i{background:#3FAE7A !important}
+html:not(#x) .zc-sp.zc-mid i{background:#F0B429 !important}
+html:not(#x) .zc-sp.zc-duur i,html:not(#x) .zc-sp.zc-hoog i{background:#B42318 !important}
+html:not(#x) .zc-vb.zc-g{background:#E3F4EB !important;color:#1F8F5F !important}
+html:not(#x) .zc-bespaar{border-color:#BFE3D0 !important}
+html:not(#x) .zc-bespaar b{color:#1F8F5F !important}
+html:not(#x) .zc-bespaar.zc-duurder{border-color:#F3C7C2 !important}
+html:not(#x) .zc-bespaar.zc-duurder b{color:#B42318 !important}
+/* Zorg: het blok "premies 2027" en de stapnummers waren groen getint. */
+html:not(#x) .zc-ab{background:#F3F7FF !important;border:1px solid #E6EBF2 !important}
+html:not(#x) .zc-ab-t b{color:#0D1B2A !important}
+html:not(#x) .zc-ab-t span{color:#4A5A70 !important}
+html:not(#x) .zc-ab-f input{border-color:#D9E1EC !important}
+html:not(#x) .zc-nr{background:#EAF1FF !important;color:#2456D6 !important}
+html:not(#x) .zc-meer,html:not(#x) .zc-alles{border-color:#D9E1EC !important}
+/* Zorg: de doorklik naar verzekeraar of Zorgkiezer is geel, ook als het script hem mist (na filteren opnieuw getekend). */
+html:not(#x) .zc a.zc-knop,html:not(#x) .zc a.zc-knop:visited{background:#F9C31F !important;color:#0D1B2A !important;border-radius:12px !important}
+html:not(#x) .zc a.zc-knop:hover{background:#EDB50C !important}
+/* Zorg: de vergelijkbalk onderaan was een donkere band. */
+html:not(#x) .zc-dok{background:#FFFFFF !important;color:#0D1B2A !important;border-top:1px solid #E6EBF2 !important;box-shadow:0 -6px 18px -12px rgba(13,27,42,.25) !important}
+html:not(#x) .zc-dok-leeg{color:#4A5A70 !important}
+/* Zorg: knoppen "Reken uit" en "Seintje" liepen rechts uit hun vak door de bredere letter. */
+html:not(#x) .zc-nu-f,html:not(#x) .zc-ab-f{min-width:0 !important;max-width:100% !important}
+html:not(#x) .zc-nu-f button,html:not(#x) .zc-ab-f button{flex:0 0 auto !important;padding:0 12px !important;font-size:13.5px !important}
+html:not(#x) .zc-nu-f input,html:not(#x) .zc-ab-f input{min-width:0 !important;flex:1 1 0% !important;width:auto !important}
+
+/* Alle prijzen (.ap): interne knoppen "Vergelijk energie" en de rand van de eerste kaart waren fel groen. */
+html:not(#x) .ap{--groen:#2456D6 !important;--groen-l:#2456D6 !important;--blauw:#2456D6 !important}
+html:not(#x) .ap a.ap-knop:not(.dpv-geel):not(.ap-stil),html:not(#x) .ap a.ap-knop:not(.dpv-geel):not(.ap-stil):visited{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .ap a.ap-knop:not(.dpv-geel):not(.ap-stil):hover{background:#1B45B4 !important}
+html:not(#x) .ap-kaart.ap-eerste{border-color:#2456D6 !important;box-shadow:0 0 0 1px #2456D6 !important}
+html:not(#x) .ap-eerste .ap-vlag{background:#EAF1FF !important;color:#2456D6 !important}
+
+/* Productvergelijker (.ds) en gaming (.dg): paars en fel groen kwamen uit variabelen die de laag niet omzette. */
+html:not(#x) .ds,html:not(#x) .dg{--pa:#2456D6 !important;--pa2:#F3F7FF !important;--rd:#E6EBF2 !important;--gr:#1F8F5F !important;--mut:#4A5A70 !important}
+html:not(#x) .ds-chip,html:not(#x) .ds-sel,html:not(#x) .ds-prijsvak input,html:not(#x) .ds-zoek input,html:not(#x) .ds-kaartknop button,html:not(#x) .ds-vink{border-color:#D9E1EC !important}
+html:not(#x) .ds-chip[aria-pressed="true"]{background:#2456D6 !important;border-color:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .ds-chip.groen[aria-pressed="true"]{background:#1F8F5F !important;border-color:#1F8F5F !important}
+html:not(#x) .ds-kaart{border-radius:16px !important}
+html:not(#x) .ds-kaart.gekozen,html:not(#x) .ds-vink[aria-pressed="true"]{border-color:#2456D6 !important}
+html:not(#x) .ds-vink[aria-pressed="true"]{background:#2456D6 !important}
+html:not(#x) .ds-badge.laag{background:#3FAE7A !important;color:#0D1B2A !important}
+html:not(#x) .ds-badge.multi{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .ds-pv-w-r.beste{background:#F4F7FF !important}
+html:not(#x) .ds-leeg button,html:not(#x) .ds-dok .ds-dok-vgl{background:#2456D6 !important;color:#FFFFFF !important}
+/* Productvergelijker: de knop naar de winkel is altijd geel (kaart, vergelijktabel en uitgeklapt product). */
+html:not(#x) .ds-kaartknop a,html:not(#x) .ds-kaartknop a:visited,html:not(#x) .ds-vt-knop a,html:not(#x) .ds-vt-knop a:visited,html:not(#x) a.ds-pv-w-k,html:not(#x) a.ds-pv-w-k:visited{background:#F9C31F !important;color:#0D1B2A !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x) .ds-kaartknop a:hover,html:not(#x) .ds-vt-knop a:hover,html:not(#x) a.ds-pv-w-k:hover{background:#EDB50C !important}
+/* Productvergelijker: lange winkelnaam brak in twee regels en viel buiten de knop. */
+html:not(#x) .ds-kaartknop a{padding:6px 8px !important;text-align:center !important;line-height:1.2 !important;font-size:12px !important;min-width:0 !important;height:auto !important;overflow-wrap:anywhere !important}
+/* Gaming: interne knop "Alles in gaming vergelijken" was fel groen; aantallen in de tegels paars. */
+html:not(#x) .dg a.dg-knop,html:not(#x) .dg a.dg-knop:visited{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .dg a.dg-knop:hover{background:#1B45B4 !important}
+html:not(#x) .dg-t em,html:not(#x) .dg-uitleg a{color:#2456D6 !important}
+html:not(#x) .dg-t{border-radius:16px !important}
+
+/* Black Friday (.bfr): band blijft donker en krijgt het gele vlak; knop intern blauw; doorklik per aanbieder geel. */
+html:not(#x) .bfr{--groen:#2456D6 !important;--groen-d:#2456D6 !important}
+html:not(#x) .bfr-aanmeld{background:#0D1B2A !important;background-image:none !important;box-shadow:8px 8px 0 #F9C31F !important;margin-right:8px !important}
+html:not(#x) .bfr-aanmeld .bfr-eyebrow{color:#F9C31F !important}
+html:not(#x) .bfr-eyebrow.bfr-eb-licht{color:#2456D6 !important}
+html:not(#x) .bfr-rij button{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .bfr-rij button:hover{background:#1B45B4 !important}
+html:not(#x) .bfr-pil{background:#0D1B2A !important}
+html:not(#x) .bfr-cta{background:#F9C31F !important;color:#0D1B2A !important;border-radius:12px !important}
+html:not(#x) .bfr a.bfr-kaart:hover{border-color:#2456D6 !important}
+
+/* iPhone Duo (.duo): donker blok licht gemaakt, knop intern blauw, doorklik per aanbieder geel. */
+html:not(#x) .duo{--groen:#2456D6 !important;--groen-d:#2456D6 !important;--diep:#F3F7FF !important}
+html:not(#x) .duo-pil{background:#EAF1FF !important;color:#2456D6 !important}
+html:not(#x) .duo-pil i{background:#3FAE7A !important}
+html:not(#x) .duo-pil span{color:#2456D6 !important}
+html:not(#x) .duo-aanmeld{background:#F3F7FF !important;color:#0D1B2A !important;border:1px solid #E6EBF2 !important;border-radius:16px !important}
+html:not(#x) .duo-aanmeld .duo-akop{color:#0D1B2A !important}
+html:not(#x) .duo-eyebrow{color:#2456D6 !important}
+html:not(#x) .duo-asub{color:#4A5A70 !important}
+html:not(#x) .duo-aanmeld .duo-fijn{color:#5B6B80 !important}
+html:not(#x) .duo-rij input{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important}
+html:not(#x) .duo-rij input::placeholder{color:#5B6B80 !important}
+html:not(#x) .duo-rij button{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .duo-rij button:hover{background:#1B45B4 !important}
+html:not(#x) .duo-cta{background:#F9C31F !important;color:#0D1B2A !important;border-radius:12px !important}
+html:not(#x) .duo a.duo-kaart:hover{border-color:#2456D6 !important}
+
+/* iPhone 18 overzicht (.dih, .dihm): donker mailblok licht; knop "Wanneer kun je pre-orderen?" had donkere tekst op blauw. */
+html:not(#x) .dihm{background:#F3F7FF !important;color:#0D1B2A !important;border:1px solid #E6EBF2 !important}
+html:not(#x) .dihm :is(h2,h3,p,strong,b,label,div){color:#0D1B2A !important}
+html:not(#x) .dihm .dihm-sub{color:#4A5A70 !important}
+html:not(#x) .dihm .dihm-klein{color:#5B6B80 !important}
+html:not(#x) .dihm-rij input{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important}
+html:not(#x) .dihm-rij input::placeholder{color:#5B6B80 !important}
+html:not(#x) .dihm .dihm-rij button{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) a.dih-knop.dih-stil,html:not(#x) a.dih-knop.dih-stil:visited{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important}
+html:not(#x) a.dih-knop.dih-stil:hover{background:#EAF1FF !important}
+html:not(#x) a.dih-knop:not(.dih-stil):not(.dpv-geel){color:#FFFFFF !important}
+html:not(#x) a.dih-knop:not(.dih-stil):not(.dpv-geel):hover{background:#1B45B4 !important}
+
+/* iPhone 18 artikelen (.ip): donker mailblok licht; interne knop had blauwe tekst op donkerblauw. */
+html:not(#x) .ip{--groen:#2456D6 !important;--groend:#2456D6 !important;--blauw:#2456D6 !important;--soft:#4A5A70 !important}
+html:not(#x) .ip a.ip-go:not(.dpv-geel),html:not(#x) .ip a.ip-go:not(.dpv-geel):link,html:not(#x) .ip a.ip-go:not(.dpv-geel):visited{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .ip a.ip-go:not(.dpv-geel):hover{background:#1B45B4 !important}
+html:not(#x) .ip-mail{background:#F3F7FF !important;color:#0D1B2A !important;border:1px solid #E6EBF2 !important}
+html:not(#x) .ip-mail :is(h2,h3,p,strong,b,label){color:#0D1B2A !important}
+html:not(#x) .ip-mail .lab{color:#2456D6 !important}
+html:not(#x) .ip-mail .s{color:#4A5A70 !important}
+html:not(#x) .ip-mail :is(.klein,.fijn,small){color:#5B6B80 !important}
+html:not(#x) .ip-veld input{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important}
+html:not(#x) .ip-veld input::placeholder{color:#5B6B80 !important}
+html:not(#x) .ip-live .stip{background:#3FAE7A !important}
+
+/* Apple-event (.ev): donkere bovenkant licht, knoppen intern blauw (apple.com is geen aanbieder van ons). */
+html:not(#x) .ev{--groen:#2456D6 !important;--soft:#4A5A70 !important}
+html:not(#x) .ev-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;color:#0D1B2A !important;border-radius:16px !important}
+html:not(#x) .ev-hero .ev-h1,html:not(#x) .ev-hero :is(h1,h2){color:#0D1B2A !important}
+html:not(#x) .ev-eyebrow{color:#2456D6 !important}
+html:not(#x) .ev-hero .ev-sub{color:#4A5A70 !important}
+html:not(#x) .ev-hero .ev-mini{color:#5B6B80 !important}
+html:not(#x) .ev-veld input{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important}
+html:not(#x) .ev-veld input::placeholder{color:#5B6B80 !important}
+html:not(#x) .ev-veld button{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .ev a.ev-knopgroot,html:not(#x) .ev a.ev-knopgroot:link,html:not(#x) .ev a.ev-knopgroot:visited{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .ev a.ev-knopgroot:hover,html:not(#x) .ev-veld button:hover{background:#1B45B4 !important}
+html:not(#x) .ev-kijk{background:#F4F7FF !important;border-color:#E6EBF2 !important;border-radius:16px !important}
+
+/* Besparen op vaste lasten (.bs): knoppen hadden blauwe tekst op blauw; het donkere blok had een onzichtbare kop. */
+html:not(#x) .bs{--blauw:#2456D6 !important;--groen:#2456D6 !important;--groend:#2456D6 !important;--soft:#4A5A70 !important}
+html:not(#x) .bs a.bs-knop,html:not(#x) .bs a.bs-knop:link,html:not(#x) .bs a.bs-knop:visited,html:not(#x) .bs a.bs-groen,html:not(#x) .bs a.bs-groen:link,html:not(#x) .bs a.bs-groen:visited{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .bs a.bs-knop:hover,html:not(#x) .bs a.bs-groen:hover{background:#1B45B4 !important}
+html:not(#x) .bs-mc{background:#F3F7FF !important;color:#0D1B2A !important;border:1px solid #E6EBF2 !important}
+html:not(#x) .bs-mc h2{color:#0D1B2A !important}
+html:not(#x) .bs-mc p{color:#4A5A70 !important}
+html:not(#x) .bs-mc .lab{color:#2456D6 !important}
+
+/* Wc-papier en andere artikelen in deze opmaak (.ar): sectie was overgeslagen. Oude letter, groen, donker slotblok. */
+html:not(#x) .ar{--groen:#2456D6 !important;--groen-d:#1F8F5F !important;--groen-t:#F3F7FF !important;--soft:#4A5A70 !important;font-family:'Montserrat',system-ui,sans-serif !important}
+html:not(#x) .ar :is(h1,h2,h3,th,td,b,strong,a){font-family:'Montserrat',system-ui,sans-serif !important}
+html:not(#x) .ar .stip{background:#3FAE7A !important}
+html:not(#x) .ar .kort{background:#F3F7FF !important;border:1px solid #E6EBF2 !important;border-radius:16px !important}
+html:not(#x) .ar tr.top td{background:#F4F7FF !important}
+html:not(#x) .ar .pe,html:not(#x) .ar .nieuwste{color:#1F8F5F !important}
+html:not(#x) .ar .uitleg{background:#F4F7FF !important;border:1px solid #E6EBF2 !important;border-radius:16px !important}
+html:not(#x) .ar .slot{background:#F3F7FF !important;color:#0D1B2A !important;border:1px solid #E6EBF2 !important}
+html:not(#x) .ar .slot :is(h2,h3,strong,b){color:#0D1B2A !important}
+html:not(#x) .ar .slot p{color:#4A5A70 !important}
+html:not(#x) .ar .slot a:not(.dpv-geel){background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .ar a.knop:not(.uit){background:#F9C31F !important;color:#0D1B2A !important;border-radius:10px !important}
+/* Wc-papier: de tabel was te breed voor het scherm, de gele knop viel er rechts af. */
+html:not(#x) .ar table{display:table !important;width:100% !important;table-layout:auto !important}
+html:not(#x) .ar tr > .dpvmb{padding:7px !important;min-width:0 !important;margin:10px 0 0 2px !important}
+html:not(#x) .ar tr > .dpvmb span{display:none !important}
+html:not(#x) .ar td,html:not(#x) .ar th{padding-left:5px !important;padding-right:5px !important}
+html:not(#x) .ar a.knop{padding:8px 10px !important}
+
+/* Boodschappen (.bv): gekozen keuzes blauw in plaats van zwart; knopteksten werden afgekapt door de bredere letter. */
+html:not(#x) .bv-wkt.aan,html:not(#x) .bv-chips button.aan{background:#2456D6 !important;border-color:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .bv-chips button.aan small{color:#DCE7FF !important}
+html:not(#x) .bv-nuschap{background:#2456D6 !important}
+html:not(#x) .bv-nuschap::before{background:#3FAE7A !important}
+html:not(#x) .bv-knop{text-align:center !important;white-space:normal !important;overflow:visible !important;text-overflow:clip !important;line-height:1.25 !important}
+/* Boodschappen: "goedkoop" is een oordeel en geen link: weer groen (leesbaar), niet blauw. */
+html:not(#x) .bv-pe:not(.leeg),html:not(#x) .bv-eerder.laag,html:not(#x) .bv-lm b,html:not(#x) .bv-ae,html:not(#x) .bv-cbr .g{color:#1F8F5F !important}
+html:not(#x) .bv-badge.gratis{background:#1F8F5F !important}
+html:not(#x) .bv-k{border-radius:16px !important}
+/* Boodschappen: het kopje "deze week in de folder" was blauw geworden alsof het een link is. */
+html:not(#x) .bv-folder .bv-okop{color:#5B6B80 !important}
+
+/* Studenten (.stu): kaarttitels bleven blauw onderstreept als gewone link. */
+html:not(#x) .stu a.ak-k:not(.dpv-geel){color:#FFFFFF !important}
+
+/* Mijn contracten (.dhc): tweede knop "Scan je factuur" werd een blauw vlak met donkere tekst. */
+html:not(#x) a.dhc-knop.dhc-stil,html:not(#x) a.dhc-knop.dhc-stil:visited{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important}
+html:not(#x) a.dhc-knop.dhc-stil:hover{background:#EAF1FF !important}
+html:not(#x) a.dhc-knop:not(.dhc-stil){color:#FFFFFF !important}
+
+
+/* iPhone 18 pre-order (.pp): bovenkant was bijna zwart met bordeaux en blauw verloop. Nu licht, knop intern blauw. */
+html:not(#x) .pp{--blauw:#2456D6 !important;--nacht:#0D1B2A !important;--soft:#4A5A70 !important;--groen-d:#1F8F5F !important}
+html:not(#x) .pp-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;background-image:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;color:#0D1B2A !important;border-radius:16px !important}
+html:not(#x) .pp-hero h1{color:#0D1B2A !important}
+html:not(#x) .pp-hero .pp-sub{color:#4A5A70 !important}
+html:not(#x) .pp-pil{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important}
+html:not(#x) .pp-feiten li{color:#4A5A70 !important}
+html:not(#x) .pp-feiten b{color:#0D1B2A !important}
+html:not(#x) .pp .pp-hoofdknop,html:not(#x) .pp a.pp-hoofdknop,html:not(#x) .pp button.pp-hoofdknop{background:#2456D6 !important;color:#FFFFFF !important;-webkit-text-fill-color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .pp .pp-hoofdknop:hover{background:#1B45B4 !important}
+html:not(#x) .pp .pp-tweede,html:not(#x) .pp a.pp-tweede:visited{color:#2456D6 !important}
+html:not(#x) .pp-veld input{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important}
+html:not(#x) .pp-veld input::placeholder{color:#5B6B80 !important}
+html:not(#x) .pp-hero .pp-mini,html:not(#x) .pp-hero .pp-uit{color:#5B6B80 !important}
+html:not(#x) .pp-mtegel[aria-selected="true"]{border-color:#2456D6 !important;box-shadow:0 0 0 2px #2456D6 !important}
+html:not(#x) .pp-knopdonker{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .pp-seintje,html:not(#x) .pp-routevak,html:not(#x) .pp-modus{background:#F4F7FF !important}
+/* Pre-order: het fotovak blijft donker (de foto's hebben zelf een donkere achtergrond), wel zonder bordeaux verloop. */
+html:not(#x) .pp-mhead{background:#0D1B2A !important;background-image:none !important}
+html:not(#x) .pp-mtegel .pp-mbeeld{background:#0D1B2A !important}
+
+/* Productvergelijker, uitgeklapt product: verzendkosten en prijs liepen over elkaar; winkelregel op de kaart brak lelijk. */
+html:not(#x) .ds-pv-w-r{flex-wrap:wrap !important}
+html:not(#x) .ds-pv-w-n{flex:1 1 0% !important;min-width:0 !important}
+html:not(#x) .ds-pv-w-r > .dpvmb{flex:1 1 100% !important;justify-content:center !important}
+html:not(#x) .ds-winkelrij{flex-wrap:wrap !important;row-gap:0 !important}
+/* Productvergelijker: de sorteerkeuze viel rechts buiten het scherm. */
+html:not(#x) .ds-rechts{max-width:100% !important;min-width:0 !important;width:100% !important}
+html:not(#x) .ds-rechts .ds-sel{flex:1 1 0% !important;min-width:0 !important;width:auto !important;max-width:100% !important}
+html:not(#x) .ds-prijsvak{flex:0 0 auto !important}
+html:not(#x) .ds-prijsvak input{width:64px !important}
+
+/* Brandstofprijzen (.bst): sectie was overgeslagen. Oude letter en fel groene interne knoppen. */
+html:not(#x) .bst{font-family:'Montserrat',system-ui,sans-serif !important}
+html:not(#x) .bst :is(h1,h2,h3,b,strong,input,select,button){font-family:'Montserrat',system-ui,sans-serif !important}
+html:not(#x) .bst a.bst-knop,html:not(#x) .bst a.bst-knop:visited{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .bst a.bst-knop:hover{background:#1B45B4 !important}
+html:not(#x) .bst-af{color:#1F8F5F !important}
+html:not(#x) .bst-kaart,html:not(#x) .bst-graf,html:not(#x) .bst-reken,html:not(#x) .bst-blok{border-radius:16px !important}
+html:not(#x) .bst-sub,html:not(#x) .bst-blok p{color:#4A5A70 !important}
+html:not(#x) .bst-fijn{color:#5B6B80 !important}
+
+/* iPhone 18 bij Vodafone: het tipvak in de tekst had een groen getint vlak (vaste opmaak in de tekst zelf). */
+html:not(#x) .rte [style*="background:#f0fdf8"]{background:#F3F7FF !important;border-color:#2456D6 !important;border-radius:16px !important}
+
+/* Blok "seintje / aanmelden" (.pa): het e-mailveld was ingezakt tot een smal streepje. */
+html:not(#x) .pa .pa-mail{height:50px !important;min-height:50px !important;padding:0 15px !important;border-radius:12px !important;width:100% !important;font-size:16px !important;background:#FFFFFF !important;color:#0D1B2A !important}
+
+/* Boodschappen: de knop naar de supermarkt of de folder is een doorklik en dus geel ("prijs checken" blijft een rustige tweede knop). */
+html:not(#x) .bv a.bv-knop:not(.check),html:not(#x) .bv a.bv-knop:not(.check):visited{background:#F9C31F !important;border-color:#F9C31F !important;color:#0D1B2A !important;border-radius:12px !important}
+html:not(#x) .bv a.bv-knop:not(.check):hover{background:#EDB50C !important;border-color:#EDB50C !important}
+html:not(#x) .bv a.bv-knop.check{border-color:#D9E1EC !important;border-radius:12px !important}
+/* Boodschappen: de kleine lettertjes onderaan waren te licht om te lezen. */
+html:not(#x) .bv-fijn,html:not(#x) .bv-fijn b{color:#5B6B80 !important}
+
+/* iPhone 18 overzicht: de koppen stonden in een dunne letter; de stijl vraagt vet. */
+html:not(#x) .dih-wrap :is(h1,h2){font-weight:800 !important;letter-spacing:-0.02em !important}

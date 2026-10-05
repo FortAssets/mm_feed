@@ -104,8 +104,12 @@ for (const [h, blad] of Object.entries(B)) {
         if (/Jakarta|Bricolage|Inter\b|Syne|--font-(body|heading)-family|Playfair|Lato|Source Sans|Noto Sans|Roboto/.test(d.value)) nieuw.push(['font-family', FONT]);
         return;
       }
-      if (d.prop.startsWith('--')) { // eigen variabelen met een kleur erin
-        const s2 = /bg|back|fill|surface/i.test(d.prop) ? 'vlak' : /border|line|rand/i.test(d.prop) ? 'rand' : 'tekst';
+      if (d.prop.startsWith('--')) { // eigen variabelen met een kleur erin (de browser laat hex hier staan)
+        d.value = d.value.replace(HEX6, hexRgb).replace(/#([0-9a-fA-F])([0-9a-fA-F])([0-9a-fA-F])\b/g, (m, x, y, z) => hexRgb(m, x + x + y + y + z + z));
+        // Een lichte waarde is bijna altijd een vlak (tint), een donkere een tekst- of knopkleur.
+        const eerste = RGB.exec(d.value); RGB.lastIndex = 0;
+        const lichtje = eerste ? hsl(+eerste[1], +eerste[2], +eerste[3])[2] > 0.8 : false;
+        const s2 = /bg|back|fill|surface/i.test(d.prop) || lichtje ? 'vlak' : /border|line|rand/i.test(d.prop) ? 'rand' : 'tekst';
         const v = vervang(d.value, s2, sel); if (v) nieuw.push([d.prop, v]); return;
       }
       const soort = soortVan(d.prop); if (!soort) return;

@@ -1,0 +1,214 @@
+/* ===== C-basis: kop, meldingsbalken, voet, zwevende onderdelen, homepage-blokken, tekstpagina's ===== */
+
+/* Voet (elke pagina): was een blauw verloop, hoort donkerblauw #0D1B2A te zijn met witte tekst */
+html:not(#x) footer.pvf{background:#0D1B2A !important;background-image:none !important;color:#C9D3E0 !important}
+html:not(#x) footer.pvf .pvf-wrap,html:not(#x) footer.pvf .pvf-grid,html:not(#x) footer.pvf .pvf-brand p,html:not(#x) footer.pvf .pvf-bottom,html:not(#x) footer.pvf .pvf-bottom p{color:#C9D3E0 !important}
+/* Voet: woordmerk wit (was een verloop naar lichtblauw), "Prijs" in het groen van het logo (was fel groen #10b981) */
+html:not(#x) footer.pvf a.pvf-logo{background:none !important;-webkit-text-fill-color:#FFFFFF !important;color:#FFFFFF !important}
+html:not(#x) footer.pvf a.pvf-logo .g{color:#3FAE7A !important;-webkit-text-fill-color:#3FAE7A !important;background:none !important}
+/* Voet: links wit, bij aanwijzen het groen van het logo; kopjes wit */
+html:not(#x) footer.pvf h5{color:#FFFFFF !important}
+html:not(#x) footer.pvf .pvf-col a,html:not(#x) footer.pvf .pvf-bottom-links a{color:#DCE4EE !important}
+html:not(#x) footer.pvf .pvf-col a:hover,html:not(#x) footer.pvf .pvf-bottom-links a:hover{color:#3FAE7A !important}
+/* Voet: strook "Volg ons" in hetzelfde donkerblauw, pictogrammen wit */
+html:not(#x) .pvs{background:#0D1B2A !important}
+html:not(#x) .pvs .pvs-label{color:#C9D3E0 !important}
+html:not(#x) .pvs .pvs-links a{color:#FFFFFF !important}
+html:not(#x) .pvs .pvs-links a:hover{background:#3FAE7A !important;border-color:#3FAE7A !important;color:#0D1B2A !important}
+/* Tekstblok boven de voet: lichtgrijs op wit was niet leesbaar */
+html:not(#x) .dhd-seo,html:not(#x) .dhd-seo p{color:#5B6B80 !important}
+html:not(#x) .dhd-seo a{color:#4A5A70 !important}
+html:not(#x) .dhd-seo a:hover{color:#2456D6 !important}
+
+/* Kop op desktop: gewone menu-items even donker als de uitklapbare */
+html:not(#x) .pvnav .dmn-i.plat > a{color:#0D1B2A !important}
+html:not(#x) .pvnav .dmn-i.plat > a:hover{color:#2456D6 !important}
+/* Uitklapmenu: kolomkopjes waren te licht; toelichting onder de link in plaats van ernaast (brak rommelig af) */
+html:not(#x) .dmn-p h5{color:#5B6B80 !important}
+html:not(#x) .dmn-p a.r{flex-wrap:wrap !important;justify-content:flex-start !important;row-gap:0 !important}
+html:not(#x) .dmn-p a.r small{flex:0 0 100% !important;order:3 !important;color:#5B6B80 !important}
+html:not(#x) .dmn-p a.r .pl{order:2 !important;margin-left:auto !important}
+/* Mobiel menu: vlakjes achter de pictogrammen rond */
+html:not(#x) .pvnav-mobile .pvico{border-radius:8px !important}
+
+/* Meldingsbalk iPhone 18 Pro (groen), mobiel: het kruisje was wit op groen; de regel "nu te bestellen" werd afgekapt */
+@media (max-width:820px){
+html:not(#x) .dpb .dpb-sluit{color:#0D1B2A !important;background:rgba(13,27,42,.14) !important}
+html:not(#x) .dpb .dpb-sub{font-size:11.5px !important;letter-spacing:-.01em !important}
+html:not(#x) .dpb .dpb-knop{padding:10px 10px !important}
+html:not(#x) .dpb a.dpb-helft{gap:8px !important}
+}
+
+/* Homepage, aanmelding voor de mail ("Mis geen scherpe deal"): was een vol blauw vlak met een blauwe knop op blauw */
+html:not(#x) .dpvc-box{background:#EAF1FF !important;background-image:none !important;color:#0D1B2A !important;border-radius:16px !important;box-shadow:none !important}
+html:not(#x) .dpvc-box h3{color:#0D1B2A !important}
+html:not(#x) .dpvc-box > p,html:not(#x) .dpvc-box p{color:#4A5A70 !important}
+html:not(#x) .dpvc-box .dpvc-redenen,html:not(#x) .dpvc-box .dpvc-redenen span{color:#0D1B2A !important}
+html:not(#x) .dpvc-box .dpvc-redenen span::before{color:#1F8F5F !important}
+html:not(#x) .dpvc-box .dpvc-fine{color:#5B6B80 !important}
+html:not(#x) .dpvc-box input{border:1px solid #D9E1EC !important;border-radius:12px !important;color:#0D1B2A !important;background:#FFFFFF !important}
+html:not(#x) .dpvc-box button{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+html:not(#x) .dpvc-box button:hover{background:#1B45B4 !important}
+html:not(#x) .dpvc-box .dpvc-success{color:#1F8F5F !important}
+
+/* Homepage, kennisbank: kop was dun, label "Zorg" was paars */
+html:not(#x) .dbm .dbm-kop{font-weight:800 !important;letter-spacing:-.02em !important}
+html:not(#x) .dbm .dbm-label{color:#2456D6 !important}
+html:not(#x) .dbm .dbm-sub,html:not(#x) .dbm .dbm-exc{color:#4A5A70 !important}
+html:not(#x) .dbm a.dbm-alles{color:#2456D6 !important;border-color:#D9E1EC !important;border-radius:12px !important}
+/* Homepage, zorgblok: label "Prinsjesdag" was donker op blauw */
+html:not(#x) .zhb .zhb-pil{color:#FFFFFF !important}
+/* Homepage: lichtgrijze kleine letters op wit waren niet leesbaar (datum op artikelkaarten, peildatum, gemiddelde) */
+html:not(#x) .dbs-card .dbs-date,html:not(#x) .dhd .dhd-peil,html:not(#x) .dhd-card .dhd-gem{color:#5B6B80 !important}
+
+/* Voet: sterren, vinkjes en "Klantscore" waren blauw op donkerblauw */
+html:not(#x) footer.pvf .pvf-trustpilot .stars,html:not(#x) footer.pvf .dpvf-vink{color:#3FAE7A !important}
+html:not(#x) footer.pvf .pvf-trustpilot span{color:#C9D3E0 !important}
+html:not(#x) footer.pvf .pvf-badge{color:#FFFFFF !important}
+
+/* Zoekhulp als blok in een pagina (bijv. /pages/sim-only): was een donker vlak, en de voorbeeldvragen waren lichtblauw op lichtblauw */
+html:not(#x) .dpvai-blok{background:#EAF1FF !important;background-image:none !important;border-radius:16px !important}
+html:not(#x) .dpvai-blok .kp b{color:#0D1B2A !important}
+html:not(#x) .dpvai-blok .sub{color:#4A5A70 !important}
+html:not(#x) .dpvai-blok .dpvai-veld{border-color:#D9E1EC !important;border-radius:12px !important}
+html:not(#x) .dpvai-blok .dpvai-hint button{color:#2456D6 !important;background:#FFFFFF !important;border:1px solid #D9E1EC !important}
+html:not(#x) .dpvai-blok .dpvai-hint button:hover{background:#F3F7FF !important}
+/* Zoekhulp, overal: veld, knop en uitkomst in de nieuwe vormen; lichtgrijze labels leesbaar */
+html:not(#x) .dpvai-go{border-radius:10px !important;color:#FFFFFF !important;font-weight:800 !important}
+html:not(#x) .dpvai-go:hover{background:#1B45B4 !important}
+html:not(#x) .dpvai-paneel .dpvai-veld{border-color:#D9E1EC !important;border-radius:12px !important}
+html:not(#x) .dpvai-veld:focus-within{border-color:#2456D6 !important}
+html:not(#x) .dpvai-paneel .kp button{color:#5B6B80 !important}
+html:not(#x) .dpvai-lbl,html:not(#x) .dpvai-bood .lbl,html:not(#x) .dpvai-land .lbl,html:not(#x) .dpvai-peil,html:not(#x) .dpvai-bg .per,html:not(#x) .dpvai-chip span,html:not(#x) .dpvai-bp s{color:#5B6B80 !important}
+html:not(#x) .dpvai-zin{color:#0D1B2A !important}
+html:not(#x) .dpvai-bm,html:not(#x) .dpvai-bmeer,html:not(#x) .dpvai-rij .det{color:#4A5A70 !important}
+html:not(#x) .dpvai-links a{border-radius:12px !important}
+html:not(#x) .dpvai-links a.groen{color:#FFFFFF !important}
+html:not(#x) .dpvai-links a.groen.dpv-geel,html:not(#x) .dpvai-links a.dpv-geel{background:#F9C31F !important;border-color:#F9C31F !important;color:#0D1B2A !important}
+
+/* Venster "Mail deze deal": kleine letters waren lichtgrijs op wit; vormen volgens de stijlgids */
+html:not(#x) .dpvmh-box{border-radius:16px !important}
+html:not(#x) .dpvmh-box .dpvmh-fijn{color:#5B6B80 !important}
+html:not(#x) .dpvmh-box .dpvmh-deal{background:#F3F7FF !important;color:#4A5A70 !important}
+html:not(#x) .dpvmh-box input{border-radius:12px !important;color:#0D1B2A !important}
+html:not(#x) .dpvmh-box .dpvmh-nee{background:#FFFFFF !important;border:1px solid #D9E1EC !important;color:#0D1B2A !important;border-radius:12px !important}
+html:not(#x) .dpvmh-box .dpvmh-ok{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important}
+
+/* Lade met bewaarde aanbiedingen: teller was blauw op blauw, lichtgrijze tekst, doorklik hoort geel */
+html:not(#x) .dpvs-fab{background:#2456D6 !important;color:#FFFFFF !important}
+html:not(#x) .dpvs-fab .cnt{background:#FFFFFF !important;color:#2456D6 !important}
+html:not(#x) .dpvs-drawer{border-radius:16px !important;border-color:#E6EBF2 !important}
+html:not(#x) .dpvs-head h3{color:#0D1B2A !important}
+html:not(#x) .dpvs-empty,html:not(#x) .dpvs-foot,html:not(#x) .dpvs-head .clr,html:not(#x) .dpvs-row .m span{color:#5B6B80 !important}
+html:not(#x) .dpvs-foot{background:#F3F7FF !important}
+html:not(#x) .dpvs-row .x{color:#4A5A70 !important;background:#F3F7FF !important}
+html:not(#x) .dpvs-row a.go{border-radius:10px !important}
+html:not(#x) .dpvs-row a.go.dpv-geel{background:#F9C31F !important;color:#0D1B2A !important}
+
+/* Tekstpagina's (over ons, hoe werkt het, hoe overstappen, contact, veelgestelde vragen e.a.): bovenkant was een vol blauw vlak met witte tekst; hoort licht met donkere tekst */
+html:not(#x) .pv-page-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;color:#0D1B2A !important;border-radius:0 !important;box-shadow:none !important}
+html:not(#x) .pv-page-hero h1{color:#0D1B2A !important;letter-spacing:-.03em !important;line-height:1.1 !important}
+html:not(#x) .pv-page-hero p{color:#4A5A70 !important}
+html:not(#x) .pv-page-hero .pv-breadcrumb,html:not(#x) .pv-page-hero .pv-breadcrumb span{color:#5B6B80 !important}
+html:not(#x) .pv-page-hero .pv-breadcrumb a{color:#2456D6 !important}
+/* Tekstpagina's: label boven een kop was oud groen; oude letter Syne in vaste opmaak; oud groen rondje */
+html:not(#x) .pv-section .pv-label{color:#2456D6 !important}
+html:not(#x) #MainContent [style*="Syne"]{font-family:'Montserrat',system-ui,sans-serif !important}
+html:not(#x) #MainContent [style*="background:#00B67A"],html:not(#x) #MainContent [style*="background: #00B67A"],html:not(#x) #MainContent [style*="background:#00b67a"]{background:#3FAE7A !important;color:#0D1B2A !important}
+html:not(#x) #MainContent [style*="background:#1B3FA0"]{background:#2456D6 !important}
+html:not(#x) #MainContent [style*="color:#00B67A"],html:not(#x) #MainContent [style*="color:#00b67a"]{color:#1F8F5F !important}
+html:not(#x) .pv-breadcrumb span{opacity:1 !important}
+html:not(#x) .pv-page-hero .pv-breadcrumb a:hover{color:#1B45B4 !important}
+/* Hoe overstappen: tussenkopje stond lager dan het rondje ernaast */
+html:not(#x) #MainContent .pv-section h4[style*="margin-bottom:6px"]{margin-top:12px !important}
+
+/* Oude tekstblokken van het basisthema (bijv. /pages/about): koppen waren dun en even klein als de tekst */
+html:not(#x) .rich-text__blocks :is(h1,h2,h3,h4){font-weight:800 !important;color:#0D1B2A !important;letter-spacing:-.02em !important;line-height:1.15 !important}
+html:not(#x) .rich-text__blocks :is(h1,.h1){font-size:28px !important}
+html:not(#x) .rich-text__blocks h2:not(.h1){font-size:21px !important}
+html:not(#x) .rich-text__blocks :is(p,li){color:#0D1B2A !important;line-height:1.6 !important}
+@media (min-width:990px){html:not(#x) .rich-text__blocks :is(h1,.h1){font-size:46px !important}html:not(#x) .rich-text__blocks h2:not(.h1){font-size:26px !important}}
+
+/* Over ons: bovenkant was een blauw vlak met witte tekst; hoort licht met donkere tekst */
+html:not(#x) .pvo-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;color:#0D1B2A !important;box-shadow:none !important}
+html:not(#x) .pvo-hero .pvo-h1{color:#0D1B2A !important;letter-spacing:-.03em !important}
+html:not(#x) .pvo-hero .pvo-hsub{color:#4A5A70 !important}
+html:not(#x) .pvo-hero .pvo-bc,html:not(#x) .pvo-hero .pvo-bc span{color:#5B6B80 !important;opacity:1 !important}
+html:not(#x) .pvo-hero .pvo-bc a{color:#2456D6 !important}
+
+/* Contact en contactformulier: kop plakte op mobiel tegen de rand en had geen lichte bovenkant; velden 12px rond met rand #D9E1EC, verzendknop blauw */
+html:not(#x) .pvc{background:linear-gradient(180deg,#E3ECFF 0,#F4F7FF 240px,#FFFFFF 420px) !important}
+html:not(#x) .pvc-in.pvc-kop{padding:34px 24px 0 !important}
+html:not(#x) .pvc h1{color:#0D1B2A !important;letter-spacing:-.03em !important}
+html:not(#x) .pvc .pvc-lead{color:#4A5A70 !important}
+html:not(#x) .pvc-kruim,html:not(#x) .pvc-kruim a{color:#5B6B80 !important}
+html:not(#x) .pvc-kruim a{color:#2456D6 !important}
+html:not(#x) .pvc-vak,html:not(#x) .pvc-kaart,html:not(#x) .pvc-gegevens{border-radius:16px !important;border-color:#E6EBF2 !important;box-shadow:none !important}
+html:not(#x) .pvc-gegevens{background:#F3F7FF !important}
+html:not(#x) .pvc-veld label{color:#0D1B2A !important}
+html:not(#x) .pvc-veld input,html:not(#x) .pvc-veld select,html:not(#x) .pvc-veld textarea{border:1px solid #D9E1EC !important;border-radius:12px !important;color:#0D1B2A !important;background-color:#FFFFFF !important}
+html:not(#x) .pvc-veld input:focus,html:not(#x) .pvc-veld select:focus,html:not(#x) .pvc-veld textarea:focus{border-color:#2456D6 !important;outline:none !important;box-shadow:0 0 0 3px rgba(36,86,214,.15) !important}
+html:not(#x) .pvc-knop{background:#2456D6 !important;color:#FFFFFF !important;border-radius:12px !important;min-height:48px !important;font-weight:800 !important}
+html:not(#x) .pvc-knop:hover{background:#1B45B4 !important}
+html:not(#x) .pvc-vak .sub,html:not(#x) .pvc-fijn,html:not(#x) .pvc-kaart p,html:not(#x) .pvc-gegevens{color:#4A5A70 !important}
+html:not(#x) .pvc-fijn a,html:not(#x) .pvc-kaart a{color:#2456D6 !important}
+html:not(#x) .pvc .pvc-lead{line-height:1.5 !important;margin-bottom:16px !important}
+html:not(#x) .pvc-gegevens b,html:not(#x) .pvc-kaart b{color:#0D1B2A !important}
+
+/* Belafspraak e.a. tekstpagina's met vaste opmaak: velden in de nieuwe vorm, lichtgrijze regel leesbaar */
+html:not(#x) #MainContent .pv-section input:not([type=checkbox]):not([type=radio]):not([type=hidden]),html:not(#x) #MainContent .pv-section select,html:not(#x) #MainContent .pv-section textarea{font-family:'Montserrat',system-ui,sans-serif !important;border:1px solid #D9E1EC !important;border-radius:12px !important;color:#0D1B2A !important}
+html:not(#x) #MainContent .pv-section [style*="color:#8E99A8"],html:not(#x) #MainContent .pv-section [style*="color:#8e99a8"]{color:#5B6B80 !important}
+
+/* Zoekpagina (/search): basisthema zonder opmaak. Kop, zoekveld en resultaten in de nieuwe stijl; de tekst "Translation missing" in het veld verborgen */
+html:not(#x) .template-search__header h1{font-size:28px !important;font-weight:800 !important;letter-spacing:-.03em !important;line-height:1.1 !important;color:#0D1B2A !important;margin:0 0 16px !important}
+html:not(#x) .template-search__search .field{position:relative !important;height:auto !important}
+html:not(#x) .template-search__search label.field__label{display:none !important}
+html:not(#x) .template-search__search input.search__input{height:52px !important;width:100% !important;border:1px solid #D9E1EC !important;border-radius:12px !important;background:#FFFFFF !important;padding:0 56px 0 16px !important;font-size:16px !important;font-weight:600 !important;color:#0D1B2A !important;box-shadow:none !important}
+html:not(#x) .template-search__search input.search__input::placeholder{color:transparent !important}
+html:not(#x) .template-search__search input.search__input:focus{border-color:#2456D6 !important;outline:none !important}
+html:not(#x) .template-search__search .search__button{position:absolute !important;right:4px !important;top:4px !important;width:44px !important;height:44px !important;border-radius:10px !important;background:#2456D6 !important;color:#FFFFFF !important;border:0 !important}
+html:not(#x) .template-search__search .search__button svg{color:#FFFFFF !important;stroke:#FFFFFF !important}
+html:not(#x) .template-search .product-count__text{font-size:14px !important;font-weight:700 !important;color:#4A5A70 !important}
+html:not(#x) .template-search #product-grid > li{background:#FFFFFF !important;border:1px solid #E6EBF2 !important;border-radius:16px !important;overflow:hidden !important}
+html:not(#x) .template-search .card-wrapper{padding:14px !important}
+html:not(#x) .template-search .article-card__info{padding:12px 14px 14px !important}
+html:not(#x) .template-search .article-card time{font-size:11.5px !important;font-weight:700 !important;color:#5B6B80 !important}
+html:not(#x) .template-search .article-card__title,html:not(#x) .template-search .article-card__title span{font-size:15px !important;font-weight:800 !important;line-height:1.25 !important;color:#0D1B2A !important}
+html:not(#x) .template-search .article-card__excerpt{font-size:13px !important;line-height:1.5 !important;color:#4A5A70 !important;margin-top:6px !important}
+html:not(#x) .template-search .card-information__text,html:not(#x) .template-search .card-information__text span{font-size:15px !important;font-weight:800 !important;color:#0D1B2A !important}
+html:not(#x) .template-search .card__submit{font-size:13px !important;font-weight:700 !important;border:1px solid #D9E1EC !important;border-radius:12px !important;padding:8px 12px !important;background:#FFFFFF !important;color:#5B6B80 !important;margin-top:10px !important}
+html:not(#x) .template-search .card__submit span{font-size:13px !important;color:#5B6B80 !important}
+html:not(#x) .template-search__search .search__button{left:auto !important;display:flex !important;align-items:center !important;justify-content:center !important;padding:0 !important}
+html:not(#x) .template-search__search .search__button::after{content:"\2192" !important;color:#FFFFFF !important;font-size:18px !important;font-weight:800 !important;line-height:1 !important}
+html:not(#x) .template-search__search .search__button svg{display:none !important}
+html:not(#x) .template-search .article-card__title{max-height:none !important;height:auto !important;overflow:visible !important;display:block !important;-webkit-line-clamp:unset !important;margin:4px 0 0 !important}
+html:not(#x) .template-search #product-grid > li{min-width:0 !important}
+html:not(#x) .template-search #product-grid img{max-width:100% !important;height:auto !important}
+
+/* Pagina niet gevonden (404): basisthema zonder opmaak. Lichte bovenkant, vette kop, blauwe knop */
+html:not(#x) [id^="Main404"]{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;padding:48px 0 56px !important}
+html:not(#x) .template-404{display:block !important;text-align:center !important}
+html:not(#x) .template-404__poster{display:none !important}
+html:not(#x) .template-404__content{text-align:center !important;padding:0 8px !important}
+html:not(#x) .template-404__content h1{font-size:28px !important;font-weight:800 !important;letter-spacing:-.03em !important;line-height:1.1 !important;color:#0D1B2A !important;margin:0 0 8px !important}
+html:not(#x) .template-404__content p{font-size:15px !important;font-weight:700 !important;color:#5B6B80 !important;margin:0 0 22px !important}
+html:not(#x) a.template-404__button{display:inline-flex !important;align-items:center !important;justify-content:center !important;min-height:48px !important;padding:0 22px !important;background:#2456D6 !important;color:#FFFFFF !important;border:0 !important;border-radius:12px !important;font-size:15px !important;font-weight:800 !important;text-decoration:none !important;width:auto !important;box-shadow:none !important}
+html:not(#x) a.template-404__button:hover{background:#1B45B4 !important}
+html:not(#x) a.template-404__button::before,html:not(#x) a.template-404__button::after{display:none !important}
+@media (min-width:990px){html:not(#x) .template-404__content h1{font-size:46px !important}html:not(#x) [id^="Main404"]{padding:80px 0 96px !important}}
+
+/* Gewone tekstpagina's van het basisthema (disclaimer, cookieverklaring, GDPR, sitemap): lichte bovenkant achter de kop */
+html:not(#x) [id^="MainPageSection"]{background:linear-gradient(180deg,#E3ECFF 0,#F4F7FF 130px,#FFFFFF 240px) !important;padding-top:28px !important}
+html:not(#x) section.spaced-section:has(> [id^="MainPageSection"]){margin-top:0 !important;padding-top:0 !important}
+html:not(#x) .main-page .main-page-title{color:#0D1B2A !important;font-weight:800 !important;letter-spacing:-.03em !important;line-height:1.1 !important}
+html:not(#x) .main-page .rte a{color:#2456D6 !important}
+html:not(#x) .main-page .rte :is(h2,h3){line-height:1.2 !important;color:#0D1B2A !important;font-weight:800 !important}
+/* Hoe werkt het: rondjes met het stapnummer waren het oude donkerblauw */
+html:not(#x) .pv-step-num{background:#2456D6 !important;color:#FFFFFF !important;box-shadow:none !important}
+
+/* Veelgestelde vragen: de antwoorden klappen niet open (er is geen script dat dat doet), daarom staan ze nu altijd open; kaarten 16px rond */
+html:not(#x) .pv-faq-item{border-radius:16px !important;border-color:#E6EBF2 !important;box-shadow:none !important}
+html:not(#x) .pv-faq-q{color:#0D1B2A !important;font-weight:800 !important;cursor:default !important;background:#FFFFFF !important;padding-bottom:8px !important}
+html:not(#x) .pv-faq-q::after{display:none !important}
+html:not(#x) .pv-faq-a{max-height:none !important;padding:0 20px 18px !important;color:#4A5A70 !important}
+html:not(#x) .dpvc-box .dpvc-redenen{margin-bottom:12px !important}

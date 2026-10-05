@@ -11,10 +11,10 @@ html:not(#x) .pvnav-woord,html:not(#x) .pvf-logo{font-family:'Bricolage Grotesqu
 
 /* Geel is er alleen voor de doorklik naar een aanbieder of winkel. Het script in dpv-skin.liquid
    zet deze klasse op elke gekleurde knop waarvan de link naar een aanbieder gaat. */
-html:not(#x) a.dpv-geel,html:not(#x) a.dpv-geel:visited{background:#F9C31F !important;background-image:none !important;
+html:not(#x):not(#y) a.dpv-geel,html:not(#x):not(#y) a.dpv-geel:visited{background:#F9C31F !important;background-image:none !important;
   color:#0D1B2A !important;border-color:#F9C31F !important;box-shadow:none !important;-webkit-text-fill-color:#0D1B2A !important}
-html:not(#x) a.dpv-geel *{color:#0D1B2A !important;-webkit-text-fill-color:#0D1B2A !important}
-html:not(#x) a.dpv-geel svg{stroke:currentColor}
-html:not(#x) a.dpv-geel:hover{background:#EDB50C !important;border-color:#EDB50C !important}
+html:not(#x):not(#y) a.dpv-geel *{color:#0D1B2A !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x):not(#y) a.dpv-geel svg{stroke:currentColor}
+html:not(#x):not(#y) a.dpv-geel:hover{background:#EDB50C !important;border-color:#EDB50C !important}
 html:not(#x) :focus-visible{outline-color:#2456D6}
 html:not(#x) ::selection{background:#DCE7FF;color:#0D1B2A}

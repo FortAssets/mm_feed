@@ -21,6 +21,8 @@
 {{ 'dpv-skin.css' | asset_url | stylesheet_tag }}
 <script>
 (function () {
+  // De kleur van de browserbalk op een telefoon staat in layout/theme.liquid; die volgt hier de nieuwe huisstijl.
+  try { var tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', '#E3ECFF'); } catch (e) {}
   var UIT = /\/api\/go\b|\/go\/deal|\/api\/shop\/go|\/sm\/go|awin1\.com|tradedoubler\.com|partner\.bol\.com|lt45\.net|daisycon|tradetracker|prf\.hn|tp\.media|tp\.st|emrldtp/i;
   function tint(kleur) {
     var m = (kleur || '').match(/[\d.]+/g);

@@ -14,10 +14,10 @@ const alleen = process.argv[2] ? new RegExp(process.argv[2]) : null;
   const lijst = [...new Set(urls)].filter(u => !alleen || alleen.test(u));
   let i = 0;
   async function werker() {
-    const ctx = await b.newContext({ viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1' });
+    const ctx = await b.newContext(process.env.BREED ? { viewport: { width: 1280, height: 900 } } : { viewport: { width: 390, height: 844 }, deviceScaleFactor: 1, isMobile: true, userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1' });
     while (i < lijst.length) {
       const u = lijst[i++], n = naam(u);
-      if (fs.existsSync(`${UIT}/data/${n}.json`) && !process.env.OPNIEUW) continue;
+      if (fs.existsSync(`${UIT}/data/${n}.json`) && !process.env.OPNIEUW) { try { if (!/Just a moment/.test(JSON.parse(fs.readFileSync(`${UIT}/data/${n}.json`,'utf8')).titel)) continue; } catch (e) {} }
       const p = await ctx.newPage();
       try {
         const sep = u.includes('?') ? '&' : '?';
@@ -38,14 +38,14 @@ const alleen = process.argv[2] ? new RegExp(process.argv[2]) : null;
         });
         d.url = u;
         fs.writeFileSync(`${UIT}/data/${n}.json`, JSON.stringify(d));
-        await p.screenshot({ path: `${UIT}/shots/${n}.jpg`, type: 'jpeg', quality: 55, fullPage: true, clip: { x: 0, y: 0, width: 390, height: Math.min(d.hoogte, 9000) } });
+        await p.screenshot({ path: `${UIT}/shots/${n}.jpg`, type: 'jpeg', quality: 55, fullPage: true, clip: { x: 0, y: 0, width: process.env.BREED ? 1280 : 390, height: Math.min(d.hoogte, 9000) } });
         console.log('ok', n, d.bladen.length, d.hoogte);
       } catch (e) { console.log('FOUT', n, e.message.slice(0, 90)); }
       await p.close();
-      if (process.env.EEN) await new Promise(r => setTimeout(r, 3000));
+      if (process.env.EEN || process.env.TWEE) await new Promise(r => setTimeout(r, 3000));
     }
     await ctx.close();
   }
-  await Promise.all(process.env.EEN ? [werker()] : [werker(), werker(), werker(), werker()]);
+  await Promise.all(process.env.EEN ? [werker()] : process.env.TWEE ? [werker(), werker()] : [werker(), werker(), werker(), werker()]);
   await b.close(); process.exit(0);
 })();

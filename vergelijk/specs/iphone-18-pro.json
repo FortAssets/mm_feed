@@ -1,0 +1,47 @@
+{
+ "slug": "iphone-18-pro",
+ "naam": "Apple iPhone 18 Pro",
+ "kort": "iPhone 18 Pro",
+ "merk": "Apple",
+ "release": "september 2026",
+ "scherm_inch": 6.3,
+ "scherm_type": "OLED (LTPO)",
+ "scherm_hz": 120,
+ "helderheid_nits": 3000,
+ "chip": "Apple A20 Pro",
+ "ram_gb": 12,
+ "opslag_gb": [
+  256,
+  512,
+  1024,
+  2048
+ ],
+ "camera_achter": "48 MP hoofd (variabel diafragma) + 48 MP ultragroothoek + 48 MP tele (4x)",
+ "tele_zoom": 4,
+ "camera_voor_mp": 18,
+ "accu_mah": 4056,
+ "laden_w": 60,
+ "draadloos_w": 25,
+ "gewicht_g": 211,
+ "dikte_mm": 8.75,
+ "ip": "IP68",
+ "updates_jaren": null,
+ "vouwbaar": false,
+ "sterk": [
+  "A20 Pro-chip met 12 GB werkgeheugen",
+  "Drie camera's van 48 MP met 4x optische zoom",
+  "Snel laden: 50% in ongeveer 15 minuten, draadloos tot 25 W"
+ ],
+ "zwak": [
+  "Vrij zwaar voor een 6,3 inch toestel: 211 gram",
+  "Kleinere accu dan de Pro Max (4056 mAh)"
+ ],
+ "bronnen": [
+  "https://www.apple.com/iphone-18-pro/specs/",
+  "https://support.apple.com/en-us/148590",
+  "https://www.gsmarena.com/apple_iphone_18_pro-14934.php",
+  "https://www.gsmarena.com/apple_reveals_the_iphone_18_pro_and_iphone_18_pro_maxs_battery_capacities-news-74566.php",
+  "https://www.iculture.nl/iphone/iphone-18-pro/"
+ ],
+ "opmerking": "Specificaties van na de release (18 september 2026). Helderheid is piek buiten (1600 nits HDR). Accu 4056 mAh is de EU-uitvoering met simkaartsleuf volgens het EU-energielabel; de eSIM-only uitvoering heeft 4288 mAh. Apple noemt geen laadvermogen van het toestel, alleen 50% in circa 15 minuten met een adapter van 60 W; laden_w volgt die adapter. RAM uit GSMArena en iCulture. Apple noemt daarnaast 8x zoom van optische kwaliteit via sensoruitsnede; de telelens zelf is 4x."
+}

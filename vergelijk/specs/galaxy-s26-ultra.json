@@ -1,0 +1,43 @@
+{
+ "slug": "galaxy-s26-ultra",
+ "naam": "Samsung Galaxy S26 Ultra",
+ "kort": "Galaxy S26 Ultra",
+ "merk": "Samsung",
+ "release": "maart 2026",
+ "scherm_inch": 6.9,
+ "scherm_type": "Dynamic LTPO AMOLED 2X",
+ "scherm_hz": 120,
+ "helderheid_nits": 2600,
+ "chip": "Qualcomm Snapdragon 8 Elite Gen 5 for Galaxy (ook in Europa)",
+ "ram_gb": 12,
+ "opslag_gb": [
+  256,
+  512,
+  1024
+ ],
+ "camera_achter": "200 MP hoofd + 50 MP ultragroothoek + 50 MP periscoop-tele (5x) + 10 MP tele (3x)",
+ "tele_zoom": 5,
+ "camera_voor_mp": 12,
+ "accu_mah": 5000,
+ "laden_w": 60,
+ "draadloos_w": 25,
+ "gewicht_g": 214,
+ "dikte_mm": 7.9,
+ "ip": "IP68",
+ "updates_jaren": 7,
+ "vouwbaar": false,
+ "sterk": [
+  "200 MP hoofdcamera en twee telelenzen (3x en 5x optisch)",
+  "Snelst ladende S26: 60 W bedraad en 25 W draadloos",
+  "Zeven jaar updates toegezegd"
+ ],
+ "zwak": [
+  "Zwaar en groot: 214 gram met een 6,9 inch scherm"
+ ],
+ "bronnen": [
+  "https://www.samsung.com/nl/smartphones/galaxy-s26-ultra/",
+  "https://www.gsmarena.com/samsung_galaxy_s26_ultra_5g-14320.php",
+  "https://www.androidplanet.nl/nieuws/samsung-galaxy-s26-officieel-s26-plus-s26-ultra/"
+ ],
+ "opmerking": "De Ultra heeft wereldwijd, dus ook in Europa, de Snapdragon 8 Elite Gen 5 for Galaxy. RAM is 12 GB bij 256 en 512 GB; de 1 TB-versie heeft 16 GB. Samsung.nl noemt de 10 MP 3x-telelens niet in de opgehaalde tekst, GSMArena wel. Laadvermogen in watt en 120 Hz komen van GSMArena en Android Planet. GSMArena noemt 6 maart als release, Nederlandse verkoopstart was 11 maart 2026."
+}

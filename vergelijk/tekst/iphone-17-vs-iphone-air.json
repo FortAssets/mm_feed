@@ -1,0 +1,61 @@
+{
+  "handle": "iphone-17-vs-iphone-air",
+  "a": "iphone-17",
+  "b": "iphone-air",
+  "title": "iPhone 17 of iPhone Air: de verschillen vergelijken",
+  "seo_title": "iPhone 17 vs iPhone Air: verschillen in dikte en accu",
+  "seo_description": "iPhone 17 of iPhone Air? De Air is 5,64 mm dun en heeft de A19 Pro, de iPhone 17 een tweede camera en een grotere accu. Vergelijk ze naast elkaar.",
+  "summary": "De iPhone Air is veel dunner en lichter en heeft de A19 Pro met 12 GB werkgeheugen. De iPhone 17 heeft een extra ultragroothoekcamera, een grotere accu en laadt sneller.",
+  "lead": "<strong>De iPhone 17 en iPhone Air kosten vandaag ongeveer hetzelfde: {{prijs_a}} bij {{winkel_a}} en {{prijs_b}} bij {{winkel_b}}, een verschil van {{verschil}} euro (beide 256 GB, los toestel).</strong> Je kiest dus niet op prijs maar op wat je ervoor krijgt. De iPhone Air is 5,64 mm dun en heeft de A19 Pro, de iPhone 17 heeft twee camera's, een grotere accu en laadt op 40 W.",
+  "secties": [
+    {
+      "kop": "Scherm: iPhone Air is met 6,5 inch iets groter dan de iPhone 17",
+      "tekst": "<p>De iPhone Air heeft een scherm van <strong>6,5 inch</strong>, de iPhone 17 van 6,3 inch. Het dunste toestel heeft dus het grootste beeld van de twee, al is 0,2 inch een klein verschil. Verder is het paneel gelijk: LTPO-OLED, 120 Hz en een opgegeven piekhelderheid van 3.000 nits bij allebei. Beide dragen ook het IP68-keurmerk. Wil je iets meer ruimte voor tekst en video zonder een zwaarder toestel, dan is dat een punt voor de Air.</p>"
+    },
+    {
+      "kop": "Camera: iPhone 17 heeft twee camera's, de iPhone Air één",
+      "tekst": "<p>De iPhone Air heeft achterop <strong>één camera</strong>: een hoofdcamera van 48 MP. Een ultragroothoek en een telelens ontbreken. De iPhone 17 heeft ook een hoofdcamera van 48 MP en daarnaast een ultragroothoek van 48 MP, voor een bredere beeldhoek. Een aparte telelens heeft de iPhone 17 evenmin, zoomen gaat daar tot 2x via de hoofdcamera. Voor selfies maakt je keuze niet uit: de frontcamera is bij beide 18 MP.</p>"
+    },
+    {
+      "kop": "Accu en laden: de dunne iPhone Air levert hier in",
+      "tekst": "<p>Dun heeft een keerzijde. De iPhone Air heeft een accu van 3.149 mAh, de kleinste van de serie. De iPhone 17 heeft <strong>3.692 mAh</strong>, ruim 500 mAh meer. Ook laden gaat op de iPhone 17 sneller: Apple noemt 50% in 20 minuten met een adapter van 40 W, tegenover 50% in 30 minuten met 20 W bij de Air. Draadloos is het 25 W tegen 20 W. Ben je lange dagen van huis zonder lader, dan telt dit zwaarder dan een paar millimeter dikte.</p>"
+    },
+    {
+      "kop": "Prestaties en opslag: iPhone Air heeft de A19 Pro en 12 GB",
+      "tekst": "<p>Opvallend: de iPhone Air heeft op papier de zwaardere hardware. Daarin zit de <strong>Apple A19 Pro met 12 GB werkgeheugen</strong>, dezelfde combinatie als in de iPhone 17 Pro. De iPhone 17 heeft de gewone A19 met 8 GB. Ook in opslag gaat de Air verder: 256 GB, 512 GB of 1 TB, waar de iPhone 17 bij 512 GB stopt. Let op één praktisch punt: de iPhone Air werkt alleen met eSIM en heeft geen simkaartsleuf. Controleer dus of je provider eSIM aanbiedt.</p>"
+    },
+    {
+      "kop": "Formaat en gewicht: iPhone Air is 5,64 mm dun",
+      "tekst": "<p>Dit is waar de Air om draait. Met <strong>5,64 mm</strong> is hij ruim 2,3 mm dunner dan de iPhone 17, die 7,95 mm meet. Ook op de weegschaal is hij lichter: 165 gram tegenover 177 gram, en dat met een groter scherm. In een binnenzak of strakke broekzak merk je het verschil in dikte eerder dan die 12 gram. Beide zijn IP68 stof- en waterdicht, dus op dat punt lever je met het dunne model niets in.</p>"
+    }
+  ],
+  "kies_a": [
+    "Je wilt een ultragroothoekcamera naast de hoofdcamera",
+    "Je wilt de grotere accu (3.692 mAh) en laden op 40 W",
+    "Je hebt aan de A19 met 8 GB en 512 GB opslag genoeg"
+  ],
+  "kies_b": [
+    "Je wilt het dunste en lichtste toestel: 5,64 mm en 165 gram",
+    "Je wilt de A19 Pro met 12 GB werkgeheugen",
+    "Je wilt een scherm van 6,5 inch of 1 TB opslag"
+  ],
+  "wachten": "<p>De iPhone 17 en iPhone Air zijn allebei van september 2025 en ruim een jaar oud. Liggen de prijzen dicht bij elkaar, dan kan een actie op één van de twee je keuze kantelen. Black Friday valt op vrijdag 27 november 2026. Winkels mogen als van-prijs alleen de laagste prijs van de afgelopen 30 dagen tonen. Wij meten elke nacht, dus op de dag zelf zie je welke korting echt is.</p>",
+  "faq": [
+    {
+      "v": "Wat is het verschil tussen de iPhone 17 en de iPhone Air?",
+      "a": "De iPhone Air is 5,64 mm dun, weegt 165 gram en heeft de A19 Pro met 12 GB werkgeheugen, maar één camera en een accu van 3.149 mAh. De iPhone 17 heeft twee camera's, 3.692 mAh en laadt sneller."
+    },
+    {
+      "v": "Is de iPhone Air duurder dan de iPhone 17?",
+      "a": "Vandaag kosten ze ongeveer hetzelfde: de iPhone 17 vanaf {{prijs_a}} en de iPhone Air vanaf {{prijs_b}}, beide met 256 GB. Het verschil is {{verschil}} euro. De keuze hangt dus vooral af van dikte, camera en accu."
+    },
+    {
+      "v": "Welke heeft de beste accu, de iPhone 17 of de iPhone Air?",
+      "a": "De iPhone 17. Die heeft 3.692 mAh tegenover 3.149 mAh in de iPhone Air en laadt met 40 W in plaats van 20 W. Apple noemt 50% in 20 minuten voor de iPhone 17 en in 30 minuten voor de Air."
+    },
+    {
+      "v": "Heeft de iPhone Air een simkaartsleuf?",
+      "a": "Nee, de iPhone Air werkt alleen met eSIM en heeft geen simkaartsleuf. Verder mist hij ten opzichte van de iPhone 17 een ultragroothoekcamera. Daar staat een behuizing van 5,64 mm dik en de A19 Pro-chip tegenover."
+    }
+  ]
+}

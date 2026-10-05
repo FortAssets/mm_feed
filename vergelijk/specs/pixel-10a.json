@@ -1,0 +1,44 @@
+{
+ "slug": "pixel-10a",
+ "naam": "Google Pixel 10a",
+ "kort": "Pixel 10a",
+ "merk": "Google",
+ "release": "maart 2026",
+ "scherm_inch": 6.3,
+ "scherm_type": "pOLED",
+ "scherm_hz": 120,
+ "helderheid_nits": 3000,
+ "chip": "Google Tensor G4",
+ "ram_gb": 8,
+ "opslag_gb": [
+  128,
+  256
+ ],
+ "camera_achter": "48 MP hoofd + 13 MP ultragroothoek",
+ "tele_zoom": null,
+ "camera_voor_mp": 13,
+ "accu_mah": 5100,
+ "laden_w": 30,
+ "draadloos_w": 10,
+ "gewicht_g": 183,
+ "dikte_mm": 9.0,
+ "ip": "IP68",
+ "updates_jaren": 7,
+ "vouwbaar": false,
+ "sterk": [
+  "Grote accu van 5100 mAh",
+  "7 jaar OS- en beveiligingsupdates",
+  "Scherm tot 3000 nits met 120 Hz"
+ ],
+ "zwak": [
+  "Geen telelens",
+  "Oudere Tensor G4 chip en draadloos laden met maximaal 10 W"
+ ],
+ "bronnen": [
+  "https://store.google.com/gb/product/pixel_10a_specs?hl=en-GB",
+  "https://www.gsmarena.com/google_pixel_10a_5g-14474.php",
+  "https://support.google.com/pixelphone/answer/7158570?p=specs&rd=1&visit_id=638047317231826476-2058600975",
+  "https://en.wikipedia.org/wiki/Pixel_10a"
+ ],
+ "opmerking": "Gewicht en afmetingen: Google noemt 183 g en 9,0 mm, Wikipedia 180 g en 10,2 mm; Google aangehouden. Laadvermogen 30 W komt van GSMArena; Google noemt zelf geen wattage, alleen 50% in ongeveer 30 minuten met een 45 W PPS-lader. Aangekondigd 18 februari 2026, te koop sinds 5 maart 2026."
+}

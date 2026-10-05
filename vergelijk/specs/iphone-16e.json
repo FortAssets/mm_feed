@@ -1,0 +1,45 @@
+{
+ "slug": "iphone-16e",
+ "naam": "Apple iPhone 16e",
+ "kort": "iPhone 16e",
+ "merk": "Apple",
+ "release": "februari 2025",
+ "scherm_inch": 6.1,
+ "scherm_type": "OLED",
+ "scherm_hz": 60,
+ "helderheid_nits": 1200,
+ "chip": "Apple A18",
+ "ram_gb": 8,
+ "opslag_gb": [
+  128,
+  256,
+  512
+ ],
+ "camera_achter": "48 MP hoofd",
+ "tele_zoom": null,
+ "camera_voor_mp": 12,
+ "accu_mah": 4005,
+ "laden_w": 20,
+ "draadloos_w": 7.5,
+ "gewicht_g": 167,
+ "dikte_mm": 7.8,
+ "ip": "IP68",
+ "updates_jaren": null,
+ "vouwbaar": false,
+ "sterk": [
+  "A18-chip met 8 GB werkgeheugen",
+  "Licht toestel van 167 gram",
+  "IP68 water- en stofdicht"
+ ],
+ "zwak": [
+  "Draadloos laden beperkt tot 7,5 W via Qi, zonder MagSafe",
+  "Scherm ververst op 60 Hz en er is maar één camera achterop"
+ ],
+ "bronnen": [
+  "https://support.apple.com/en-us/122208",
+  "https://m.gsmarena.com/apple_iphone_16e-ampp-13395.php",
+  "https://www.vodafone.nl/telefoon/iphone/iphone-16-serie/iphone-16e-specs",
+  "https://www.apple.com/newsroom/2025/02/apple-debuts-iphone-16e-a-powerful-new-member-of-the-iphone-16-family/"
+ ],
+ "opmerking": "Helderheid is piek bij HDR (800 nits normaal). Apple noemt geen laadvermogen van het toestel, alleen 50% in 30 minuten met een adapter van 20 W of meer; laden_w volgt die adapter. Draadloos 7,5 W, accu en RAM komen van GSMArena, Apple noemt ze niet. 60 Hz komt van Vodafone. De 2x zoom is een uitsnede van de hoofdsensor, geen telelens."
+}

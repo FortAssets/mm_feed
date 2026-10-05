@@ -1,0 +1,45 @@
+{
+ "slug": "iphone-air",
+ "naam": "Apple iPhone Air (2025)",
+ "kort": "iPhone Air",
+ "merk": "Apple",
+ "release": "september 2025",
+ "scherm_inch": 6.5,
+ "scherm_type": "OLED (LTPO)",
+ "scherm_hz": 120,
+ "helderheid_nits": 3000,
+ "chip": "Apple A19 Pro",
+ "ram_gb": 12,
+ "opslag_gb": [
+  256,
+  512,
+  1024
+ ],
+ "camera_achter": "48 MP hoofd",
+ "tele_zoom": null,
+ "camera_voor_mp": 18,
+ "accu_mah": 3149,
+ "laden_w": 20,
+ "draadloos_w": 20,
+ "gewicht_g": 165,
+ "dikte_mm": 5.64,
+ "ip": "IP68",
+ "updates_jaren": null,
+ "vouwbaar": false,
+ "sterk": [
+  "Zeer dun (5,64 mm) en licht (165 gram)",
+  "A19 Pro-chip met 12 GB werkgeheugen",
+  "6,5 inch 120 Hz OLED-scherm met 3000 nits piekhelderheid"
+ ],
+ "zwak": [
+  "Slechts één camera achterop, geen ultragroothoek of telelens",
+  "Kleinste accu van de serie (3149 mAh) en trager laden (20 W)"
+ ],
+ "bronnen": [
+  "https://www.apple.com/iphone-air/specs/",
+  "https://www.gsmarena.com/apple_iphone_17_air-13502.php",
+  "https://en.wikipedia.org/wiki/IPhone_Air",
+  "https://www.macrumors.com/2025/09/10/iphone-17-pro-iphone-air-specs-battery-ram/"
+ ],
+ "opmerking": "Apple noemt zelf geen mAh en geen RAM; die komen van GSMArena, Wikipedia en MacRumors. Laden: Apple noemt 50% in 30 minuten met een adapter van 20 W of hoger en draadloos tot 20 W. Dikte: Apple 5,64 mm, GSMArena 5,6 mm. Alleen eSIM, geen simkaartsleuf. Apple noemt geen aantal jaren updates. Specificatiepagina op apple.com/nl kon niet worden geopend; de internationale Apple-pagina is gebruikt."
+}

@@ -1,0 +1,61 @@
+{
+ "handle": "galaxy-s26-vs-pixel-10",
+ "a": "galaxy-s26",
+ "b": "pixel-10",
+ "title": "Galaxy S26 of Pixel 10: verschillen in camera, accu en gewicht",
+ "seo_title": "Galaxy S26 vs Pixel 10 vergelijken: specs en prijs",
+ "seo_description": "Galaxy S26 of Pixel 10: beide 6,3 inch en 12 GB, maar de Pixel heeft 5x zoom en een grotere accu en de S26 is 37 gram lichter. Vergelijk alle specs.",
+ "summary": "Twee toestellen van 6,3 inch met 120 Hz, 12 GB werkgeheugen en zeven jaar updates. De Galaxy S26 is lichter en dunner, de Pixel 10 heeft een grotere accu en een telelens die verder reikt.",
+ "lead": "<strong>De Galaxy S26 en de Pixel 10 kosten vandaag ongeveer hetzelfde: {{prijs_a}} bij {{winkel_a}} voor de S26 met 256 GB en {{prijs_b}} bij {{winkel_b}} voor de Pixel 10 met 128 GB, een verschil van {{verschil}} euro.</strong> Let op dat je bij de S26 het dubbele aan opslag krijgt. Verder kies je tussen 167 gram bij Samsung en een grotere accu met 5x zoom bij Google.",
+ "secties": [
+  {
+   "kop": "Scherm: Galaxy S26 en Pixel 10 zijn beide 6,3 inch met 120 Hz",
+   "tekst": "<p>Formaat en verversing zijn hetzelfde: 6,3 inch en 120 Hz op beide toestellen. De Galaxy S26 gebruikt een Dynamic LTPO AMOLED 2X, de Pixel 10 een OLED-scherm. In helderheid ligt de Pixel 10 op papier voor met een piek van <strong>3.000 nits</strong>, tegen 2.600 nits voor de Galaxy S26. Dat zijn piekwaarden, dus het verschil speelt vooral bij fel zonlicht. Voor de rest zijn het twee schermen van dezelfde maat en dezelfde vloeiendheid. Kijk voor je keuze dus liever naar camera, accu en gewicht.</p>"
+  },
+  {
+   "kop": "Camera: Pixel 10 zoomt 5x, Galaxy S26 3x",
+   "tekst": "<p>Beide hebben drie camera's achterop, inclusief een echte telelens. De Galaxy S26 combineert een hoofdcamera van 50 MP met een ultragroothoek van 12 MP en een telelens met 3x zoom van 10 MP. De Pixel 10 heeft een hoofdcamera van 48 MP, een ultragroothoek van 13 MP en een telelens met <strong>5x zoom</strong> van 10,8 MP. In megapixels ontlopen ze elkaar nauwelijks. Het verschil zit in hoe ver de telelens reikt. De frontcamera is 12 MP op de S26 en 10,5 MP op de Pixel 10.</p>"
+  },
+  {
+   "kop": "Accu en laden: Pixel 10 heeft 4.970 mAh, Galaxy S26 4.300 mAh",
+   "tekst": "<p>Bij een gelijk schermformaat heeft de Pixel 10 een flink grotere accu: <strong>4.970 mAh</strong> tegen 4.300 mAh in de Galaxy S26. Dat is 670 mAh meer. Ook laden gaat bij Google iets sneller, met maximaal 30 W tegen 25 W bij Samsung. Groot is dat verschil niet. Draadloos laden kan op allebei tot 15 W, bij de Pixel 10 via het magnetische Qi2. Daar staat tegenover dat de Pixel 10 zwaarder is, dus je ruilt hier capaciteit tegen gewicht.</p>"
+  },
+  {
+   "kop": "Prestaties en opslag: Exynos 2600 in de Galaxy S26, Tensor G5 in de Pixel 10",
+   "tekst": "<p>De Galaxy S26 heeft in Nederland de Samsung Exynos 2600, de Pixel 10 de Google Tensor G5. Allebei hebben ze <strong>12 GB werkgeheugen</strong> en zeven jaar updates. In opslag is er wel verschil. De Pixel 10 is er met 128 GB en 256 GB, de Galaxy S26 met 256 GB en 512 GB. De prijs van de Pixel 10 op deze pagina hoort bij 128 GB, die van de S26 bij 256 GB. Bewaar je veel foto's en video op je telefoon, reken dan met de grotere uitvoering van de Pixel.</p>"
+  },
+  {
+   "kop": "Formaat en gewicht: Galaxy S26 is 37 gram lichter dan de Pixel 10",
+   "tekst": "<p>Voor twee telefoons met hetzelfde schermformaat is het verschil groot. De Galaxy S26 komt uit op <strong>167 gram</strong> bij een dikte van 7,2 mm. De Pixel 10 weegt <strong>204 gram</strong> en meet 8,6 mm. Dat is 37 gram zwaarder en 1,4 mm dikker. Zoek je een compact toestel dat weinig weegt, dan is de S26 de duidelijke keuze. De Pixel 10 heeft daar een grotere accu tegenover staan. Stof- en waterdicht zijn ze allebei volgens IP68.</p>"
+  }
+ ],
+ "kies_a": [
+  "Licht en dun: 167 gram en 7,2 mm",
+  "Standaard 256 GB opslag, ook met 512 GB",
+  "Frontcamera van 12 MP tegen 10,5 MP"
+ ],
+ "kies_b": [
+  "Telelens met 5x zoom in plaats van 3x",
+  "Grotere accu: 4.970 mAh tegen 4.300 mAh",
+  "Piekhelderheid van 3.000 nits en laden met 30 W"
+ ],
+ "wachten": "<p>De Pixel 10 is van augustus 2025 en dus al meer dan een jaar te koop. De Galaxy S26 is van maart 2026. Black Friday is dit jaar op vrijdag 27 november 2026. Winkels mogen dan als van-prijs alleen de laagste prijs van de afgelopen 30 dagen tonen. Wij meten elke nacht, dus op de dag zelf zie je hier bij beide toestellen of de korting echt is. Eén aanbieding kan de keuze dan omdraaien.</p>",
+ "faq": [
+  {
+   "v": "Wat is het verschil tussen de Galaxy S26 en de Pixel 10?",
+   "a": "Beide hebben 6,3 inch, 120 Hz en 12 GB werkgeheugen. De Pixel 10 heeft een grotere accu (4.970 mAh), 5x zoom en 3.000 nits. De Galaxy S26 weegt 167 gram tegen 204 gram en begint bij 256 GB opslag."
+  },
+  {
+   "v": "Is de Galaxy S26 of de Pixel 10 de betere koop?",
+   "a": "Ze kosten vandaag ongeveer hetzelfde: {{prijs_a}} voor de Galaxy S26 met 256 GB en {{prijs_b}} voor de Pixel 10 met 128 GB. Kies de S26 voor opslag en gewicht, de Pixel 10 voor accu en zoom."
+  },
+  {
+   "v": "Welke heeft de beste accu, de Galaxy S26 of de Pixel 10?",
+   "a": "De Pixel 10, met 4.970 mAh tegen 4.300 mAh in de Galaxy S26. Laden gaat met 30 W tegen 25 W. Draadloos laden is bij beide 15 W. Het scherm is bij allebei 6,3 inch."
+  },
+  {
+   "v": "Hoe lang krijgen de Galaxy S26 en de Pixel 10 updates?",
+   "a": "Voor beide toestellen zijn zeven jaar updates toegezegd. De Pixel 10 is van augustus 2025 en de Galaxy S26 van maart 2026, dus de S26 is het nieuwere toestel van de twee."
+  }
+ ]
+}

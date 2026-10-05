@@ -1,0 +1,61 @@
+{
+  "handle": "iphone-17-pro-vs-iphone-18-pro",
+  "a": "iphone-17-pro",
+  "b": "iphone-18-pro",
+  "title": "iPhone 17 Pro of iPhone 18 Pro: verschillen vergelijken",
+  "seo_title": "iPhone 17 Pro vs iPhone 18 Pro: wat is er nieuw?",
+  "seo_description": "iPhone 17 Pro of de nieuwe 18 Pro? Vergelijk chip, camera met variabel diafragma, accu, laden en gewicht en zie wat de vorige generatie je scheelt.",
+  "summary": "De iPhone 18 Pro volgt de iPhone 17 Pro op met de A20 Pro-chip, een hoofdcamera met variabel diafragma en sneller laden. Scherm, werkgeheugen, telelens en dikte blijven gelijk.",
+  "lead": "<strong>De iPhone 17 Pro is vandaag {{verschil}} euro goedkoper dan de iPhone 18 Pro: {{prijs_a}} bij {{winkel_a}} tegenover {{prijs_b}} bij {{winkel_b}} (beide 256 GB, los toestel).</strong> De nieuwe generatie brengt de A20 Pro, een hoofdcamera met variabel diafragma en 50% lading in ongeveer 15 minuten. Scherm, werkgeheugen en zoombereik zijn hetzelfde gebleven.",
+  "secties": [
+    {
+      "kop": "Scherm: iPhone 18 Pro verandert weinig ten opzichte van de 17 Pro",
+      "tekst": "<p>Tussen de twee generaties is het scherm op papier gelijk gebleven. Zowel de iPhone 17 Pro als de iPhone 18 Pro heeft een LTPO-OLED van <strong>6,3 inch</strong> met 120 Hz. Voor beide staat 3.000 nits als piekhelderheid genoteerd. Bij de iPhone 18 Pro is dat de piek buiten, met 1.600 nits voor HDR. Voor de 17 Pro hebben we die uitsplitsing niet, dus helemaal één-op-één vergelijken kan niet. Het scherm is in elk geval geen reden om een jaar nieuwer te kopen.</p>"
+    },
+    {
+      "kop": "Camera: variabel diafragma is nieuw op de iPhone 18 Pro",
+      "tekst": "<p>De opzet is hetzelfde: drie camera's van 48 MP, namelijk hoofd, ultragroothoek en een telelens met 4x zoom. Nieuw op de iPhone 18 Pro is het <strong>variabele diafragma</strong> van de hoofdcamera. Bij de iPhone 17 Pro staat dat niet in de specificaties. De telelens zelf blijft 4x. Apple noemt bij de 18 Pro daarnaast 8x zoom van optische kwaliteit, via een uitsnede van de sensor. De frontcamera is bij beide 18 MP. Megapixels en zoombereik geven dus geen doorslag.</p>"
+    },
+    {
+      "kop": "Accu en laden: iPhone 18 Pro laadt sneller dan de 17 Pro",
+      "tekst": "<p>De accu is licht gegroeid. De Europese iPhone 18 Pro met simkaartsleuf heeft <strong>4.056 mAh</strong> volgens het EU-energielabel, de iPhone 17 Pro in dezelfde uitvoering 3.998 mAh. Dat scheelt 58 mAh. Het grotere verschil zit in het laden. Apple noemt voor de 18 Pro 50% in ongeveer 15 minuten met een adapter van 60 W, voor de 17 Pro 50% in 20 minuten met 40 W. Draadloos laden gaat bij beide tot 25 W.</p>"
+    },
+    {
+      "kop": "Prestaties en opslag: A20 Pro en 2 TB op de iPhone 18 Pro",
+      "tekst": "<p>De iPhone 18 Pro draait op de <strong>Apple A20 Pro</strong>, de iPhone 17 Pro op de A19 Pro. Dat is één chipgeneratie verschil. Het werkgeheugen is niet meegegroeid: beide hebben 12 GB. Bij de opslag is er wel een stap. Allebei beginnen ze bij 256 GB en gaan ze via 512 GB naar 1 TB, maar alleen de iPhone 18 Pro is er ook met 2 TB. Heb je die ruimte niet nodig, dan blijft de nieuwere chip over als verschil.</p>"
+    },
+    {
+      "kop": "Formaat en gewicht: iPhone 18 Pro is 5 gram zwaarder",
+      "tekst": "<p>Aan de maten is weinig veranderd. Beide Pro's zijn <strong>8,75 mm</strong> dik en hebben een scherm van 6,3 inch. De iPhone 17 Pro weegt 206 gram, de iPhone 18 Pro 211 gram. Het nieuwe model is dus niet lichter geworden, eerder een fractie zwaarder. Beide zijn voor dit schermformaat aan de zware kant. De IP68-bescherming tegen stof en water is gelijk. Op formaat hoef je tussen deze twee niet te kiezen.</p>"
+    }
+  ],
+  "kies_a": [
+    "Je wilt drie camera's van 48 MP met 4x zoom voor minder geld",
+    "Je vindt 50% lading in 20 minuten snel genoeg",
+    "Je hebt aan maximaal 1 TB opslag genoeg"
+  ],
+  "kies_b": [
+    "Je wilt de nieuwste chip: de Apple A20 Pro",
+    "Je wilt een hoofdcamera met variabel diafragma",
+    "Je wilt sneller laden of 2 TB opslag"
+  ],
+  "wachten": "<p>De iPhone 18 Pro is van september 2026 en op Black Friday, vrijdag 27 november 2026, ruim twee maanden oud. De iPhone 17 Pro is dan veertien maanden op de markt en heeft een opvolger. Winkels mogen als van-prijs alleen de laagste prijs van de afgelopen 30 dagen tonen. Wij meten elke nacht, dus op de dag zelf zie je bij welke van de twee de korting echt is.</p>",
+  "faq": [
+    {
+      "v": "Wat is het verschil tussen de iPhone 17 Pro en de iPhone 18 Pro?",
+      "a": "De iPhone 18 Pro heeft de A20 Pro-chip, een hoofdcamera met variabel diafragma, sneller laden (50% in ongeveer 15 minuten) en een optie met 2 TB. Scherm, werkgeheugen, telelens en dikte zijn gelijk aan de iPhone 17 Pro."
+    },
+    {
+      "v": "Is de iPhone 18 Pro de meerprijs waard?",
+      "a": "De iPhone 18 Pro kost vandaag {{verschil}} euro meer: {{prijs_b}} tegenover {{prijs_a}}, beide 256 GB. Je betaalt dat voor een nieuwere chip, variabel diafragma en sneller laden. Hetzelfde scherm en 12 GB werkgeheugen krijg je bij de iPhone 17 Pro ook."
+    },
+    {
+      "v": "Welke heeft de beste accu, de iPhone 17 Pro of de 18 Pro?",
+      "a": "De capaciteit is bijna gelijk: 4.056 mAh in de iPhone 18 Pro en 3.998 mAh in de iPhone 17 Pro, beide de Europese uitvoering met simkaartsleuf. De 18 Pro laadt wel sneller, met een adapter van 60 W."
+    },
+    {
+      "v": "Is de iPhone 17 Pro nog een goede keuze nu de 18 Pro er is?",
+      "a": "De iPhone 17 Pro is van september 2025 en heeft hetzelfde 6,3 inch scherm, 12 GB werkgeheugen en dezelfde 4x telelens als de iPhone 18 Pro. Je mist de A20 Pro, het variabele diafragma en het snellere laden."
+    }
+  ]
+}

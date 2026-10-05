@@ -1,0 +1,61 @@
+{
+  "handle": "iphone-17-vs-iphone-17-pro",
+  "a": "iphone-17",
+  "b": "iphone-17-pro",
+  "title": "iPhone 17 of iPhone 17 Pro: wat zijn de verschillen?",
+  "seo_title": "iPhone 17 vs iPhone 17 Pro: verschillen vergelijken",
+  "seo_description": "iPhone 17 of 17 Pro? Zelfde 6,3 inch scherm, maar de Pro heeft een telelens, de A19 Pro en meer opslag. Bekijk alle verschillen en de laagste prijzen.",
+  "summary": "De iPhone 17 en iPhone 17 Pro delen hetzelfde 6,3 inch scherm en laden even snel. De Pro voegt een telelens met 4x zoom, de A19 Pro met 12 GB werkgeheugen en opslag tot 1 TB toe, maar weegt 29 gram meer.",
+  "lead": "<strong>De iPhone 17 is vandaag {{verschil}} euro goedkoper dan de iPhone 17 Pro: {{prijs_a}} bij {{winkel_a}} tegenover {{prijs_b}} bij {{winkel_b}}, allebei 256 GB als los toestel.</strong> Het scherm en de laadsnelheid zijn gelijk. De meerprijs van de Pro gaat naar een telelens met 4x zoom, de A19 Pro-chip met 12 GB werkgeheugen en een iets grotere accu.",
+  "secties": [
+    {
+      "kop": "Scherm: iPhone 17 en iPhone 17 Pro zijn hier gelijk",
+      "tekst": "<p>Voor het scherm hoef je de Pro niet te kopen. Beide hebben een LTPO-OLED van <strong>6,3 inch</strong> met 120 Hz en een opgegeven piekhelderheid van 3.000 nits. Diagonaal, paneeltype, verversing en helderheid: op alle vier staat dezelfde waarde. Ook de IP68-bescherming tegen stof en water is gelijk. Kijk je vooral video of scrol je veel, dan krijg je met de gewone iPhone 17 hetzelfde beeldformaat en dezelfde verversing als met de Pro.</p>"
+    },
+    {
+      "kop": "Camera: de iPhone 17 Pro heeft een telelens met 4x zoom",
+      "tekst": "<p>De iPhone 17 heeft twee camera's achterop: een hoofdcamera en een ultragroothoek, allebei 48 MP. De iPhone 17 Pro heeft diezelfde twee en zet er een derde bij: een <strong>telelens met 4x zoom</strong>, ook 48 MP. Op de iPhone 17 zoom je tot 2x via de hoofdcamera, een aparte telelens ontbreekt. De frontcamera is bij beide 18 MP. Fotografeer je vaak op afstand, zoals op het sportveld of bij een concert, dan is dit het verschil dat telt.</p>"
+    },
+    {
+      "kop": "Accu en laden: iPhone 17 Pro heeft ruim 300 mAh meer",
+      "tekst": "<p>De Europese iPhone 17 Pro met simkaartsleuf heeft een accu van <strong>3.998 mAh</strong>, de iPhone 17 van 3.692 mAh. Let op: de 4.252 mAh die je soms ziet staan, hoort bij de eSIM-versie van de Pro. Apple noemt zelf geen mAh, de cijfers komen uit externe bronnen. Laden gaat bij beide gelijk: Apple noemt 50% in 20 minuten met een adapter van 40 W, en draadloos laden tot 25 W. Op laadsnelheid win je dus niets met de Pro.</p>"
+    },
+    {
+      "kop": "Prestaties en opslag: A19 in de iPhone 17, A19 Pro in de 17 Pro",
+      "tekst": "<p>In de iPhone 17 zit de Apple A19 met 8 GB werkgeheugen, in de iPhone 17 Pro de <strong>A19 Pro met 12 GB</strong>. Dat is de helft meer geheugen. Bij de opslag begint het gelijk met 256 GB en 512 GB. Daarna houdt het bij de iPhone 17 op, terwijl de Pro ook met 1 TB te koop is. Bewaar je veel video en foto's op het toestel zelf, dan heb je alleen bij de Pro die ruimte.</p>"
+    },
+    {
+      "kop": "Formaat en gewicht: iPhone 17 is 29 gram lichter dan de Pro",
+      "tekst": "<p>Het scherm is even groot, maar in de hand voel je verschil. De iPhone 17 weegt <strong>177 gram</strong> en is 7,95 mm dik. De iPhone 17 Pro weegt 206 gram en is 8,75 mm dik. Dat is 29 gram en 0,8 mm extra, veel voor een toestel van 6,3 inch. Draag je je telefoon in een broekzak of houd je hem lang vast, dan is de gewone iPhone 17 de lichtste van de twee.</p>"
+    }
+  ],
+  "kies_a": [
+    "Je wilt hetzelfde 6,3 inch scherm van 120 Hz voor minder geld",
+    "Je wilt het lichtere toestel: 177 gram tegenover 206 gram",
+    "Je hebt genoeg aan 2x zoom en maximaal 512 GB opslag"
+  ],
+  "kies_b": [
+    "Je wilt een telelens met 4x zoom van 48 MP",
+    "Je wilt de A19 Pro met 12 GB werkgeheugen",
+    "Je wilt 1 TB opslag of de iets grotere accu"
+  ],
+  "wachten": "<p>Beide modellen zijn van september 2025 en dus ruim een jaar op de markt. Aan de specificaties verandert niets meer, alleen de prijs beweegt nog. Black Friday is op vrijdag 27 november 2026. Winkels mogen dan als van-prijs alleen de laagste prijs van de afgelopen 30 dagen tonen. Wij meten elke nacht, dus op de dag zelf zie je of de korting op de iPhone 17 of de Pro echt is.</p>",
+  "faq": [
+    {
+      "v": "Wat is het verschil tussen de iPhone 17 en de iPhone 17 Pro?",
+      "a": "De iPhone 17 Pro heeft een extra telelens met 4x zoom, de A19 Pro met 12 GB werkgeheugen, een accu van 3.998 mAh en opslag tot 1 TB. Scherm, frontcamera en laadsnelheid zijn gelijk aan de iPhone 17."
+    },
+    {
+      "v": "Is de iPhone 17 Pro de meerprijs waard?",
+      "a": "De Pro kost vandaag {{verschil}} euro meer dan de iPhone 17, beide met 256 GB. Dat is het waard als je de telelens, 12 GB werkgeheugen of 1 TB opslag gaat gebruiken. Voor het scherm of het laden hoef je het niet te doen."
+    },
+    {
+      "v": "Welke heeft de beste accu, de iPhone 17 of de 17 Pro?",
+      "a": "De iPhone 17 Pro heeft de grootste accu: 3.998 mAh in de Europese uitvoering met simkaartsleuf, tegenover 3.692 mAh in de iPhone 17. Laden gaat bij beide even snel, met 40 W bedraad en 25 W draadloos."
+    },
+    {
+      "v": "Is het scherm van de iPhone 17 Pro beter dan dat van de iPhone 17?",
+      "a": "Nee, op papier niet. Beide hebben een LTPO-OLED van 6,3 inch met 120 Hz en 3.000 nits piekhelderheid. Het verschil tussen de twee zit in camera, chip, opslag en gewicht, niet in het beeldscherm."
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+{
+ "slug": "iphone-17-pro",
+ "naam": "Apple iPhone 17 Pro",
+ "kort": "iPhone 17 Pro",
+ "merk": "Apple",
+ "release": "september 2025",
+ "scherm_inch": 6.3,
+ "scherm_type": "OLED (LTPO)",
+ "scherm_hz": 120,
+ "helderheid_nits": 3000,
+ "chip": "Apple A19 Pro",
+ "ram_gb": 12,
+ "opslag_gb": [
+  256,
+  512,
+  1024
+ ],
+ "camera_achter": "48 MP hoofd + 48 MP ultragroothoek + 48 MP tele",
+ "tele_zoom": 4,
+ "camera_voor_mp": 18,
+ "accu_mah": 3998,
+ "laden_w": 40,
+ "draadloos_w": 25,
+ "gewicht_g": 206,
+ "dikte_mm": 8.75,
+ "ip": "IP68",
+ "updates_jaren": null,
+ "vouwbaar": false,
+ "sterk": [
+  "Drie 48 MP camera's met 4x optische telezoom",
+  "A19 Pro-chip met 12 GB werkgeheugen",
+  "120 Hz OLED-scherm met 3000 nits piekhelderheid"
+ ],
+ "zwak": [
+  "Met 206 gram zwaar voor een toestel van 6,3 inch",
+  "Europese uitvoering met simkaartsleuf heeft een kleinere accu dan de eSIM-versie (4252 mAh)"
+ ],
+ "bronnen": [
+  "https://support.apple.com/en-us/125090",
+  "https://www.gsmarena.com/apple_iphone_17_pro-14049.php",
+  "https://en.wikipedia.org/wiki/IPhone_17_Pro",
+  "https://www.macrumors.com/2025/09/10/iphone-17-pro-iphone-air-specs-battery-ram/"
+ ],
+ "opmerking": "Apple noemt zelf geen mAh en geen RAM. Accu van de uitvoering met simkaartsleuf (internationaal/Europa): GSMArena 3998 mAh, Wikipedia 3988 mAh; GSMArena aangehouden. De eSIM-versie heeft 4252 mAh. Laden: Apple noemt 50% in 20 minuten met een adapter van 40 W of hoger; GSMArena noemt geen wattage op de specpagina. Dikte: Apple 8,75 mm, GSMArena 8,8 mm. Apple noemt geen aantal jaren updates. Specificatiepagina op apple.com/nl kon niet worden geopend; Apple Support (en-us) gebruikt."
+}

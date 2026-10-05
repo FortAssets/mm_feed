@@ -1,0 +1,44 @@
+{
+ "slug": "galaxy-z-flip8",
+ "naam": "Samsung Galaxy Z Flip8",
+ "kort": "Galaxy Z Flip8",
+ "merk": "Samsung",
+ "release": "juli 2026",
+ "scherm_inch": 6.9,
+ "scherm_type": "Dynamic AMOLED 2X",
+ "scherm_hz": 120,
+ "helderheid_nits": 2600,
+ "chip": "Samsung Exynos 2600",
+ "ram_gb": 12,
+ "opslag_gb": [
+  256,
+  512
+ ],
+ "camera_achter": "50 MP hoofd + 12 MP ultragroothoek",
+ "tele_zoom": null,
+ "camera_voor_mp": 10,
+ "accu_mah": 4300,
+ "laden_w": 25,
+ "draadloos_w": 15,
+ "gewicht_g": 180,
+ "dikte_mm": 6.1,
+ "ip": "IP48",
+ "updates_jaren": 7,
+ "vouwbaar": true,
+ "sterk": [
+  "Groot 4,1 inch coverscherm met 120 Hz",
+  "7 jaar software-updates",
+  "Licht voor een vouwtoestel: 180 gram"
+ ],
+ "zwak": [
+  "Geen telelens en laden met maximaal 25 W",
+  "IP48: beperkte bescherming tegen stof"
+ ],
+ "bronnen": [
+  "https://news.samsung.com/global/samsung-galaxy-z-fold8-ultra-fold8-and-flip8foldables-perfected-for-every-way-of-living",
+  "https://www.samsung.com/nl/smartphones/galaxy-z-flip8/",
+  "https://www.nieuwemobiel.nl/telefoons/samsung/galaxy-z-flip-8/specificaties",
+  "https://www.notebookcheck.net/Samsung-Galaxy-Z-Flip8-Reviews-and-Specs.1352353.0.html"
+ ],
+ "opmerking": "Coverscherm: 4,1 inch Super AMOLED, 60/120 Hz (948 x 1048). Dikte 6,1 mm is opengeklapt; dichtgevouwen 13,1 mm. Aangekondigd 22 juli 2026, volgens Nieuwemobiel verkrijgbaar sinds 3 augustus 2026. Samsung noemt '2x optische zoom' via de 50 MP hoofdcamera (sensoruitsnede), er is geen aparte telelens. Draadloos laden 15 W volgens Samsung Newsroom; Nieuwemobiel noemt alleen 10 W omgekeerd draadloos laden. Notebookcheck noemt het schermtype Super AMOLED, Samsung zelf Dynamic AMOLED 2X (aangehouden)."
+}

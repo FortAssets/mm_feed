@@ -1,0 +1,43 @@
+{
+ "slug": "galaxy-s26",
+ "naam": "Samsung Galaxy S26",
+ "kort": "Galaxy S26",
+ "merk": "Samsung",
+ "release": "maart 2026",
+ "scherm_inch": 6.3,
+ "scherm_type": "Dynamic LTPO AMOLED 2X",
+ "scherm_hz": 120,
+ "helderheid_nits": 2600,
+ "chip": "Samsung Exynos 2600 (Europese versie)",
+ "ram_gb": 12,
+ "opslag_gb": [
+  256,
+  512
+ ],
+ "camera_achter": "50 MP hoofd + 12 MP ultragroothoek + 10 MP tele (3x)",
+ "tele_zoom": 3,
+ "camera_voor_mp": 12,
+ "accu_mah": 4300,
+ "laden_w": 25,
+ "draadloos_w": 15,
+ "gewicht_g": 167,
+ "dikte_mm": 7.2,
+ "ip": "IP68",
+ "updates_jaren": 7,
+ "vouwbaar": false,
+ "sterk": [
+  "Compact en licht: 167 gram bij een 6,3 inch scherm",
+  "Zeven jaar updates toegezegd",
+  "Telelens met 3x optische zoom en 12 GB werkgeheugen"
+ ],
+ "zwak": [
+  "Laadt met maximaal 25 W, trager dan de S26+ (45 W) en Ultra (60 W)",
+  "Kleinste accu van de serie (4300 mAh)"
+ ],
+ "bronnen": [
+  "https://www.samsung.com/nl/smartphones/galaxy-s26/",
+  "https://www.gsmarena.com/samsung_galaxy_s26-review-2942.php",
+  "https://www.androidplanet.nl/nieuws/samsung-galaxy-s26-officieel-s26-plus-s26-ultra/"
+ ],
+ "opmerking": "Europa/Nederland krijgt de Exynos 2600; alleen VS, China en Japan krijgen de Snapdragon 8 Elite Gen 5. Samsung.nl noemt geen laadvermogen in watt of verversingssnelheid; die komen van GSMArena en Android Planet. Nederlandse verkoopstart 11 maart 2026. Updates: 7 jaar volgens GSMArena en Android Planet."
+}

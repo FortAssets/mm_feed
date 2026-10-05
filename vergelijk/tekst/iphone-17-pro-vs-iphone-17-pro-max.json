@@ -1,0 +1,61 @@
+{
+  "handle": "iphone-17-pro-vs-iphone-17-pro-max",
+  "a": "iphone-17-pro",
+  "b": "iphone-17-pro-max",
+  "title": "iPhone 17 Pro of iPhone 17 Pro Max: de verschillen",
+  "seo_title": "iPhone 17 Pro vs iPhone 17 Pro Max: formaat, accu, prijs",
+  "seo_description": "iPhone 17 Pro of Pro Max? Zelfde chip en camera's, maar een scherm van 6,3 of 6,9 inch en een flink grotere accu. Vergelijk gewicht, opslag en prijzen.",
+  "summary": "De iPhone 17 Pro en iPhone 17 Pro Max hebben dezelfde chip, camera's en laadsnelheid. Het verschil zit in het formaat: 6,3 tegenover 6,9 inch, met in de Pro Max een grotere accu en 27 gram extra gewicht.",
+  "lead": "<strong>De iPhone 17 Pro Max kost vandaag {{verschil}} euro meer dan de iPhone 17 Pro: {{prijs_b}} bij {{winkel_b}} tegenover {{prijs_a}} bij {{winkel_a}}, beide met 256 GB als los toestel.</strong> Daarvoor krijg je een scherm van 6,9 in plaats van 6,3 inch en een accu van 4.823 mAh. Chip, werkgeheugen en camera's zijn identiek.",
+  "secties": [
+    {
+      "kop": "Scherm: 6,3 inch op de iPhone 17 Pro, 6,9 inch op de Pro Max",
+      "tekst": "<p>Dit is de keuze waar het om draait. De iPhone 17 Pro heeft een scherm van 6,3 inch, de iPhone 17 Pro Max van <strong>6,9 inch</strong>. Dat is 0,6 inch meer diagonaal voor video, kaarten en tekst. In de techniek erachter zit geen verschil: allebei LTPO-OLED, 120 Hz en 3.000 nits piekhelderheid. Je kiest dus puur op oppervlak. Bedien je je telefoon vaak met één hand, dan zit je met 6,3 inch dichter bij alle hoeken.</p>"
+    },
+    {
+      "kop": "Camera: iPhone 17 Pro en Pro Max hebben dezelfde drie lenzen",
+      "tekst": "<p>Voor de camera hoef je niet naar de grootste te grijpen. Beide hebben een hoofdcamera, een ultragroothoek en een <strong>telelens met 4x zoom</strong>, alle drie 48 MP. Ook de frontcamera is gelijk met 18 MP. In megapixels, aantal lenzen en zoombereik staat bij de twee precies hetzelfde. Op de specificaties is er dus geen foto- of videoreden om de Pro Max boven de Pro te kiezen. Wat wel verandert is de zoeker: je kadert op een groter scherm.</p>"
+    },
+    {
+      "kop": "Accu en laden: Pro Max heeft 825 mAh meer dan de iPhone 17 Pro",
+      "tekst": "<p>In de Europese iPhone 17 Pro Max met simkaartsleuf zit <strong>4.823 mAh</strong>, in de iPhone 17 Pro in dezelfde uitvoering 3.998 mAh. Dat is ruim 20% meer capaciteit, al moet die ook een groter scherm van stroom voorzien. De eSIM-versies hebben grotere accu's (5.088 en 4.252 mAh), maar die cijfers gelden niet voor de uitvoering met simkaartsleuf. Laden gaat gelijk: Apple noemt voor beide 50% in 20 minuten met een adapter van 40 W of hoger, en draadloos tot 25 W.</p>"
+    },
+    {
+      "kop": "Prestaties en opslag: alleen de iPhone 17 Pro Max gaat tot 2 TB",
+      "tekst": "<p>Van binnen zijn ze gelijk: de Apple A19 Pro met <strong>12 GB werkgeheugen</strong> in allebei. Het is dezelfde hardware in twee maten, dus de grote is niet de krachtigere variant. Het enige verschil zit bovenaan de opslaglijst. Beide zijn er met 256 GB, 512 GB en 1 TB, de Pro Max ook met 2 TB. Bewaar je heel veel video op het toestel zelf, dan is dat de enige van de twee die zo ver gaat.</p>"
+    },
+    {
+      "kop": "Formaat en gewicht: iPhone 17 Pro weegt 206 gram, Pro Max 233 gram",
+      "tekst": "<p>De dikte is gelijk, <strong>8,75 mm</strong>, maar het gewicht niet. De iPhone 17 Pro weegt 206 gram, de iPhone 17 Pro Max 233 gram. Die 27 gram extra horen bij een behuizing rond een scherm van 6,9 inch. De Pro is voor zijn 6,3 inch al aan de zware kant, de Pro Max is met 233 gram gewoon zwaar. Beide zijn IP68 stof- en waterdicht. Twijfel je, houd de Pro Max dan eerst even vast in een winkel.</p>"
+    }
+  ],
+  "kies_a": [
+    "Je wilt het compactere toestel van 6,3 inch",
+    "Je wilt 27 gram minder meedragen: 206 tegenover 233 gram",
+    "Je wilt dezelfde A19 Pro en drie camera's in een kleiner formaat"
+  ],
+  "kies_b": [
+    "Je wilt het grootste scherm: 6,9 inch",
+    "Je wilt de grootste accu: 4.823 mAh",
+    "Je wilt 2 TB opslag kunnen kiezen"
+  ],
+  "wachten": "<p>De iPhone 17 Pro en Pro Max kwamen allebei in september 2025 uit en zijn dus even oud: ruim een jaar. Het onderlinge prijsverschil kan rond Black Friday, vrijdag 27 november 2026, groter of kleiner worden. Winkels mogen als van-prijs alleen de laagste prijs van de afgelopen 30 dagen tonen. Wij meten elke nacht, dus op de dag zelf zie je of het formaat dat jij wilt echt in prijs is gezakt.</p>",
+  "faq": [
+    {
+      "v": "Wat is het verschil tussen de iPhone 17 Pro en de iPhone 17 Pro Max?",
+      "a": "Het formaat. De Pro Max heeft een scherm van 6,9 inch, een accu van 4.823 mAh en weegt 233 gram. De Pro heeft 6,3 inch, 3.998 mAh en weegt 206 gram. Chip, werkgeheugen en camera's zijn gelijk."
+    },
+    {
+      "v": "Is de iPhone 17 Pro Max de meerprijs waard?",
+      "a": "De Pro Max kost vandaag {{verschil}} euro meer dan de Pro, beide met 256 GB. Je krijgt daarvoor een groter scherm en een grotere accu, geen andere chip of camera. Het is het waard als je dat formaat ook echt wilt."
+    },
+    {
+      "v": "Welke heeft de beste accu, de iPhone 17 Pro of de Pro Max?",
+      "a": "De iPhone 17 Pro Max: 4.823 mAh tegenover 3.998 mAh in de iPhone 17 Pro, allebei de Europese uitvoering met simkaartsleuf. De laadsnelheid is gelijk, met 50% in 20 minuten volgens Apple en draadloos laden tot 25 W."
+    },
+    {
+      "v": "Heeft de iPhone 17 Pro Max een betere camera dan de 17 Pro?",
+      "a": "Nee. Beide hebben drie camera's van 48 MP achterop, waaronder een telelens met 4x zoom, en een frontcamera van 18 MP. Op de specificaties is er geen verschil in camera tussen de Pro en de Pro Max."
+    }
+  ]
+}

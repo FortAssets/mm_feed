@@ -1,0 +1,1042 @@
+{
+ "iphone-17": {
+  "slug": "iphone-17",
+  "naam": "Apple iPhone 17",
+  "kort": "iPhone 17",
+  "merk": "Apple",
+  "release": "september 2025",
+  "scherm_inch": 6.3,
+  "scherm_type": "OLED (LTPO)",
+  "scherm_hz": 120,
+  "helderheid_nits": 3000,
+  "chip": "Apple A19",
+  "ram_gb": 8,
+  "opslag_gb": [
+   256,
+   512
+  ],
+  "camera_achter": "48 MP hoofd + 48 MP ultragroothoek",
+  "tele_zoom": null,
+  "camera_voor_mp": 18,
+  "accu_mah": 3692,
+  "laden_w": 40,
+  "draadloos_w": 25,
+  "gewicht_g": 177,
+  "dikte_mm": 7.95,
+  "ip": "IP68",
+  "updates_jaren": null,
+  "vouwbaar": false,
+  "sterk": [
+   "120 Hz OLED-scherm met 3000 nits piekhelderheid",
+   "Twee 48 MP camera's en 18 MP frontcamera",
+   "Draadloos laden tot 25 W via MagSafe en Qi2"
+  ],
+  "zwak": [
+   "Geen aparte telelens, alleen 2x zoom via de hoofdcamera",
+   "Maximaal 512 GB opslag"
+  ],
+  "bronnen": [
+   "https://www.apple.com/iphone-17/specs/",
+   "https://www.apple.com/nl/shop/buy-iphone/iphone-17",
+   "https://www.apple.com/nl/newsroom/2025/09/apple-introduces-iphone-17/",
+   "https://www.gsmarena.com/apple_iphone_17-14050.php",
+   "https://en.wikipedia.org/wiki/IPhone_17",
+   "https://www.macrumors.com/2025/09/10/iphone-17-pro-iphone-air-specs-battery-ram/"
+  ],
+  "opmerking": "Apple noemt zelf geen mAh en geen RAM; accu en RAM komen van GSMArena, Wikipedia en MacRumors. Laden: Apple noemt 50% in 20 minuten met een 40 W adapter, GSMArena vermeldt 25 W bedraad; Apple aangehouden. Dikte: Apple 7,95 mm, GSMArena rondt af op 8 mm. Apple noemt geen aantal jaren updates. De specificatiepagina op apple.com/nl kon niet worden geopend; de internationale Apple-pagina en de Nederlandse winkel- en newsroompagina zijn gebruikt.",
+  "id": "e0195950643589",
+  "cat": "telefoons",
+  "feednaam": "Apple iPhone 17 256GB Zwart | Los Toestel",
+  "im": "https://cdn.webshopapp.com/shops/328120/files/484652368/image.jpg",
+  "prijs": 925,
+  "winkels": [
+   [
+    "Dutch-Plaza",
+    925
+   ],
+   [
+    "bol.com partner",
+    985
+   ],
+   [
+    "MediaMarkt",
+    1119
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "iphone-17-pro": {
+  "slug": "iphone-17-pro",
+  "naam": "Apple iPhone 17 Pro",
+  "kort": "iPhone 17 Pro",
+  "merk": "Apple",
+  "release": "september 2025",
+  "scherm_inch": 6.3,
+  "scherm_type": "OLED (LTPO)",
+  "scherm_hz": 120,
+  "helderheid_nits": 3000,
+  "chip": "Apple A19 Pro",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512,
+   1024
+  ],
+  "camera_achter": "48 MP hoofd + 48 MP ultragroothoek + 48 MP tele",
+  "tele_zoom": 4,
+  "camera_voor_mp": 18,
+  "accu_mah": 3998,
+  "laden_w": 40,
+  "draadloos_w": 25,
+  "gewicht_g": 206,
+  "dikte_mm": 8.75,
+  "ip": "IP68",
+  "updates_jaren": null,
+  "vouwbaar": false,
+  "sterk": [
+   "Drie 48 MP camera's met 4x optische telezoom",
+   "A19 Pro-chip met 12 GB werkgeheugen",
+   "120 Hz OLED-scherm met 3000 nits piekhelderheid"
+  ],
+  "zwak": [
+   "Met 206 gram zwaar voor een toestel van 6,3 inch",
+   "Europese uitvoering met simkaartsleuf heeft een kleinere accu dan de eSIM-versie (4252 mAh)"
+  ],
+  "bronnen": [
+   "https://support.apple.com/en-us/125090",
+   "https://www.gsmarena.com/apple_iphone_17_pro-14049.php",
+   "https://en.wikipedia.org/wiki/IPhone_17_Pro",
+   "https://www.macrumors.com/2025/09/10/iphone-17-pro-iphone-air-specs-battery-ram/"
+  ],
+  "opmerking": "Apple noemt zelf geen mAh en geen RAM. Accu van de uitvoering met simkaartsleuf (internationaal/Europa): GSMArena 3998 mAh, Wikipedia 3988 mAh; GSMArena aangehouden. De eSIM-versie heeft 4252 mAh. Laden: Apple noemt 50% in 20 minuten met een adapter van 40 W of hoger; GSMArena noemt geen wattage op de specpagina. Dikte: Apple 8,75 mm, GSMArena 8,8 mm. Apple noemt geen aantal jaren updates. Specificatiepagina op apple.com/nl kon niet worden geopend; Apple Support (en-us) gebruikt.",
+  "id": "e0195950627442",
+  "cat": "telefoons",
+  "feednaam": "Apple iPhone 17 Pro 256GB Oranje | Los Toestel",
+  "im": "https://cdn.webshopapp.com/shops/328120/files/484571827/image.jpg",
+  "prijs": 1099,
+  "winkels": [
+   [
+    "Dutch-Plaza",
+    1099
+   ],
+   [
+    "bol.com partner",
+    1099
+   ],
+   [
+    "MediaMarkt",
+    1329
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "iphone-17-pro-max": {
+  "slug": "iphone-17-pro-max",
+  "naam": "Apple iPhone 17 Pro Max",
+  "kort": "iPhone 17 Pro Max",
+  "merk": "Apple",
+  "release": "september 2025",
+  "scherm_inch": 6.9,
+  "scherm_type": "OLED (LTPO)",
+  "scherm_hz": 120,
+  "helderheid_nits": 3000,
+  "chip": "Apple A19 Pro",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512,
+   1024,
+   2048
+  ],
+  "camera_achter": "48 MP hoofd + 48 MP ultragroothoek + 48 MP tele",
+  "tele_zoom": 4,
+  "camera_voor_mp": 18,
+  "accu_mah": 4823,
+  "laden_w": 40,
+  "draadloos_w": 25,
+  "gewicht_g": 233,
+  "dikte_mm": 8.75,
+  "ip": "IP68",
+  "updates_jaren": null,
+  "vouwbaar": false,
+  "sterk": [
+   "Groot 6,9 inch 120 Hz OLED-scherm met 3000 nits piekhelderheid",
+   "Drie 48 MP camera's met 4x optische telezoom",
+   "Grootste accu van de serie en opslag tot 2 TB"
+  ],
+  "zwak": [
+   "Zwaar met 233 gram",
+   "Europese uitvoering met simkaartsleuf heeft een kleinere accu dan de eSIM-versie (5088 mAh)"
+  ],
+  "bronnen": [
+   "https://support.apple.com/en-us/125091",
+   "https://www.gsmarena.com/apple_iphone_17_pro_max-13964.php",
+   "https://en.wikipedia.org/wiki/IPhone_17_Pro",
+   "https://www.gsmarena.com/apple_iphone_17_pro_vs_iphone_17_pro_max_review_battery_camera_price_compared-news-69875.php",
+   "https://www.macrumors.com/2025/09/10/iphone-17-pro-iphone-air-specs-battery-ram/"
+  ],
+  "opmerking": "Apple noemt zelf geen mAh en geen RAM. Accu van de uitvoering met simkaartsleuf (internationaal/Europa): 4823 mAh volgens de GSMArena-specpagina en Wikipedia; een GSMArena-vergelijkingsartikel noemt 4832 mAh. De eSIM-versie heeft 5088 mAh. Laden: Apple noemt 50% in 20 minuten met een adapter van 40 W of hoger, GSMArena vermeldt 50 W bedraad; Apple aangehouden. Dikte: Apple 8,75 mm, GSMArena 8,8 mm. Telezoom: 4x optisch (Apple noemt daarnaast 8x zoom van optische kwaliteit). Apple noemt geen aantal jaren updates. Specificatiepagina op apple.com/nl kon niet worden geopend; Apple Support (en-us) gebruikt.",
+  "id": "e0195950639094",
+  "cat": "telefoons",
+  "feednaam": "Apple iPhone 17 Pro Max 256GB Oranje | Los Toestel",
+  "im": "https://cdn.webshopapp.com/shops/328120/files/486892730/image.jpg",
+  "prijs": 1219,
+  "winkels": [
+   [
+    "Dutch-Plaza",
+    1219
+   ],
+   [
+    "bol.com partner",
+    1229
+   ],
+   [
+    "MediaMarkt",
+    1339
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "iphone-air": {
+  "slug": "iphone-air",
+  "naam": "Apple iPhone Air (2025)",
+  "kort": "iPhone Air",
+  "merk": "Apple",
+  "release": "september 2025",
+  "scherm_inch": 6.5,
+  "scherm_type": "OLED (LTPO)",
+  "scherm_hz": 120,
+  "helderheid_nits": 3000,
+  "chip": "Apple A19 Pro",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512,
+   1024
+  ],
+  "camera_achter": "48 MP hoofd",
+  "tele_zoom": null,
+  "camera_voor_mp": 18,
+  "accu_mah": 3149,
+  "laden_w": 20,
+  "draadloos_w": 20,
+  "gewicht_g": 165,
+  "dikte_mm": 5.64,
+  "ip": "IP68",
+  "updates_jaren": null,
+  "vouwbaar": false,
+  "sterk": [
+   "Zeer dun (5,64 mm) en licht (165 gram)",
+   "A19 Pro-chip met 12 GB werkgeheugen",
+   "6,5 inch 120 Hz OLED-scherm met 3000 nits piekhelderheid"
+  ],
+  "zwak": [
+   "Slechts één camera achterop, geen ultragroothoek of telelens",
+   "Kleinste accu van de serie (3149 mAh) en trager laden (20 W)"
+  ],
+  "bronnen": [
+   "https://www.apple.com/iphone-air/specs/",
+   "https://www.gsmarena.com/apple_iphone_17_air-13502.php",
+   "https://en.wikipedia.org/wiki/IPhone_Air",
+   "https://www.macrumors.com/2025/09/10/iphone-17-pro-iphone-air-specs-battery-ram/"
+  ],
+  "opmerking": "Apple noemt zelf geen mAh en geen RAM; die komen van GSMArena, Wikipedia en MacRumors. Laden: Apple noemt 50% in 30 minuten met een adapter van 20 W of hoger en draadloos tot 20 W. Dikte: Apple 5,64 mm, GSMArena 5,6 mm. Alleen eSIM, geen simkaartsleuf. Apple noemt geen aantal jaren updates. Specificatiepagina op apple.com/nl kon niet worden geopend; de internationale Apple-pagina is gebruikt.",
+  "id": "e0195950622867",
+  "cat": "telefoons",
+  "feednaam": "iPhone Air 256GB",
+  "im": "https://coolblue.bynder.com/transform/da9807a2-19d7-4dac-8753-fa2d3b38ea04/969431-969435-969439?io=transform:fit,height:800,width:800&format=png",
+  "prijs": 899,
+  "winkels": [
+   [
+    "bol.com partner",
+    899
+   ],
+   [
+    "Coolblue",
+    926
+   ],
+   [
+    "MediaMarkt",
+    1099
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "iphone-17e": {
+  "slug": "iphone-17e",
+  "naam": "Apple iPhone 17e",
+  "kort": "iPhone 17e",
+  "merk": "Apple",
+  "release": "maart 2026",
+  "scherm_inch": 6.1,
+  "scherm_type": "OLED",
+  "scherm_hz": 60,
+  "helderheid_nits": 1200,
+  "chip": "Apple A19",
+  "ram_gb": 8,
+  "opslag_gb": [
+   256,
+   512
+  ],
+  "camera_achter": "48 MP hoofd",
+  "tele_zoom": null,
+  "camera_voor_mp": 12,
+  "accu_mah": 4005,
+  "laden_w": 20,
+  "draadloos_w": 15,
+  "gewicht_g": 169,
+  "dikte_mm": 7.8,
+  "ip": "IP68",
+  "updates_jaren": null,
+  "vouwbaar": false,
+  "sterk": [
+   "A19-chip met 8 GB werkgeheugen",
+   "MagSafe en Qi2 draadloos laden tot 15 W",
+   "Standaard 256 GB opslag"
+  ],
+  "zwak": [
+   "Scherm ververst op 60 Hz",
+   "Eén camera achterop, geen ultragroothoek of telelens"
+  ],
+  "bronnen": [
+   "https://www.apple.com/iphone-17e/specs/",
+   "https://m.gsmarena.com/apple_iphone_17e-ampp-14487.php",
+   "https://www.vodafone.nl/telefoon/iphone/iphone-17-serie/iphone-17e-specs"
+  ],
+  "opmerking": "Helderheid is piek bij HDR (800 nits normaal). Apple noemt geen laadvermogen van het toestel, alleen 50% in 30 minuten met een adapter van 20 W of meer; laden_w volgt die adapter (Vodafone: 20 W, GSMArena noemt 15 W). 60 Hz komt van Vodafone, Apple noemt geen verversingssnelheid. Gewicht volgens Apple 169 g, Vodafone 170 g. Accu en RAM uit GSMArena/Vodafone. De 2x zoom is een uitsnede van de hoofdsensor, geen telelens.",
+  "id": "e0195951030784",
+  "cat": "telefoons",
+  "feednaam": "iPhone 17e 256GB",
+  "im": "https://coolblue.bynder.com/transform/26716251-e50e-4271-9e22-17bb546b20d8/976731?io=transform:fit,height:800,width:800&format=png",
+  "prijs": 819,
+  "winkels": [
+   [
+    "bol.com partner",
+    819
+   ],
+   [
+    "MediaMarkt",
+    869
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "iphone-16e": {
+  "slug": "iphone-16e",
+  "naam": "Apple iPhone 16e",
+  "kort": "iPhone 16e",
+  "merk": "Apple",
+  "release": "februari 2025",
+  "scherm_inch": 6.1,
+  "scherm_type": "OLED",
+  "scherm_hz": 60,
+  "helderheid_nits": 1200,
+  "chip": "Apple A18",
+  "ram_gb": 8,
+  "opslag_gb": [
+   128,
+   256,
+   512
+  ],
+  "camera_achter": "48 MP hoofd",
+  "tele_zoom": null,
+  "camera_voor_mp": 12,
+  "accu_mah": 4005,
+  "laden_w": 20,
+  "draadloos_w": 7.5,
+  "gewicht_g": 167,
+  "dikte_mm": 7.8,
+  "ip": "IP68",
+  "updates_jaren": null,
+  "vouwbaar": false,
+  "sterk": [
+   "A18-chip met 8 GB werkgeheugen",
+   "Licht toestel van 167 gram",
+   "IP68 water- en stofdicht"
+  ],
+  "zwak": [
+   "Draadloos laden beperkt tot 7,5 W via Qi, zonder MagSafe",
+   "Scherm ververst op 60 Hz en er is maar één camera achterop"
+  ],
+  "bronnen": [
+   "https://support.apple.com/en-us/122208",
+   "https://m.gsmarena.com/apple_iphone_16e-ampp-13395.php",
+   "https://www.vodafone.nl/telefoon/iphone/iphone-16-serie/iphone-16e-specs",
+   "https://www.apple.com/newsroom/2025/02/apple-debuts-iphone-16e-a-powerful-new-member-of-the-iphone-16-family/"
+  ],
+  "opmerking": "Helderheid is piek bij HDR (800 nits normaal). Apple noemt geen laadvermogen van het toestel, alleen 50% in 30 minuten met een adapter van 20 W of meer; laden_w volgt die adapter. Draadloos 7,5 W, accu en RAM komen van GSMArena, Apple noemt ze niet. 60 Hz komt van Vodafone. De 2x zoom is een uitsnede van de hoofdsensor, geen telelens.",
+  "id": "e0195950051155",
+  "cat": "telefoons",
+  "feednaam": "Apple iPhone 16e 128GB Zwart | Los Toestel",
+  "im": "https://cdn.webshopapp.com/shops/328120/files/474216563/image.jpg",
+  "prijs": 629,
+  "winkels": [
+   [
+    "Dutch-Plaza",
+    629
+   ],
+   [
+    "bol.com partner",
+    639
+   ],
+   [
+    "MediaMarkt",
+    699
+   ]
+  ],
+  "variant_gb": 128
+ },
+ "iphone-18-pro": {
+  "slug": "iphone-18-pro",
+  "naam": "Apple iPhone 18 Pro",
+  "kort": "iPhone 18 Pro",
+  "merk": "Apple",
+  "release": "september 2026",
+  "scherm_inch": 6.3,
+  "scherm_type": "OLED (LTPO)",
+  "scherm_hz": 120,
+  "helderheid_nits": 3000,
+  "chip": "Apple A20 Pro",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512,
+   1024,
+   2048
+  ],
+  "camera_achter": "48 MP hoofd (variabel diafragma) + 48 MP ultragroothoek + 48 MP tele (4x)",
+  "tele_zoom": 4,
+  "camera_voor_mp": 18,
+  "accu_mah": 4056,
+  "laden_w": 60,
+  "draadloos_w": 25,
+  "gewicht_g": 211,
+  "dikte_mm": 8.75,
+  "ip": "IP68",
+  "updates_jaren": null,
+  "vouwbaar": false,
+  "sterk": [
+   "A20 Pro-chip met 12 GB werkgeheugen",
+   "Drie camera's van 48 MP met 4x optische zoom",
+   "Snel laden: 50% in ongeveer 15 minuten, draadloos tot 25 W"
+  ],
+  "zwak": [
+   "Vrij zwaar voor een 6,3 inch toestel: 211 gram",
+   "Kleinere accu dan de Pro Max (4056 mAh)"
+  ],
+  "bronnen": [
+   "https://www.apple.com/iphone-18-pro/specs/",
+   "https://support.apple.com/en-us/148590",
+   "https://www.gsmarena.com/apple_iphone_18_pro-14934.php",
+   "https://www.gsmarena.com/apple_reveals_the_iphone_18_pro_and_iphone_18_pro_maxs_battery_capacities-news-74566.php",
+   "https://www.iculture.nl/iphone/iphone-18-pro/"
+  ],
+  "opmerking": "Specificaties van na de release (18 september 2026). Helderheid is piek buiten (1600 nits HDR). Accu 4056 mAh is de EU-uitvoering met simkaartsleuf volgens het EU-energielabel; de eSIM-only uitvoering heeft 4288 mAh. Apple noemt geen laadvermogen van het toestel, alleen 50% in circa 15 minuten met een adapter van 60 W; laden_w volgt die adapter. RAM uit GSMArena en iCulture. Apple noemt daarnaast 8x zoom van optische kwaliteit via sensoruitsnede; de telelens zelf is 4x.",
+  "id": "e0195951416144",
+  "cat": "telefoons",
+  "feednaam": "Apple iPhone 18 Pro 256GB Zwart | Los Toestel",
+  "im": "https://cdn.webshopapp.com/shops/328120/files/503152216/image.jpg",
+  "prijs": 1449,
+  "winkels": [
+   [
+    "Dutch-Plaza",
+    1449
+   ],
+   [
+    "bol.com partner",
+    1458.99
+   ],
+   [
+    "MediaMarkt",
+    1479
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "iphone-18-pro-max": {
+  "slug": "iphone-18-pro-max",
+  "naam": "Apple iPhone 18 Pro Max",
+  "kort": "iPhone 18 Pro Max",
+  "merk": "Apple",
+  "release": "september 2026",
+  "scherm_inch": 6.9,
+  "scherm_type": "OLED (LTPO)",
+  "scherm_hz": 120,
+  "helderheid_nits": 3000,
+  "chip": "Apple A20 Pro",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512,
+   1024,
+   2048
+  ],
+  "camera_achter": "48 MP hoofd (variabel diafragma) + 48 MP ultragroothoek + 48 MP tele (4x)",
+  "tele_zoom": 4,
+  "camera_voor_mp": 18,
+  "accu_mah": 5391,
+  "laden_w": 60,
+  "draadloos_w": 25,
+  "gewicht_g": 249,
+  "dikte_mm": 8.75,
+  "ip": "IP68",
+  "updates_jaren": null,
+  "vouwbaar": false,
+  "sterk": [
+   "Grote accu van 5391 mAh, tot 43 uur video volgens Apple",
+   "Drie camera's van 48 MP met 4x optische zoom",
+   "Groot 6,9 inch scherm met 120 Hz en 3000 nits piek"
+  ],
+  "zwak": [
+   "Zwaar: 249 gram",
+   "8,75 mm dik"
+  ],
+  "bronnen": [
+   "https://www.apple.com/iphone-18-pro/specs/",
+   "https://www.apple.com/nl/shop/buy-iphone/iphone-18-pro",
+   "https://www.gsmarena.com/apple_reveals_the_iphone_18_pro_and_iphone_18_pro_maxs_battery_capacities-news-74566.php",
+   "https://www.iculture.nl/koopadvies/iphone-18-pro-vs-iphone-18-pro-max/",
+   "https://www.91mobiles.com/apple-iphone-18-pro-max-price-in-india"
+  ],
+  "opmerking": "Specificaties van na de release (18 september 2026). Helderheid is piek buiten (1600 nits HDR). Accu 5391 mAh is de EU-uitvoering met simkaartsleuf volgens het EU-energielabel (GSMArena); 91mobiles noemt 5567 mAh, vermoedelijk de eSIM-only uitvoering. Apple noemt geen laadvermogen van het toestel, alleen 50% in circa 15 minuten met een adapter van 60 W; laden_w volgt die adapter. RAM alleen uit 91mobiles; de volledige GSMArena-specpagina en review waren niet te openen (HTTP 429) en de AMP-versie toonde nog gegevens van voor de release. De telelens is 4x; 8x is sensoruitsnede.",
+  "id": "e0195951410548",
+  "cat": "telefoons",
+  "feednaam": "Apple iPhone 18 Pro Max 512GB Zwart | Los Toestel",
+  "im": "https://cdn.webshopapp.com/shops/328120/files/503074777/image.jpg",
+  "prijs": 1839,
+  "winkels": [
+   [
+    "Dutch-Plaza",
+    1839
+   ],
+   [
+    "bol.com partner",
+    1878.99
+   ],
+   [
+    "MediaMarkt",
+    1879
+   ]
+  ],
+  "variant_gb": 512
+ },
+ "galaxy-s26": {
+  "slug": "galaxy-s26",
+  "naam": "Samsung Galaxy S26",
+  "kort": "Galaxy S26",
+  "merk": "Samsung",
+  "release": "maart 2026",
+  "scherm_inch": 6.3,
+  "scherm_type": "Dynamic LTPO AMOLED 2X",
+  "scherm_hz": 120,
+  "helderheid_nits": 2600,
+  "chip": "Samsung Exynos 2600 (Europese versie)",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512
+  ],
+  "camera_achter": "50 MP hoofd + 12 MP ultragroothoek + 10 MP tele (3x)",
+  "tele_zoom": 3,
+  "camera_voor_mp": 12,
+  "accu_mah": 4300,
+  "laden_w": 25,
+  "draadloos_w": 15,
+  "gewicht_g": 167,
+  "dikte_mm": 7.2,
+  "ip": "IP68",
+  "updates_jaren": 7,
+  "vouwbaar": false,
+  "sterk": [
+   "Compact en licht: 167 gram bij een 6,3 inch scherm",
+   "Zeven jaar updates toegezegd",
+   "Telelens met 3x optische zoom en 12 GB werkgeheugen"
+  ],
+  "zwak": [
+   "Laadt met maximaal 25 W, trager dan de S26+ (45 W) en Ultra (60 W)",
+   "Kleinste accu van de serie (4300 mAh)"
+  ],
+  "bronnen": [
+   "https://www.samsung.com/nl/smartphones/galaxy-s26/",
+   "https://www.gsmarena.com/samsung_galaxy_s26-review-2942.php",
+   "https://www.androidplanet.nl/nieuws/samsung-galaxy-s26-officieel-s26-plus-s26-ultra/"
+  ],
+  "opmerking": "Europa/Nederland krijgt de Exynos 2600; alleen VS, China en Japan krijgen de Snapdragon 8 Elite Gen 5. Samsung.nl noemt geen laadvermogen in watt of verversingssnelheid; die komen van GSMArena en Android Planet. Nederlandse verkoopstart 11 maart 2026. Updates: 7 jaar volgens GSMArena en Android Planet.",
+  "id": "e8806097827481",
+  "cat": "telefoons",
+  "feednaam": "Samsung Galaxy S26 256GB Zwart 5G | Los Toestel",
+  "im": "https://cdn.webshopapp.com/shops/328120/files/497576195/image.jpg",
+  "prijs": 649,
+  "winkels": [
+   [
+    "Dutch-Plaza",
+    649
+   ],
+   [
+    "MediaMarkt",
+    679
+   ],
+   [
+    "bol.com partner",
+    689
+   ],
+   [
+    "Mobiel.nl",
+    799
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "galaxy-s26-plus": {
+  "slug": "galaxy-s26-plus",
+  "naam": "Samsung Galaxy S26+",
+  "kort": "Galaxy S26+",
+  "merk": "Samsung",
+  "release": "maart 2026",
+  "scherm_inch": 6.7,
+  "scherm_type": "Dynamic LTPO AMOLED 2X",
+  "scherm_hz": 120,
+  "helderheid_nits": 2600,
+  "chip": "Samsung Exynos 2600 (Europese versie)",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512
+  ],
+  "camera_achter": "50 MP hoofd + 12 MP ultragroothoek + 10 MP tele (3x)",
+  "tele_zoom": 3,
+  "camera_voor_mp": 12,
+  "accu_mah": 4900,
+  "laden_w": 45,
+  "draadloos_w": 20,
+  "gewicht_g": 190,
+  "dikte_mm": 7.3,
+  "ip": "IP68",
+  "updates_jaren": 7,
+  "vouwbaar": false,
+  "sterk": [
+   "Groot 6,7 inch scherm met 120 Hz en 2600 nits piekhelderheid",
+   "Accu van 4900 mAh met 45 W snelladen",
+   "Zeven jaar updates toegezegd"
+  ],
+  "zwak": [
+   "Zelfde camera's als de kleinere en goedkopere Galaxy S26",
+   "Geen periscooplens: optische zoom blijft bij 3x"
+  ],
+  "bronnen": [
+   "https://www.samsung.com/nl/smartphones/galaxy-s26/",
+   "https://m.gsmarena.com/samsung_galaxy_s26_plus-review-2941.php",
+   "https://www.androidplanet.nl/nieuws/samsung-galaxy-s26-officieel-s26-plus-s26-ultra/"
+  ],
+  "opmerking": "Europa/Nederland krijgt de Exynos 2600; VS en China krijgen de Snapdragon 8 Elite Gen 5. Samsung.nl noemt geen laadvermogen in watt of verversingssnelheid; die komen van GSMArena en Android Planet. Nederlandse verkoopstart 11 maart 2026.",
+  "id": "e8806097828198",
+  "cat": "telefoons",
+  "feednaam": "SAMSUNG Galaxy S26+ - 5G - 256 GB Wit",
+  "im": "https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_171764946/fee_786_587.png",
+  "prijs": 799,
+  "winkels": [
+   [
+    "MediaMarkt",
+    799
+   ],
+   [
+    "bol.com partner",
+    859
+   ],
+   [
+    "Mobiel.nl",
+    962
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "galaxy-s26-ultra": {
+  "slug": "galaxy-s26-ultra",
+  "naam": "Samsung Galaxy S26 Ultra",
+  "kort": "Galaxy S26 Ultra",
+  "merk": "Samsung",
+  "release": "maart 2026",
+  "scherm_inch": 6.9,
+  "scherm_type": "Dynamic LTPO AMOLED 2X",
+  "scherm_hz": 120,
+  "helderheid_nits": 2600,
+  "chip": "Qualcomm Snapdragon 8 Elite Gen 5 for Galaxy (ook in Europa)",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512,
+   1024
+  ],
+  "camera_achter": "200 MP hoofd + 50 MP ultragroothoek + 50 MP periscoop-tele (5x) + 10 MP tele (3x)",
+  "tele_zoom": 5,
+  "camera_voor_mp": 12,
+  "accu_mah": 5000,
+  "laden_w": 60,
+  "draadloos_w": 25,
+  "gewicht_g": 214,
+  "dikte_mm": 7.9,
+  "ip": "IP68",
+  "updates_jaren": 7,
+  "vouwbaar": false,
+  "sterk": [
+   "200 MP hoofdcamera en twee telelenzen (3x en 5x optisch)",
+   "Snelst ladende S26: 60 W bedraad en 25 W draadloos",
+   "Zeven jaar updates toegezegd"
+  ],
+  "zwak": [
+   "Zwaar en groot: 214 gram met een 6,9 inch scherm"
+  ],
+  "bronnen": [
+   "https://www.samsung.com/nl/smartphones/galaxy-s26-ultra/",
+   "https://www.gsmarena.com/samsung_galaxy_s26_ultra_5g-14320.php",
+   "https://www.androidplanet.nl/nieuws/samsung-galaxy-s26-officieel-s26-plus-s26-ultra/"
+  ],
+  "opmerking": "De Ultra heeft wereldwijd, dus ook in Europa, de Snapdragon 8 Elite Gen 5 for Galaxy. RAM is 12 GB bij 256 en 512 GB; de 1 TB-versie heeft 16 GB. Samsung.nl noemt de 10 MP 3x-telelens niet in de opgehaalde tekst, GSMArena wel. Laadvermogen in watt en 120 Hz komen van GSMArena en Android Planet. GSMArena noemt 6 maart als release, Nederlandse verkoopstart was 11 maart 2026.",
+  "id": "e8806097827092",
+  "cat": "telefoons",
+  "feednaam": "Samsung Galaxy S26 Ultra 256GB Paars 5G | Los Toestel",
+  "im": "https://cdn.webshopapp.com/shops/328120/files/496625527/image.jpg",
+  "prijs": 919,
+  "winkels": [
+   [
+    "Dutch-Plaza",
+    919
+   ],
+   [
+    "bol.com partner",
+    955
+   ],
+   [
+    "MediaMarkt",
+    969
+   ],
+   [
+    "Mobiel.nl",
+    1149
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "galaxy-s26-fe": {
+  "slug": "galaxy-s26-fe",
+  "naam": "Samsung Galaxy S26 FE",
+  "kort": "Galaxy S26 FE",
+  "merk": "Samsung",
+  "release": "september 2026",
+  "scherm_inch": 6.7,
+  "scherm_type": "Dynamic AMOLED 2X",
+  "scherm_hz": 120,
+  "helderheid_nits": 1900,
+  "chip": "Samsung Exynos 2500 (Europese versie)",
+  "ram_gb": 8,
+  "opslag_gb": [
+   128,
+   256
+  ],
+  "camera_achter": "50 MP hoofd + 12 MP ultragroothoek + 8 MP tele (3x)",
+  "tele_zoom": 3,
+  "camera_voor_mp": 12,
+  "accu_mah": 4900,
+  "laden_w": 45,
+  "draadloos_w": 15,
+  "gewicht_g": 193,
+  "dikte_mm": 7.4,
+  "ip": "IP68",
+  "updates_jaren": 7,
+  "vouwbaar": false,
+  "sterk": [
+   "Zeven jaar updates toegezegd",
+   "Accu van 4900 mAh met 45 W snelladen",
+   "Telelens met 3x optische zoom"
+  ],
+  "zwak": [
+   "Oudere Exynos 2500 chip en 8 GB werkgeheugen, minder dan de 12 GB van de S26",
+   "Scherm minder fel (1900 nits) dan de rest van de S26-serie (2600 nits)"
+  ],
+  "bronnen": [
+   "https://www.samsung.com/nl/smartphones/galaxy-s/galaxy-s26-fe-graphite-256gb-sm-s741bzkgeub/",
+   "https://news.samsung.com/nl/samsung-galaxy-s26-fe-de-ultieme-ervaring-die-focust-op-wat-belangrijk-is",
+   "https://www.gsmarena.com/samsung_galaxy_s26_fe_5g-14870.php",
+   "https://www.androidplanet.nl/nieuws/samsung-galaxy-s26-fe-officieel/"
+  ],
+  "opmerking": "Officieel aangekondigd op 27 augustus 2026, te koop sinds 4 september 2026; specificaties komen van Samsung zelf, niet van geruchten. Opslag: het Nederlandse persbericht en Android Planet noemen alleen 128 en 256 GB; de productpagina op samsung.nl en GSMArena noemen ook 512 GB, maar daarvan is geen Nederlandse verkoop bevestigd. De 1900 nits is de waarde in de hoge-helderheidsmodus (HBM), geen piekwaarde zoals bij de andere S26-modellen.",
+  "id": "e8806099395292",
+  "cat": "telefoons",
+  "feednaam": "Samsung Galaxy S26 FE 128GB Paars 5G | Los Toestel",
+  "im": "https://cdn.webshopapp.com/shops/328120/files/502438711/image.jpg",
+  "prijs": 569,
+  "winkels": [
+   [
+    "Dutch-Plaza",
+    569
+   ],
+   [
+    "bol.com partner",
+    584
+   ],
+   [
+    "Mobiel.nl",
+    769
+   ],
+   [
+    "MediaMarkt",
+    799
+   ]
+  ],
+  "variant_gb": 128
+ },
+ "galaxy-z-flip8": {
+  "slug": "galaxy-z-flip8",
+  "naam": "Samsung Galaxy Z Flip8",
+  "kort": "Galaxy Z Flip8",
+  "merk": "Samsung",
+  "release": "juli 2026",
+  "scherm_inch": 6.9,
+  "scherm_type": "Dynamic AMOLED 2X",
+  "scherm_hz": 120,
+  "helderheid_nits": 2600,
+  "chip": "Samsung Exynos 2600",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512
+  ],
+  "camera_achter": "50 MP hoofd + 12 MP ultragroothoek",
+  "tele_zoom": null,
+  "camera_voor_mp": 10,
+  "accu_mah": 4300,
+  "laden_w": 25,
+  "draadloos_w": 15,
+  "gewicht_g": 180,
+  "dikte_mm": 6.1,
+  "ip": "IP48",
+  "updates_jaren": 7,
+  "vouwbaar": true,
+  "sterk": [
+   "Groot 4,1 inch coverscherm met 120 Hz",
+   "7 jaar software-updates",
+   "Licht voor een vouwtoestel: 180 gram"
+  ],
+  "zwak": [
+   "Geen telelens en laden met maximaal 25 W",
+   "IP48: beperkte bescherming tegen stof"
+  ],
+  "bronnen": [
+   "https://news.samsung.com/global/samsung-galaxy-z-fold8-ultra-fold8-and-flip8foldables-perfected-for-every-way-of-living",
+   "https://www.samsung.com/nl/smartphones/galaxy-z-flip8/",
+   "https://www.nieuwemobiel.nl/telefoons/samsung/galaxy-z-flip-8/specificaties",
+   "https://www.notebookcheck.net/Samsung-Galaxy-Z-Flip8-Reviews-and-Specs.1352353.0.html"
+  ],
+  "opmerking": "Coverscherm: 4,1 inch Super AMOLED, 60/120 Hz (948 x 1048). Dikte 6,1 mm is opengeklapt; dichtgevouwen 13,1 mm. Aangekondigd 22 juli 2026, volgens Nieuwemobiel verkrijgbaar sinds 3 augustus 2026. Samsung noemt '2x optische zoom' via de 50 MP hoofdcamera (sensoruitsnede), er is geen aparte telelens. Draadloos laden 15 W volgens Samsung Newsroom; Nieuwemobiel noemt alleen 10 W omgekeerd draadloos laden. Notebookcheck noemt het schermtype Super AMOLED, Samsung zelf Dynamic AMOLED 2X (aangehouden).",
+  "id": "e8806099191832",
+  "cat": "telefoons",
+  "feednaam": "Samsung Galaxy Z Flip8 5G 256GB Graphite",
+  "im": "https://mobiel-product.imgix.net/hv3euogg3lsrdor06m74sau14mf6",
+  "prijs": 712,
+  "winkels": [
+   [
+    "bol.com partner",
+    712
+   ],
+   [
+    "Mobiel.nl",
+    1229
+   ],
+   [
+    "MediaMarkt",
+    1299
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "galaxy-z-fold8": {
+  "slug": "galaxy-z-fold8",
+  "naam": "Samsung Galaxy Z Fold8",
+  "kort": "Galaxy Z Fold8",
+  "merk": "Samsung",
+  "release": "juli 2026",
+  "scherm_inch": 7.6,
+  "scherm_type": "Dynamic AMOLED 2X (LTPO)",
+  "scherm_hz": 120,
+  "helderheid_nits": 2600,
+  "chip": "Qualcomm Snapdragon 8 Elite Gen 5 for Galaxy",
+  "ram_gb": 12,
+  "opslag_gb": [
+   256,
+   512,
+   1024
+  ],
+  "camera_achter": "50 MP hoofd + 50 MP ultragroothoek",
+  "tele_zoom": null,
+  "camera_voor_mp": 10,
+  "accu_mah": 4800,
+  "laden_w": 45,
+  "draadloos_w": 20,
+  "gewicht_g": 201,
+  "dikte_mm": 4.5,
+  "ip": "IP48",
+  "updates_jaren": 7,
+  "vouwbaar": true,
+  "sterk": [
+   "Slechts 4,5 mm dun opengeklapt en 201 gram",
+   "Snapdragon 8 Elite Gen 5 met 12 of 16 GB werkgeheugen",
+   "45 W laden en 7 jaar updates"
+  ],
+  "zwak": [
+   "Geen telelens",
+   "IP48: beperkte bescherming tegen stof"
+  ],
+  "bronnen": [
+   "https://news.samsung.com/global/samsung-galaxy-z-fold8-ultra-fold8-and-flip8foldables-perfected-for-every-way-of-living",
+   "https://www.gsmarena.com/samsung_galaxy_z_fold_wide_5g-14673.php",
+   "https://www.samsung.com/au/mobile/buying-guide/galaxy-z-fold8-features-specs/"
+  ],
+  "opmerking": "Coverscherm: 5,5 inch Dynamic AMOLED 2X, 120 Hz (1248 x 1972). Binnenscherm heeft 4:3 verhouding. Dikte 4,5 mm is opengeklapt; dichtgevouwen 9,7 mm. De 1 TB uitvoering heeft 16 GB werkgeheugen, de andere 12 GB. Helderheid: Samsung noemt 2600 nits, GSMArena 3000 nits; Samsung aangehouden. Updates (7 OS-generaties) komt van GSMArena en van Samsungs Flip8-pagina; niet op een Fold8-pagina van Samsung zelf gezien. De Nederlandse productpagina van Samsung kon niet worden geopend; waarden komen van Samsung Newsroom (globaal) en Samsung Australie. Aangekondigd 22 juli 2026. Frontcamera: 10 MP in zowel cover- als binnenscherm.",
+  "id": "e8806099185923",
+  "cat": "telefoons",
+  "feednaam": "Samsung Galaxy Z Fold8 5G 256GB Lavender",
+  "im": "https://mobiel-product.imgix.net/02djtlz43poj29sxcrhdyu6r0yie",
+  "prijs": 1385,
+  "winkels": [
+   [
+    "bol.com partner",
+    1385
+   ],
+   [
+    "Mobiel.nl",
+    1833
+   ],
+   [
+    "MediaMarkt",
+    1999
+   ]
+  ],
+  "variant_gb": 256
+ },
+ "pixel-10": {
+  "slug": "pixel-10",
+  "naam": "Google Pixel 10",
+  "kort": "Pixel 10",
+  "merk": "Google",
+  "release": "augustus 2025",
+  "scherm_inch": 6.3,
+  "scherm_type": "OLED",
+  "scherm_hz": 120,
+  "helderheid_nits": 3000,
+  "chip": "Google Tensor G5",
+  "ram_gb": 12,
+  "opslag_gb": [
+   128,
+   256
+  ],
+  "camera_achter": "48 MP hoofd + 13 MP ultragroothoek + 10,8 MP tele (5x)",
+  "tele_zoom": 5,
+  "camera_voor_mp": 10.5,
+  "accu_mah": 4970,
+  "laden_w": 30,
+  "draadloos_w": 15,
+  "gewicht_g": 204,
+  "dikte_mm": 8.6,
+  "ip": "IP68",
+  "updates_jaren": 7,
+  "vouwbaar": false,
+  "sterk": [
+   "5x optische telelens",
+   "7 jaar OS- en beveiligingsupdates",
+   "Helder scherm tot 3000 nits met 120 Hz"
+  ],
+  "zwak": [
+   "Vrij zwaar voor 6,3 inch: 204 gram",
+   "Laden met maximaal 30 W"
+  ],
+  "bronnen": [
+   "https://store.google.com/product/pixel_10_specs?hl=en-US",
+   "https://gsmarena.com/google_pixel_10_5g-13979.php"
+  ],
+  "opmerking": "Gewicht en dikte in mm komen van GSMArena; Google Store (VS) geeft alleen inches en ounces (7,2 oz). Draadloos laden is Qi2 (magnetisch) tot 15 W. Geen tegenstrijdigheden tussen bronnen.",
+  "id": "e0840353926905",
+  "cat": "telefoons",
+  "feednaam": "Google Pixel 10 128GB Obsidian",
+  "im": "https://mobiel-product.imgix.net/nbhvq84hv7zhcovdq2les5eunh9u",
+  "prijs": 586,
+  "winkels": [
+   [
+    "Mobiel.nl",
+    586
+   ],
+   [
+    "bol.com partner",
+    593
+   ],
+   [
+    "MediaMarkt",
+    599
+   ]
+  ],
+  "variant_gb": 128
+ },
+ "pixel-10a": {
+  "slug": "pixel-10a",
+  "naam": "Google Pixel 10a",
+  "kort": "Pixel 10a",
+  "merk": "Google",
+  "release": "maart 2026",
+  "scherm_inch": 6.3,
+  "scherm_type": "pOLED",
+  "scherm_hz": 120,
+  "helderheid_nits": 3000,
+  "chip": "Google Tensor G4",
+  "ram_gb": 8,
+  "opslag_gb": [
+   128,
+   256
+  ],
+  "camera_achter": "48 MP hoofd + 13 MP ultragroothoek",
+  "tele_zoom": null,
+  "camera_voor_mp": 13,
+  "accu_mah": 5100,
+  "laden_w": 30,
+  "draadloos_w": 10,
+  "gewicht_g": 183,
+  "dikte_mm": 9.0,
+  "ip": "IP68",
+  "updates_jaren": 7,
+  "vouwbaar": false,
+  "sterk": [
+   "Grote accu van 5100 mAh",
+   "7 jaar OS- en beveiligingsupdates",
+   "Scherm tot 3000 nits met 120 Hz"
+  ],
+  "zwak": [
+   "Geen telelens",
+   "Oudere Tensor G4 chip en draadloos laden met maximaal 10 W"
+  ],
+  "bronnen": [
+   "https://store.google.com/gb/product/pixel_10a_specs?hl=en-GB",
+   "https://www.gsmarena.com/google_pixel_10a_5g-14474.php",
+   "https://support.google.com/pixelphone/answer/7158570?p=specs&rd=1&visit_id=638047317231826476-2058600975",
+   "https://en.wikipedia.org/wiki/Pixel_10a"
+  ],
+  "opmerking": "Gewicht en afmetingen: Google noemt 183 g en 9,0 mm, Wikipedia 180 g en 10,2 mm; Google aangehouden. Laadvermogen 30 W komt van GSMArena; Google noemt zelf geen wattage, alleen 50% in ongeveer 30 minuten met een 45 W PPS-lader. Aangekondigd 18 februari 2026, te koop sinds 5 maart 2026.",
+  "id": "e0840353949737",
+  "cat": "telefoons",
+  "feednaam": "Google Pixel 10a 8GB 128GB Obsidian",
+  "im": "https://mobiel-product.imgix.net/gqlvqa5ug5s0xcm4e9ipjndw0ij7",
+  "prijs": 409,
+  "winkels": [
+   [
+    "bol.com partner",
+    409
+   ],
+   [
+    "Mobiel.nl",
+    449
+   ],
+   [
+    "MediaMarkt",
+    449
+   ]
+  ],
+  "variant_gb": 128
+ }
+}

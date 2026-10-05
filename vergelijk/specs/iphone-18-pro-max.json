@@ -1,0 +1,47 @@
+{
+ "slug": "iphone-18-pro-max",
+ "naam": "Apple iPhone 18 Pro Max",
+ "kort": "iPhone 18 Pro Max",
+ "merk": "Apple",
+ "release": "september 2026",
+ "scherm_inch": 6.9,
+ "scherm_type": "OLED (LTPO)",
+ "scherm_hz": 120,
+ "helderheid_nits": 3000,
+ "chip": "Apple A20 Pro",
+ "ram_gb": 12,
+ "opslag_gb": [
+  256,
+  512,
+  1024,
+  2048
+ ],
+ "camera_achter": "48 MP hoofd (variabel diafragma) + 48 MP ultragroothoek + 48 MP tele (4x)",
+ "tele_zoom": 4,
+ "camera_voor_mp": 18,
+ "accu_mah": 5391,
+ "laden_w": 60,
+ "draadloos_w": 25,
+ "gewicht_g": 249,
+ "dikte_mm": 8.75,
+ "ip": "IP68",
+ "updates_jaren": null,
+ "vouwbaar": false,
+ "sterk": [
+  "Grote accu van 5391 mAh, tot 43 uur video volgens Apple",
+  "Drie camera's van 48 MP met 4x optische zoom",
+  "Groot 6,9 inch scherm met 120 Hz en 3000 nits piek"
+ ],
+ "zwak": [
+  "Zwaar: 249 gram",
+  "8,75 mm dik"
+ ],
+ "bronnen": [
+  "https://www.apple.com/iphone-18-pro/specs/",
+  "https://www.apple.com/nl/shop/buy-iphone/iphone-18-pro",
+  "https://www.gsmarena.com/apple_reveals_the_iphone_18_pro_and_iphone_18_pro_maxs_battery_capacities-news-74566.php",
+  "https://www.iculture.nl/koopadvies/iphone-18-pro-vs-iphone-18-pro-max/",
+  "https://www.91mobiles.com/apple-iphone-18-pro-max-price-in-india"
+ ],
+ "opmerking": "Specificaties van na de release (18 september 2026). Helderheid is piek buiten (1600 nits HDR). Accu 5391 mAh is de EU-uitvoering met simkaartsleuf volgens het EU-energielabel (GSMArena); 91mobiles noemt 5567 mAh, vermoedelijk de eSIM-only uitvoering. Apple noemt geen laadvermogen van het toestel, alleen 50% in circa 15 minuten met een adapter van 60 W; laden_w volgt die adapter. RAM alleen uit 91mobiles; de volledige GSMArena-specpagina en review waren niet te openen (HTTP 429) en de AMP-versie toonde nog gegevens van voor de release. De telelens is 4x; 8x is sensoruitsnede."
+}

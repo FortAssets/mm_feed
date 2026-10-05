@@ -1,0 +1,61 @@
+{
+  "handle": "iphone-17-vs-galaxy-s26",
+  "a": "iphone-17",
+  "b": "galaxy-s26",
+  "title": "iPhone 17 of Galaxy S26: de verschillen op een rij",
+  "seo_title": "iPhone 17 vs Galaxy S26 vergelijken: alle verschillen",
+  "seo_description": "iPhone 17 of Galaxy S26? Vergelijk scherm, camera, accu, laden en gewicht van deze twee 6,3 inch toestellen en zie waar ze vandaag het voordeligst zijn.",
+  "summary": "De iPhone 17 en Galaxy S26 hebben allebei een 6,3 inch scherm van 120 Hz. De Galaxy S26 heeft een telelens, een grotere accu en zeven jaar updates, de iPhone 17 laadt sneller en heeft een ultragroothoek- en frontcamera met meer megapixels.",
+  "lead": "<strong>De Galaxy S26 is vandaag {{verschil}} euro goedkoper dan de iPhone 17: {{prijs_b}} bij {{winkel_b}} tegenover {{prijs_a}} bij {{winkel_a}} (allebei 256 GB, los toestel).</strong> Voor dat lagere bedrag krijg je een telelens met 3x zoom, 12 GB werkgeheugen en een accu van 4.300 mAh. De iPhone 17 zet daar laden op 40 W en een ultragroothoekcamera van 48 MP tegenover.",
+  "secties": [
+    {
+      "kop": "Scherm: iPhone 17 en Galaxy S26 allebei 6,3 inch",
+      "tekst": "<p>Op schermformaat hoef je niet te kiezen: beide toestellen meten 6,3 inch en verversen met 120 Hz. De iPhone 17 gebruikt een LTPO-OLED, de Galaxy S26 een Dynamic LTPO AMOLED 2X. Apple geeft een piekhelderheid van <strong>3.000 nits</strong> op, Samsung 2.600 nits. Dat zijn opgaven van de fabrikant die niet één-op-één vergelijkbaar zijn, dus lees het als een klein verschil op papier. Beide zijn IP68 stof- en waterdicht.</p>"
+    },
+    {
+      "kop": "Camera: Galaxy S26 heeft een telelens, de iPhone 17 niet",
+      "tekst": "<p>Hier zit het duidelijkste verschil. De Galaxy S26 heeft drie camera's achterop: 50 MP hoofd, 12 MP ultragroothoek en een <strong>telelens met 3x zoom</strong> van 10 MP. De iPhone 17 heeft er twee, allebei van 48 MP, en geen aparte telelens. Inzoomen gaat daar tot 2x via de hoofdcamera. Wil je vaak iets dichterbij halen, dan pleit dat voor de Galaxy S26. De iPhone 17 heeft wel de ultragroothoek met meer megapixels en een frontcamera van 18 MP tegenover 12 MP.</p>"
+    },
+    {
+      "kop": "Accu en laden: grotere accu in de Galaxy S26, sneller laden op de iPhone 17",
+      "tekst": "<p>De Galaxy S26 heeft een accu van <strong>4.300 mAh</strong>, de iPhone 17 van 3.692 mAh. Dat is ruim 600 mAh verschil in capaciteit. Bij het laden draait het om. De iPhone 17 laadt met 40 W via de kabel en 25 W draadloos, de Galaxy S26 met 25 W en 15 W. Apple noemt voor de iPhone 17 50% in 20 minuten met een adapter van 40 W. Je kiest dus tussen meer capaciteit of korter aan de lader.</p>"
+    },
+    {
+      "kop": "Prestaties en opslag: Apple A19 tegenover Exynos 2600",
+      "tekst": "<p>In de iPhone 17 zit de Apple A19 met 8 GB werkgeheugen. De Galaxy S26 krijgt in Nederland de Samsung Exynos 2600 met <strong>12 GB werkgeheugen</strong>. De Snapdragon-versie is er alleen voor de VS, China en Japan. In opslag zijn ze gelijk: 256 of 512 GB, meer kan bij geen van beide. Een verschil voor de lange termijn: Samsung zegt zeven jaar updates toe. Apple noemt zelf geen aantal jaren, dus daarop kun je de twee niet naast elkaar leggen.</p>"
+    },
+    {
+      "kop": "Formaat en gewicht: Galaxy S26 is 10 gram lichter dan de iPhone 17",
+      "tekst": "<p>Met hetzelfde schermformaat liggen ze dicht bij elkaar. De Galaxy S26 weegt <strong>167 gram</strong> en is 7,2 mm dik. De iPhone 17 komt op 177 gram en 7,95 mm. Tien gram en driekwart millimeter merk je vooral als je ze naast elkaar houdt. Beide zijn gewone, niet-vouwbare toestellen met een IP68-keurmerk. Zoek je de lichtste en dunste van de twee, dan is dat de Galaxy S26, maar groot is het verschil niet.</p>"
+    }
+  ],
+  "kies_a": [
+    "Je wilt sneller laden: 40 W bedraad en 25 W draadloos",
+    "Je wilt een ultragroothoek van 48 MP en een frontcamera van 18 MP",
+    "Je wilt het scherm met de hoogste opgegeven piekhelderheid: 3.000 nits"
+  ],
+  "kies_b": [
+    "Je wilt een telelens met 3x zoom",
+    "Je wilt de grotere accu (4.300 mAh) en 12 GB werkgeheugen",
+    "Je wilt zeven jaar toegezegde updates en het lichtere toestel"
+  ],
+  "wachten": "<p>De iPhone 17 is van september 2025 en dus ruim een jaar oud, de Galaxy S26 kwam in maart 2026 uit. Black Friday valt op vrijdag 27 november 2026. Winkels mogen als van-prijs alleen de laagste prijs van de afgelopen 30 dagen tonen. Wij meten elke nacht, dus op de dag zelf zie je hier of een korting echt is. Heb je nu een toestel nodig, vergelijk dan de prijzen van vandaag hierboven.</p>",
+  "faq": [
+    {
+      "v": "Wat is het verschil tussen de iPhone 17 en de Galaxy S26?",
+      "a": "De Galaxy S26 heeft een telelens met 3x zoom, een accu van 4.300 mAh en 12 GB werkgeheugen. De iPhone 17 laadt sneller (40 W tegenover 25 W) en heeft twee camera's van 48 MP. Het scherm is bij beide 6,3 inch."
+    },
+    {
+      "v": "Is de iPhone 17 de meerprijs waard ten opzichte van de Galaxy S26?",
+      "a": "De iPhone 17 kost vandaag {{verschil}} euro meer: {{prijs_a}} tegenover {{prijs_b}}, beide 256 GB. Daarvoor krijg je sneller laden en een ultragroothoek van 48 MP, maar geen telelens en een kleinere accu. Het hangt af van wat jij belangrijk vindt."
+    },
+    {
+      "v": "Welke heeft de beste accu, de iPhone 17 of de Galaxy S26?",
+      "a": "De Galaxy S26 heeft de grootste accu: 4.300 mAh tegenover 3.692 mAh in de iPhone 17. De iPhone 17 laadt wel sneller, met 40 W via de kabel en 25 W draadloos. De Galaxy S26 doet 25 W en 15 W."
+    },
+    {
+      "v": "Hoe lang krijgt de Galaxy S26 updates vergeleken met de iPhone 17?",
+      "a": "Samsung zegt voor de Galaxy S26 zeven jaar updates toe. Apple noemt voor de iPhone 17 zelf geen aantal jaren. Een vergelijking in jaren is daardoor niet te maken. Alleen bij Samsung weet je vooraf waar je aan toe bent."
+    }
+  ]
+}

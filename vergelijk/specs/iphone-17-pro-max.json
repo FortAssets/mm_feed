@@ -1,0 +1,47 @@
+{
+ "slug": "iphone-17-pro-max",
+ "naam": "Apple iPhone 17 Pro Max",
+ "kort": "iPhone 17 Pro Max",
+ "merk": "Apple",
+ "release": "september 2025",
+ "scherm_inch": 6.9,
+ "scherm_type": "OLED (LTPO)",
+ "scherm_hz": 120,
+ "helderheid_nits": 3000,
+ "chip": "Apple A19 Pro",
+ "ram_gb": 12,
+ "opslag_gb": [
+  256,
+  512,
+  1024,
+  2048
+ ],
+ "camera_achter": "48 MP hoofd + 48 MP ultragroothoek + 48 MP tele",
+ "tele_zoom": 4,
+ "camera_voor_mp": 18,
+ "accu_mah": 4823,
+ "laden_w": 40,
+ "draadloos_w": 25,
+ "gewicht_g": 233,
+ "dikte_mm": 8.75,
+ "ip": "IP68",
+ "updates_jaren": null,
+ "vouwbaar": false,
+ "sterk": [
+  "Groot 6,9 inch 120 Hz OLED-scherm met 3000 nits piekhelderheid",
+  "Drie 48 MP camera's met 4x optische telezoom",
+  "Grootste accu van de serie en opslag tot 2 TB"
+ ],
+ "zwak": [
+  "Zwaar met 233 gram",
+  "Europese uitvoering met simkaartsleuf heeft een kleinere accu dan de eSIM-versie (5088 mAh)"
+ ],
+ "bronnen": [
+  "https://support.apple.com/en-us/125091",
+  "https://www.gsmarena.com/apple_iphone_17_pro_max-13964.php",
+  "https://en.wikipedia.org/wiki/IPhone_17_Pro",
+  "https://www.gsmarena.com/apple_iphone_17_pro_vs_iphone_17_pro_max_review_battery_camera_price_compared-news-69875.php",
+  "https://www.macrumors.com/2025/09/10/iphone-17-pro-iphone-air-specs-battery-ram/"
+ ],
+ "opmerking": "Apple noemt zelf geen mAh en geen RAM. Accu van de uitvoering met simkaartsleuf (internationaal/Europa): 4823 mAh volgens de GSMArena-specpagina en Wikipedia; een GSMArena-vergelijkingsartikel noemt 4832 mAh. De eSIM-versie heeft 5088 mAh. Laden: Apple noemt 50% in 20 minuten met een adapter van 40 W of hoger, GSMArena vermeldt 50 W bedraad; Apple aangehouden. Dikte: Apple 8,75 mm, GSMArena 8,8 mm. Telezoom: 4x optisch (Apple noemt daarnaast 8x zoom van optische kwaliteit). Apple noemt geen aantal jaren updates. Specificatiepagina op apple.com/nl kon niet worden geopend; Apple Support (en-us) gebruikt."
+}

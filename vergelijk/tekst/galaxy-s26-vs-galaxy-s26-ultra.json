@@ -1,0 +1,61 @@
+{
+ "handle": "galaxy-s26-vs-galaxy-s26-ultra",
+ "a": "galaxy-s26",
+ "b": "galaxy-s26-ultra",
+ "title": "Galaxy S26 vs Galaxy S26 Ultra: verschillen en prijs",
+ "seo_title": "Galaxy S26 of S26 Ultra? Alle verschillen vergeleken",
+ "seo_description": "Galaxy S26 of S26 Ultra: 6,3 tegen 6,9 inch, 50 MP tegen 200 MP en 25 W tegen 60 W laden. Zie wat de Ultra extra biedt en wat beide vandaag kosten.",
+ "summary": "De Galaxy S26 is de compacte keuze van 167 gram. De Galaxy S26 Ultra heeft een groter scherm, een 200 MP camera met twee telelenzen, een grotere accu en laadt ruim twee keer zo snel.",
+ "lead": "<strong>De Galaxy S26 is vandaag {{verschil}} euro goedkoper dan de Galaxy S26 Ultra: {{prijs_a}} bij {{winkel_a}} tegen {{prijs_b}} bij {{winkel_b}}, beide met 256 GB als los toestel.</strong> De Ultra geeft daar een scherm van 6,9 inch, een camera van 200 MP en 60 W laden voor terug. De S26 weegt 47 gram minder en is duidelijk compacter.",
+ "secties": [
+  {
+   "kop": "Scherm: 6,3 inch op de Galaxy S26, 6,9 inch op de S26 Ultra",
+   "tekst": "<p>Het paneel is bij deze twee van hetzelfde type: Dynamic LTPO AMOLED 2X met 120 Hz en een piekhelderheid van 2.600 nits. In vloeiendheid en felheid kies je dus niet tussen beter of slechter. Het verschil zit in de maat. De Galaxy S26 heeft <strong>6,3 inch</strong>, de Galaxy S26 Ultra <strong>6,9 inch</strong>. Op de Ultra heb je meer ruimte voor video, kaarten en lange teksten. De S26 is handzamer. Bedenk vooraf waar je je telefoon het meest voor gebruikt.</p>"
+  },
+  {
+   "kop": "Camera: 200 MP en twee telelenzen op de Galaxy S26 Ultra",
+   "tekst": "<p>Hier is de afstand het grootst. De Galaxy S26 heeft een hoofdcamera van 50 MP, een ultragroothoek van 12 MP en een telelens met 3x zoom van 10 MP. De Galaxy S26 Ultra heeft een hoofdcamera van <strong>200 MP</strong>, een ultragroothoek van 50 MP en twee telelenzen: dezelfde 10 MP met 3x zoom en daarbovenop een periscooplens van 50 MP, een telelens met 5x zoom. Fotografeer je vaak iets op afstand, zoals een podium of een sportveld, dan haalt de Ultra het dichterbij. De frontcamera is bij beide 12 MP.</p>"
+  },
+  {
+   "kop": "Accu en laden: Galaxy S26 Ultra laadt met 60 W, de S26 met 25 W",
+   "tekst": "<p>De Galaxy S26 heeft met 4.300 mAh de kleinste accu van de S26-serie. De Galaxy S26 Ultra heeft 5.000 mAh, maar moet daarmee ook een groter scherm van stroom voorzien. Duidelijker is het verschil bij het laden. De S26 laadt bedraad met maximaal <strong>25 W</strong>, de Ultra met <strong>60 W</strong> en is daarmee de snelst ladende S26. Draadloos is het 15 W tegen 25 W. Laad je vooral 's nachts, dan maakt dat weinig uit. Laad je vaak even tussendoor bij, dan is de Ultra praktischer.</p>"
+  },
+  {
+   "kop": "Prestaties en opslag: Exynos in de Galaxy S26, Snapdragon in de Ultra",
+   "tekst": "<p>In Nederland krijgt de Galaxy S26 de <strong>Samsung Exynos 2600</strong>. De Galaxy S26 Ultra heeft ook in Europa de Qualcomm Snapdragon 8 Elite Gen 5 for Galaxy. Beide hebben 12 GB werkgeheugen bij 256 en 512 GB opslag. De Ultra is er daarnaast met 1 TB, en die uitvoering heeft 16 GB werkgeheugen. De S26 stopt bij 512 GB. Samsung zegt voor allebei zeven jaar updates toe, dus daarvoor hoef je het duurdere model niet te nemen. De prijzen hier gelden voor 256 GB.</p>"
+  },
+  {
+   "kop": "Formaat en gewicht: Galaxy S26 weegt 167 gram, de Ultra 214 gram",
+   "tekst": "<p>De Galaxy S26 weegt <strong>167 gram</strong> en is 7,2 mm dik. De Galaxy S26 Ultra weegt <strong>214 gram</strong> en meet 7,9 mm. Dat is 47 gram meer, ruim een kwart zwaarder, en dat voel je bij lang vasthouden of in een jaszak. Met een scherm van 6,9 inch is de Ultra ook in lengte en breedte het grotere toestel. Beide zijn stof- en waterdicht volgens IP68. Twijfel je over de maat, leg ze dan in een winkel naast elkaar in je hand.</p>"
+  }
+ ],
+ "kies_a": [
+  "Licht en compact: 167 gram bij 6,3 inch",
+  "Hetzelfde 120 Hz scherm met 2.600 nits voor minder geld",
+  "Ook zeven jaar updates en 12 GB werkgeheugen"
+ ],
+ "kies_b": [
+  "Hoofdcamera van 200 MP en telelenzen met 3x en 5x zoom",
+  "Laadt met 60 W bedraad en 25 W draadloos",
+  "Accu van 5.000 mAh en opslag tot 1 TB"
+ ],
+ "wachten": "<p>De Galaxy S26 en de Galaxy S26 Ultra liggen allebei sinds maart 2026 in de winkel, ruim een half jaar dus. Black Friday is op vrijdag 27 november 2026. Een winkel mag als van-prijs alleen de laagste prijs van de afgelopen 30 dagen tonen. Wij meten elke nacht, dus op de dag zelf zie je hier of de korting echt is. Kun je nog even vooruit met je huidige toestel, dan kun je die meting afwachten.</p>",
+ "faq": [
+  {
+   "v": "Wat is het verschil tussen de Galaxy S26 en de Galaxy S26 Ultra?",
+   "a": "De Galaxy S26 Ultra heeft een scherm van 6,9 inch, een hoofdcamera van 200 MP, twee telelenzen, 5.000 mAh en 60 W laden. De Galaxy S26 heeft 6,3 inch, 50 MP, één telelens, 4.300 mAh en 25 W, en weegt 47 gram minder."
+  },
+  {
+   "v": "Is de Galaxy S26 Ultra het meerwaard?",
+   "a": "De Ultra kost vandaag {{verschil}} euro meer dan de Galaxy S26. Dat is het waard als je het grote scherm, de 5x zoom en het snelle laden echt gebruikt. Schermtype, helderheid, werkgeheugen en updates zijn op de S26 gelijk."
+  },
+  {
+   "v": "Welke heeft de beste accu, de Galaxy S26 of de S26 Ultra?",
+   "a": "De Galaxy S26 Ultra heeft de grootste accu met 5.000 mAh, tegen 4.300 mAh in de Galaxy S26. De Ultra laadt ook sneller: 60 W bedraad en 25 W draadloos, tegen 25 W en 15 W."
+  },
+  {
+   "v": "Heeft de Galaxy S26 in Nederland dezelfde chip als de S26 Ultra?",
+   "a": "Nee. De Galaxy S26 heeft in Europa de Samsung Exynos 2600. De Galaxy S26 Ultra heeft wereldwijd, dus ook in Nederland, de Qualcomm Snapdragon 8 Elite Gen 5 for Galaxy. Het werkgeheugen is bij 256 GB op beide 12 GB."
+  }
+ ]
+}

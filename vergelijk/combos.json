@@ -1,0 +1,52 @@
+[
+ {
+  "a": "iphone-17",
+  "b": "galaxy-s26",
+  "handle": "iphone-17-vs-galaxy-s26"
+ },
+ {
+  "a": "iphone-17",
+  "b": "iphone-17-pro",
+  "handle": "iphone-17-vs-iphone-17-pro"
+ },
+ {
+  "a": "iphone-17-pro",
+  "b": "iphone-18-pro",
+  "handle": "iphone-17-pro-vs-iphone-18-pro"
+ },
+ {
+  "a": "iphone-17-pro",
+  "b": "iphone-17-pro-max",
+  "handle": "iphone-17-pro-vs-iphone-17-pro-max"
+ },
+ {
+  "a": "iphone-17",
+  "b": "iphone-air",
+  "handle": "iphone-17-vs-iphone-air"
+ },
+ {
+  "a": "iphone-17e",
+  "b": "iphone-17",
+  "handle": "iphone-17e-vs-iphone-17"
+ },
+ {
+  "a": "galaxy-s26",
+  "b": "galaxy-s26-ultra",
+  "handle": "galaxy-s26-vs-galaxy-s26-ultra"
+ },
+ {
+  "a": "galaxy-s26-fe",
+  "b": "galaxy-s26",
+  "handle": "galaxy-s26-fe-vs-galaxy-s26"
+ },
+ {
+  "a": "iphone-17-pro-max",
+  "b": "galaxy-s26-ultra",
+  "handle": "iphone-17-pro-max-vs-galaxy-s26-ultra"
+ },
+ {
+  "a": "galaxy-s26",
+  "b": "pixel-10",
+  "handle": "galaxy-s26-vs-pixel-10"
+ }
+]

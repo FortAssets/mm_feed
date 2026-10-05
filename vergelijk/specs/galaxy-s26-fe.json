@@ -1,0 +1,44 @@
+{
+ "slug": "galaxy-s26-fe",
+ "naam": "Samsung Galaxy S26 FE",
+ "kort": "Galaxy S26 FE",
+ "merk": "Samsung",
+ "release": "september 2026",
+ "scherm_inch": 6.7,
+ "scherm_type": "Dynamic AMOLED 2X",
+ "scherm_hz": 120,
+ "helderheid_nits": 1900,
+ "chip": "Samsung Exynos 2500 (Europese versie)",
+ "ram_gb": 8,
+ "opslag_gb": [
+  128,
+  256
+ ],
+ "camera_achter": "50 MP hoofd + 12 MP ultragroothoek + 8 MP tele (3x)",
+ "tele_zoom": 3,
+ "camera_voor_mp": 12,
+ "accu_mah": 4900,
+ "laden_w": 45,
+ "draadloos_w": 15,
+ "gewicht_g": 193,
+ "dikte_mm": 7.4,
+ "ip": "IP68",
+ "updates_jaren": 7,
+ "vouwbaar": false,
+ "sterk": [
+  "Zeven jaar updates toegezegd",
+  "Accu van 4900 mAh met 45 W snelladen",
+  "Telelens met 3x optische zoom"
+ ],
+ "zwak": [
+  "Oudere Exynos 2500 chip en 8 GB werkgeheugen, minder dan de 12 GB van de S26",
+  "Scherm minder fel (1900 nits) dan de rest van de S26-serie (2600 nits)"
+ ],
+ "bronnen": [
+  "https://www.samsung.com/nl/smartphones/galaxy-s/galaxy-s26-fe-graphite-256gb-sm-s741bzkgeub/",
+  "https://news.samsung.com/nl/samsung-galaxy-s26-fe-de-ultieme-ervaring-die-focust-op-wat-belangrijk-is",
+  "https://www.gsmarena.com/samsung_galaxy_s26_fe_5g-14870.php",
+  "https://www.androidplanet.nl/nieuws/samsung-galaxy-s26-fe-officieel/"
+ ],
+ "opmerking": "Officieel aangekondigd op 27 augustus 2026, te koop sinds 4 september 2026; specificaties komen van Samsung zelf, niet van geruchten. Opslag: het Nederlandse persbericht en Android Planet noemen alleen 128 en 256 GB; de productpagina op samsung.nl en GSMArena noemen ook 512 GB, maar daarvan is geen Nederlandse verkoop bevestigd. De 1900 nits is de waarde in de hoge-helderheidsmodus (HBM), geen piekwaarde zoals bij de andere S26-modellen."
+}

@@ -1,0 +1,46 @@
+{
+ "slug": "iphone-17",
+ "naam": "Apple iPhone 17",
+ "kort": "iPhone 17",
+ "merk": "Apple",
+ "release": "september 2025",
+ "scherm_inch": 6.3,
+ "scherm_type": "OLED (LTPO)",
+ "scherm_hz": 120,
+ "helderheid_nits": 3000,
+ "chip": "Apple A19",
+ "ram_gb": 8,
+ "opslag_gb": [
+  256,
+  512
+ ],
+ "camera_achter": "48 MP hoofd + 48 MP ultragroothoek",
+ "tele_zoom": null,
+ "camera_voor_mp": 18,
+ "accu_mah": 3692,
+ "laden_w": 40,
+ "draadloos_w": 25,
+ "gewicht_g": 177,
+ "dikte_mm": 7.95,
+ "ip": "IP68",
+ "updates_jaren": null,
+ "vouwbaar": false,
+ "sterk": [
+  "120 Hz OLED-scherm met 3000 nits piekhelderheid",
+  "Twee 48 MP camera's en 18 MP frontcamera",
+  "Draadloos laden tot 25 W via MagSafe en Qi2"
+ ],
+ "zwak": [
+  "Geen aparte telelens, alleen 2x zoom via de hoofdcamera",
+  "Maximaal 512 GB opslag"
+ ],
+ "bronnen": [
+  "https://www.apple.com/iphone-17/specs/",
+  "https://www.apple.com/nl/shop/buy-iphone/iphone-17",
+  "https://www.apple.com/nl/newsroom/2025/09/apple-introduces-iphone-17/",
+  "https://www.gsmarena.com/apple_iphone_17-14050.php",
+  "https://en.wikipedia.org/wiki/IPhone_17",
+  "https://www.macrumors.com/2025/09/10/iphone-17-pro-iphone-air-specs-battery-ram/"
+ ],
+ "opmerking": "Apple noemt zelf geen mAh en geen RAM; accu en RAM komen van GSMArena, Wikipedia en MacRumors. Laden: Apple noemt 50% in 20 minuten met een 40 W adapter, GSMArena vermeldt 25 W bedraad; Apple aangehouden. Dikte: Apple 7,95 mm, GSMArena rondt af op 8 mm. Apple noemt geen aantal jaren updates. De specificatiepagina op apple.com/nl kon niet worden geopend; de internationale Apple-pagina en de Nederlandse winkel- en newsroompagina zijn gebruikt."
+}

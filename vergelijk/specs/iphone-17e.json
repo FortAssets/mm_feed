@@ -1,0 +1,43 @@
+{
+ "slug": "iphone-17e",
+ "naam": "Apple iPhone 17e",
+ "kort": "iPhone 17e",
+ "merk": "Apple",
+ "release": "maart 2026",
+ "scherm_inch": 6.1,
+ "scherm_type": "OLED",
+ "scherm_hz": 60,
+ "helderheid_nits": 1200,
+ "chip": "Apple A19",
+ "ram_gb": 8,
+ "opslag_gb": [
+  256,
+  512
+ ],
+ "camera_achter": "48 MP hoofd",
+ "tele_zoom": null,
+ "camera_voor_mp": 12,
+ "accu_mah": 4005,
+ "laden_w": 20,
+ "draadloos_w": 15,
+ "gewicht_g": 169,
+ "dikte_mm": 7.8,
+ "ip": "IP68",
+ "updates_jaren": null,
+ "vouwbaar": false,
+ "sterk": [
+  "A19-chip met 8 GB werkgeheugen",
+  "MagSafe en Qi2 draadloos laden tot 15 W",
+  "Standaard 256 GB opslag"
+ ],
+ "zwak": [
+  "Scherm ververst op 60 Hz",
+  "Eén camera achterop, geen ultragroothoek of telelens"
+ ],
+ "bronnen": [
+  "https://www.apple.com/iphone-17e/specs/",
+  "https://m.gsmarena.com/apple_iphone_17e-ampp-14487.php",
+  "https://www.vodafone.nl/telefoon/iphone/iphone-17-serie/iphone-17e-specs"
+ ],
+ "opmerking": "Helderheid is piek bij HDR (800 nits normaal). Apple noemt geen laadvermogen van het toestel, alleen 50% in 30 minuten met een adapter van 20 W of meer; laden_w volgt die adapter (Vodafone: 20 W, GSMArena noemt 15 W). 60 Hz komt van Vodafone, Apple noemt geen verversingssnelheid. Gewicht volgens Apple 169 g, Vodafone 170 g. Accu en RAM uit GSMArena/Vodafone. De 2x zoom is een uitsnede van de hoofdsensor, geen telelens."
+}

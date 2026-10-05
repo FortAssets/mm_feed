@@ -1,0 +1,42 @@
+{
+ "slug": "pixel-10",
+ "naam": "Google Pixel 10",
+ "kort": "Pixel 10",
+ "merk": "Google",
+ "release": "augustus 2025",
+ "scherm_inch": 6.3,
+ "scherm_type": "OLED",
+ "scherm_hz": 120,
+ "helderheid_nits": 3000,
+ "chip": "Google Tensor G5",
+ "ram_gb": 12,
+ "opslag_gb": [
+  128,
+  256
+ ],
+ "camera_achter": "48 MP hoofd + 13 MP ultragroothoek + 10,8 MP tele (5x)",
+ "tele_zoom": 5,
+ "camera_voor_mp": 10.5,
+ "accu_mah": 4970,
+ "laden_w": 30,
+ "draadloos_w": 15,
+ "gewicht_g": 204,
+ "dikte_mm": 8.6,
+ "ip": "IP68",
+ "updates_jaren": 7,
+ "vouwbaar": false,
+ "sterk": [
+  "5x optische telelens",
+  "7 jaar OS- en beveiligingsupdates",
+  "Helder scherm tot 3000 nits met 120 Hz"
+ ],
+ "zwak": [
+  "Vrij zwaar voor 6,3 inch: 204 gram",
+  "Laden met maximaal 30 W"
+ ],
+ "bronnen": [
+  "https://store.google.com/product/pixel_10_specs?hl=en-US",
+  "https://gsmarena.com/google_pixel_10_5g-13979.php"
+ ],
+ "opmerking": "Gewicht en dikte in mm komen van GSMArena; Google Store (VS) geeft alleen inches en ounces (7,2 oz). Draadloos laden is Qi2 (magnetisch) tot 15 W. Geen tegenstrijdigheden tussen bronnen."
+}

@@ -1,0 +1,44 @@
+{
+ "slug": "galaxy-z-fold8",
+ "naam": "Samsung Galaxy Z Fold8",
+ "kort": "Galaxy Z Fold8",
+ "merk": "Samsung",
+ "release": "juli 2026",
+ "scherm_inch": 7.6,
+ "scherm_type": "Dynamic AMOLED 2X (LTPO)",
+ "scherm_hz": 120,
+ "helderheid_nits": 2600,
+ "chip": "Qualcomm Snapdragon 8 Elite Gen 5 for Galaxy",
+ "ram_gb": 12,
+ "opslag_gb": [
+  256,
+  512,
+  1024
+ ],
+ "camera_achter": "50 MP hoofd + 50 MP ultragroothoek",
+ "tele_zoom": null,
+ "camera_voor_mp": 10,
+ "accu_mah": 4800,
+ "laden_w": 45,
+ "draadloos_w": 20,
+ "gewicht_g": 201,
+ "dikte_mm": 4.5,
+ "ip": "IP48",
+ "updates_jaren": 7,
+ "vouwbaar": true,
+ "sterk": [
+  "Slechts 4,5 mm dun opengeklapt en 201 gram",
+  "Snapdragon 8 Elite Gen 5 met 12 of 16 GB werkgeheugen",
+  "45 W laden en 7 jaar updates"
+ ],
+ "zwak": [
+  "Geen telelens",
+  "IP48: beperkte bescherming tegen stof"
+ ],
+ "bronnen": [
+  "https://news.samsung.com/global/samsung-galaxy-z-fold8-ultra-fold8-and-flip8foldables-perfected-for-every-way-of-living",
+  "https://www.gsmarena.com/samsung_galaxy_z_fold_wide_5g-14673.php",
+  "https://www.samsung.com/au/mobile/buying-guide/galaxy-z-fold8-features-specs/"
+ ],
+ "opmerking": "Coverscherm: 5,5 inch Dynamic AMOLED 2X, 120 Hz (1248 x 1972). Binnenscherm heeft 4:3 verhouding. Dikte 4,5 mm is opengeklapt; dichtgevouwen 9,7 mm. De 1 TB uitvoering heeft 16 GB werkgeheugen, de andere 12 GB. Helderheid: Samsung noemt 2600 nits, GSMArena 3000 nits; Samsung aangehouden. Updates (7 OS-generaties) komt van GSMArena en van Samsungs Flip8-pagina; niet op een Fold8-pagina van Samsung zelf gezien. De Nederlandse productpagina van Samsung kon niet worden geopend; waarden komen van Samsung Newsroom (globaal) en Samsung Australie. Aangekondigd 22 juli 2026. Frontcamera: 10 MP in zowel cover- als binnenscherm."
+}

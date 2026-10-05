@@ -1,0 +1,61 @@
+{
+ "handle": "iphone-17-pro-max-vs-galaxy-s26-ultra",
+ "a": "iphone-17-pro-max",
+ "b": "galaxy-s26-ultra",
+ "title": "iPhone 17 Pro Max vs Galaxy S26 Ultra: verschillen vergeleken",
+ "seo_title": "iPhone 17 Pro Max of Galaxy S26 Ultra vergelijken",
+ "seo_description": "iPhone 17 Pro Max of Galaxy S26 Ultra: twee toestellen van 6,9 inch met andere camera's, laadsnelheden en gewicht. Bekijk de verschillen en dagprijzen.",
+ "summary": "Twee toestellen van 6,9 inch met 120 Hz en 12 GB werkgeheugen. De Galaxy S26 Ultra heeft een 200 MP camera, 60 W laden en is 19 gram lichter; de iPhone 17 Pro Max heeft drie camera's van 48 MP en opslag tot 2 TB.",
+ "lead": "<strong>De Galaxy S26 Ultra is vandaag {{verschil}} euro goedkoper dan de iPhone 17 Pro Max: {{prijs_b}} bij {{winkel_b}} tegen {{prijs_a}} bij {{winkel_a}}, allebei 256 GB als los toestel.</strong> In schermformaat en werkgeheugen zijn ze gelijk. De keuze gaat over de opbouw van de camera, laadsnelheid, gewicht en of je bij Apple of Samsung wilt zitten.",
+ "secties": [
+  {
+   "kop": "Scherm: iPhone 17 Pro Max en Galaxy S26 Ultra zijn beide 6,9 inch",
+   "tekst": "<p>In formaat is er geen verschil: beide schermen meten 6,9 inch, gebruiken LTPO en verversen op 120 Hz. Het enige getal dat afwijkt is de piekhelderheid. Voor de iPhone 17 Pro Max staat <strong>3.000 nits</strong> opgegeven, voor de Galaxy S26 Ultra <strong>2.600 nits</strong>. Dat gaat om piekwaarden, niet om de helderheid bij gewoon gebruik. Zoek je een groot scherm voor video en foto's, dan krijg je dat bij allebei. Het scherm hoeft bij deze twee dus niet de doorslag te geven.</p>"
+  },
+  {
+   "kop": "Camera: 200 MP op de Galaxy S26 Ultra, drie keer 48 MP op de iPhone",
+   "tekst": "<p>De iPhone 17 Pro Max heeft drie camera's van elk 48 MP: hoofd, ultragroothoek en een telelens met 4x zoom. De Galaxy S26 Ultra heeft er vier: een hoofdcamera van <strong>200 MP</strong>, een ultragroothoek van 50 MP, een periscooplens van 50 MP als telelens met 5x zoom en een tweede telelens van 10 MP met 3x zoom. Samsung biedt dus twee zoomstanden en zoomt een stap verder in. Apple houdt de resolutie over alle lenzen gelijk. De frontcamera is 18 MP op de iPhone en 12 MP op de Ultra.</p>"
+  },
+  {
+   "kop": "Accu en laden: Galaxy S26 Ultra laadt met 60 W, iPhone met 40 W",
+   "tekst": "<p>De Galaxy S26 Ultra heeft een accu van 5.000 mAh. De iPhone 17 Pro Max die je in Nederland koopt, met simkaartsleuf, heeft <strong>4.823 mAh</strong>. Elders lees je soms 5.088 mAh, maar dat is de uitvoering met alleen eSIM. Bedraad laadt de Ultra met maximaal <strong>60 W</strong>. Apple noemt voor de iPhone 50% in 20 minuten met een adapter van 40 W of hoger. Draadloos laden gaat bij beide tot 25 W. Op papier heeft Samsung dus een kleine voorsprong in capaciteit en een grotere in laadvermogen.</p>"
+  },
+  {
+   "kop": "Prestaties en opslag: iPhone 17 Pro Max gaat tot 2 TB",
+   "tekst": "<p>De iPhone 17 Pro Max draait op de Apple A19 Pro, de Galaxy S26 Ultra op de Qualcomm Snapdragon 8 Elite Gen 5 for Galaxy, ook in Europa. Beide hebben <strong>12 GB werkgeheugen</strong> in de uitvoering met 256 GB waar de prijzen hier bij horen. De Ultra met 1 TB heeft 16 GB. In opslag gaat Apple het verst: 256 GB, 512 GB, 1 TB en 2 TB. Samsung stopt bij 1 TB. Voor de Ultra zegt Samsung zeven jaar updates toe.</p>"
+  },
+  {
+   "kop": "Formaat en gewicht: Galaxy S26 Ultra is lichter en dunner",
+   "tekst": "<p>Licht zijn ze geen van beide, maar er is verschil. De Galaxy S26 Ultra weegt <strong>214 gram</strong> en is 7,9 mm dik. De iPhone 17 Pro Max weegt <strong>233 gram</strong> en meet 8,75 mm. Dat is 19 gram en bijna een millimeter meer. Stof- en waterdichtheid is gelijk met IP68. Draag je je telefoon veel in een broekzak of houd je hem lang vast om te lezen, dan telt het lagere gewicht van de Ultra mee. Het schermformaat is bij beide 6,9 inch.</p>"
+  }
+ ],
+ "kies_a": [
+  "Drie camera's van 48 MP en een frontcamera van 18 MP",
+  "Opslag tot 2 TB, de Ultra stopt bij 1 TB",
+  "Piekhelderheid van 3.000 nits tegen 2.600 nits"
+ ],
+ "kies_b": [
+  "Hoofdcamera van 200 MP en telelenzen met 3x en 5x zoom",
+  "Laadt bedraad met 60 W en is 19 gram lichter",
+  "Zeven jaar updates toegezegd door Samsung"
+ ],
+ "wachten": "<p>De iPhone 17 Pro Max is van september 2025 en daarmee ruim een jaar op de markt. De Galaxy S26 Ultra is van maart 2026. Black Friday is vrijdag 27 november 2026. Als van-prijs mag een winkel alleen de laagste prijs van de afgelopen 30 dagen tonen. Wij meten elke nacht, dus op de dag zelf zie je hier of een korting echt is. Bij toestellen in deze prijsklasse loont het om dat te controleren.</p>",
+ "faq": [
+  {
+   "v": "Wat is het verschil tussen de iPhone 17 Pro Max en de Galaxy S26 Ultra?",
+   "a": "Beide hebben een 120 Hz scherm van 6,9 inch en 12 GB werkgeheugen. De Galaxy S26 Ultra heeft een 200 MP camera, twee telelenzen en 60 W laden. De iPhone 17 Pro Max heeft drie 48 MP camera's en tot 2 TB opslag."
+  },
+  {
+   "v": "Is de iPhone 17 Pro Max het meerwaard boven de Galaxy S26 Ultra?",
+   "a": "De iPhone 17 Pro Max kost vandaag {{verschil}} euro meer bij gelijke opslag van 256 GB. Je krijgt een hogere piekhelderheid, een frontcamera van 18 MP en opslag tot 2 TB. De Ultra laadt sneller en is lichter."
+  },
+  {
+   "v": "Welke heeft de beste accu, de iPhone 17 Pro Max of de Galaxy S26 Ultra?",
+   "a": "De Galaxy S26 Ultra heeft 5.000 mAh, de Europese iPhone 17 Pro Max met simkaartsleuf 4.823 mAh. De Ultra laadt bedraad met 60 W, de iPhone met een adapter van 40 W. Draadloos halen beide 25 W."
+  },
+  {
+   "v": "Welke is zwaarder, de iPhone 17 Pro Max of de Galaxy S26 Ultra?",
+   "a": "De iPhone 17 Pro Max is de zwaarste met 233 gram en een dikte van 8,75 mm. De Galaxy S26 Ultra weegt 214 gram en is 7,9 mm dik. Het scherm is bij beide 6,9 inch."
+  }
+ ]
+}

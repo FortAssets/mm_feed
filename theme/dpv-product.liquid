@@ -64,6 +64,12 @@
 .dpp-ja{color:#1F8F5F;font-weight:800}.dpp-nee{color:#B42318;font-weight:800}
 .dpp-graf svg{display:block;width:100%;height:120px;background:#F4F7FF;border-radius:12px}
 .dpp-graf-vt{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#5B6B80;margin-top:6px}
+.dpp-score{font-size:13px;font-weight:700;color:#4A5A70;margin:0 0 10px}.dpp-score span{color:#F9C31F}.dpp-score a{color:#2456D6;text-decoration:none}
+.dpp-sg{border-top:1px solid #E6EBF2}.dpp-sg:first-of-type{border-top:0}
+.dpp-sg summary{cursor:pointer;font-size:15px;font-weight:800;padding:13px 0;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.dpp-sg summary::-webkit-details-marker{display:none}.dpp-sg summary:after{content:'+';font-size:20px;font-weight:600;color:#2456D6}.dpp-sg[open] summary:after{content:'\2212'}
+.dpp-sg .dpp-specs{margin-bottom:10px}
+.dpp-bron{font-size:12.5px !important;color:#5B6B80 !important;margin-top:10px !important}
 .dpp-specs{width:100%;border-collapse:collapse;font-size:14px}
 .dpp-specs th{text-align:left;font-weight:600;color:#4A5A70;padding:9px 10px 9px 0;width:44%;vertical-align:top}
 .dpp-specs td{font-weight:700;padding:9px 0}
@@ -103,6 +109,7 @@
       <div>
         {%- if m.merk.value != blank -%}<p class="dpp-merk">{{ m.merk.value | escape }}</p>{%- endif -%}
         <h1>{{ naam | escape }}</h1>
+        {%- if specs.score -%}<p class="dpp-score"><span aria-hidden="true">★</span> {{ specs.score | round: 1 | replace: '.', ',' }} van 5 bij bol.com{% if specs.g.size > 0 %} · <a href="#specificaties">Specificaties</a>{% endif %}</p>{%- endif -%}
         <p class="dpp-van" id="dpp-van">
           {%- if prijs_tekst != blank -%}<b>{{ prijs_tekst }}</b>laagste prijs{% if m.winkels.value > 1 %} bij {{ m.winkels.value }} winkels{% endif %}{%- endif -%}
         </p>
@@ -136,12 +143,18 @@
       <div id="dpp-graf"></div>
     </div>
 
-    {%- if specs != blank -%}
-      <div class="dpp-blok">
-        <h2>Specificaties</h2>
-        <table class="dpp-specs">
-          {%- for s in specs -%}<tr><th scope="row">{{ s[0] | escape }}</th><td>{{ s[1] | escape }}</td></tr>{%- endfor -%}
-        </table>
+    {%- if specs.g.size > 0 -%}
+      <div class="dpp-blok" id="specificaties">
+        <h2>Specificaties van {{ naam | escape }}</h2>
+        {%- for g in specs.g -%}
+          <details class="dpp-sg"{% if forloop.index <= 3 %} open{% endif %}>
+            <summary>{{ g.t | escape }}</summary>
+            <table class="dpp-specs">
+              {%- for r in g.r -%}<tr><th scope="row">{{ r[0] | escape }}</th><td>{{ r[1] | escape }}</td></tr>{%- endfor -%}
+            </table>
+          </details>
+        {%- endfor -%}
+        {%- if specs.bron != blank -%}<p class="dpp-bron">Specificaties volgens {{ specs.bron | escape }}. Controleer bij de winkel of de uitvoering klopt voordat je bestelt.</p>{%- endif -%}
       </div>
     {%- endif -%}
 

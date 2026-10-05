@@ -422,7 +422,7 @@
         return '<a class="dhk-alt-rij" rel="' + rel(x) + '" target="_blank" href="' + esc(x.url) + '" data-pos="' + (n + 2) + '" data-naam="' + esc(x.knop) + '">' +
           (x.beeld || '') +
           '<span class="dhk-alt-naam"><b>' + esc(x.naam) + '</b><span>' + esc(x.sub) + '</span></span>' +
-          '<span class="dhk-prijs">' + euro(x.prijs) + '<small>' + esc(x.per.split(' + ')[0]) + '</small></span>' +
+          '<span class="dhk-prijs">' + euro(x.prijs) + '<small>' + esc(x.per).replace(' + ', '<br>+ ') + '</small></span>' +
           '<span class="dhk-ga">Bekijk ›</span></a>';
       }).join('') + '</div>';
     }
@@ -513,7 +513,11 @@
               .sort(function (a, b) { return a.perEenheid - b.perEenheid; });
             var gehad = {}; d = d.filter(function (x) { if (gehad[x.winkel]) return false; gehad[x.winkel] = 1; return true; });
             return { p: p, d: d };
-          }).filter(function (x) { return x.p.vergelijkbaar && x.d.length >= 2; })
+          }).filter(function (x) {
+            // Zit de laagste meer dan 40% onder de volgende, dan is het meestal een
+            // andere verpakking of een leesfout in de folder. Dan liever niet tonen.
+            return x.p.vergelijkbaar && x.d.length >= 2 && x.d[0].perEenheid >= x.d[1].perEenheid * 0.6;
+          })
             .sort(function (a, b) { return b.d.length - a.d.length; });
           tab.P = P;
           var tel = {};

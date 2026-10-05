@@ -240,7 +240,7 @@
         if (!o.vr) sub.push('voorraad onbekend');
         h += '<div class="dpp-rij' + (i === 0 ? ' beste' : '') + '"><div class="dpp-rij-n">' + esc(o.w) +
           (i === 0 && pr.o.length > 1 ? '<span class="dpp-lab">LAAGSTE</span>' : '') + '<small>' + sub.join(' · ') + '</small></div>' +
-          '<span class="dpp-rij-p">' + eur(o.p) + (o.v > o.p ? '<s>' + eur(o.v) + '</s>' : '') + '</span>' +
+          '<span class="dpp-rij-p">' + eur(o.p) + (o.v > o.p && o.p >= o.v * 0.6 ? '<s>' + eur(o.v) + '</s>' : '') + '</span>' +
           '<a class="dpp-knop" data-w="' + esc(o.w) + '" href="' + go + '&w=' + encodeURIComponent(o.w) + '" target="_blank" rel="sponsored noopener">Bekijk ›</a></div>';
       });
       document.getElementById('dpp-winkels').innerHTML = h;

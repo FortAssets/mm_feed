@@ -49,6 +49,10 @@
 
 <script>
 (function () {
+  // De sectie staat boven het artikel, dus het artikel bestaat nog niet als dit
+  // script wordt gelezen. Wachten tot de pagina er staat.
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+  function start() {
   var API = 'https://shop.deprijsvergelijker.com';
   var vg = document.querySelector('[data-vg]');
   var doos = document.getElementById('vgk');
@@ -149,6 +153,7 @@
       if (ca && cb) { ca.classList.toggle('win', pa < pb); cb.classList.toggle('win', pb < pa); }
     }
   });
+  }
 })();
 </script>
 {%- endif -%}

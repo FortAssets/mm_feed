@@ -10,21 +10,33 @@
     (ACM Leidraad 2024, hoofdstuk 8);
   - geen vaste knop onderaan: die wint op homepages in tests niet.
 
-  Eerste stap: alleen Sim only en Producten werken als tabblad. De andere
-  categorieen zijn gewone links naar hun eigen pagina.
+  Tweede stap, zelfde dag: alle acht categorieen zijn een tabblad. Een tabblad
+  haalt zijn gegevens pas op als je het opent.
 
-  Sim only komt uit de telecom-worker (een bundel per aanbieder), producten uit
-  de shop-worker. Valt een van beide uit, dan blijft de link naar de volledige
-  vergelijker staan.
+  Waar de gegevens vandaan komen:
+  - sim only, telefoon, internet: telecom-worker (/api/cards/...);
+  - producten, gaming: shop-worker;
+  - boodschappen: boodschappen-worker (/sm/api/deals);
+  - zorg: de polissen staan als instelling in de zorgvergelijker. Wij lezen ze
+    uit die pagina, zodat er een plek blijft om ze bij te houden;
+  - energie: data/energie-top.json in de repo. De energie-worker geeft alleen
+    een pagina terug en mag niet door een andere site gelezen worden;
+    energie.mjs leest de pagina twee keer per dag uit.
+  Valt een bron uit, dan blijft de link naar de volledige vergelijker staan.
 
   Elke klik naar een aanbieder gaat als gebeurtenis "dhk_klik" naar gtag of
-  dataLayer als die er zijn, met tabblad, keuze en positie. Daarmee is later te
-  meten of de beste keuze of een alternatief wordt gekozen.
+  dataLayer als die er zijn, met tabblad, keuze en positie.
 {%- endcomment -%}
 
 <section class="dhk" id="dhk"
   data-worker="{{ section.settings.worker_url }}"
-  data-shop="{{ section.settings.shop_url }}">
+  data-shop="{{ section.settings.shop_url }}"
+  data-boodschappen="{{ section.settings.boodschappen_url }}"
+  data-energie="{{ section.settings.energie_data }}"
+  data-zorg="{{ section.settings.zorg_url }}"
+  data-prod="{{ section.settings.groepen | escape }}"
+  data-gaming="{{ section.settings.gaming_groepen | escape }}"
+  data-seintje="{{ section.settings.seintje_url }}">
   <div class="dhk-in">
 
     <div class="dhk-kop">
@@ -35,63 +47,23 @@
 
     <div class="dhk-app">
       <div class="dhk-tabs" role="tablist" aria-label="Wat wil je vergelijken?">
-        <button type="button" class="dhk-tab aan" role="tab" aria-selected="true" aria-controls="dhk-p-sim" id="dhk-t-sim" data-tab="sim">Sim only</button>
-        <button type="button" class="dhk-tab" role="tab" aria-selected="false" aria-controls="dhk-p-prod" id="dhk-t-prod" data-tab="prod" tabindex="-1">Producten</button>
-        {%- assign links = section.settings.links | newline_to_br | split: '<br />' -%}
-        {%- for l in links -%}
-          {%- assign d = l | strip | split: '|' -%}
-          {%- if d.size == 2 -%}
-            <a class="dhk-tab dhk-link" href="{{ d[1] | strip }}">{{ d[0] | strip }}</a>
-          {%- endif -%}
+        {%- assign tabs = "sim:Sim only,telefoon:Telefoon,internet:Internet,energie:Energie,zorg:Zorg,prod:Producten,gaming:Gaming,boodschappen:Boodschappen" | split: ',' -%}
+        {%- for t in tabs -%}
+          {%- assign d = t | split: ':' -%}
+          <button type="button" class="dhk-tab{% if forloop.first %} aan{% endif %}" role="tab" id="dhk-t-{{ d[0] }}" data-tab="{{ d[0] }}"
+            aria-controls="dhk-paneel" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"{% unless forloop.first %} tabindex="-1"{% endunless %}>{{ d[1] }}</button>
         {%- endfor -%}
       </div>
 
-      {%- comment -%} Sim only {%- endcomment -%}
-      <div class="dhk-paneel" id="dhk-p-sim" role="tabpanel" aria-labelledby="dhk-t-sim">
-        <p class="dhk-vraag">Wat is voor jou belangrijk?</p>
-        <div class="dhk-chips" id="dhk-sim-chips">
-          <button type="button" class="dhk-chip aan" data-f="alles" aria-pressed="true">Laagste prijs</button>
-          <button type="button" class="dhk-chip" data-f="data" aria-pressed="false">Onbeperkt data</button>
-          <button type="button" class="dhk-chip" data-f="bellen" aria-pressed="false">Onbeperkt bellen</button>
-          <button type="button" class="dhk-chip" data-f="jaar" aria-pressed="false">1 jaar contract</button>
-        </div>
-        <div class="dhk-uit" id="dhk-sim-uit" aria-live="polite">
-          <div class="dhk-laad" aria-hidden="true"><i></i><i></i><i></i></div>
-          <noscript><a class="dhk-knop" href="{{ section.settings.sim_url }}">Bekijk alle sim only</a></noscript>
-        </div>
-        <p class="dhk-regel" id="dhk-sim-regel">{{ section.settings.sim_regel }}</p>
-        <a class="dhk-alle" href="{{ section.settings.sim_url }}">Alle sim only vergelijken ›</a>
-        {%- if section.settings.seintje_url != blank -%}
-        <a class="dhk-sein" href="{{ section.settings.seintje_url }}">
-          <span class="dhk-sein-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7 2.5 7h-17S6 15 6 9Z"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg></span>
-          <span><b>{{ section.settings.seintje_kop }}</b><br>{{ section.settings.seintje_tekst }}</span>
-          <span class="dhk-pijl" aria-hidden="true">›</span>
-        </a>
-        {%- endif -%}
-      </div>
-
-      {%- comment -%} Producten {%- endcomment -%}
-      <div class="dhk-paneel" id="dhk-p-prod" role="tabpanel" aria-labelledby="dhk-t-prod" hidden>
-        <form class="dhk-zoek" action="{{ section.settings.prod_url }}" method="get" role="search">
-          <label for="dhk-q" class="dhk-verborgen">Zoek een product</label>
-          <input id="dhk-q" name="q" type="search" autocomplete="off" placeholder="Zoek op merk of model" enterkeyhint="search">
-          <button type="submit">Zoek</button>
-        </form>
-        <div class="dhk-chips" id="dhk-prod-chips">
-          {%- assign groepen = section.settings.groepen | newline_to_br | split: '<br />' -%}
-          {%- for g in groepen -%}
-            {%- assign d = g | strip | split: '|' -%}
-            {%- if d.size >= 3 -%}
-              <button type="button" class="dhk-chip{% if forloop.first %} aan{% endif %}" aria-pressed="{% if forloop.first %}true{% else %}false{% endif %}"
-                data-ids="{{ d[2] | strip }}" data-meer="{{ d[1] | strip }}">{{ d[0] | strip }}</button>
-            {%- endif -%}
-          {%- endfor -%}
-        </div>
-        <div class="dhk-uit" id="dhk-prod-uit" aria-live="polite">
-          <div class="dhk-laad" aria-hidden="true"><i></i><i></i><i></i></div>
-        </div>
-        <p class="dhk-regel">{{ section.settings.prod_regel }}</p>
-        <a class="dhk-alle" id="dhk-prod-alle" href="{{ section.settings.prod_url }}">Alle producten vergelijken ›</a>
+      <div class="dhk-paneel" id="dhk-paneel" role="tabpanel" aria-labelledby="dhk-t-sim">
+        <div class="dhk-laad" aria-hidden="true"><i></i><i></i><i></i></div>
+        <noscript>
+          <div class="dhk-links">
+            <a href="/pages/sim-only">Sim only</a><a href="/pages/telefoonabonnement">Telefoon</a><a href="/pages/internet-tv">Internet</a>
+            <a href="/pages/energie">Energie</a><a href="/pages/zorgverzekering">Zorg</a><a href="/pages/vergelijken">Producten</a>
+            <a href="/pages/gaming">Gaming</a><a href="/pages/boodschappen">Boodschappen</a>
+          </div>
+        </noscript>
       </div>
     </div>
 
@@ -218,14 +190,24 @@
 
 .dhk :focus-visible{outline:3px solid #7FE3BC;outline-offset:2px}
 .dhk-paneel :focus-visible{outline-color:#059669}
-</style>
 
+/* 5 okt, tweede stap: alle categorieen als tabblad */
+.dhk-foto{flex:0 0 auto;width:54px;height:64px;border-radius:10px;background:#fff;border:1px solid #D8E0EA;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.dhk-foto img{max-width:46px;max-height:56px;object-fit:contain}
+.dhk-alt-rij .dhk-foto{width:40px;height:48px}.dhk-alt-rij .dhk-foto img{max-width:34px;max-height:42px}
+.dhk-let{font-size:12.5px;line-height:1.45;color:#92400E;background:#FEF3C7;border-radius:9px;padding:8px 10px;margin:0 0 11px}
+.dhk-prod-s{display:block;font-size:12px;font-weight:600;color:#5B6B80;margin-top:2px}
+.dhk-w small{font:600 11.5px 'Plus Jakarta Sans',system-ui,sans-serif;opacity:.8;margin-left:3px}
+.dhk-links{display:flex;flex-wrap:wrap;gap:8px}
+.dhk-links a{color:#047857;font-weight:800;font-size:14px}
+</style>
 <script>
 (function () {
   var wortel = document.getElementById('dhk');
   if (!wortel) return;
-  var WORKER = wortel.getAttribute('data-worker') || '';
-  var SHOP = wortel.getAttribute('data-shop') || '';
+  var A = function (n) { return wortel.getAttribute('data-' + n) || ''; };
+  var WORKER = A('worker'), SHOP = A('shop'), BOOD = A('boodschappen'), ENERGIE = A('energie'), ZORG = A('zorg'), SEIN = A('seintje');
+  var paneel = document.getElementById('dhk-paneel');
 
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
@@ -243,20 +225,423 @@
       else if (window.dataLayer && window.dataLayer.push) { d.event = naam; window.dataLayer.push(d); }
     } catch (e) {}
   }
+  function json(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+  var LAAD = '<div class="dhk-laad" aria-hidden="true"><i></i><i></i><i></i></div>';
 
-  /* ---------- tabbladen ---------- */
+  var DOMEIN = { lebara: 'lebara.nl', youfone: 'youfone.nl', hollandsnieuwe: 'hollandsnieuwe.nl', simyo: 'simyo.nl', ben: 'ben.nl',
+    kpn: 'kpn.com', odido: 'odido.nl', vodafone: 'vodafone.nl', ziggo: 'ziggo.nl', simpel: 'simpel.nl', onlinenl: 'online.nl',
+    budgetmobiel: 'budgetmobiel.nl', delta: 'delta.nl' };
+  function logo(dom) {
+    if (!dom) return '';
+    return '<img class="dhk-logo" alt="" loading="lazy" width="36" height="36" onerror="this.style.display=\'none\'" ' +
+      'src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://' + esc(dom) + '">';
+  }
+  function merkLogo(provider) { return logo(DOMEIN[String(provider || '').toLowerCase().replace(/[^a-z0-9]/g, '')]); }
+  function foto(src) {
+    return src ? '<span class="dhk-foto"><img src="' + esc(src) + '" alt="" loading="lazy" onerror="this.parentNode.style.display=\'none\'"></span>' : '';
+  }
+  function mnd(k) { return parseInt(String(k.contract || '').replace(/\D/g, ''), 10) || 0; }
+  function duur(k) { var m = mnd(k); return m === 12 ? '1 jaar' : m === 24 ? '2 jaar' : m ? m + ' maanden' : 'maandelijks opzegbaar'; }
+  function ga(k, cat) { return WORKER + '/api/go?u=' + encodeURIComponent(k.url) + '&cat=' + cat + '&p=' + encodeURIComponent(k.provider || ''); }
+  function datum(iso) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+    if (!m) return iso || '';
+    return parseInt(m[3], 10) + ' ' + ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'][parseInt(m[2], 10) - 1] + ' ' + m[1];
+  }
+
+  var VERGOEDING = ' Aanbieders betalen niet voor een plek. Wij krijgen een vergoeding als je via ons afsluit; jij betaalt daardoor niets extra.';
+
+  /* =====================================================================
+     Tabbladen met een aanbod: een beste keuze en twee alternatieven.
+     Elk item: naam, sub, prijs, per, onder, let, url, knop, beeld, aff.
+     ===================================================================== */
+  var AANBOD = {
+    sim: {
+      vraag: 'Wat is voor jou belangrijk?',
+      chips: [
+        { id: 'alles', label: 'Laagste prijs', wat: 'laagste maandprijs', test: function () { return true; } },
+        { id: 'data', label: 'Onbeperkt data', wat: 'laagste maandprijs met onbeperkt data', test: function (x) { return x.k.unlimited; } },
+        { id: 'bellen', label: 'Onbeperkt bellen', wat: 'laagste maandprijs met onbeperkt bellen', test: function (x) { return /onbeperkt/i.test(x.k.minutes || ''); } },
+        { id: 'jaar', label: '1 jaar contract', wat: 'laagste maandprijs met een contract van 1 jaar', test: function (x) { return mnd(x.k) === 12; } }
+      ],
+      laad: function () {
+        return json(WORKER + '/api/cards/simonly?limit=60').then(function (j) {
+          return (j.cards || []).filter(function (k) { return parseFloat(k.price) > 0 && k.url && k.provider; }).map(function (k) {
+            var p = parseFloat(k.price), m = mnd(k) || 24;
+            var d = k.unlimited ? 'Onbeperkt data' : (k.dataGB ? k.dataGB + ' GB' : '');
+            var b = /onbeperkt/i.test(k.minutes || '') ? 'onbeperkt bellen' : (k.minutes || '');
+            var net = k.network && String(k.network).toLowerCase() !== String(k.provider).toLowerCase() ? 'netwerk van ' + k.network : '';
+            return { k: k, naam: k.provider, sub: [d, b, duur(k), net].filter(Boolean).join(' · '), prijs: p, per: 'per maand',
+              rang2: -(k.unlimited ? 9999 : k.dataGB || 0),
+              onder: euro(p * m) + ' over ' + m + ' maanden', url: ga(k, 'simonly'), knop: k.provider, beeld: merkLogo(k.provider), aff: true };
+          });
+        });
+      },
+      regel: 'Zo kiezen wij: de laagste maandprijs binnen jouw keuze, bij een gelijke prijs de grootste bundel.' + VERGOEDING,
+      alle: ['Alle sim only vergelijken', '/pages/sim-only'], sein: true
+    },
+
+    telefoon: {
+      vraag: 'Welk toestel zoek je?',
+      chips: [
+        { id: 'alles', label: 'Laagste kosten', wat: 'laagste kosten per maand', test: function () { return true; } },
+        { id: 'apple', label: 'iPhone', wat: 'voordeligste iPhone', test: function (x) { return /iphone/i.test(x.k.device); } },
+        { id: 'samsung', label: 'Samsung', wat: 'voordeligste Samsung', test: function (x) { return /samsung/i.test(x.k.device); } },
+        { id: 'pixel', label: 'Google Pixel', wat: 'voordeligste Pixel', test: function (x) { return /pixel/i.test(x.k.device); } },
+        { id: 'nul', label: 'Geen bijbetaling', wat: 'laagste kosten zonder bijbetaling', test: function (x) { return !(parseFloat(x.k.downPayment) > 0); } }
+      ],
+      laad: function () {
+        return json(WORKER + '/api/cards/telefoon?limit=60').then(function (j) {
+          return (j.cards || []).filter(function (k) { return parseFloat(k.price) > 0 && k.url && k.device; }).map(function (k) {
+            var p = parseFloat(k.price), m = mnd(k) || 24, een = parseFloat(k.downPayment) || 0;
+            var totaal = parseFloat(k.totalPrice) || (p * m + een);
+            var toestel = parseFloat(k.deviceTotal) || 0, abbo = parseFloat(k.bundleMonthly) || 0;
+            var d = k.unlimited ? 'onbeperkt data' : (k.dataGB ? k.dataGB + ' GB' : '');
+            var onder = toestel > 0 && abbo > 0
+              ? 'Toestel ' + euro(toestel) + (een > 0 ? ', waarvan ' + euro(een) + ' vooraf' : '') + ' · abonnement ' + euro(abbo) + ' per maand'
+              : euro(totaal) + ' over ' + m + ' maanden';
+            return { k: k, naam: k.device, sub: [k.provider, d, k.minutes, duur(k)].filter(Boolean).join(' · '),
+              prijs: p, per: een > 0 ? 'per maand + ' + euro(een) + ' vooraf' : 'per maand',
+              rang: totaal / m, onder: onder + ' · samen ' + euro(totaal) + ' over ' + m + ' maanden',
+              url: ga(k, 'telefoon'), knop: k.provider, beeld: foto(k.image) || merkLogo(k.provider), aff: true };
+          });
+        });
+      },
+      regel: 'Zo kiezen wij: de laagste totale kosten per maand over de hele looptijd, dus toestel, abonnement en bijbetaling samen.' + VERGOEDING,
+      alle: ['Alle telefoons met abonnement', '/pages/telefoonabonnement'], sein: true
+    },
+
+    internet: {
+      vraag: 'Wat is voor jou belangrijk?',
+      chips: [
+        { id: 'alles', label: 'Laagste prijs', wat: 'laagste maandprijs', test: function () { return true; } },
+        { id: 'snel', label: '1 Gbit of sneller', wat: 'laagste maandprijs vanaf 1 Gbit', test: function (x) { return x.k.speedMbit >= 1000; } },
+        { id: 'tv', label: 'Met tv', wat: 'laagste maandprijs met tv', test: function (x) { return !!x.k.tv; } },
+        { id: 'jaar', label: '1 jaar contract', wat: 'laagste maandprijs met een contract van 1 jaar', test: function (x) { return mnd(x.k) === 12; } }
+      ],
+      laad: function () {
+        return json(WORKER + '/api/cards/internet?limit=60').then(function (j) {
+          return (j.cards || []).filter(function (k) { return parseFloat(k.price) > 0 && k.url && k.provider; }).map(function (k) {
+            var p = parseFloat(k.price), m = mnd(k);
+            return { k: k, naam: k.provider, sub: [k.speed, k.tv ? 'met tv' : 'alleen internet', duur(k)].filter(Boolean).join(' · '),
+              prijs: p, per: 'per maand', rang2: -(k.speedMbit || 0),
+              onder: m ? euro(p * m) + ' over ' + m + ' maanden' : '', url: ga(k, 'internet'), knop: k.provider, beeld: merkLogo(k.provider), aff: true };
+          });
+        });
+      },
+      regel: 'Zo kiezen wij: de laagste maandprijs binnen jouw keuze, bij een gelijke prijs de hoogste snelheid. Controleer bij de aanbieder of dit op jouw adres kan.' + VERGOEDING,
+      alle: ['Alle internetabonnementen', '/pages/internet-tv'], sein: true
+    },
+
+    energie: {
+      vraag: 'Met hoeveel woon je?',
+      start: 'samen',
+      chips: ['alleen:Alleen', 'samen:Samen', 'gezin:Gezin', 'groot:Groot gezin'].map(function (s) {
+        var d = s.split(':');
+        return { id: d[0], label: d[1], wat: 'laagste jaarrekening', test: function (x) { return x.hh === d[0]; } };
+      }),
+      uniek: true,
+      laad: function (tab) {
+        return json(ENERGIE).then(function (j) {
+          var uit = [];
+          tab.voet = {};
+          (j.huishoudens || []).forEach(function (h) {
+            tab.voet[h.id] = 'Stroom en gas, ' + h.verbruik + ', zonder postcode gerekend. Tarieven laatst nagekeken op ' + datum(j.bijgehouden) + '.';
+            (h.items || []).forEach(function (i) {
+              uit.push({ hh: h.id, naam: i.naam, sub: i.soort, prijs: i.maand, per: 'per maand', rang: i.jaar,
+                onder: euro(i.jaar) + ' per jaar, de hele rekening: levering, belasting en netbeheer',
+                let: i.korting ? 'Inclusief ' + i.korting + '. Die geldt alleen in het eerste jaar.' : '',
+                url: i.url, knop: i.naam, beeld: logo(i.dom), aff: !!i.aff });
+            });
+          });
+          return uit;
+        });
+      },
+      regel: 'Zo kiezen wij: de laagste jaarrekening voor dit verbruik, een contract per leverancier. Dynamische contracten doen niet mee, want dat is een schatting. Leveranciers betalen niet voor een plek. Bij een deel van de leveranciers krijgen wij een vergoeding als je afsluit; jij betaalt daardoor niets extra.',
+      alle: ['Reken met je eigen verbruik en postcode', '/pages/energie']
+    },
+
+    zorg: {
+      vraag: 'Wat is voor jou belangrijk?',
+      chips: [
+        { id: 'alles', label: 'Laagste premie', wat: 'laagste premie', test: function () { return true; } },
+        { id: 'er', label: 'Eigen risico €385', wat: 'laagste premie met het gewone eigen risico', test: function (x) { return x.er <= 385; } },
+        { id: 'vrij', label: 'Vrije zorgkeuze', wat: 'laagste premie met vrije zorgkeuze', test: function (x) { return x.polis !== 'natura'; } }
+      ],
+      laad: function () {
+        return fetch(ZORG).then(function (r) { return r.text(); }).then(function (html) {
+          var a = html.indexOf('var RUW = ['), uit = [];
+          if (a < 0) throw new Error('geen polissen');
+          var blok = html.slice(a, html.indexOf('];', a));
+          var re = /naam:\s*("(?:[^"\\]|\\.)*"),\s*verz:\s*("(?:[^"\\]|\\.)*"),\s*premie:\s*Number\("([\d.]+)"\),\s*er:\s*Number\("(\d+)"\),\s*polis:\s*("(?:[^"\\]|\\.)*"),\s*kenmerken:\s*("(?:[^"\\]|\\.)*"),\s*partner:\s*("(?:[^"\\]|\\.)*"),\s*url:\s*("(?:[^"\\]|\\.)*")/g, m;
+          while ((m = re.exec(blok))) {
+            try {
+              var premie = parseFloat(m[3]), er = parseInt(m[4], 10), polis = JSON.parse(m[5]), partner = JSON.parse(m[7]), url = JSON.parse(m[8]);
+              if (!(premie > 0) || !url) continue;
+              uit.push({ er: er, polis: polis, naam: JSON.parse(m[1]),
+                sub: [JSON.parse(m[2]), polis === 'natura' ? 'naturapolis' : polis + 'polis', 'eigen risico ' + euro(er)].join(' · '),
+                prijs: premie, per: 'per maand', onder: euro(premie * 12) + ' per jaar',
+                let: er > 385 ? 'Let op: eigen risico ' + euro(er) + ' in plaats van €385. Je betaalt minder premie, maar meer als je zorg nodig hebt.' : '',
+                url: url, knop: partner, beeld: '', aff: true });
+            } catch (e) {}
+          }
+          if (!uit.length) throw new Error('geen polissen');
+          return uit;
+        });
+      },
+      regel: 'Zo kiezen wij: de laagste premie binnen jouw keuze, uit een selectie van basisverzekeringen. Wij vragen geen leeftijd of gezondheidsgegevens. Controleer het bedrag bij de verzekeraar voordat je afsluit.' + VERGOEDING,
+      alle: ['Alle premies en uitleg', ZORG]
+    }
+  };
+
+  function tekenAanbod(naam) {
+    var tab = AANBOD[naam], st = staat[naam];
+    var chip = tab.chips.filter(function (c) { return c.id === st.keuze; })[0] || tab.chips[0];
+    var lijst = st.items.filter(chip.test).sort(function (a, b) {
+      return ((a.rang != null ? a.rang : a.prijs) - (b.rang != null ? b.rang : b.prijs)) || ((a.rang2 || 0) - (b.rang2 || 0));
+    });
+    if (tab.uniek) { var gehad = {}; lijst = lijst.filter(function (x) { if (gehad[x.naam]) return false; gehad[x.naam] = 1; return true; }); }
+    var uit = paneel.querySelector('.dhk-uit');
+    if (!uit) return;
+    if (!lijst.length) { uit.innerHTML = '<p class="dhk-leeg">Hiervoor hebben wij nu geen aanbod. Kies een andere optie.</p>'; return; }
+    function rel(x) { return x.aff ? 'nofollow sponsored noopener' : 'nofollow noopener'; }
+    var b = lijst[0];
+    var h = '<div class="dhk-best">' +
+      '<span class="dhk-lab">Beste keuze · ' + esc(chip.wat) + '</span>' +
+      '<div class="dhk-best-rij">' + (b.beeld || '') +
+        '<div class="dhk-best-naam"><b>' + esc(b.naam) + '</b><span>' + esc(b.sub) + '</span></div>' +
+        '<div class="dhk-prijs">' + euro(b.prijs) + '<small>' + esc(b.per) + '</small></div>' +
+      '</div>' +
+      (b.onder ? '<p class="dhk-totaal">' + esc(b.onder) + '</p>' : '<p class="dhk-totaal"></p>') +
+      (b.let ? '<p class="dhk-let">' + esc(b.let) + '</p>' : '') +
+      '<a class="dhk-knop" rel="' + rel(b) + '" target="_blank" href="' + esc(b.url) + '" data-pos="1" data-naam="' + esc(b.knop) + '">Bekijk bij ' + esc(b.knop) + ' ›</a>' +
+      '</div>';
+    var rest = lijst.slice(1, 3);
+    if (rest.length) {
+      h += '<div class="dhk-alt">' + rest.map(function (x, n) {
+        return '<a class="dhk-alt-rij" rel="' + rel(x) + '" target="_blank" href="' + esc(x.url) + '" data-pos="' + (n + 2) + '" data-naam="' + esc(x.knop) + '">' +
+          (x.beeld || '') +
+          '<span class="dhk-alt-naam"><b>' + esc(x.naam) + '</b><span>' + esc(x.sub) + '</span></span>' +
+          '<span class="dhk-prijs">' + euro(x.prijs) + '<small>' + esc(x.per.split(' + ')[0]) + '</small></span>' +
+          '<span class="dhk-ga">Bekijk ›</span></a>';
+      }).join('') + '</div>';
+    }
+    uit.innerHTML = h;
+    var voet = paneel.querySelector('.dhk-voet');
+    if (voet) voet.textContent = tab.voet ? (tab.voet[chip.id] || '') + ' ' : '';
+  }
+
+  /* =====================================================================
+     Tabbladen met producten: per product de winkels op prijs.
+     Elk product: naam, sub, im, rijen [{winkel, prijs, klein, url, aff, intern}], meer.
+     ===================================================================== */
+  function goed(x) {
+    // Zelfde rem als in de productrijen: een winkel die meer dan 40% onder de
+    // volgende zit, heeft bijna altijd een fout in de feed.
+    if (!x || !x.o || !x.o.length || !(x.p > 0)) return false;
+    var o = x.o.slice().sort(function (a, b) { return a.p - b.p; });
+    if (o.length > 1 && o[0].p < o[1].p * 0.6) return false;
+    return true;
+  }
+  function shopKaart(x) {
+    var link = SHOP + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c);
+    var o = x.o.slice().sort(function (a, b) { return a.p - b.p; });
+    return { naam: x.n, im: x.im,
+      rijen: o.slice(0, 3).map(function (w) {
+        return { winkel: w.w === 'bol.com partner' ? 'bol.com (partner)' : w.w, ruw: w.w, prijs: euro(w.p), url: link + '&w=' + encodeURIComponent(w.w), aff: true };
+      }),
+      meer: o.length > 3 ? ['+ ' + (o.length - 3) + (o.length - 3 === 1 ? ' winkel' : ' winkels'), '/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n)] : null };
+  }
+  var shopCache = {};
+  function shopProduct(id, cat) {
+    var s = id + '|' + cat;
+    if (!shopCache[s]) shopCache[s] = json(SHOP + '/api/shop/product?i=' + encodeURIComponent(id) + '&cat=' + encodeURIComponent(cat))
+      .then(function (j) { return j.product || null; }).catch(function () { return null; });
+    return shopCache[s];
+  }
+  // Bron van een snelkeuze: "id:cat,id:cat" of "lijst:cat:type:minprijs".
+  function shopBron(bron) {
+    if (shopCache[bron]) return shopCache[bron];
+    var p;
+    if (bron.indexOf('lijst:') === 0) {
+      var d = bron.split(':'), q = new URLSearchParams({ cat: d[1], multi: '1', n: '30', sort: 'prijs' });
+      if (d[2]) q.set('type', d[2]);
+      if (d[3]) q.set('min', d[3]);
+      p = json(SHOP + '/api/shop/lijst?' + q.toString()).then(function (j) {
+        var gehad = {}, uit = [];
+        (j.items || []).filter(goed).forEach(function (x) {
+          var fam = String(x.n).toLowerCase().split(/\s+/).slice(0, 2).join(' ');
+          if (gehad[fam] || uit.length >= 3) return;
+          gehad[fam] = 1; uit.push(x);
+        });
+        return uit;
+      });
+    } else {
+      p = Promise.all(bron.split(',').map(function (s) { var d = s.trim().split(':'); return d.length === 2 ? shopProduct(d[0], d[1]) : null; }))
+        .then(function (r) { return r.filter(goed); });
+    }
+    shopCache[bron] = p.then(function (r) { return r.map(shopKaart); });
+    return shopCache[bron];
+  }
+  function groepen(tekst) {
+    return String(tekst || '').split(/\n/).map(function (r) { return r.trim().split('|'); })
+      .filter(function (d) { return d.length >= 3 && d[0]; })
+      .map(function (d, n) { return { id: 'g' + n, label: d[0].trim(), meer: d[1].trim(), bron: d[2].trim() }; });
+  }
+
+  var PROD = {
+    prod: {
+      zoek: true, chips: groepen(A('prod')),
+      laad: function (chip) { return shopBron(chip.bron); },
+      alle: function (chip) { return chip.meer ? ['Alle ' + chip.label.toLowerCase() + ' vergelijken', '/pages/vergelijken?cat=' + encodeURIComponent(chip.meer)] : ['Alle producten vergelijken', '/pages/vergelijken']; },
+      regel: 'Per product staan de winkels op prijs, de laagste bovenaan. Winkels betalen niet voor een plek. Wij krijgen een vergoeding als je via ons koopt; jij betaalt daardoor niets extra.'
+    },
+    gaming: {
+      chips: groepen(A('gaming')),
+      laad: function (chip) { return shopBron(chip.bron); },
+      alle: function () { return ['Alle gaming-aanbiedingen', '/pages/gaming']; },
+      regel: 'Per product staan de winkels op prijs, de laagste bovenaan. Winkels betalen niet voor een plek. Wij krijgen een vergoeding als je via ons koopt; jij betaalt daardoor niets extra.'
+    },
+    boodschappen: {
+      chips: [{ id: 'top', label: 'Meeste winkels' }],
+      voor: function (tab) {
+        // Een keer alles ophalen; de snelkeuzes zijn de categorieen waarin deze
+        // week genoeg te vergelijken valt.
+        return json(BOOD + '/sm/api/deals').then(function (j) {
+          var P = (j.producten || []).map(function (p) {
+            var d = (p.deals || []).filter(function (x) { return x.perEenheid > 0 && x.winkelNaam && !x.mechaniekOnzeker; })
+              .sort(function (a, b) { return a.perEenheid - b.perEenheid; });
+            var gehad = {}; d = d.filter(function (x) { if (gehad[x.winkel]) return false; gehad[x.winkel] = 1; return true; });
+            return { p: p, d: d };
+          }).filter(function (x) { return x.p.vergelijkbaar && x.d.length >= 2; })
+            .sort(function (a, b) { return b.d.length - a.d.length; });
+          tab.P = P;
+          var tel = {};
+          P.forEach(function (x) { tel[x.p.categorie] = (tel[x.p.categorie] || 0) + 1; });
+          Object.keys(tel).filter(function (c) { return tel[c] >= 2; }).sort(function (a, b) { return tel[b] - tel[a]; }).slice(0, 5)
+            .forEach(function (c, n) { tab.chips.push({ id: 'c' + n, label: c, cat: c }); });
+        });
+      },
+      laad: function (chip, tab) {
+        var P = (tab.P || []).filter(function (x) { return !chip.cat || x.p.categorie === chip.cat; }).slice(0, 3);
+        return Promise.resolve(P.map(function (x) {
+          var e = x.p.eenheid || 'stuk', pagina = '/pages/boodschappen?zoek=' + encodeURIComponent(x.p.merk || x.p.naam);
+          return { naam: x.p.naam, sub: 'Aanbiedingen van deze week, prijs per ' + e, im: x.p.afbeelding,
+            rijen: x.d.slice(0, 3).map(function (w) {
+              return { winkel: w.winkelNaam, ruw: w.winkelNaam, prijs: euro(w.perEenheid), klein: 'per ' + e,
+                url: w.bestelUrl || pagina, aff: !!w.bestelUrl, intern: !w.bestelUrl };
+            }),
+            meer: x.d.length > 3 ? ['+ ' + (x.d.length - 3) + (x.d.length - 3 === 1 ? ' winkel' : ' winkels'), pagina] : null };
+        }));
+      },
+      alle: function () { return ['Alle aanbiedingen van deze week', '/pages/boodschappen']; },
+      regel: 'Per product staan de winkels op prijs per liter, kilo of stuk, de laagste bovenaan. De prijzen komen uit de folders en sites van de supermarkten. Bij een winkel waar je online kunt bestellen krijgen wij een vergoeding als je via ons bestelt.'
+    }
+  };
+
+  function tekenProd(naam) {
+    var tab = PROD[naam], st = staat[naam];
+    var chip = tab.chips.filter(function (c) { return c.id === st.keuze; })[0] || tab.chips[0];
+    var uit = paneel.querySelector('.dhk-uit');
+    if (!uit || !chip) return;
+    uit.innerHTML = LAAD;
+    var alle = paneel.querySelector('.dhk-alle'), a = tab.alle(chip);
+    if (alle) { alle.href = a[1]; alle.textContent = a[0] + ' ›'; }
+    var mijn = ++st.vraag;
+    tab.laad(chip, tab).then(function (items) {
+      if (mijn !== st.vraag || actief !== naam) return;
+      if (!items.length) { uit.innerHTML = '<p class="dhk-leeg">Hier valt nu niets te vergelijken. Kies een andere optie.</p>'; return; }
+      uit.innerHTML = items.map(function (x, pn) {
+        var rijen = x.rijen.map(function (w, n) {
+          return '<a class="dhk-w' + (n === 0 ? ' eerste' : '') + '"' + (w.intern ? '' : ' rel="' + (w.aff ? 'nofollow sponsored noopener' : 'nofollow noopener') + '" target="_blank"') +
+            ' href="' + esc(w.url) + '" data-pos="' + (pn + 1) + '.' + (n + 1) + '" data-naam="' + esc(w.ruw) + '">' +
+            '<span>' + (n === 0 ? 'Bekijk bij ' : '') + esc(w.winkel) + (n === 0 && x.rijen.length > 1 ? '<i>laagste</i>' : '') + '</span>' +
+            '<b>' + w.prijs + (w.klein ? '<small>' + esc(w.klein) + '</small>' : '') + '</b></a>';
+        }).join('');
+        return '<div class="dhk-prod">' +
+          '<div class="dhk-prod-im">' + (x.im ? '<img src="' + esc(x.im) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') + '</div>' +
+          '<p class="dhk-prod-n">' + esc(x.naam) + (x.sub ? '<span class="dhk-prod-s">' + esc(x.sub) + '</span>' : '') + '</p>' +
+          '<div class="dhk-prod-w">' + rijen + (x.meer ? '<a class="dhk-meer" href="' + esc(x.meer[1]) + '">' + esc(x.meer[0]) + ' ›</a>' : '') + '</div></div>';
+      }).join('');
+    }).catch(function () { fout(naam); });
+  }
+
+  /* =====================================================================
+     Tabbladen
+     ===================================================================== */
+  var staat = {}, actief = '';
+  var PAGINA = { sim: '/pages/sim-only', telefoon: '/pages/telefoonabonnement', internet: '/pages/internet-tv', energie: '/pages/energie',
+    zorg: ZORG, prod: '/pages/vergelijken', gaming: '/pages/gaming', boodschappen: '/pages/boodschappen' };
+
+  function fout(naam) {
+    if (actief !== naam) return;
+    var uit = paneel.querySelector('.dhk-uit') || paneel;
+    uit.innerHTML = '<p class="dhk-leeg">De prijzen laden nu niet. De volledige vergelijker werkt wel.</p>';
+  }
+  function chipsHtml(chips, keuze) {
+    return '<div class="dhk-chips">' + chips.map(function (c) {
+      var aan = c.id === keuze;
+      return '<button type="button" class="dhk-chip' + (aan ? ' aan' : '') + '" data-chip="' + esc(c.id) + '" aria-pressed="' + (aan ? 'true' : 'false') + '">' + esc(c.label) + '</button>';
+    }).join('') + '</div>';
+  }
+  function sein() {
+    if (!SEIN) return '';
+    return '<a class="dhk-sein" href="' + esc(SEIN) + '">' +
+      '<span class="dhk-sein-ic" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9a6 6 0 0 1 12 0c0 6 2.5 7 2.5 7h-17S6 15 6 9Z"/><path d="M10 20a2.2 2.2 0 0 0 4 0"/></svg></span>' +
+      '<span><b>Zit je nog vast aan je contract?</b><br>Krijg een mail op de dag dat je kunt overstappen.</span>' +
+      '<span class="dhk-pijl" aria-hidden="true">›</span></a>';
+  }
+  function bouw(naam) {
+    var st = staat[naam];
+    if (AANBOD[naam]) {
+      var t = AANBOD[naam];
+      var chips = t.chips.filter(function (c) { return st.items.some(c.test); });
+      paneel.innerHTML = '<p class="dhk-vraag">' + esc(t.vraag) + '</p>' + chipsHtml(chips, st.keuze) +
+        '<div class="dhk-uit" aria-live="polite"></div>' +
+        '<p class="dhk-regel"><span class="dhk-voet"></span>' + esc(t.regel) + '</p>' +
+        '<a class="dhk-alle" href="' + esc(t.alle[1]) + '">' + esc(t.alle[0]) + ' ›</a>' + (t.sein ? sein() : '');
+      tekenAanbod(naam);
+    } else {
+      var p = PROD[naam];
+      paneel.innerHTML = (p.zoek ? '<form class="dhk-zoek" action="/pages/vergelijken" method="get" role="search">' +
+          '<label for="dhk-q" class="dhk-verborgen">Zoek een product</label>' +
+          '<input id="dhk-q" name="q" type="search" autocomplete="off" placeholder="Zoek op merk of model" enterkeyhint="search">' +
+          '<button type="submit">Zoek</button></form>' : '') +
+        chipsHtml(p.chips, st.keuze) + '<div class="dhk-uit" aria-live="polite"></div>' +
+        '<p class="dhk-regel">' + esc(p.regel) + '</p><a class="dhk-alle" href="' + esc(PAGINA[naam]) + '"></a>';
+      tekenProd(naam);
+    }
+  }
+  function open(naam) {
+    actief = naam;
+    paneel.setAttribute('aria-labelledby', 'dhk-t-' + naam);
+    var st = staat[naam];
+    if (st && st.klaar) return bouw(naam);
+    paneel.innerHTML = LAAD;
+    if (st) return; // wordt al opgehaald
+    st = staat[naam] = { vraag: 0 };
+    var t = AANBOD[naam], p = PROD[naam];
+    var klaar = t
+      ? t.laad(t).then(function (items) { if (!items.length) throw new Error('leeg'); st.items = items; st.keuze = t.start || t.chips[0].id; })
+      : (p.voor ? p.voor(p) : Promise.resolve()).then(function () { if (!p.chips.length) throw new Error('leeg'); st.keuze = p.chips[0].id; });
+    klaar.then(function () { st.klaar = true; if (actief === naam) bouw(naam); })
+      .catch(function () { delete staat[naam]; if (actief === naam) paneel.innerHTML = '<p class="dhk-leeg">De prijzen laden nu niet. De volledige vergelijker werkt wel.</p>' +
+        '<a class="dhk-alle" href="' + esc(PAGINA[naam]) + '">Naar de vergelijker ›</a>'; });
+  }
+
   var tabs = [].slice.call(wortel.querySelectorAll('button.dhk-tab'));
-  var prodGeladen = false;
   function kiesTab(naam, focus) {
     tabs.forEach(function (t) {
       var aan = t.getAttribute('data-tab') === naam;
       t.classList.toggle('aan', aan);
       t.setAttribute('aria-selected', aan ? 'true' : 'false');
       t.tabIndex = aan ? 0 : -1;
-      document.getElementById(t.getAttribute('aria-controls')).hidden = !aan;
       if (aan && focus) t.focus();
+      if (aan && t.scrollIntoView && t.parentNode.scrollWidth > t.parentNode.clientWidth) {
+        t.parentNode.scrollLeft = Math.max(0, t.offsetLeft - t.parentNode.offsetLeft - 40);
+      }
     });
-    if (naam === 'prod' && !prodGeladen) { prodGeladen = true; laadProd(); }
+    open(naam);
     try { sessionStorage.setItem('dhk-tab', naam); } catch (e) {}
   }
   tabs.forEach(function (t, n) {
@@ -264,177 +649,26 @@
     t.addEventListener('keydown', function (e) {
       if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
       e.preventDefault();
-      var v = tabs[(n + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length];
-      kiesTab(v.getAttribute('data-tab'), true);
+      kiesTab(tabs[(n + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length].getAttribute('data-tab'), true);
     });
   });
 
-  /* ---------- sim only ---------- */
-  var DOMEIN = { lebara: 'lebara.nl', youfone: 'youfone.nl', hollandsnieuwe: 'hollandsnieuwe.nl', simyo: 'simyo.nl', ben: 'ben.nl',
-    kpn: 'kpn.com', odido: 'odido.nl', vodafone: 'vodafone.nl', budget: 'budgetmobiel.nl', '50plus': '50plusmobiel.nl' };
-  function logo(provider, klein) {
-    var k = String(provider || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    var d = DOMEIN[k] || DOMEIN[k.replace('mobiel', '')];
-    if (!d) return '';
-    return '<img class="dhk-logo" alt="" loading="lazy" width="36" height="36" onerror="this.style.display=\'none\'" ' +
-      'src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://' + d + '">';
-  }
-  var FILTER = {
-    alles:  { test: function () { return true; }, wat: 'laagste maandprijs' },
-    data:   { test: function (k) { return !!k.unlimited; }, wat: 'laagste maandprijs met onbeperkt data' },
-    bellen: { test: function (k) { return /onbeperkt/i.test(k.minutes || ''); }, wat: 'laagste maandprijs met onbeperkt bellen' },
-    jaar:   { test: function (k) { return mnd(k) === 12; }, wat: 'laagste maandprijs met een contract van 1 jaar' }
-  };
-  function mnd(k) { return parseInt(String(k.contract || '').replace(/\D/g, ''), 10) || 24; }
-  function bundel(k) {
-    var d = k.unlimited ? 'Onbeperkt data' : (k.dataGB ? k.dataGB + ' GB' : '');
-    var b = /onbeperkt/i.test(k.minutes || '') ? 'onbeperkt bellen' : (k.minutes || '');
-    var j = mnd(k) === 12 ? '1 jaar' : mnd(k) === 24 ? '2 jaar' : mnd(k) + ' maanden';
-    return [d, b, j].filter(Boolean).join(' · ');
-  }
-  function ga(k) { return WORKER + '/api/go?u=' + encodeURIComponent(k.url) + '&cat=simonly&p=' + encodeURIComponent(k.provider || ''); }
-
-  var kaarten = [], simKeuze = 'alles';
-  var simUit = document.getElementById('dhk-sim-uit');
-  var simChips = [].slice.call(document.querySelectorAll('#dhk-sim-chips .dhk-chip'));
-
-  function tekenSim() {
-    var f = FILTER[simKeuze];
-    var lijst = kaarten.filter(f.test).sort(function (a, b) {
-      return (a.price - b.price) || ((b.unlimited ? 9999 : b.dataGB || 0) - (a.unlimited ? 9999 : a.dataGB || 0));
-    });
-    if (!lijst.length) { simUit.innerHTML = '<p class="dhk-leeg">Hiervoor hebben wij nu geen aanbod. Kies een andere optie.</p>'; return; }
-    var b = lijst[0];
-    var net = b.network && String(b.network).toLowerCase() !== String(b.provider).toLowerCase() ? ' · netwerk van ' + esc(b.network) : '';
-    var h = '<div class="dhk-best">' +
-      '<span class="dhk-lab">Beste keuze · ' + esc(f.wat) + '</span>' +
-      '<div class="dhk-best-rij">' + logo(b.provider) +
-        '<div class="dhk-best-naam"><b>' + esc(b.provider) + '</b><span>' + esc(bundel(b)) + net + '</span></div>' +
-        '<div class="dhk-prijs">' + euro(b.price) + '<small>per maand</small></div>' +
-      '</div>' +
-      '<p class="dhk-totaal">' + euro(b.price * mnd(b)) + ' over ' + mnd(b) + ' maanden</p>' +
-      '<a class="dhk-knop" rel="nofollow sponsored noopener" target="_blank" href="' + esc(ga(b)) + '" data-pos="1" data-naam="' + esc(b.provider) + '">Bekijk bij ' + esc(b.provider) + ' ›</a>' +
-      '</div>';
-    var rest = lijst.slice(1, 3);
-    if (rest.length) {
-      h += '<div class="dhk-alt">' + rest.map(function (k, n) {
-        return '<a class="dhk-alt-rij" rel="nofollow sponsored noopener" target="_blank" href="' + esc(ga(k)) + '" data-pos="' + (n + 2) + '" data-naam="' + esc(k.provider) + '">' +
-          logo(k.provider) +
-          '<span class="dhk-alt-naam"><b>' + esc(k.provider) + '</b><span>' + esc(bundel(k)) + '</span></span>' +
-          '<span class="dhk-prijs">' + euro(k.price) + '<small>per maand</small></span>' +
-          '<span class="dhk-ga">Bekijk ›</span></a>';
-      }).join('') + '</div>';
+  paneel.addEventListener('click', function (e) {
+    var c = e.target.closest ? e.target.closest('.dhk-chip') : null;
+    if (c) {
+      staat[actief].keuze = c.getAttribute('data-chip');
+      [].forEach.call(paneel.querySelectorAll('.dhk-chip'), function (x) { var a = x === c; x.classList.toggle('aan', a); x.setAttribute('aria-pressed', a ? 'true' : 'false'); });
+      if (AANBOD[actief]) tekenAanbod(actief); else tekenProd(actief);
+      meet('dhk_keuze', { tab: actief, keuze: c.textContent.trim() });
+      return;
     }
-    simUit.innerHTML = h;
-  }
-
-  simChips.forEach(function (c) {
-    c.addEventListener('click', function () {
-      if (c.disabled) return;
-      simKeuze = c.getAttribute('data-f');
-      simChips.forEach(function (x) { var a = x === c; x.classList.toggle('aan', a); x.setAttribute('aria-pressed', a ? 'true' : 'false'); });
-      tekenSim();
-      meet('dhk_keuze', { tab: 'sim', keuze: simKeuze });
-    });
-  });
-
-  function simFout() {
-    simUit.innerHTML = '<p class="dhk-leeg">De prijzen laden nu niet. De volledige vergelijker werkt wel.</p>';
-  }
-  if (WORKER) {
-    fetch(WORKER + '/api/cards/simonly?limit=60')
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
-        kaarten = ((j && j.cards) || []).map(function (k) { k.price = parseFloat(k.price || 0); return k; })
-          .filter(function (k) { return k.price > 0 && k.url && k.provider; });
-        if (!kaarten.length) return simFout();
-        simChips.forEach(function (c) {
-          if (!kaarten.some(FILTER[c.getAttribute('data-f')].test)) c.hidden = true;
-        });
-        tekenSim();
-      })
-      .catch(simFout);
-  } else simFout();
-
-  /* ---------- producten ---------- */
-  var prodUit = document.getElementById('dhk-prod-uit');
-  var prodChips = [].slice.call(document.querySelectorAll('#dhk-prod-chips .dhk-chip'));
-  var prodAlle = document.getElementById('dhk-prod-alle');
-  var prodBasis = prodAlle ? prodAlle.getAttribute('href') : '/pages/vergelijken';
-  var cache = {};
-
-  function haal(id, cat) {
-    var s = id + '|' + cat;
-    if (!cache[s]) {
-      cache[s] = fetch(SHOP + '/api/shop/product?i=' + encodeURIComponent(id) + '&cat=' + encodeURIComponent(cat))
-        .then(function (r) { return r.json(); })
-        .then(function (j) { return (j && j.product) || null; })
-        .catch(function () { return null; });
-    }
-    return cache[s];
-  }
-  function winkel(o) { return o.w === 'bol.com partner' ? 'bol.com (partner)' : o.w; }
-  function goed(x) {
-    // Zelfde rem als in de productrijen: een winkel die meer dan 40% onder de
-    // volgende zit, heeft bijna altijd een fout in de feed.
-    if (!x || !x.o || !x.o.length || !(x.p > 0)) return false;
-    if (x.o.length > 1 && x.o[0].p < x.o[1].p * 0.6) return false;
-    return true;
-  }
-  function tekenProd(items, chip) {
-    items = items.filter(goed);
-    if (!items.length) { prodUit.innerHTML = '<p class="dhk-leeg">De prijzen laden nu niet. De productvergelijker werkt wel.</p>'; return; }
-    prodUit.innerHTML = items.map(function (x, pn) {
-      var link = SHOP + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c);
-      var o = x.o.slice().sort(function (a, b) { return a.p - b.p; });
-      var rijen = o.slice(0, 3).map(function (w, n) {
-        return '<a class="dhk-w' + (n === 0 ? ' eerste' : '') + '" rel="nofollow sponsored noopener" target="_blank" href="' + esc(link + '&w=' + encodeURIComponent(w.w)) + '"' +
-          ' data-pos="' + (pn + 1) + '.' + (n + 1) + '" data-naam="' + esc(w.w) + '">' +
-          '<span>' + (n === 0 ? 'Bekijk bij ' : '') + esc(winkel(w)) + (n === 0 && o.length > 1 ? '<i>laagste</i>' : '') + '</span><b>' + euro(w.p) + '</b></a>';
-      }).join('');
-      var meer = o.length > 3
-        ? '<a class="dhk-meer" href="' + esc(prodBasis + '?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n)) + '">+ ' + (o.length - 3) + (o.length - 3 === 1 ? ' winkel' : ' winkels') + ' ›</a>' : '';
-      return '<div class="dhk-prod">' +
-        '<div class="dhk-prod-im">' + (x.im ? '<img src="' + esc(x.im) + '" alt="" loading="lazy" onerror="this.style.display=\'none\'">' : '') + '</div>' +
-        '<p class="dhk-prod-n">' + esc(x.n) + '</p>' +
-        '<div class="dhk-prod-w">' + rijen + meer + '</div></div>';
-    }).join('');
-  }
-  var prodVraag = 0;
-  function laadProd(chip) {
-    chip = chip || prodChips[0];
-    if (!chip || !SHOP) return;
-    var mijn = ++prodVraag;
-    var ids = (chip.getAttribute('data-ids') || '').split(',').map(function (s) { return s.trim().split(':'); })
-      .filter(function (d) { return d.length === 2 && d[0]; });
-    var meer = chip.getAttribute('data-meer') || '';
-    if (prodAlle) {
-      prodAlle.href = meer ? prodBasis + '?cat=' + encodeURIComponent(meer) : prodBasis;
-      prodAlle.textContent = (meer ? 'Alle ' + chip.textContent.trim().toLowerCase() : 'Alle producten') + ' vergelijken ›';
-    }
-    Promise.all(ids.map(function (d) { return haal(d[0], d[1]); })).then(function (r) {
-      if (mijn !== prodVraag) return;
-      tekenProd(r.filter(Boolean), chip);
-    });
-  }
-  prodChips.forEach(function (c) {
-    c.addEventListener('click', function () {
-      prodChips.forEach(function (x) { var a = x === c; x.classList.toggle('aan', a); x.setAttribute('aria-pressed', a ? 'true' : 'false'); });
-      prodUit.innerHTML = '<div class="dhk-laad" aria-hidden="true"><i></i><i></i><i></i></div>';
-      laadProd(c);
-      meet('dhk_keuze', { tab: 'prod', keuze: c.textContent.trim() });
-    });
-  });
-
-  /* ---------- meten ---------- */
-  wortel.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('a[data-pos]') : null;
-    if (!a) return;
-    var tab = a.closest('#dhk-p-prod') ? 'prod' : 'sim';
-    meet('dhk_klik', { tab: tab, keuze: tab === 'sim' ? simKeuze : '', positie: a.getAttribute('data-pos'), aanbieder: a.getAttribute('data-naam') });
+    if (a) meet('dhk_klik', { tab: actief, keuze: (staat[actief] || {}).keuze || '', positie: a.getAttribute('data-pos'), aanbieder: a.getAttribute('data-naam') });
   });
 
-  try { if (sessionStorage.getItem('dhk-tab') === 'prod') kiesTab('prod'); } catch (e) {}
+  var begin = 'sim';
+  try { var b = sessionStorage.getItem('dhk-tab'); if (b && (AANBOD[b] || PROD[b])) begin = b; } catch (e) {}
+  kiesTab(begin);
 })();
 </script>
 
@@ -442,25 +676,22 @@
 {
   "name": "Hero kiezer",
   "settings": [
-    { "type": "text", "id": "worker_url", "label": "Worker telecom", "default": "https://awin.business-347.workers.dev" },
-    { "type": "text", "id": "shop_url", "label": "Worker producten", "default": "https://shop.deprijsvergelijker.com" },
     { "type": "text", "id": "eyebrow", "label": "Bovenregel", "default": "Onafhankelijk · elke dag bijgewerkt" },
     { "type": "text", "id": "kop", "label": "Kop", "default": "Tik en zie direct" },
     { "type": "text", "id": "kop_accent", "label": "Kop, gekleurd deel", "default": "wat het kost." },
     { "type": "textarea", "id": "sub", "label": "Ondertitel (alleen op een breed scherm)", "default": "Geen formulier vooraf. Je ziet meteen de laagste prijs, met de alternatieven eronder, en je gaat met een tik naar de aanbieder." },
-    { "type": "textarea", "id": "links", "label": "Overige categorieën", "info": "naam|link, een per regel", "default": "Telefoon|/pages/telefoonabonnement\nInternet|/pages/internet-tv\nEnergie|/pages/energie\nZorg|/pages/zorgverzekering\nBoodschappen|/pages/boodschappen\nGaming|/pages/gaming" },
+    { "type": "text", "id": "seintje_url", "label": "Link contract-seintje", "info": "Staat onder sim only, telefoon en internet. Leeg = niet tonen.", "default": "/pages/mijn-contracten" },
 
-    { "type": "header", "content": "Sim only" },
-    { "type": "text", "id": "sim_url", "label": "Link alle sim only", "default": "/pages/sim-only" },
-    { "type": "textarea", "id": "sim_regel", "label": "Uitleg onder de uitkomst", "default": "Zo kiezen wij: de laagste maandprijs binnen jouw keuze, bij een gelijke prijs de grootste bundel. Aanbieders betalen niet voor een plek. Wij krijgen een vergoeding als je via ons afsluit; jij betaalt daardoor niets extra." },
-    { "type": "text", "id": "seintje_url", "label": "Link seintje", "default": "/pages/mijn-contracten" },
-    { "type": "text", "id": "seintje_kop", "label": "Seintje, kop", "default": "Zit je nog vast aan je contract?" },
-    { "type": "text", "id": "seintje_tekst", "label": "Seintje, tekst", "default": "Krijg een mail op de dag dat je kunt overstappen." },
+    { "type": "header", "content": "Producten en gaming" },
+    { "type": "textarea", "id": "groepen", "label": "Snelkeuzes producten", "info": "naam|categorie voor de link 'alle'|bron. Bron is product-id:categorie met komma's ertussen, of lijst:categorie:type:minimumprijs.", "default": "Populair||e0045496337414:gaming,e8806097827481:telefoons,e0195950643589:telefoons\nTelefoons|telefoons|e0195950643589:telefoons,e8806097827481:telefoons,e0195950627442:telefoons\nLaptops|laptops|e0195950687408:laptops,e4711121778834:laptops,e4711636476805:laptops\nTv's|tv-beeld|e8806096360576:tv-beeld,e4548736183001:tv-beeld,e5901292530365:tv-beeld\nAudio|audio|lijst:audio::80" },
+    { "type": "textarea", "id": "gaming_groepen", "label": "Snelkeuzes gaming", "info": "Zelfde opbouw als hierboven.", "default": "Consoles|gaming|e0045496337414:gaming,e0045496453442:gaming,e0045496337544:gaming\nGames|gaming|lijst:gaming:games:25\nHeadsets|gaming|lijst:gaming:gaming headsets:40\nControllers|gaming|lijst:gaming:controllers:30" },
 
-    { "type": "header", "content": "Producten" },
-    { "type": "text", "id": "prod_url", "label": "Link productvergelijker", "default": "/pages/vergelijken" },
-    { "type": "textarea", "id": "groepen", "label": "Snelkeuzes", "info": "naam|categorie voor de link 'alle'|product-id:categorie, gescheiden door komma's. Laat de categorie leeg voor alle producten.", "default": "Populair||e0045496337414:gaming,e8806097827481:telefoons,e0195950643589:telefoons\nTelefoons|telefoons|e0195950643589:telefoons,e8806097827481:telefoons,e0195950627442:telefoons\nLaptops|laptops|e0195950687408:laptops,e4711121778834:laptops,e4711636476805:laptops\nTv's|tv-beeld|e8806096360576:tv-beeld,e4548736183001:tv-beeld,e5901292530365:tv-beeld\nGaming|gaming|e0045496337414:gaming,e0045496453442:gaming,e0045496337544:gaming" },
-    { "type": "textarea", "id": "prod_regel", "label": "Uitleg onder de uitkomst", "default": "Per product staan de winkels op prijs, de laagste bovenaan. Winkels betalen niet voor een plek. Wij krijgen een vergoeding als je via ons koopt; jij betaalt daardoor niets extra." }
+    { "type": "header", "content": "Bronnen" },
+    { "type": "text", "id": "worker_url", "label": "Worker telecom", "default": "https://awin.business-347.workers.dev" },
+    { "type": "text", "id": "shop_url", "label": "Worker producten", "default": "https://shop.deprijsvergelijker.com" },
+    { "type": "text", "id": "boodschappen_url", "label": "Worker boodschappen", "default": "https://dpv-boodschappen.business-347.workers.dev" },
+    { "type": "text", "id": "energie_data", "label": "Energie: bestand met de top per huishouden", "default": "https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/energie-top.json" },
+    { "type": "text", "id": "zorg_url", "label": "Zorg: pagina met de vergelijker", "default": "/pages/zorgverzekering" }
   ],
   "presets": [ { "name": "Hero kiezer" } ]
 }

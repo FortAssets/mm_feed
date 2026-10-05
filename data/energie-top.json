@@ -1,0 +1,323 @@
+{
+ "gemaakt": "2026-10-05T10:02:05.278Z",
+ "bron": "https://dpv-energie.business-347.workers.dev/energie",
+ "huishoudens": [
+  {
+   "id": "alleen",
+   "label": "Alleen",
+   "verbruik": "1.600 kWh · 800 m³ · regio Liander",
+   "items": [
+    {
+     "naam": "Budget Thuis",
+     "soort": "1 jaar vast + €275 korting · 12 maanden",
+     "jaar": 1740,
+     "maand": 145,
+     "dom": "budgetthuis.nl",
+     "check": "20 augustus 2026",
+     "url": "https://www.budgetthuis.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": "€275 welkomstkorting"
+    },
+    {
+     "naam": "Energiedirect",
+     "soort": "3 jaar vast · 36 maanden",
+     "jaar": 1826,
+     "maand": 152,
+     "dom": "energiedirect.nl",
+     "check": "5 augustus 2026",
+     "url": "https://lt45.net/c/?si=924&li=1825926&wi=394405&ws=&dl=",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Budget Thuis",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 1855,
+     "maand": 155,
+     "dom": "budgetthuis.nl",
+     "check": "20 augustus 2026",
+     "url": "https://www.budgetthuis.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Coolblue Energie",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 1922,
+     "maand": 160,
+     "dom": "coolblueenergie.nl",
+     "check": "10 augustus 2026",
+     "url": "https://www.awin1.com/cread.php?awinmid=85163&awinaffid=1528789&ued=https%3A%2F%2Fwww.coolblue.nl%2Fenergie",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Essent",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 1941,
+     "maand": 162,
+     "dom": "essent.nl",
+     "check": "14 augustus 2026",
+     "url": "https://lt45.net/c/?si=9787&li=1824676&wi=394405&ws=&dl=",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Greenchoice",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 1987,
+     "maand": 166,
+     "dom": "greenchoice.nl",
+     "check": "21 augustus 2026",
+     "url": "https://www.greenchoice.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": ""
+    }
+   ]
+  },
+  {
+   "id": "samen",
+   "label": "Samen",
+   "verbruik": "2.500 kWh · 1.100 m³ · regio Liander",
+   "items": [
+    {
+     "naam": "Budget Thuis",
+     "soort": "1 jaar vast + €275 korting · 12 maanden",
+     "jaar": 2461,
+     "maand": 205,
+     "dom": "budgetthuis.nl",
+     "check": "20 augustus 2026",
+     "url": "https://www.budgetthuis.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": "€275 welkomstkorting"
+    },
+    {
+     "naam": "Energiedirect",
+     "soort": "3 jaar vast · 36 maanden",
+     "jaar": 2462,
+     "maand": 205,
+     "dom": "energiedirect.nl",
+     "check": "5 augustus 2026",
+     "url": "https://lt45.net/c/?si=924&li=1825926&wi=394405&ws=&dl=",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Budget Thuis",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 2506,
+     "maand": 209,
+     "dom": "budgetthuis.nl",
+     "check": "20 augustus 2026",
+     "url": "https://www.budgetthuis.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Coolblue Energie",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 2599,
+     "maand": 217,
+     "dom": "coolblueenergie.nl",
+     "check": "10 augustus 2026",
+     "url": "https://www.awin1.com/cread.php?awinmid=85163&awinaffid=1528789&ued=https%3A%2F%2Fwww.coolblue.nl%2Fenergie",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Essent",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 2632,
+     "maand": 219,
+     "dom": "essent.nl",
+     "check": "14 augustus 2026",
+     "url": "https://lt45.net/c/?si=9787&li=1824676&wi=394405&ws=&dl=",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Greenchoice",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 2692,
+     "maand": 224,
+     "dom": "greenchoice.nl",
+     "check": "21 augustus 2026",
+     "url": "https://www.greenchoice.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": ""
+    }
+   ]
+  },
+  {
+   "id": "gezin",
+   "label": "Gezin",
+   "verbruik": "3.500 kWh · 1.400 m³ · regio Liander",
+   "items": [
+    {
+     "naam": "Energiedirect",
+     "soort": "3 jaar vast · 36 maanden",
+     "jaar": 3121,
+     "maand": 260,
+     "dom": "energiedirect.nl",
+     "check": "5 augustus 2026",
+     "url": "https://lt45.net/c/?si=924&li=1825926&wi=394405&ws=&dl=",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Budget Thuis",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 3182,
+     "maand": 265,
+     "dom": "budgetthuis.nl",
+     "check": "20 augustus 2026",
+     "url": "https://www.budgetthuis.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Budget Thuis",
+     "soort": "1 jaar vast + €275 korting · 12 maanden",
+     "jaar": 3211,
+     "maand": 268,
+     "dom": "budgetthuis.nl",
+     "check": "20 augustus 2026",
+     "url": "https://www.budgetthuis.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": "€275 welkomstkorting"
+    },
+    {
+     "naam": "Coolblue Energie",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 3301,
+     "maand": 275,
+     "dom": "coolblueenergie.nl",
+     "check": "10 augustus 2026",
+     "url": "https://www.awin1.com/cread.php?awinmid=85163&awinaffid=1528789&ued=https%3A%2F%2Fwww.coolblue.nl%2Fenergie",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Essent",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 3351,
+     "maand": 279,
+     "dom": "essent.nl",
+     "check": "14 augustus 2026",
+     "url": "https://lt45.net/c/?si=9787&li=1824676&wi=394405&ws=&dl=",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Greenchoice",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 3423,
+     "maand": 285,
+     "dom": "greenchoice.nl",
+     "check": "21 augustus 2026",
+     "url": "https://www.greenchoice.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": ""
+    }
+   ]
+  },
+  {
+   "id": "groot",
+   "label": "Groot gezin",
+   "verbruik": "4.600 kWh · 1.800 m³ · regio Liander",
+   "items": [
+    {
+     "naam": "Energiedirect",
+     "soort": "3 jaar vast · 36 maanden",
+     "jaar": 3945,
+     "maand": 329,
+     "dom": "energiedirect.nl",
+     "check": "5 augustus 2026",
+     "url": "https://lt45.net/c/?si=924&li=1825926&wi=394405&ws=&dl=",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Budget Thuis",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 4025,
+     "maand": 335,
+     "dom": "budgetthuis.nl",
+     "check": "20 augustus 2026",
+     "url": "https://www.budgetthuis.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Budget Thuis",
+     "soort": "1 jaar vast + €275 korting · 12 maanden",
+     "jaar": 4143,
+     "maand": 345,
+     "dom": "budgetthuis.nl",
+     "check": "20 augustus 2026",
+     "url": "https://www.budgetthuis.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": "€275 welkomstkorting"
+    },
+    {
+     "naam": "Coolblue Energie",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 4177,
+     "maand": 348,
+     "dom": "coolblueenergie.nl",
+     "check": "10 augustus 2026",
+     "url": "https://www.awin1.com/cread.php?awinmid=85163&awinaffid=1528789&ued=https%3A%2F%2Fwww.coolblue.nl%2Fenergie",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Essent",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 4244,
+     "maand": 354,
+     "dom": "essent.nl",
+     "check": "14 augustus 2026",
+     "url": "https://lt45.net/c/?si=9787&li=1824676&wi=394405&ws=&dl=",
+     "aff": true,
+     "soortTag": "vast",
+     "korting": ""
+    },
+    {
+     "naam": "Greenchoice",
+     "soort": "Goedkoopste contract · 12 maanden",
+     "jaar": 4336,
+     "maand": 361,
+     "dom": "greenchoice.nl",
+     "check": "21 augustus 2026",
+     "url": "https://www.greenchoice.nl/",
+     "aff": false,
+     "soortTag": "vast",
+     "korting": ""
+    }
+   ]
+  }
+ ],
+ "bijgehouden": "2026-08-21"
+}

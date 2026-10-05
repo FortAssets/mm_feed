@@ -78,11 +78,18 @@ jobs:
       # Dus: eerst de data committen, dan die commit-sha in index.json zetten en
       # dat als tweede commit erbij. De pin wijst naar commit 1, en die bevat de
       # data waar de index bij hoort.
+      # De top van de energievergelijker voor de hero op de homepage. Mag
+      # mislukken: dan blijft het bestand van de vorige run staan.
+      - name: Energietop voor de homepage
+        continue-on-error: true
+        run: node energie.mjs
+
       - name: Commit en push
         run: |
           git config user.name "mm-feed-bot"
           git config user.email "bot@users.noreply.github.com"
           git add -A data/shop
+          git add data/energie-top.json || true
           if git diff --staged --quiet; then
             echo "niets veranderd, geen commit"
             exit 0

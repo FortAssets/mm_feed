@@ -265,6 +265,8 @@
       var badge = scheelt >= 1 ? '<span class="dsr-b scheelt">scheelt ' + eur(scheelt) + '</span>'
         : (laagsteOoit ? '<span class="dsr-b laag">Laagste tot nu</span>' : '');
       var ga = API + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c);
+      // Voor elke pijl staat een vaste spatie (\u00a0): anders kwam de pijl op
+      // een smalle kaart alleen op een nieuwe regel.
       // Het merk alleen tonen als het niet al vooraan in de naam staat.
       var merk = x.b && String(x.n || '').toLowerCase().indexOf(String(x.b).toLowerCase()) !== 0 ? '<span class="dsr-merk">' + esc(x.b) + '</span>' : '';
       return '<article class="dsr-k">' +
@@ -281,12 +283,12 @@
                 '" target="_blank" rel="sponsored noopener"><span class="dsr-wn">' + esc(winkel(w.w)) + '</span><b>' + eur(w.p) + '</b></a>';
             }).join('') + '</div>' +
             '<div class="dsr-voet">' +
-            '<a class="dsr-knop" href="' + ga + '&w=' + encodeURIComponent(top[0].w) + '" target="_blank" rel="sponsored noopener">Bekijk bij ' + esc(winkel(top[0].w)) + ' · ' + eur(top[0].p) + ' ›</a>' +
-            '<a class="dsr-meer" href="/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n) + '">Prijsverloop en alle winkels ›</a>'
+            '<a class="dsr-knop" href="' + ga + '&w=' + encodeURIComponent(top[0].w) + '" target="_blank" rel="sponsored noopener">Bekijk bij ' + esc(winkel(top[0].w)) + ' · ' + eur(top[0].p) + '\u00a0›</a>' +
+            '<a class="dsr-meer" href="/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&q=' + encodeURIComponent(x.n) + '">Prijsverloop en alle winkels\u00a0›</a>'
           : '<p class="dsr-van"><b>' + eur(x.p) + '</b>' +
             (korting ? ' <s>' + eur(x.v) + '</s> <span class="dsr-kt">-' + korting + '%</span>' : '') + '</p>' +
             '<div class="dsr-voet">' +
-            '<a class="dsr-knop" href="' + ga + '" target="_blank" rel="sponsored noopener">Bekijk bij ' + esc(winkel(o[0].w)) + ' · ' + eur(x.p) + ' ›</a>') +
+            '<a class="dsr-knop" href="' + ga + '" target="_blank" rel="sponsored noopener">Bekijk bij ' + esc(winkel(o[0].w)) + ' · ' + eur(x.p) + '\u00a0›</a>') +
         (BF && window.dpvBf && window.dpvBf.aan ? window.dpvBf.knop(x) : '') +
         '</div></div></article>';
     }).join('');

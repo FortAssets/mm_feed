@@ -197,7 +197,7 @@
 .dhk-prijs small{display:block;font:700 11px/1.2 'Montserrat',system-ui,sans-serif;color:#5B6B80;margin-top:4px;letter-spacing:0}
 /* looptijd en totaalbedrag als kleine pillen onder de regel */
 .dhk-tags{display:flex;flex-wrap:wrap;gap:6px;margin:11px 0 12px;padding:0;min-height:1px}
-.dhk-tags span{background:#fff;border:1px solid #D9E1EC;border-radius:999px;padding:4px 10px;font-size:12px;line-height:1.3;font-weight:700;color:#4A5A70}
+.dhk-tags span{background:#fff;border:1px solid #D9E1EC;border-radius:13px;padding:4px 10px;font-size:12px;line-height:1.3;font-weight:700;color:#4A5A70}
 .dhk a.dhk-knop,.dhk a.dhk-knop:visited{display:flex;align-items:center;justify-content:center;min-height:50px;padding:0 16px;border-radius:12px;
   background:#F9C31F;color:#0D1B2A !important;font:800 16px/1.15 'Montserrat',system-ui,sans-serif;text-decoration:none !important;text-align:center}
 .dhk a.dhk-knop:hover{background:#EDB50C}
@@ -263,6 +263,9 @@
 .dhk-w span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center}
 .dhk-w i{flex:0 0 auto}
 .dhk-w i{font-style:normal;font-size:10px;letter-spacing:.04em;text-transform:uppercase;font-weight:800;background:rgba(13,27,42,.12);color:#0D1B2A;border-radius:999px;padding:3px 7px;margin-left:7px}
+/* Op een telefoon past het label "laagste" niet naast een lange winkelnaam en
+   werd het afgesneden. De gele knop staat bovenaan en zegt het al. */
+@media(max-width:480px){.dhk-w i{display:none}}
 .dhk a.dhk-meer{display:inline-block;margin-top:7px;font-size:13px;font-weight:800;color:#2456D6 !important;text-decoration:none !important;padding:6px 0}
 
 /* laden */
@@ -400,7 +403,7 @@
             return { k: k, naam: k.device, sub: [k.provider, d, k.minutes, duur(k)].filter(Boolean).join(' · '),
               prijs: p, per: een > 0 ? 'per maand + ' + euro(een) + ' vooraf' : 'per maand',
               rang: totaal / m, onder: onder + ' · samen ' + euro(totaal) + ' over ' + m + ' maanden',
-              tags: (toestel > 0 && abbo > 0 ? ['Toestel ' + euro(toestel), 'Abonnement ' + euro(abbo) + ' per maand'] : [])
+              tags: (toestel > 0 && abbo > 0 ? ['Toestel ' + euro(toestel), 'Abonnement ' + euro(abbo) + ' p/m'] : [])
                 .concat(['Samen ' + euro(totaal) + ' over ' + m + ' maanden']),
               url: ga(k, 'telefoon'), knop: k.provider, beeld: foto(k.image) || merkLogo(k.provider), aff: true };
           });
@@ -451,7 +454,7 @@
             (h.items || []).forEach(function (i) {
               uit.push({ hh: h.id, naam: i.naam, sub: i.soort, prijs: i.maand, per: 'per maand', rang: i.jaar,
                 onder: euro(i.jaar) + ' per jaar, de hele rekening: levering, belasting en netbeheer',
-                tags: [euro(i.jaar) + ' per jaar', 'Hele rekening: levering, belasting en netbeheer'],
+                tags: [euro(i.jaar) + ' per jaar', 'incl. belasting en netbeheer'],
                 let: i.korting ? 'Inclusief ' + i.korting + '. Die geldt alleen in het eerste jaar.' : '',
                 url: i.url, knop: i.naam, beeld: logo(i.dom), aff: !!i.aff });
             });

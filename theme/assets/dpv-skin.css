@@ -654,3 +654,13 @@ html:not(#x) .dpk-w{font-weight:800 !important}
 html:not(#x) .pvz2-price .per,html:not(#x) .pvz2-price .promo,html:not(#x) .pvz2-btw,html:not(#x) .pvz2-note,html:not(#x) .dhc-voorbeeld{color:#5B6B80 !important}
 html:not(#x) .pvtv-best,html:not(#x) .zc-vb.zc-g{color:#17764E !important}
 html:not(#x) .pvbel button,html:not(#x) [style*="Inter, sans-serif"],html:not(#x) [style*="Inter,sans-serif"]{font-family:'Montserrat',system-ui,sans-serif !important}
+/* Blogoverzicht: de bovenkant was een vol blauw vlak met witte tekst. Nu het lichte bovenvlak. */
+html:not(#x) .pvbi-hero{background:linear-gradient(180deg,#E3ECFF 0%,#F4F7FF 100%) !important;color:#0D1B2A !important}
+html:not(#x) .pvbi-hero::after{background:none !important}
+html:not(#x) .pvbi-eyebrow{color:#2456D6 !important}
+html:not(#x) .pvbi-h1{color:#0D1B2A !important}
+html:not(#x) .pvbi-intro{color:#4A5A70 !important}
+html:not(#x) .pvbi-trust-item{color:#0D1B2A !important}
+html:not(#x) .pvbi-trust-item svg{color:#0D1B2A !important;background:#3FAE7A !important;border-radius:50% !important;padding:3px !important;box-sizing:content-box !important}
+/* Cookiemelding (externe app): de knop was fel groen. */
+html:not(#x) .Avada-CookiesBar_BtnAgree,html:not(#x) [class*="Avada-CookiesBar"] button[class*="Agree"],html:not(#x) .Avada-CookiesBar__Wrapper .Avada-CookiesBar_BtnAgree{background:#2456D6 !important;border-color:#2456D6 !important;color:#FFFFFF !important}

@@ -261,6 +261,10 @@
       // "scheelt": laagste tegenover de hoogste getoonde winkel, hele euro's.
       // Onder de euro zeggen wij niets; dat is geen verschil om voor te klikken.
       var scheelt = multi ? Math.round(top[top.length - 1].p - top[0].p) : 0;
+      // 5 okt: bij een tv stond "scheelt €4.675". Ligt de laagste meer dan 40%
+      // onder de hoogste, dan is het bijna altijd een fout in een feed of een
+      // ander product onder dezelfde naam. Dan tonen wij het verschil niet.
+      if (multi && top[0].p < top[top.length - 1].p * 0.6) scheelt = 0;
       var laagsteOoit = (typeof x.lp === 'number' && x.mt >= 2 && x.p <= x.lp + 0.005);
       var badge = scheelt >= 1 ? '<span class="dsr-b scheelt">scheelt ' + eur(scheelt) + '</span>'
         : (laagsteOoit ? '<span class="dsr-b laag">Laagste tot nu</span>' : '');

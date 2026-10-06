@@ -25,7 +25,26 @@ import fs from 'node:fs'
 import crypto from 'node:crypto'
 
 const SHOP = process.env.SHOPIFY_SHOP || 'a954c1.myshopify.com'
-const TOKEN = process.env.SHOPIFY_TOKEN || ''
+// Twee manieren om binnen te komen. Een vast token (oude eigen app, begint met
+// shpat_), of client-id en geheim van een app uit het Dev Dashboard: daarmee
+// haalt het script zelf een token dat een dag geldig is.
+let TOKEN = process.env.SHOPIFY_TOKEN || ''
+const CLIENT_ID = process.env.SHOPIFY_CLIENT_ID || ''
+const CLIENT_GEHEIM = process.env.SHOPIFY_CLIENT_SECRET || ''
+if (!TOKEN && CLIENT_ID && CLIENT_GEHEIM && !process.argv.includes('--droog')) {
+  // Een poging. Lukt het niet, dan stopt de run met een duidelijke melding.
+  const r = await fetch('https://' + SHOP + '/admin/oauth/access_token', {
+    method: 'POST',
+    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'client_credentials', client_id: CLIENT_ID, client_secret: CLIENT_GEHEIM })
+  })
+  const j = await r.json().catch(() => ({}))
+  if (!r.ok || !j.access_token) {
+    console.error('Shopify gaf geen token (' + r.status + '). Controleer SHOPIFY_CLIENT_ID en SHOPIFY_CLIENT_SECRET, en of de app op de winkel is geinstalleerd met read_metaobjects en write_metaobjects.')
+    process.exit(1)
+  }
+  TOKEN = j.access_token
+}
 const VERSIE = '2026-01'
 const DROOG = process.argv.includes('--droog') || !TOKEN
 const MAX_NIEUW = Number(process.env.MAX_NIEUW || 5000)
@@ -265,7 +284,7 @@ if (!DROOG) {
   console.log('pagina\'s geschreven: ' + geschreven + (fouten.length ? ' | fouten: ' + fouten.length : ''))
   for (const f of fouten.slice(0, 15)) console.error('  ' + f)
 } else {
-  console.log('droog: er is niets geschreven' + (TOKEN ? '' : ' (geen SHOPIFY_TOKEN)'))
+  console.log('droog: er is niets geschreven' + (TOKEN ? '' : ' (geen Shopify-sleutel)'))
   for (const { rij, s } of teDoen.slice(0, 5)) console.log('  ' + s.h + ' | ' + rij.f.prijs + ' | ' + rij.f.winkels + ' winkels')
 }
 

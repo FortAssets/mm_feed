@@ -4,9 +4,10 @@ name: Productpaginas
 # de prijzen van vandaag erin zitten. Maakt nieuwe productpagina's aan, werkt
 # prijzen en aanbod bij op de bestaande, en haalt specificaties op bij bol.
 #
-# Nodig: het geheim SHOPIFY_TOKEN (Admin API-token van een eigen app met de
-# rechten read_metaobjects en write_metaobjects). Zonder dat geheim telt de run
-# alleen wat er zou gebeuren en schrijft hij niets.
+# Nodig: de geheimen SHOPIFY_CLIENT_ID en SHOPIFY_CLIENT_SECRET van een app uit
+# het Dev Dashboard met de rechten read_metaobjects en write_metaobjects (of
+# SHOPIFY_TOKEN van een oude eigen app). Zonder sleutel telt de run alleen wat
+# er zou gebeuren en schrijft hij niets.
 on:
   schedule:
     - cron: '37 5 * * *'
@@ -40,6 +41,8 @@ jobs:
       - name: Productpaginas bijwerken
         env:
           SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
+          SHOPIFY_CLIENT_ID: ${{ secrets.SHOPIFY_CLIENT_ID }}
+          SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
           BOL_CLIENT_ID: ${{ secrets.BOL_CLIENT_ID }}
           BOL_CLIENT_SECRET: ${{ secrets.BOL_CLIENT_SECRET }}
           MAX_NIEUW: ${{ inputs.max_nieuw || '5000' }}

@@ -45,3 +45,23 @@ html:not(#x):not(#y) a.bv-knop{display:flex !important;align-items:center;justif
 
 /* --- Zakelijk-blok (rood van Vodafone blijft): de rode gloed eronder is een schaduw en gaat weg --- */
 html:not(#x):not(#y) .pvzb-in{box-shadow:none !important}
+
+/* --- Black Friday-band (de enige donkere band): de aanmeldknop was inkt op inkt. Interne knop op donker: wit met inkttekst --- */
+html:not(#x):not(#y) .bfr-rij button,html:not(#x):not(#y) .bfr-rij button:hover{background:#fff !important;color:#0D1B2A !important;border:1.5px solid #fff !important;border-radius:10px !important}
+html:not(#x):not(#y) .bfr-rij button:hover{background:#F1F3F8 !important}
+html:not(#x):not(#y) .bfr-rij input{border-radius:10px !important}
+
+/* --- Kaarten die bij de steekproef nog een lichte rand hadden --- */
+html:not(#x):not(#y) :is(.pv-faq-item,.dihm,.pvz-trust,.pvz-final,.zk-hero,.bs-mc,.dpv-eb,.duo-aanmeld,.kk-blok,.ip-mail,.dg-c,article.ar>.slot){border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:none !important}
+/* tip- en verwijsblokken in lopende tekst: lichtgrijs vlak met de inktstreep links */
+html:not(#x):not(#y) .pv-related,html:not(#x):not(#y) .pv-tip{background:#F1F3F8 !important}
+
+/* --- Nog twee gele doorklikknoppen onder de 44 px (toestellen, wc-papier) --- */
+html:not(#x):not(#y) a.pvtv-go.dpv-geel{height:44px !important}
+html:not(#x):not(#y) td a.knop.dpv-geel{display:inline-flex !important;align-items:center;min-height:44px !important}
+
+/* --- Toestellen: de hele pagina lag op een grijsblauw vlak; de bovenkant hoort wit te zijn --- */
+html:not(#x):not(#y) .pvtv{background:#fff !important}
+/* --- Black Friday: de sprongknoppen bovenaan zijn pillen met inktrand --- */
+html:not(#x):not(#y) .bfr-chips a{border:1.5px solid #0D1B2A !important;background:#fff !important;color:#0D1B2A !important}
+html:not(#x):not(#y) .bfr-chips a:hover{background:#F1F3F8 !important}

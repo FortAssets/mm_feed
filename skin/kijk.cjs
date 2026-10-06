@@ -99,10 +99,10 @@ const inPagina = () => {
         const titel = await p.title();
         if (/Just a moment|Verifying your connection/i.test(titel) || /Verifying your connection/i.test(await p.evaluate(() => document.body.innerText.slice(0, 400)))) { blok = true; console.log('CONTROLE', n, 'wacht 90 s'); }
         else {
-          await p.evaluate(async () => { for (let y = 0; y < document.documentElement.scrollHeight; y += 700) { scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); } scrollTo(0, 0); });
+          await p.evaluate(async () => { for (let y = 0, i = 0; y < document.documentElement.scrollHeight && i < 60; y += 700, i++) { scrollTo(0, y); await new Promise(r => setTimeout(r, 120)); } scrollTo(0, 0); });
           await p.waitForTimeout(1500);
           if (process.env.NA) await p.evaluate(process.env.NA);
-          const d = await p.evaluate(inPagina); d.pad = pd; d.fouten = fouten;
+          const d = await Promise.race([p.evaluate(inPagina), new Promise((_, nee) => setTimeout(() => nee(new Error('te lang bezig met meten')), 40000))]); d.pad = pd; d.fouten = fouten;
           d.hoogte = await p.evaluate(() => document.documentElement.scrollHeight);
           if (process.env.DATA) Object.assign(d, await p.evaluate(() => {
             const bladen = []; [...document.styleSheets].forEach(s => { try { bladen.push({ bron: s.href || 'inline', eigenaar: (s.ownerNode && (s.ownerNode.closest('[id^="shopify-section"]') || {}).id) || '', regels: [...s.cssRules].map(x => x.cssText) }); } catch (e) {} });
@@ -110,11 +110,11 @@ const inPagina = () => {
             return { bladen, stijlen };
           }));
           fs.writeFileSync(f, JSON.stringify(d));
-          await p.screenshot({ path: `${UIT}/${n}.jpg`, type: 'jpeg', quality: 62, fullPage: true, clip: { x: 0, y: 0, width: w === 'm' ? 390 : 1366, height: Math.min(d.hoogte, w === 'm' ? 12000 : 9000) } });
+          await p.screenshot({ timeout: 30000, path: `${UIT}/${n}.jpg`, type: 'jpeg', quality: 62, fullPage: true, clip: { x: 0, y: 0, width: w === 'm' ? 390 : 1366, height: Math.min(d.hoogte, w === 'm' ? 12000 : 9000) } });
           console.log('ok', n, 'contrast', Object.keys(d.contrast).length, 'oud', Object.keys(d.oud).length, 'vorm', Object.keys(d.vorm).length, 'overloop', d.overloop, 'h', d.hoogte);
         }
       } catch (e) { console.log('FOUT', n, e.message.slice(0, 90)); }
-      await p.close();
+      await Promise.race([p.close(), slaap(8000)]);
       if (!blok) break; await slaap(90000);
     }
   }

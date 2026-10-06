@@ -706,7 +706,8 @@
     wijzer.textContent=koppen[0].getAttribute('data-schap')||'';
     if(!('IntersectionObserver' in window))return;
     var bar=document.getElementById('bv-bar');
-    var hoog=(bar?bar.offsetHeight:0)+12;
+    /* 6 okt: de vaste balk is nu alleen de schapregel; reken met die hoogte, niet met het hele filterblok */
+    var hoog=((typeof vaste!=='undefined'&&vaste&&vaste.length)?bovenrand():70)+72;
     var inBeeld={};
     schapKijker=new IntersectionObserver(function(rijen){
       rijen.forEach(function(r){inBeeld[r.target.getAttribute('data-schap')]=r.isIntersecting});

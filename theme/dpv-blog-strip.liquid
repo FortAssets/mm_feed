@@ -189,6 +189,7 @@
         {%- endif -%}
       {%- endif -%}
       {%- assign geteld = 0 -%}
+      {%- assign maanden = "januari,februari,maart,april,mei,juni,juli,augustus,september,oktober,november,december" | split: "," -%}
       {%- assign tagfilters = section.settings.tag_filter | split: ',' -%}
       {%- for article in lijst -%}
         {%- if geteld >= limiet -%}{%- break -%}{%- endif -%}
@@ -209,7 +210,7 @@
             <div class="dbs-cover geen"><span>{{ article.title | slice: 0 }}</span></div>
           {% endif %}
           <div class="dbs-body">
-            <div class="dbs-date">{{ article.published_at | date: "%-d %B %Y" }}</div>
+            {%- assign mi = article.published_at | date: "%-m" | minus: 1 -%}<div class="dbs-date">{{ article.published_at | date: "%-d" }} {{ maanden[mi] }} {{ article.published_at | date: "%Y" }}</div>
             <div class="dbs-title">{{ article.title }}</div>
             <div class="dbs-exc">{{ article.excerpt_or_content | strip_html | truncate: 110 }}</div>
           </div>

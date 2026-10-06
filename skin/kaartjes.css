@@ -122,7 +122,8 @@ html:not(#x):not(#y) .dtc-tag{background:#3FAE7A !important;color:#0D1B2A !impor
 html:not(#x):not(#y) .dtc-img,html:not(#x):not(#y) .dtc-simg{background:#F1F3F8 !important;background-image:none !important}
 html:not(#x):not(#y) .dtc-img img,html:not(#x):not(#y) .dtc-simg img{mix-blend-mode:multiply}
 /* knoppen binnen de site (geen doorklik): wit met een fijne rand, niet met inkt */
-html:not(#x):not(#y) a.bv-knop:not(.dpv-geel):not(.bestel){border:1px solid #CBD3DF !important;box-shadow:none !important}
+html:not(#x):not(#y) .bv a.bv-knop:not(.check){border:1.5px solid #0D1B2A !important;box-shadow:3px 3px 0 #0D1B2A !important;border-radius:10px !important}
+html:not(#x):not(#y) .bv a.bv-knop.check{border:1px solid #CBD3DF !important;box-shadow:none !important}
 html:not(#x):not(#y) .pa-blok{border:1px solid #E3E8F0 !important;box-shadow:none !important}
 /* "Zoek in gewone taal": een zacht groen vlak (de kleur van de stip, licht), zodat het blok opvalt zonder fel te zijn */
 html:not(#x):not(#y) .dpvai-blok{background:#EAF6F0 !important;background-image:none !important;border:1px solid #CDEFE0 !important}

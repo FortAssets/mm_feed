@@ -43,6 +43,8 @@
   endif
   if winkelgids
     assign onderwerp = 'winkel'
+  elsif spoor contains 'rijbewijs' or spoor contains 'theorie-examen' or spoor contains 'theorie examen' or spoor contains 'rijles'
+    assign onderwerp = 'rijbewijs'
   elsif spoor contains 'zorg' or spoor contains 'eigen risico' or spoor contains 'eigen-risico' or spoor contains 'basisverzekering'
     assign onderwerp = 'zorg'
   elsif spoor contains 'energie' or spoor contains 'stroom' or spoor contains 'salderen' or spoor contains 'netbeheer' or spoor contains 'zonnepanel'
@@ -212,6 +214,13 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
           <a class="dab-knop" href="/go/vodafone-zakelijk?bron={{ article.handle | url_encode }}" target="_blank" rel="sponsored nofollow noopener">Bekijk Vodafone Zakelijk</a></div>
       </div>
       <a class="dab-breed" href="/pages/zakelijke-abonnementen">Vergelijk alle zakelijke abonnementen &rarr;</a>
+
+    {%- when 'rijbewijs' -%}
+      {%- comment -%} 6 okt: onder het artikel over het rijbewijs stonden sim only-deals. Theorie.nl (Daisycon, campagne 2320) past hier wel. Prijzen gezien op 6 oktober 2026. {%- endcomment -%}
+      <h2 class="dab-kop">Theorie-examen: oefen online bij Theorie.nl</h2>
+      <p class="dab-sub">31 oefenexamens van 50 vragen en 21 uitlegvideo's, op je telefoon, tablet of laptop. Je betaalt alleen voor de periode dat je oefent: een dag, een week of een maand, vanaf &euro;19,99.</p>
+      <a class="dab-knop-groot" href="https://go.deprijsvergelijker.com/api/go?u=https%3A%2F%2Fdt51.net%2Fc%2F%3Fsi%3D2320%26li%3D1520810%26wi%3D394405%26ws%3Dartikel-rijbewijs%26dl%3D&amp;cat=artikel-rijbewijs&amp;p=Theorie.nl&amp;bron={{ article.handle | url_encode }}" target="_blank" rel="sponsored nofollow noopener">Bekijk de pakketten van Theorie.nl</a>
+      <a class="dab-breed" href="/pages/studenten">Meer manieren om te besparen als student &rarr;</a>
 
     {%- when 'reizen' -%}
       <h2 class="dab-kop">Internet in het buitenland regelen</h2>
@@ -386,6 +395,10 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
     } else if (ONDERWERP === 'zorg') {
       div.innerHTML = '<div class="dpv-inline-tx"><b>Premies 2027 op 12 november.</b> Wij mailen je zodra ze er zijn.</div>' +
         '<a class="dpv-inline-k" href="#aanbod">Seintje</a>';
+    } else if (ONDERWERP === 'rijbewijs') {
+      var th = document.querySelector('#aanbod a.dab-knop-groot');
+      div.innerHTML = '<div class="dpv-inline-tx"><b>Theorie online oefenen?</b> Oefenexamens bij Theorie.nl vanaf \u20ac19,99.<small>Advertentie</small></div>' +
+        '<a class="dpv-inline-k" href="' + (th ? th.getAttribute('href') : '#aanbod') + '" target="_blank" rel="sponsored nofollow noopener">Bekijk</a>';
     } else if (ONDERWERP === 'reizen') {
       div.innerHTML = '<div class="dpv-inline-tx"><b>Op reis?</b> Een eSIM is buiten de EU vaak goedkoper dan roamen.</div>' +
         '<a class="dpv-inline-k" href="/pages/internet-op-vakantie">Vergelijk eSIM\'s</a>';

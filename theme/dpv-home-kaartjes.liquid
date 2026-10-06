@@ -318,6 +318,11 @@ html:not(#x) .dhd .lees a{display:block;padding:9px 0}}
 /* ---- wat het thema nodig heeft bovenop het ontwerp ---- */
 #shopify-section-dpv-zorg-home{display:none}
 html:not(#x) .dhd .dpvmb{display:none !important}
+/* Zoekhulp (sectie dpv-ai-zoek): het dichte paneel staat alleen 39px onder de schermrand geschoven en komt
+   daardoor in beeld zodra het scherm hoger wordt. Hier op de homepage is het dicht echt onzichtbaar; het script
+   zet bij een tik op de knop class "aan" op het paneel en haalt die bij sluiten weer weg. */
+html:not(#x) #dpvai-paneel{visibility:hidden;transition:transform .26s cubic-bezier(.2,.9,.3,1),visibility 0s linear .26s}
+html:not(#x) #dpvai-paneel.aan{visibility:visible;transition:transform .26s cubic-bezier(.2,.9,.3,1),visibility 0s}
 /* Het thema verbergt lege elementen (div:empty); de verschoven vlakken zijn leeg en moeten blijven staan. */
 html:not(#x) .dhd .vlak,html:not(#x) .dhd .blad i{display:block}
 html:not(#x) .dhd .gat{display:block}
@@ -648,7 +653,40 @@ html:not(#x):not(#y) body .dhd .knop-inkt[disabled]{opacity:.6;cursor:default}
       <p><a class="alle" href="{{ blogs[s.blog].url }}">Alle artikelen</a></p>
     </div>
     <ul class="blogs">
-      {%- for article in arts limit: 3 -%}
+      {%- comment -%}
+        Drie vaste artikelen (handles uit de instellingen), in die volgorde. Bestaat een handle niet,
+        dan komt op die plek het nieuwste artikel dat nog niet getoond wordt.
+      {%- endcomment -%}
+      {%- assign act_ruw = s.act_1 | append: ',' | append: s.act_2 | append: ',' | append: s.act_3 | split: ',' -%}
+      {%- assign act_vast = '|' -%}
+      {%- for ruw in act_ruw -%}
+        {%- assign h = ruw | strip | split: '/' | last -%}
+        {%- if h != blank -%}
+          {%- assign sleutel = s.blog | append: '/' | append: h -%}
+          {%- if articles[sleutel].id -%}{%- assign act_vast = act_vast | append: h | append: '|' -%}{%- endif -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- assign act_getoond = '|' -%}
+      {%- for i in (0..2) -%}
+        {%- assign article = nil -%}
+        {%- assign h = act_ruw[i] | strip | split: '/' | last -%}
+        {%- if h != blank -%}
+          {%- assign sleutel = s.blog | append: '/' | append: h -%}
+          {%- assign zoek = '|' | append: h | append: '|' -%}
+          {%- unless act_getoond contains zoek -%}
+            {%- if articles[sleutel].id -%}{%- assign article = articles[sleutel] -%}{%- endif -%}
+          {%- endunless -%}
+        {%- endif -%}
+        {%- unless article -%}
+          {%- for a in arts limit: 12 -%}
+            {%- assign zoek = '|' | append: a.handle | append: '|' -%}
+            {%- if act_vast contains zoek or act_getoond contains zoek -%}{%- continue -%}{%- endif -%}
+            {%- assign article = a -%}
+            {%- break -%}
+          {%- endfor -%}
+        {%- endunless -%}
+        {%- unless article -%}{%- continue -%}{%- endunless -%}
+        {%- assign act_getoond = act_getoond | append: article.handle | append: '|' -%}
       <li><a href="{{ article.url }}">
         {%- if article.image -%}
           <img src="{{ article.image | image_url: width: 800 }}" alt="" width="800" height="450" loading="lazy">
@@ -971,6 +1009,9 @@ html:not(#x):not(#y) body .dhd .knop-inkt[disabled]{opacity:.6;cursor:default}
     { "type": "text", "id": "gaming_kop", "label": "Gaming: kop", "default": "Gaming, per winkel vergeleken" },
     { "type": "text", "id": "act_kop", "label": "Actueel: kop", "default": "Actueel" },
     { "type": "text", "id": "blog", "label": "Actueel: blog (handle)", "default": "advies" },
+    { "type": "text", "id": "act_1", "label": "Actueel: artikel 1 (handle)", "info": "Het laatste deel van het adres van het artikel. Bestaat het niet, dan komt hier het nieuwste artikel.", "default": "hoeveel-gb-data-heb-je-nodig" },
+    { "type": "text", "id": "act_2", "label": "Actueel: artikel 2 (handle)", "default": "black-friday-2026-wanneer-begint" },
+    { "type": "text", "id": "act_3", "label": "Actueel: artikel 3 (handle)", "default": "iphone-18-pro-pre-order-wanneer-en-waar" },
     { "type": "header", "content": "Bronnen" },
     { "type": "text", "id": "worker_url", "label": "Worker telecom", "default": "https://awin.business-347.workers.dev" },
     { "type": "text", "id": "shop_url", "label": "Worker producten", "default": "https://shop.deprijsvergelijker.com" },

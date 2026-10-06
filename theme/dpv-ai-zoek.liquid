@@ -774,7 +774,7 @@ body.dpvai-fab-open .pvlang{bottom:74px !important;transition:bottom .22s ease}
       h += '<a class="dpvai-sr" href="' + boodVeilig(x.url) + '"><span class="dpvai-ss">' + x.soort + '</span><span class="dpvai-st">' + boodVeilig(x.titel) + '</span><span class="dpvai-sp">&rsaquo;</span></a>';
     });
     h += '<div class="dpvai-links"><a href="/search?q=' + encodeURIComponent(v) + '&type=article,page">Alles over \u201c' + boodVeilig(v) + '\u201d &rsaquo;</a>' +
-      (metKnop ? '<a class="groen" href="#" data-dpvai-vgl>Toch abonnementen vergelijken &rsaquo;</a>' : '') + '</div>';
+      (metKnop ? '<a class="groen" href="#" data-dpvai-vgl>Zoek in de vergelijker &rsaquo;</a>' : '') + '</div>';
     vak.innerHTML = h;
     vak.className = 'dpvai-bood aan';
     hintTonen(false);

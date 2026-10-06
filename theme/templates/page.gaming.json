@@ -101,6 +101,10 @@
         "tekst": "Wij houden de prijzen van consoles, games en gaming-pc's elke nacht bij. Zakt er iets onder de laagste prijs die wij gemeten hebben, dan sturen wij je een bericht. Voor Black Friday is dat het verschil tussen een echte korting en een hoger doorgestreept bedrag.",
         "knop": "Hou mij op de hoogte",
         "bron": "gaming",
+        "chips": true,
+        "chips_kop": "Waar wil je bericht over?",
+        "chips_voor": "gaming,black-friday",
+        "chips_fijn": "Gaming en Black Friday staan aan. Zet er meer bij als je wilt; aanpassen kan later met een klik in elke mail.",
         "fijn": "Hoogstens een mail per week. Afmelden kan met een klik in elke mail."
       }
     }

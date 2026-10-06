@@ -201,8 +201,8 @@
         "bron": "black-friday",
         "chips": true,
         "chips_kop": "Waar wil je bericht over?",
-        "chips_voor": "",
-        "chips_fijn": "Alles staat aan. Vink uit wat je niet wilt; aanpassen kan later met een klik in elke mail.",
+        "chips_voor": "black-friday,gaming,telefoons,laptops,tv-beeld,audio,huishoudelijk,keuken",
+        "chips_fijn": "Black Friday en alle productgroepen staan aan. Vink uit wat je niet wilt of zet er iets bij; aanpassen kan later met een klik in elke mail.",
         "fijn": "Dubbele opt-in: je krijgt eerst een mail met een link erin. Zonder die klik sturen wij je niets. Afmelden kan altijd."
       }
     },

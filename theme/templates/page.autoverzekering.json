@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "vergelijker": {
+      "type": "dpv-auto-vergelijker",
+      "settings": {}
+    }
+  },
+  "order": [
+    "vergelijker"
+  ]
+}

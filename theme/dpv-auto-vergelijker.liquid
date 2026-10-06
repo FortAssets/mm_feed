@@ -1,0 +1,118 @@
+{%- comment -%} Autoverzekering vergelijken: rekenvoorbeelden per profiel. Premies peildatum 6 oktober 2026. {%- endcomment -%}
+<style>
+.av{font-family:'Instrument Sans',system-ui,sans-serif;color:#0D1B2A;font-size:15.500px;line-height:1.5}
+.av *{box-sizing:border-box}
+.av h1,.av h2,.av h3{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-weight:800;letter-spacing:-.04em;color:#0D1B2A;margin:0}
+.av-w{max-width:980px;margin:0 auto;padding:0 24px}
+.av-hero{background:#F1F3F8;border-bottom:1px solid #E3E8F0;padding:24px 0 26px}
+.av-kruimel{font-size:13px;color:#4A5A70;margin:0 0 8px}.av-kruimel a{color:#4A5A70}
+.av h1{font-size:38px;line-height:1.05;margin-bottom:10px}
+.av-intro{max-width:660px;color:#4A5A70;font-size:16.500px;margin:0}
+.av-sec{padding:28px 0 4px}.av h2{font-size:25px;margin-bottom:4px}.av-uit{color:#4A5A70;margin:0 0 16px;max-width:700px}
+.av-ind{border:1px solid #E3E8F0;border-radius:16px;padding:18px;display:grid;grid-template-columns:1.25fr 1fr;gap:22px;align-items:center;background:#fff}
+.av-groep{margin-bottom:12px}.av-groep:last-child{margin-bottom:0}.av-groep>span{display:block;font-size:12.500px;font-weight:700;color:#4A5A70;margin-bottom:6px}
+.av-groep>div{display:flex;gap:7px;flex-wrap:wrap}
+.av button.av-chip{font:600 13.500px 'Instrument Sans',sans-serif;padding:0 13px;min-height:40px;border:1px solid #CBD3DF;border-radius:999px;background:#fff;color:#0D1B2A;cursor:pointer;box-shadow:none}
+.av button.av-chip[aria-pressed=true]{background:#0D1B2A;color:#fff;border-color:#0D1B2A}
+.av-uitk{background:#F1F3F8;border-radius:14px;padding:18px}.av-uitk small{display:block;font-size:12.500px;font-weight:700;color:#4A5A70}
+.av-uitk b{display:block;font:800 34px/1.1 'Bricolage Grotesque',sans-serif;letter-spacing:-.04em;margin:4px 0 2px}.av-uitk b u{text-decoration:none;font:600 16px 'Instrument Sans',sans-serif;letter-spacing:0;color:#4A5A70}
+.av-uitk p{font-size:13px;color:#4A5A70;margin:8px 0 0}
+.av-tel{display:flex;justify-content:space-between;align-items:center;font-size:13.500px;color:#4A5A70;margin:0 0 12px}.av-tel b{color:#0D1B2A}
+.av-rij{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-areas:"wie pr" "ch knop";gap:10px 18px;align-items:center;border:1px solid #E3E8F0;border-radius:14px;padding:14px 16px;margin-bottom:10px;background:#fff}
+.av-rij.av-top{border:1.500px solid #0D1B2A;box-shadow:6px 6px 0 #3FAE7A;margin:14px 6px 18px 0;padding-top:20px}
+.av-lint{position:absolute;left:14px;top:-12px;background:#3FAE7A;color:#fff;font-size:11.500px;font-weight:700;padding:3px 10px;border-radius:999px}
+.av-wie{grid-area:wie;display:flex;align-items:center;gap:12px}.av-ini{width:44px;height:44px;border-radius:11px;color:#fff;font-weight:700;font-size:12.500px;display:flex;align-items:center;justify-content:center;flex:none}
+.av-wie b{display:block;font:800 19px/1.15 'Bricolage Grotesque',sans-serif;letter-spacing:-.03em}
+.av-hoe{font-size:12.500px;color:#4A5A70;font-weight:600}.av-hoe.av-direct{color:#1F7A52}
+.av-pr{grid-area:pr;text-align:right}.av-pr b{display:block;font:800 27px/1 'Bricolage Grotesque',sans-serif;letter-spacing:-.04em}.av-pr span{font-size:11.500px;color:#4A5A70;font-weight:600}
+.av-ch{grid-area:ch;list-style:none;padding:0;margin:0;display:flex;gap:6px;flex-wrap:wrap}.av-ch li{font-size:12.500px;background:#F1F3F8;border-radius:8px;padding:5px 9px;font-weight:500;margin:0}
+.av a.av-knop,.av a.av-knop:visited{grid-area:knop;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;background:#F9C31F;border:1.500px solid #0D1B2A;border-radius:10px;box-shadow:3px 3px 0 #0D1B2A;font-weight:700;font-size:14px;white-space:nowrap;margin-right:3px;color:#0D1B2A;text-decoration:none}
+.av a.av-knop:hover{background:#EDB50C;transform:translate(2px,2px);box-shadow:1px 1px 0 #0D1B2A}
+.av-fijn{font-size:12.500px;color:#4A5A70;margin:12px 0 0;max-width:820px}
+.av-leeg{border:1px dashed #CBD3DF;border-radius:14px;padding:18px;color:#4A5A70}
+.av-dek{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.av-d{border:1px solid #E3E8F0;border-radius:14px;padding:16px;background:#fff}.av-d h3{font-size:19px;letter-spacing:-.03em}.av-d p{font-size:14px;color:#4A5A70;margin:4px 0 0}
+.av details{border:1px solid #E3E8F0;border-radius:12px;padding:0 16px;margin-bottom:8px;background:#fff}.av summary{cursor:pointer;font-weight:700;padding:14px 0;list-style:none}.av summary::-webkit-details-marker{display:none}.av details p{margin:0 0 14px;color:#4A5A70}
+.av-eind{height:34px}
+@media(max-width:700px){.av-w{padding:0 16px}.av h1{font-size:29px}.av h2{font-size:22px}.av-ind{grid-template-columns:1fr;gap:14px;padding:14px}.av-dek{grid-template-columns:1fr}
+.av-rij{grid-template-areas:"wie pr" "ch ch" "knop knop";padding:13px}.av a.av-knop{width:calc(100% - 3px);min-height:48px}.av-uitk b{font-size:29px}.av-pr b{font-size:24px}.av-rij.av-top{margin-right:6px}}
+</style>
+<div class="av" id="av">
+ <div class="av-hero"><div class="av-w">
+  <p class="av-kruimel"><a href="/">Home</a> / Autoverzekering</p>
+  <h1>{{ section.settings.kop }}</h1>
+  <p class="av-intro">{{ section.settings.intro }}</p>
+ </div></div>
+ <div class="av-sec"><div class="av-w">
+  <h2>Wat betaal jij ongeveer?</h2><p class="av-uit">Drie keuzes, geen kenteken nodig.</p>
+  <div class="av-ind"><div>
+   <div class="av-groep"><span id="av-l1">Leeftijd</span><div role="group" aria-labelledby="av-l1" data-f="l">
+    <button type="button" class="av-chip" data-w="18-23" aria-pressed="false">18 tot 23</button><button type="button" class="av-chip" data-w="24-34" aria-pressed="false">24 tot 34</button><button type="button" class="av-chip" data-w="35-59" aria-pressed="true">35 tot 59</button><button type="button" class="av-chip" data-w="60+" aria-pressed="false">60 en ouder</button></div></div>
+   <div class="av-groep"><span id="av-l2">Waar woon je</span><div role="group" aria-labelledby="av-l2" data-f="r">
+    <button type="button" class="av-chip" data-w="stad" aria-pressed="false">Grote stad</button><button type="button" class="av-chip" data-w="middel" aria-pressed="true">Middelgrote stad</button><button type="button" class="av-chip" data-w="dorp" aria-pressed="false">Dorp of platteland</button></div></div>
+   <div class="av-groep"><span id="av-l3">Dekking</span><div role="group" aria-labelledby="av-l3" data-f="d">
+    <button type="button" class="av-chip" data-w="wa" aria-pressed="false">WA</button><button type="button" class="av-chip" data-w="bc" aria-pressed="true">WA+ (beperkt casco)</button><button type="button" class="av-chip" data-w="vc" aria-pressed="false">Allrisk</button></div></div>
+  </div>
+  <div class="av-uitk" aria-live="polite"><small id="av-keuze"></small><b id="av-band"></b><p id="av-profiel"></p></div></div>
+ </div></div>
+ <div class="av-sec"><div class="av-w">
+  <h2>Verzekeraars vergeleken</h2><p class="av-uit">Gesorteerd op de premie in het rekenvoorbeeld voor jouw keuze. De knop gaat naar de verzekeraar zelf of naar zijn pagina bij Poliswijzer, waar je je eigen premie berekent.</p>
+  <div class="av-tel"><span id="av-aantal"></span><span>Laagste premie bovenaan</span></div>
+  <div id="av-lijst"></div>
+  <p class="av-fijn" id="av-voet"></p>
+ </div></div>
+ <div class="av-sec"><div class="av-w">
+  <h2>Welke dekking kies je</h2><p class="av-uit">WA is verplicht, de rest kies je zelf.</p>
+  <div class="av-dek">
+   <div class="av-d"><h3>WA</h3><p>Schade die je aan anderen toebrengt. Vaak gekozen voor auto's ouder dan tien jaar.</p></div>
+   <div class="av-d"><h3>WA+ (beperkt casco)</h3><p>Ook diefstal, brand, storm en ruitschade. Vaak gekozen voor auto's van zes tot tien jaar.</p></div>
+   <div class="av-d"><h3>Allrisk</h3><p>Ook schade aan je eigen auto, ook bij eigen schuld. Vaak gekozen voor auto's tot zes jaar.</p></div>
+  </div>
+ </div></div>
+ <div class="av-sec"><div class="av-w">
+  <h2>Veelgestelde vragen</h2><p class="av-uit">Kort uitgelegd hoe deze vergelijking werkt.</p>
+  <details><summary>Waarom zie ik geen persoonlijke premie?</summary><p>Je premie hangt af van je kenteken, je postcode, je leeftijd en je schadevrije jaren. Die vragen wij hier niet. Je ziet wat een vergelijkbare bestuurder betaalt, zodat je weet welke verzekeraars voor jou het bekijken waard zijn. Je eigen premie bereken je daarna in een paar minuten bij de verzekeraar.</p></details>
+  <details><summary>Hoe komen jullie aan deze premies?</summary><p>Wij rekenen op een vaste datum twaalf voorbeeldprofielen door: vier leeftijdsgroepen in drie soorten woonplaats, steeds met dezelfde auto en hetzelfde aantal kilometers. Per verzekeraar tonen we de goedkoopste polis. De peildatum en het profiel staan onder de lijst.</p></details>
+  <details><summary>Wanneer kan ik overstappen?</summary><p>In het eerste jaar zit je meestal vast aan je contract. Daarna kun je bij de meeste verzekeraars dagelijks opzeggen, met een opzegtermijn van hoogstens een maand. Sluit eerst de nieuwe verzekering af en zeg daarna de oude op, zodat je auto geen dag onverzekerd is.</p></details>
+  <details><summary>Verdienen jullie hieraan?</summary><p>Ja. Sluit je via een knop op deze pagina een verzekering af, dan ontvangen wij een vergoeding van de verzekeraar of van Poliswijzer. Jij betaalt dezelfde premie. De volgorde is altijd op prijs.</p></details>
+  <div class="av-eind"></div>
+ </div></div>
+</div>
+<script type="application/json" id="av-data">{"v":[{"n":"Centraal Beheer","i":"CB","k":"#F58220","c":["Aanschafwaarde 36 maanden","Pechhulp aanvullend"],"direct":false,"u":"https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D107738%26awinaffid%3D1528789%26clickref%3Dauto-pw-centraal-beheer%26ued%3Dhttps%253A%252F%252Fwww.poliswijzer.nl%252Fautoverzekeraars%252Fcentraal-beheer&cat=auto&p=Poliswijzer"},{"n":"Allianz Direct","i":"AD","k":"#003781","c":["Dagelijks opzegbaar","Altijd vervangend vervoer"],"direct":false,"u":"https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D107738%26awinaffid%3D1528789%26clickref%3Dauto-pw-allianz-direct%26ued%3Dhttps%253A%252F%252Fwww.poliswijzer.nl%252Fautoverzekeraars%252Fallianz-direct&cat=auto&p=Poliswijzer"},{"n":"OHRA","i":"OHRA","k":"#E30613","c":["Dagelijks opzegbaar"],"direct":false,"u":"https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D107738%26awinaffid%3D1528789%26clickref%3Dauto-pw-ohra%26ued%3Dhttps%253A%252F%252Fwww.poliswijzer.nl%252Fautoverzekeraars%252Fohra&cat=auto&p=Poliswijzer"},{"n":"FBTO","i":"FBTO","k":"#E4002B","c":["Ruitschade zonder eigen risico","Pechhulp als module"],"direct":true,"u":"https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8354%26awinaffid%3D1528789%26clickref%3Dauto-fbto%26ued%3Dhttps%253A%252F%252Fwww.fbto.nl%252Fautoverzekering&cat=auto&p=FBTO"},{"n":"Inshared","i":"INS","k":"#E6007E","c":[],"direct":false,"u":"https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D107738%26awinaffid%3D1528789%26clickref%3Dauto-pw-inshared%26ued%3Dhttps%253A%252F%252Fwww.poliswijzer.nl%252Fautoverzekeraars%252Finshared&cat=auto&p=Poliswijzer"},{"n":"Univé","i":"UNI","k":"#00A651","c":["Direct opzegbaar","Pechhulp aanvullend"],"direct":false,"u":"https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D107738%26awinaffid%3D1528789%26clickref%3Dauto-pw-unive%26ued%3Dhttps%253A%252F%252Fwww.poliswijzer.nl%252Fautoverzekeraars%252Funive&cat=auto&p=Poliswijzer"},{"n":"Nationale-Nederlanden","i":"NN","k":"#EA650D","c":[],"direct":false,"u":"https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D107738%26awinaffid%3D1528789%26clickref%3Dauto-pw-nationale-nederlanden%26ued%3Dhttps%253A%252F%252Fwww.poliswijzer.nl%252Fautoverzekeraars%252Fnationale-nederlanden&cat=auto&p=Poliswijzer"},{"n":"a.s.r.","i":"asr","k":"#5B2D86","c":["No-claimkorting tot 75%","Pechhulp aanvullend"],"direct":true,"u":"https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8279%26awinaffid%3D1528789%26clickref%3Dauto-asr%26ued%3Dhttps%253A%252F%252Fwww.asr.nl%252Fverzekeringen%252Fautoverzekering&cat=auto&p=a.s.r."},{"n":"ABN AMRO","i":"ABN","k":"#00857A","c":["Aanschafwaarde 36 maanden"],"direct":false,"u":"https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D107738%26awinaffid%3D1528789%26clickref%3Dauto-pw-abn-amro%26ued%3Dhttps%253A%252F%252Fwww.poliswijzer.nl%252Fautoverzekeraars%252Fabn-amro&cat=auto&p=Poliswijzer"}],"p":{"18-23|stad|wa":[[1,140.28,0,"8,7"],[2,149.86,0,"7,6"],[5,153.51,0,"8,0"],[7,162.72,0,"7,6"],[6,163.75,0,"7,5"],[0,176.7,0,"8,0"],[3,195.32,0,"8,0"],[8,229.77,0,"8,0"]],"18-23|stad|bc":[[1,141.28,0,"8,5"],[2,166.8,150,"6,9"],[5,176.32,150,"7,8"],[6,178.03,0,"7,6"],[7,178.98,150,"6,7"],[0,197.22,150,"7,7"],[4,216.63,135,"8,8"],[3,220.23,0,"7,5"]],"18-23|stad|vc":[[2,198.98,150,"7,0"],[1,203.47,0,"8,5"],[7,205.83,150,"6,9"],[6,214.09,0,"7,6"],[5,231.78,150,"7,7"],[0,254.91,150,"7,9"],[3,269.79,0,"7,9"],[4,270.05,135,"8,6"]],"24-34|stad|wa":[[5,48.07,0,"8,0"],[1,55.45,0,"8,7"],[2,57.05,0,"7,6"],[7,63.08,0,"7,6"],[6,64.81,0,"7,5"],[4,68.3,0,"9,0"],[0,71.92,0,"8,0"],[3,72.59,0,"8,0"],[8,77.62,0,"8,0"]],"24-34|stad|bc":[[1,56.46,0,"8,5"],[5,61.59,150,"7,8"],[7,69.38,150,"6,7"],[2,70.52,150,"6,9"],[6,76.63,0,"7,6"],[4,77.98,135,"8,8"],[8,82.3,0,"8,8"],[0,86.47,150,"7,7"]],"24-34|stad|vc":[[5,87.16,150,"7,7"],[2,88.26,150,"7,0"],[7,92.82,150,"6,9"],[1,93.36,0,"8,5"],[6,100.15,0,"7,6"],[4,101.48,135,"8,6"],[8,106.07,0,"8,6"],[0,116.86,150,"7,9"]],"35-59|stad|wa":[[5,31.81,0,"8,0"],[2,38.45,0,"7,6"],[1,38.79,0,"8,7"],[8,45.27,0,"8,0"],[3,46.33,0,"8,0"],[6,46.92,0,"7,5"],[0,47.48,0,"8,0"],[4,48.51,0,"9,0"],[7,48.97,0,"7,6"]],"35-59|stad|bc":[[1,39.8,0,"8,5"],[5,40.8,150,"7,8"],[2,47.64,150,"6,9"],[8,48,0,"8,8"],[4,53.88,135,"8,8"],[6,56.06,0,"7,6"],[0,56.98,150,"7,7"],[3,57.52,0,"7,5"]],"35-59|stad|vc":[[5,58.26,150,"7,7"],[2,61.25,150,"7,0"],[8,63.21,0,"8,6"],[1,69.04,0,"8,5"],[4,69.09,135,"8,6"],[6,69.95,0,"7,6"],[7,70.62,150,"6,9"],[0,81.66,150,"7,9"]],"60+|stad|wa":[[5,27.18,0,"8,0"],[2,31.21,0,"7,6"],[1,31.45,0,"8,7"],[3,31.67,0,"8,0"],[6,31.94,0,"7,5"],[0,34.24,0,"8,0"],[7,35.36,0,"7,6"],[4,39.31,0,"9,0"],[8,39.97,0,"8,0"]],"60+|stad|bc":[[1,32.45,0,"8,5"],[5,34.36,150,"7,8"],[2,37.67,150,"6,9"],[6,37.76,0,"7,6"],[7,38.89,150,"6,7"],[3,38.9,0,"7,5"],[0,40.7,150,"7,7"]],"60+|stad|vc":[[6,51.68,0,"7,6"],[7,52.39,150,"6,9"],[2,53.54,150,"7,0"],[5,54.23,150,"7,7"],[8,57.11,0,"8,6"],[4,57.67,135,"8,6"],[1,58.94,0,"8,5"],[0,63.52,150,"7,9"],[3,63.65,0,"7,9"]],"18-23|middel|bc":[[7,113.74,150,"6,7"],[1,116.84,0,"8,5"],[0,117.21,150,"7,7"],[2,125.72,150,"6,9"],[6,134.46,0,"7,6"],[3,134.56,0,"7,5"],[4,151.5,135,"8,8"]],"18-23|middel|vc":[[2,155.03,150,"7,0"],[1,158.99,0,"8,5"],[7,159.57,150,"6,9"],[0,161.9,150,"7,9"],[6,169.98,0,"7,6"],[3,176.56,0,"7,9"],[4,205.24,135,"8,6"]],"24-34|middel|wa":[[0,41.12,0,"8,0"],[3,42.1,0,"8,0"],[7,42.11,0,"7,6"],[2,42.77,0,"7,6"],[5,43.17,0,"8,0"],[4,45.71,0,"9,0"],[6,48.01,0,"7,5"],[1,49.72,0,"8,7"],[8,80.76,0,"8,0"]],"24-34|middel|bc":[[7,47.52,150,"6,7"],[1,50.72,0,"8,5"],[0,52.42,150,"7,7"],[2,53.39,150,"6,9"],[5,55.55,150,"7,8"],[4,55.84,135,"8,8"],[3,56.24,0,"7,5"]],"24-34|middel|vc":[[2,69.35,150,"7,0"],[7,74.58,150,"6,9"],[0,75.92,150,"7,9"],[4,79.85,135,"8,6"],[5,79.91,150,"7,7"],[3,80.59,0,"7,9"],[6,81.37,0,"7,6"],[1,81.88,0,"8,5"]],"35-59|middel|wa":[[3,26.86,0,"8,0"],[0,27.1,0,"8,0"],[5,28.58,0,"8,0"],[2,28.83,0,"7,6"],[4,32.48,0,"9,0"],[7,32.69,0,"7,6"],[6,34.79,0,"7,5"],[1,34.85,0,"8,7"],[8,47.09,0,"8,0"]],"35-59|middel|bc":[[0,34.35,150,"7,7"],[1,35.85,0,"8,5"],[3,36.02,0,"7,5"],[2,36.2,150,"6,9"],[7,36.8,150,"6,7"],[5,36.86,150,"7,8"],[4,38.15,135,"8,8"]],"35-59|middel|vc":[[2,48.41,150,"7,0"],[0,53.47,150,"7,9"],[5,53.57,150,"7,7"],[4,53.75,135,"8,6"],[6,56.66,0,"7,6"],[3,57.56,0,"7,9"],[1,62.24,0,"8,5"]],"60+|middel|wa":[[3,18.37,0,"8,0"],[0,19.53,0,"8,0"],[2,23.4,0,"7,6"],[7,23.61,0,"7,6"],[6,23.76,0,"7,5"],[5,24.37,0,"8,0"],[1,25.91,0,"8,7"],[4,26.32,0,"9,0"],[8,41.58,0,"8,0"]],"60+|middel|bc":[[3,24.19,0,"7,5"],[0,24.44,150,"7,7"],[7,25.68,150,"6,7"],[1,26.91,0,"8,5"],[2,28.63,150,"6,9"],[6,29.04,0,"7,6"],[4,30.66,135,"8,8"]],"60+|middel|vc":[[7,41.95,150,"6,9"],[0,42.11,150,"7,9"],[6,42.29,0,"7,6"],[2,42.77,150,"7,0"],[3,44.1,0,"7,9"],[4,45.11,135,"8,6"],[1,47.72,0,"8,5"]],"18-23|middel|wa":[[0,100.85,0,"8,0"],[1,101.17,0,"8,7"],[7,108.63,0,"7,6"],[2,112.35,0,"7,6"],[3,113.16,0,"8,0"],[6,120.64,0,"7,5"],[5,138.02,0,"8,0"],[8,239.04,0,"8,0"]],"18-23|dorp|wa":[[1,52.59,0,"8,7"],[0,59.04,0,"8,0"],[3,63.88,0,"8,0"],[5,71.29,0,"8,0"],[6,88.49,0,"7,5"],[2,89.48,0,"7,6"],[7,91.36,0,"7,6"],[8,93,0,"8,0"]],"18-23|dorp|bc":[[1,63.21,0,"8,5"],[0,75.59,150,"7,7"],[5,81.3,150,"7,8"],[3,83.15,0,"7,5"],[4,85.46,135,"8,8"],[8,98.62,0,"8,8"],[6,99.45,0,"7,6"]],"24-34|dorp|wa":[[3,23.76,0,"8,0"],[0,24.07,0,"8,0"],[5,24.22,0,"8,0"],[4,26.11,0,"9,0"],[1,28.27,0,"8,7"],[8,31.42,0,"8,0"],[7,33.06,0,"7,6"],[2,34.06,0,"7,6"],[6,35.45,0,"7,5"]],"24-34|dorp|bc":[[1,30.02,0,"8,5"],[5,30.77,150,"7,8"],[4,31.29,135,"8,8"],[8,33.31,0,"8,8"],[0,34.5,150,"7,7"],[3,35.61,0,"7,5"],[7,39.41,150,"6,7"]],"24-34|dorp|vc":[[4,50.86,135,"8,6"],[5,51.58,150,"7,7"],[2,53.26,150,"7,0"],[0,54.27,150,"7,9"],[8,56.42,0,"8,6"],[3,57.29,0,"7,9"],[1,58.95,0,"8,5"]],"35-59|dorp|wa":[[3,15.17,0,"8,0"],[0,15.88,0,"8,0"],[5,17.44,0,"8,0"],[8,18.32,0,"8,0"],[4,18.55,0,"9,0"],[1,20.69,0,"8,7"],[2,22.97,0,"7,6"],[7,25.66,0,"7,6"],[6,25.7,0,"7,5"]],"35-59|dorp|bc":[[8,19.43,0,"8,8"],[4,21.61,135,"8,8"],[1,21.7,0,"8,5"],[5,22.01,150,"7,8"],[0,22.49,150,"7,7"],[3,22.78,0,"7,5"],[2,27.6,150,"6,9"]],"35-59|dorp|vc":[[8,34.23,0,"8,6"],[4,34.73,135,"8,6"],[5,36.94,150,"7,7"],[2,37.43,150,"7,0"],[0,38.44,150,"7,9"],[3,41.65,0,"7,9"],[1,41.76,0,"8,5"],[6,42.82,0,"7,6"]],"60+|dorp|wa":[[3,10.36,0,"8,0"],[0,11.43,0,"8,0"],[4,15.03,0,"9,0"],[8,16.18,0,"8,0"],[1,16.94,0,"8,7"],[5,17.44,0,"8,0"],[6,17.61,0,"7,5"],[7,18.53,0,"7,6"],[2,18.63,0,"7,6"]],"60+|dorp|bc":[[3,15.16,0,"7,5"],[0,15.8,150,"7,7"],[8,17.15,0,"8,8"],[4,17.41,135,"8,8"],[1,17.94,0,"8,5"],[5,21.02,150,"7,8"],[7,21.44,150,"6,7"],[6,21.74,0,"7,6"]],"60+|dorp|vc":[[4,29.87,135,"8,6"],[0,30.53,150,"7,9"],[8,31.33,0,"8,6"],[7,31.81,150,"6,9"],[6,32.05,0,"7,6"],[3,32.48,0,"7,9"],[2,33.38,150,"7,0"]],"18-23|dorp|vc":[[0,113.39,150,"7,9"],[1,113.51,0,"8,5"],[2,121.15,150,"7,0"],[3,121.75,0,"7,9"],[5,125.19,150,"7,7"],[6,127.34,0,"7,6"],[4,130.53,135,"8,6"]]}}</script>
+<script>
+(function(){
+  var el=document.getElementById('av');if(!el)return;
+  var D=JSON.parse(document.getElementById('av-data').textContent);
+  var K={l:'35-59',r:'middel',d:'bc'};
+  var LN={'18-23':'18 tot 23 jaar','24-34':'24 tot 34 jaar','35-59':'35 tot 59 jaar','60+':'60 jaar en ouder'};
+  var RN={stad:'grote stad',middel:'middelgrote stad',dorp:'dorp of platteland'};
+  var DN={wa:'WA',bc:'WA+',vc:'Allrisk'};
+  var PR={'18-23':['21 jaar',1],'24-34':['28 jaar',5],'35-59':['45 jaar',12],'60+':['67 jaar',20]};
+  var PL={stad:'Rotterdam',middel:'Amersfoort',dorp:'Beetsterzwaag (Friesland)'};
+  function eur(p){return '\u20AC'+p.toFixed(2).replace('.',',');}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  try{var q=new URLSearchParams(location.search);if(LN[q.get('leeftijd')])K.l=q.get('leeftijd');if(RN[q.get('regio')])K.r=q.get('regio');if(DN[q.get('dekking')])K.d=q.get('dekking');}catch(e){}
+  function teken(){
+    var rows=D.p[K.l+'|'+K.r+'|'+K.d]||[];
+    el.querySelectorAll('[data-f]').forEach(function(g){var f=g.getAttribute('data-f');g.querySelectorAll('button').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-w')===K[f]?'true':'false');});});
+    document.getElementById('av-keuze').textContent=DN[K.d]+' \u00B7 '+LN[K.l]+' \u00B7 '+RN[K.r];
+    var pr=PR[K.l];
+    document.getElementById('av-profiel').textContent='Rekenvoorbeeld: Volkswagen Polo uit 2018, '+pr[1]+(pr[1]===1?' schadevrij jaar':' schadevrije jaren')+', 10.000 km per jaar. Peildatum 6 oktober 2026.';
+    document.getElementById('av-voet').textContent='Rekenvoorbeeld: Volkswagen Polo 1.0 uit 2018, 10.000 km per jaar, '+pr[0]+', '+pr[1]+(pr[1]===1?' schadevrij jaar':' schadevrije jaren')+', '+PL[K.r]+'. Premies per maand volgens de vergelijker van Poliswijzer op 6 oktober 2026, goedkoopste polis per verzekeraar. Jouw premie hangt af van je kenteken, postcode en schadevrije jaren en kan hoger of lager zijn. Wij ontvangen een vergoeding als je via ons afsluit; jij betaalt hetzelfde.';
+    if(!rows.length){document.getElementById('av-band').textContent='Geen rekenvoorbeeld';document.getElementById('av-lijst').innerHTML='<div class="av-leeg">Voor deze keuze hebben wij geen rekenvoorbeeld.</div>';document.getElementById('av-aantal').textContent='';return;}
+    document.getElementById('av-band').innerHTML=eur(rows[0][1])+' <u>tot</u> '+eur(rows[rows.length-1][1])+' <u>per maand</u>';
+    document.getElementById('av-aantal').innerHTML='<b>'+rows.length+' verzekeraars</b> voor '+DN[K.d];
+    document.getElementById('av-lijst').innerHTML=rows.map(function(r,x){var v=D.v[r[0]];
+      var ch=['Eigen risico \u20AC'+r[2]].concat(v.c);if(r[3])ch.push('Dekkingsscore '+r[3]);
+      return '<div class="av-rij'+(x===0?' av-top':'')+'">'+(x===0?'<span class="av-lint">Laagste in dit rekenvoorbeeld</span>':'')+
+       '<div class="av-wie"><span class="av-ini" style="background:'+v.k+'">'+esc(v.i)+'</span><div><b>'+esc(v.n)+'</b><span class="av-hoe'+(v.direct?' av-direct':'')+'">'+(v.direct?'rechtstreeks bij '+esc(v.n):'via Poliswijzer')+'</span></div></div>'+
+       '<div class="av-pr"><b>'+eur(r[1])+'</b><span>per maand \u00B7 rekenvoorbeeld</span></div>'+
+       '<ul class="av-ch">'+ch.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul>'+
+       '<a class="av-knop" href="'+esc(v.u)+'" target="_blank" rel="nofollow sponsored noopener">Bekijk '+esc(v.n)+' \u2192</a></div>';}).join('');
+  }
+  el.addEventListener('click',function(e){var b=e.target.closest('button.av-chip');if(!b)return;var f=b.parentNode.getAttribute('data-f');K[f]=b.getAttribute('data-w');teken();});
+  teken();
+})();
+</script>
+{% schema %}
+{"name":"Autoverzekering vergl.","settings":[{"type":"text","id":"kop","label":"Kop","default":"Autoverzekering vergelijken"},{"type":"textarea","id":"intro","label":"Intro","default":"Kies je leeftijd, waar je woont en je dekking. Je ziet per verzekeraar wat een vergelijkbare bestuurder betaalt en wat je ervoor krijgt. Je eigen premie bereken je daarna bij de verzekeraar."}],"presets":[{"name":"Autoverzekering vergl."}]}
+{% endschema %}

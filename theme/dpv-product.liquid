@@ -32,60 +32,62 @@
 
 {%- render 'dpv-bf-knop', api: section.settings.bf_api, tot: section.settings.bf_tot -%}
 <style>
-.dpp{font-family:'Montserrat',system-ui,sans-serif;color:#0D1B2A;background:linear-gradient(180deg,#E3ECFF 0,#F4F7FF 420px,#fff 421px)}
+/* 6 okt, stijl "Prijskaartjes": witte bovenkant, Bricolage voor kop en prijs, kaarten met inktrand,
+   de gele knop met inktrand en verschoven inktvlak. Alleen de opmaak is veranderd. */
+.dpp{font-family:'Instrument Sans',system-ui,sans-serif;color:#0D1B2A;background:#fff}
 .dpp *{box-sizing:border-box}
 .dpp .dpvmb{display:none !important}
 .dpp-top>*{min-width:0}
 .dpp-in{max-width:1120px;margin:0 auto;padding:18px 16px 40px}
-.dpp-kruim{font-size:12.5px;font-weight:600;color:#5B6B80;margin:0 0 14px;display:flex;flex-wrap:wrap;gap:6px}
+.dpp-kruim{font-size:12.5px;font-weight:600;color:#4A5A70;margin:0 0 14px;display:flex;flex-wrap:wrap;gap:6px}
 .dpp-kruim a{color:#2456D6;text-decoration:none}
 .dpp-top{display:grid;gap:18px}
-.dpp-foto{background:#fff;border:1px solid #E6EBF2;border-radius:18px;display:flex;align-items:center;justify-content:center;padding:22px;min-height:240px}
+.dpp-foto{background:#fff;border:1.5px solid #0D1B2A;border-radius:14px;display:flex;align-items:center;justify-content:center;padding:22px;min-height:240px}
 .dpp-foto img{max-width:100%;max-height:300px;object-fit:contain}
-.dpp-merk{font-size:12.5px;font-weight:800;color:#2456D6;letter-spacing:.04em;text-transform:uppercase;margin:0 0 6px}
-.dpp h1{font-size:25px;line-height:1.12;letter-spacing:-.025em;font-weight:800;margin:0 0 10px;color:#0D1B2A}
+.dpp-merk{font-size:12.5px;font-weight:700;color:#4A5A70;letter-spacing:.04em;text-transform:uppercase;margin:0 0 6px}
+.dpp h1{font-family:'Bricolage Grotesque','Instrument Sans',system-ui,sans-serif;font-size:27px;line-height:1.08;letter-spacing:-.04em;font-weight:800;margin:0 0 10px;color:#0D1B2A}
 .dpp-van{font-size:14px;font-weight:600;color:#4A5A70;margin:0 0 14px}
-.dpp-van b{font-size:30px;font-weight:800;color:#0D1B2A;letter-spacing:-.02em;font-variant-numeric:tabular-nums;margin-right:6px}
-.dpp-kaart{background:#fff;border:1px solid #E6EBF2;border-radius:18px;padding:14px;box-shadow:8px 8px 0 #3FAE7A}
-.dpp-kaart h2{font-size:15px;font-weight:800;margin:0 0 10px}
-.dpp-rij{display:flex;align-items:center;gap:10px;border:1px solid #E6EBF2;border-radius:12px;padding:10px 12px;margin-top:8px}
-.dpp-rij.beste{border-color:#2456D6;background:#F3F7FF}
-.dpp-rij-n{flex:1;min-width:0;font-size:14.5px;font-weight:800}
-.dpp-rij-n small{display:block;font-size:12px;font-weight:600;color:#5B6B80;margin-top:2px}
-.dpp-lab{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.05em;background:#E3F4EB;color:#1F8F5F;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
-.dpp-rij-p{font-size:17px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
-.dpp-rij-p s{display:block;font-size:12px;font-weight:600;color:#5B6B80;text-align:right}
-.dpp a.dpp-knop{background:#F9C31F;color:#0D1B2A;font-size:14px;font-weight:800;text-decoration:none;border-radius:10px;padding:11px 14px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center}
-.dpp a.dpp-knop:hover{background:#EDB50C}
-.dpp-volg{margin-top:12px;border-top:1px solid #E6EBF2;padding-top:12px}.dpp-volg>b{display:block;font-size:14px;font-weight:800;margin-bottom:8px}
+.dpp-van b{font-family:'Bricolage Grotesque','Instrument Sans',system-ui,sans-serif;font-size:34px;font-weight:800;color:#0D1B2A;letter-spacing:-.04em;font-variant-numeric:tabular-nums;margin-right:6px}
+.dpp-kaart{background:#fff;border:1.5px solid #0D1B2A;border-radius:14px;padding:14px;box-shadow:8px 8px 0 #3FAE7A}
+.dpp-kaart h2{font-family:'Bricolage Grotesque','Instrument Sans',system-ui,sans-serif;font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0 0 10px}
+.dpp-rij{display:flex;align-items:center;gap:10px;border:1px solid #E3E8F0;border-radius:10px;padding:10px 12px;margin-top:8px}
+.dpp-rij.beste{border:1.5px solid #0D1B2A;background:#fff}
+.dpp-rij-n{flex:1;min-width:0;font-size:14.5px;font-weight:700}
+.dpp-rij-n small{display:block;font-size:12px;font-weight:600;color:#4A5A70;margin-top:2px}
+.dpp-lab{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.05em;background:#3FAE7A;color:#0D1B2A;border-radius:999px;padding:2px 8px;margin-left:6px;vertical-align:middle}
+.dpp-rij-p{font-family:'Bricolage Grotesque','Instrument Sans',system-ui,sans-serif;font-size:19px;letter-spacing:-.03em;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}
+.dpp-rij-p s{display:block;font-family:'Instrument Sans',system-ui,sans-serif;letter-spacing:0;font-size:12px;font-weight:600;color:#4A5A70;text-align:right}
+.dpp a.dpp-knop{background:#F9C31F;color:#0D1B2A;font-size:14px;font-weight:700;text-decoration:none;border:1.5px solid #0D1B2A;border-radius:10px;box-shadow:3px 3px 0 #0D1B2A;padding:11px 14px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center;transition:transform .12s ease,box-shadow .12s ease}
+.dpp a.dpp-knop:hover{background:#EDB50C;transform:translate(2px,2px);box-shadow:0 0 0 #0D1B2A}
+.dpp-volg{margin-top:12px;border-top:1px solid #E3E8F0;padding-top:12px}.dpp-volg>b{display:block;font-size:14px;font-weight:700;margin-bottom:8px}
 .dpp-volg .dpvbf-mail{display:none !important}
-.dpp-var{margin:0 0 12px}.dpp-var>span{display:block;font-size:12.5px;font-weight:700;color:#5B6B80;margin-bottom:6px}
-.dpp-var a{display:inline-block;font-size:13px;font-weight:700;color:#0D1B2A;text-decoration:none;background:#fff;border:1px solid #D9E1EC;border-radius:999px;padding:7px 12px;margin:0 6px 6px 0}
-.dpp-var a:hover{border-color:#2456D6;color:#2456D6}
-.dpp-peil{font-size:12px;font-weight:600;color:#5B6B80;margin:10px 0 0}
-.dpp-blok{background:#fff;border:1px solid #E6EBF2;border-radius:16px;padding:16px;margin-top:18px}
-.dpp-blok h2{font-size:19px;font-weight:800;letter-spacing:-.02em;margin:0 0 10px}
+.dpp-var{margin:0 0 12px}.dpp-var>span{display:block;font-size:12.5px;font-weight:700;color:#4A5A70;margin-bottom:6px}
+.dpp-var a{display:inline-block;font-size:13px;font-weight:700;color:#0D1B2A;text-decoration:none;background:#fff;border:1.5px solid #0D1B2A;border-radius:999px;padding:7px 12px;margin:0 6px 6px 0}
+.dpp-var a:hover{background:#0D1B2A;color:#fff}
+.dpp-peil{font-size:12px;font-weight:600;color:#4A5A70;margin:10px 0 0}
+.dpp-blok{background:#fff;border:1.5px solid #0D1B2A;border-radius:14px;padding:16px;margin-top:18px}
+.dpp-blok h2{font-family:'Bricolage Grotesque','Instrument Sans',system-ui,sans-serif;font-size:21px;font-weight:800;letter-spacing:-.03em;margin:0 0 10px}
 .dpp-blok p{font-size:14.5px;line-height:1.6;color:#0D1B2A;margin:0 0 8px}
 .dpp-blok p:last-child{margin:0}
 .dpp-ja{color:#1F8F5F;font-weight:800}.dpp-nee{color:#B42318;font-weight:800}
-.dpp-graf svg{display:block;width:100%;height:120px;background:#F4F7FF;border-radius:12px}
-.dpp-graf-vt{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#5B6B80;margin-top:6px}
+.dpp-graf svg{display:block;width:100%;height:120px;background:#F1F3F8;border-radius:10px}
+.dpp-graf-vt{display:flex;justify-content:space-between;font-size:12px;font-weight:600;color:#4A5A70;margin-top:6px}
 .dpp-score{font-size:13px;font-weight:700;color:#4A5A70;margin:0 0 10px}.dpp-score span{color:#F9C31F}.dpp-score a{color:#2456D6;text-decoration:none}
-.dpp-sg{border-top:1px solid #E6EBF2}.dpp-sg:first-of-type{border-top:0}
-.dpp-sg summary{cursor:pointer;font-size:15px;font-weight:800;padding:13px 0;list-style:none;display:flex;justify-content:space-between;align-items:center}
-.dpp-sg summary::-webkit-details-marker{display:none}.dpp-sg summary:after{content:'+';font-size:20px;font-weight:600;color:#2456D6}.dpp-sg[open] summary:after{content:'\2212'}
+.dpp-sg{border-top:1px solid #E3E8F0}.dpp-sg:first-of-type{border-top:0}
+.dpp-sg summary{cursor:pointer;font-size:15px;font-weight:700;padding:13px 0;list-style:none;display:flex;justify-content:space-between;align-items:center}
+.dpp-sg summary::-webkit-details-marker{display:none}.dpp-sg summary:after{content:'+';font-size:20px;font-weight:600;color:#0D1B2A}.dpp-sg[open] summary:after{content:'\2212'}
 .dpp-sg .dpp-specs{margin-bottom:10px}
-.dpp-bron{font-size:12.5px !important;color:#5B6B80 !important;margin-top:10px !important}
+.dpp-bron{font-size:12.5px !important;color:#4A5A70 !important;margin-top:10px !important}
 .dpp-specs{width:100%;border-collapse:collapse;font-size:14px}
 .dpp-specs th{text-align:left;font-weight:600;color:#4A5A70;padding:9px 10px 9px 0;width:44%;vertical-align:top}
 .dpp-specs td{font-weight:700;padding:9px 0}
-.dpp-specs tr+tr th,.dpp-specs tr+tr td{border-top:1px solid #E6EBF2}
+.dpp-specs tr+tr th,.dpp-specs tr+tr td{border-top:1px solid #E3E8F0}
 .dpp-meer{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
-.dpp-meer a{display:block;background:#fff;border:1px solid #E6EBF2;border-radius:14px;padding:10px;text-decoration:none;color:#0D1B2A}
+.dpp-meer a{display:block;background:#fff;border:1.5px solid #0D1B2A;border-radius:14px;padding:10px;text-decoration:none;color:#0D1B2A}
 .dpp-meer img{display:block;width:100%;height:90px;object-fit:contain;margin-bottom:8px}
 .dpp-meer b{display:block;font-size:13px;font-weight:700;line-height:1.3;max-height:3.9em;overflow:hidden}
-.dpp-meer span{display:block;font-size:14px;font-weight:800;margin-top:4px}
-.dpp-link{display:inline-block;margin-top:12px;font-size:14px;font-weight:800;color:#2456D6;text-decoration:none}
+.dpp-meer span{display:block;font-family:'Bricolage Grotesque','Instrument Sans',system-ui,sans-serif;font-size:16px;letter-spacing:-.03em;font-weight:800;margin-top:4px}
+.dpp-link{display:inline-block;margin-top:12px;font-size:14px;font-weight:600;color:#2456D6;text-decoration:none}
 @media(min-width:800px){
   .dpp-in{padding:26px 24px 56px}
   .dpp-top{grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:28px;align-items:start}
@@ -171,7 +173,7 @@
       {%- if m.tekst.value != blank -%}{{ m.tekst.value | escape | newline_to_br | prepend: '<p>' | append: '</p>' }}{%- endif -%}
       <p>Wij zetten de prijs van {{ naam | escape }} bij {% if m.winkels.value > 1 %}{{ m.winkels.value }} winkels{% else %}de winkel{% endif %} naast elkaar en meten die elke nacht opnieuw. Kijk bij het vergelijken ook naar verzendkosten en levertijd: die staan bij elke winkel vermeld zodra de actuele prijzen geladen zijn.</p>
       <p>Via de knoppen ga je naar de winkel. Koop je daar iets, dan krijgen wij soms een vergoeding. Dat verandert de prijs niet en ook niet de volgorde: de laagste prijs staat altijd bovenaan.</p>
-      {%- if m.ean.value != blank -%}<p style="font-size:12.5px;color:#5B6B80">EAN {{ m.ean.value | escape }}</p>{%- endif -%}
+      {%- if m.ean.value != blank -%}<p style="font-size:12.5px;color:#4A5A70">EAN {{ m.ean.value | escape }}</p>{%- endif -%}
     </div>
 
     <div class="dpp-blok" id="dpp-meer-blok" hidden>
@@ -229,7 +231,7 @@
     });
     var nu = reeks[reeks.length - 1];
     return '<div class="dpp-graf"><svg viewBox="0 0 100 ' + H + '" preserveAspectRatio="none" aria-hidden="true">' +
-      '<path d="' + d + '" fill="none" stroke="#2456D6" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>' +
+      '<path d="' + d + '" fill="none" stroke="#0D1B2A" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>' +
       '<div class="dpp-graf-vt"><span>sinds ' + dag(reeks[0].dag) + ' · hoogste ' + eur(Math.max.apply(null, ps)) + '</span><span>nu ' + eur(nu.prijs) + '</span></div></div>';
   }
 

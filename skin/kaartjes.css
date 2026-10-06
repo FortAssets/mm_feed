@@ -1,0 +1,47 @@
+
+/* ===== kaartjes.css: vormen en herstellingen die bij het nalopen van de pagina's nodig bleken (6 okt) =====
+   Twee keer :not() zodat deze regels winnen van de gegenereerde regels hierboven. */
+
+/* --- Tekstlinks in lopende tekst blijven blauw (het enige blauw dat de stijlgids toelaat) --- */
+html:not(#x):not(#y) :is(.rte,.article-template__content,.pv-seo-content,.den-uitleg,.main-page) :is(p,li,td) a:not([class]){color:#2456D6 !important}
+
+/* --- De hoofdkaart van een pagina: inktrand en het verschoven groene vlak (een per scherm) --- */
+/* sim only, telefoon, internet: de beste aanbieding bovenaan */
+html:not(#x):not(#y) .dpv-winner{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:8px 8px 0 #3FAE7A !important}
+/* zorgverzekering: de polis met de laagste premie */
+html:not(#x):not(#y) .zc-kaart.zc-eerste{border:1.5px solid #0D1B2A !important;background:#fff !important;box-shadow:8px 8px 0 #3FAE7A !important}
+/* boodschappen: het zoek- en filterblok is de vergelijker */
+html:not(#x):not(#y) .bv-bar{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:8px 8px 0 #3FAE7A !important}
+/* contact: het formulier */
+html:not(#x):not(#y) .pvc-kaart:has(form){box-shadow:8px 8px 0 #3FAE7A !important}
+@media(min-width:800px){html:not(#x):not(#y) .dpv-winner,html:not(#x):not(#y) .bv-bar,html:not(#x):not(#y) .pvc-kaart:has(form){box-shadow:10px 10px 0 #3FAE7A !important}}
+
+/* --- Vergelijker (sim only, telefoon, internet): de kaarten hadden een rand en een lijn van schaduw tegelijk --- */
+html:not(#x):not(#y) .pvx-card,html:not(#x):not(#y) .pvx-card:hover{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:none !important}
+
+/* --- "Zoek in gewone taal" (boven de vergelijkers en in het zwevende venster) --- */
+html:not(#x):not(#y) .dpvai-blok{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) .dpvai-veld{border:1.5px solid #0D1B2A !important;border-radius:10px !important}
+html:not(#x):not(#y) .dpvai-chip{background:#fff !important;border:1.5px solid #0D1B2A !important;color:#0D1B2A !important}
+html:not(#x):not(#y) .dpvai-chip:hover{background:#F1F3F8 !important}
+html:not(#x):not(#y) #dpvai-paneel{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+
+/* --- Aanmeldblok "Mis geen scherp abonnement" --- */
+html:not(#x):not(#y) .dpvc-box{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) .dpvc-form input{border:1.5px solid #0D1B2A !important;border-radius:10px !important}
+
+/* --- Artikelen: blokken met aanbiedingen in de tekst --- */
+html:not(#x):not(#y) .pvblog-grid>div,html:not(#x):not(#y) .rte .dpv-inline{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+/* Het blok "de laagste prijzen van vanochtend" onder een artikel stond op een donker vlak, omdat de klasse .dab
+   elders een groene knop is. Hier is het de sectie: geen eigen vlak, de inhoud op lichtgrijs met inktrand. */
+html:not(#x):not(#y) section.dab{background:none !important;color:#0D1B2A !important;display:block !important;border-radius:0 !important;padding:0 16px !important}
+html:not(#x):not(#y) .dab-in{background:#F1F3F8 !important;border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) .dab-eerste{border-color:#0D1B2A !important;box-shadow:none !important}
+html:not(#x):not(#y) .dab-vlag{background:#3FAE7A !important;color:#0D1B2A !important}
+
+/* --- Gele doorklikknoppen die lager waren dan 44 px --- */
+html:not(#x):not(#y) .ds-kaartknop a.dpv-geel{min-height:44px !important}
+html:not(#x):not(#y) a.bv-knop{display:flex !important;align-items:center;justify-content:center;min-height:44px !important;white-space:normal !important;line-height:1.2 !important}
+
+/* --- Zakelijk-blok (rood van Vodafone blijft): de rode gloed eronder is een schaduw en gaat weg --- */
+html:not(#x):not(#y) .pvzb-in{box-shadow:none !important}

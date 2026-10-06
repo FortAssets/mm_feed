@@ -1,0 +1,28 @@
+/* ===== Huisstijllaag "Prijskaartjes", het handgeschreven deel =====
+   6 okt. Volgorde van dit bestand (bouw.sh): dit deel, dan de omgezette kleuren en letters per bestaande regel
+   (skin.cjs en kaart.cjs), dan de vormen uit kaart.cjs, dan kaartjes.css met wat bij het nalopen nodig bleek.
+   De homepage (.dhd) heeft haar eigen opmaak en wordt door de algemene regels hier overgeslagen. */
+:root:not(#x){--font-body-family:'Instrument Sans',system-ui,sans-serif;--font-heading-family:'Bricolage Grotesque','Instrument Sans',sans-serif;
+  --dpv-inkt:#0D1B2A;--dpv-zacht:#4A5A70;--dpv-blauw:#2456D6;--dpv-geel:#F9C31F;--dpv-groen:#3FAE7A;--dpv-grijs:#F1F3F8;--dpv-lijn:#E3E8F0;--dpv-tint:#F1F3F8;--dpv-tint2:#FFFFFF}
+html:not(#x) body{font-family:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
+html:not(#x) body :is(h4,h5,h6,button,input,select,textarea){font-family:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif}
+html:not(#x):not(#y) body :is(h1,h2,h3):not(.dhd *){font-family:'Bricolage Grotesque','Instrument Sans',system-ui,sans-serif !important;font-weight:800 !important;letter-spacing:-.04em}
+html:not(#x):not(#y) body h3:not(.dhd *){letter-spacing:-.02em}
+/* Het woordmerk is het logo en houdt zijn eigen letter. */
+html:not(#x) .pvnav-woord,html:not(#x) .pvf-logo{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif !important}
+
+/* Geel is er alleen voor de doorklik naar een aanbieder of winkel: geel vlak, inktrand, verschoven inktvlak.
+   Het script in dpv-skin.liquid zet deze klasse op elke gekleurde knop waarvan de link naar een aanbieder gaat. */
+html:not(#x):not(#y) a.dpv-geel:not(.dhd *),html:not(#x):not(#y) a.dpv-geel:not(.dhd *):visited{background:#F9C31F !important;background-image:none !important;
+  color:#0D1B2A !important;border:1.5px solid #0D1B2A !important;border-radius:10px !important;box-shadow:3px 3px 0 #0D1B2A !important;-webkit-text-fill-color:#0D1B2A !important;
+  font-family:'Instrument Sans',system-ui,sans-serif !important;transition:transform .12s ease,box-shadow .12s ease,background .12s ease !important}
+html:not(#x):not(#y) a.dpv-geel:not(.dhd *) *{color:#0D1B2A !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x):not(#y) a.dpv-geel:not(.dhd *) svg{stroke:currentColor}
+html:not(#x):not(#y) a.dpv-geel:not(.dhd *):hover{background:#EDB50C !important;transform:translate(2px,2px) !important;box-shadow:0 0 0 #0D1B2A !important}
+/* de homepage hield de oude regel voor a.dpv-geel; die blijft daar precies zo gelden */
+html:not(#x):not(#y) .dhd a.dpv-geel,html:not(#x):not(#y) .dhd a.dpv-geel:visited{background:#F9C31F !important;background-image:none !important;color:#0D1B2A !important;border-color:#F9C31F !important;box-shadow:none !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x):not(#y) .dhd a.dpv-geel *{color:#0D1B2A !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x):not(#y) .dhd a.dpv-geel svg{stroke:currentColor}
+html:not(#x):not(#y) .dhd a.dpv-geel:hover{background:#EDB50C !important;border-color:#EDB50C !important}
+html:not(#x) :focus-visible{outline-color:#2456D6}
+html:not(#x) ::selection{background:#FFF0B3;color:#0D1B2A}

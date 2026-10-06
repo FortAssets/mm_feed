@@ -4,8 +4,8 @@
 const fs = require('fs'), postcss = require('postcss');
 const B = JSON.parse(fs.readFileSync('bladen.json', 'utf8'));
 const INKT = '#0D1B2A', BLAUW = '#2456D6', BLAUW_D = '#1B45B4', GEEL = '#F9C31F', GROEN = '#3FAE7A';
-const OVERSLAAN_BLAD = /shopifycloud|emrldtp|pagefly|fonts\.googleapis|accelerated-checkout|shopify_pay|portable-wallets/;
-const OVERSLAAN_SEL = /\.dhk|\.dhr|\.dsr|#dsr-|\.dwa|\.dpvbf|Avada|\.pf-|__pf|shopify-payment|\.pvnav-woord|\.pvnav-merk|\.pvf-logo|\.pvz2-|#shopify-pc|\.shopify-pc|gravity|\.dpv-skin/;
+const OVERSLAAN_BLAD = /dpv-skin\.css|shopifycloud|emrldtp|pagefly|fonts\.googleapis|accelerated-checkout|shopify_pay|portable-wallets/;
+const OVERSLAAN_SEL = /\.dhk|\.dhr|\.dsr|#dsr-|\.dwa|\.dpvbf|Avada|\.pf-|__pf|shopify-payment|\.pvnav-woord|\.pvnav-merk|\.pvf-logo|\.pvz2-|#shopify-pc|\.shopify-pc|gravity|\.dpv-skin|\.dhd|\.dpp\b|#dpp|:not\(#x\)/;
 const MERK_VAST = /\.pvz2-/; // Vodafone-rood blijft
 const FONT = "'Montserrat',system-ui,-apple-system,'Segoe UI',sans-serif";
 

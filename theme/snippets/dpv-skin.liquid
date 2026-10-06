@@ -1,28 +1,31 @@
 {%- comment -%}
-  Huisstijl "2-rond" voor de hele site.
+  Huisstijl "Prijskaartjes" voor de hele site (6 okt; daarvoor "2-rond").
 
-  5 okt. De site bestaat uit ruim honderd secties die elk hun eigen opmaak
+  De site bestaat uit ruim honderd secties die elk hun eigen opmaak
   meebrengen. In plaats van die allemaal te herschrijven ligt hier een laag
-  overheen: assets/dpv-skin.css zet per bestaande regel de kleur en de letter
-  om naar de nieuwe huisstijl. Dat bestand wordt gemaakt door skin/skin.cjs in
-  de repo, uit de opmaak die de pagina's echt gebruiken.
+  overheen: assets/dpv-skin.css zet per bestaande regel de kleur, de letter en
+  de vorm om naar de huisstijl (inkt, wit en lichtgrijs, Bricolage Grotesque
+  voor koppen en prijzen, Instrument Sans voor de rest, kaarten met inktrand).
+  Dat bestand wordt gemaakt door skin/bouw.sh in de repo (skin.cjs, kaart.cjs
+  en de handgeschreven delen hand-k.css en kaartjes.css), uit de opmaak die de
+  pagina's echt gebruiken.
 
-  De secties die al in de nieuwe stijl zijn gebouwd (de kiezer, de tegels, de
-  productrijen, "zo werkt het") slaat die laag over.
+  De homepage (dpv-home-kaartjes) en de secties met eigen opmaak in deze stijl
+  (productrijen, productpagina, het seintje) slaat die laag over.
 
   Het script zet de gele kleur op knoppen die naar een aanbieder of winkel
   gaan. Geel is in deze huisstijl alleen voor die doorklik; alle andere
-  knoppen zijn blauw. Welke knop naar een aanbieder gaat staat niet in de
-  opmaak maar in de link, daarom doet een script dit.
+  knoppen zijn inkt of wit met inktrand. Welke knop naar een aanbieder gaat
+  staat niet in de opmaak maar in de link, daarom doet een script dit.
 {%- endcomment -%}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 {{ 'dpv-skin.css' | asset_url | stylesheet_tag }}
 <script>
 (function () {
   // De kleur van de browserbalk op een telefoon staat in layout/theme.liquid; die volgt hier de nieuwe huisstijl.
-  try { var tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', '#E3ECFF'); } catch (e) {}
+  try { var tc = document.querySelector('meta[name="theme-color"]'); if (tc) tc.setAttribute('content', '#FFFFFF'); } catch (e) {}
   var UIT = /\/api\/go\b|\/go\/deal|\/api\/shop\/go|\/sm\/go|awin1\.com|tradedoubler\.com|partner\.bol\.com|lt45\.net|daisycon|tradetracker|prf\.hn|tp\.media|tp\.st|emrldtp/i;
   function tint(kleur) {
     var m = (kleur || '').match(/[\d.]+/g);
@@ -108,7 +111,6 @@
   Staat hier en niet in dpv-skin.css, omdat dat bestand door skin.cjs wordt
   gemaakt en dit blok daarna moet winnen (vandaar :not(#y)).
 {%- endcomment -%}
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 html:not(#x):not(#y) .pvnav{background:#fff !important;border-bottom:1.5px solid #0D1B2A !important;font-family:'Instrument Sans',system-ui,sans-serif !important}
 html:not(#x):not(#y) .pvnav-woord{background:none !important;-webkit-text-fill-color:#0D1B2A !important;color:#0D1B2A !important;letter-spacing:-.03em}

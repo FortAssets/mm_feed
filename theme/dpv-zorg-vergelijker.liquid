@@ -367,7 +367,7 @@
       <p class="zc-lead">Je hoeft je oude verzekering niet zelf op te zeggen.</p>
       <div class="zc-drie">
         <div class="zc-stap"><span class="zc-nr">1</span><b>Vergelijk en kies</b><p>Bekijk de premies hierboven en kies een polis. Let op het soort polis en het eigen risico.</p></div>
-        <div class="zc-stap"><span class="zc-nr">2</span><b>Sluit af v&oacute;&oacute;r 1 januari</b><p>Je sluit af bij de verzekeraar zelf of via Zorgkiezer. Dat duurt een paar minuten.</p></div>
+        <div class="zc-stap"><span class="zc-nr">2</span><b>Sluit af v&oacute;&oacute;r 1 januari</b><p>Je sluit af bij de verzekeraar zelf, of via Zorgkiezer of Poliswijzer. Dat duurt een paar minuten.</p></div>
         <div class="zc-stap"><span class="zc-nr">3</span><b>Jij hoeft niets op te zeggen</b><p>Je nieuwe verzekeraar zegt je oude verzekering voor je op. Zo ben je nooit onverzekerd.</p></div>
       </div>
     </div>
@@ -505,7 +505,7 @@
     return '<span class="zc-ini" aria-hidden="true">' + esc(merk(p).slice(0, 3).toUpperCase()) + '</span>';
   }
   function via(p) {
-    return p.partner === 'Zorgkiezer' ? 'via Zorgkiezer' : 'rechtstreeks bij ' + esc(p.partner);
+    return (p.partner === 'Zorgkiezer' || p.partner === 'Poliswijzer') ? 'via ' + p.partner : 'rechtstreeks bij ' + esc(p.partner);
   }
 
   var telling = {};
@@ -982,7 +982,7 @@
     { "type": "text", "id": "v6", "label": "Vraag 6", "default": "Wat is het verplicht eigen risico in 2027?" },
     { "type": "richtext", "id": "a6", "label": "Antwoord 6", "default": "<p>In 2026 is het verplicht eigen risico €385. In 2027 wordt het €400, en dat staat vast. Dat bedrag volgt een wettelijke indexatie met de geraamde zorguitgaven; daar stemt de Kamer niet apart over. De eerder aangekondigde sprong naar €455 was wel een politieke keuze, en die is uitgesteld naar 2028. Je kunt je eigen risico vrijwillig met maximaal €500 verhogen; dan betaal je minder premie, maar meer als je zorg nodig hebt. Huisarts, verloskundige zorg en zorg voor kinderen tellen niet mee. <a href=\"/blogs/advies/eigen-risico-2027-400-euro\">Meer over het eigen risico in 2027</a>.</p>" },
     { "type": "text", "id": "v7", "label": "Vraag 7", "default": "Verdienen jullie aan mijn keuze?" },
-    { "type": "richtext", "id": "a7", "label": "Antwoord 7", "default": "<p>Klik je door en sluit je een verzekering af, dan krijgen wij een vergoeding van de verzekeraar of van Zorgkiezer. Jij betaalt daardoor niets meer. De volgorde op deze pagina is altijd de prijs, van laag naar hoog.</p>" },
+    { "type": "richtext", "id": "a7", "label": "Antwoord 7", "default": "<p>Klik je door en sluit je een verzekering af, dan krijgen wij een vergoeding van de verzekeraar, van Zorgkiezer of van Poliswijzer. Jij betaalt daardoor niets meer. De volgorde op deze pagina is altijd de prijs, van laag naar hoog.</p>" },
     { "type": "text", "id": "v8", "label": "Vraag 8" },
     { "type": "richtext", "id": "a8", "label": "Antwoord 8" }
   ],

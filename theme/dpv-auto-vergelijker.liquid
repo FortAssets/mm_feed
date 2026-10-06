@@ -103,7 +103,7 @@
     document.getElementById('av-aantal').innerHTML='<b>'+rows.length+' verzekeraars</b> voor '+DN[K.d];
     document.getElementById('av-lijst').innerHTML=rows.map(function(r,x){var v=D.v[r[0]];
       var ch=['Eigen risico \u20AC'+r[2]].concat(v.c);if(r[3])ch.push('Dekkingsscore '+r[3]);
-      return '<div class="av-rij'+(x===0?' av-top':'')+'">'+(x===0?'<span class="av-lint">Laagste in dit rekenvoorbeeld</span>':'')+
+      return '<div data-dpv-mail class="av-rij'+(x===0?' av-top':'')+'">'+(x===0?'<span class="av-lint">Laagste in dit rekenvoorbeeld</span>':'')+
        '<div class="av-wie"><span class="av-ini" style="background:'+v.k+'">'+esc(v.i)+'</span><div><b>'+esc(v.n)+'</b><span class="av-hoe'+(v.direct?' av-direct':'')+'">'+(v.direct?'rechtstreeks bij '+esc(v.n):'via Poliswijzer')+'</span></div></div>'+
        '<div class="av-pr"><b>'+eur(r[1])+'</b><span>per maand \u00B7 rekenvoorbeeld</span></div>'+
        '<ul class="av-ch">'+ch.map(function(c){return '<li>'+esc(c)+'</li>';}).join('')+'</ul>'+

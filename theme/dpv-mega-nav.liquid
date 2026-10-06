@@ -356,7 +356,27 @@
       </div>
     </div>
 
-    <div class="dmn-i plat"><a href="{{ p }}dagelijkse-deals">Dagdeals</a></div>
+    {%- comment -%} 6 okt: Dagdeals (door dpv-menu-swap omgezet naar Zorgverzekering) is vervangen door een uitklapmenu Verzekeringen met zorg en auto. {%- endcomment -%}
+    <div class="dmn-i">
+      <a href="{{ p }}zorgverzekering">Verzekeringen <svg class="ch" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></a>
+      <div class="dmn-p">
+        <div>
+          <h5>Vergelijken</h5>
+          <a class="r" href="{{ p }}zorgverzekering">Zorgverzekering<small>basisverzekeringen naast elkaar</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}autoverzekering">Autoverzekering<small>WA, WA+ en allrisk</small><span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Zorg 2027</h5>
+          <a class="r" href="{{ p }}zorgverzekering">Seintje bij de nieuwe premies<small>uiterlijk 12 november bekend</small><span class="pl">&rsaquo;</span></a>
+        </div>
+        <div class="dmn-pro" style="grid-column:4">
+          <div class="lb">Direct vergelijken</div>
+          <b>Autoverzekering</b>
+          <span class="sp">Kies je leeftijd en woonplaats en zie wat verzekeraars vragen.</span>
+          <a class="kn" href="{{ p }}autoverzekering">Bekijk de lijst &rarr;</a>
+        </div>
+      </div>
+    </div>
     <div class="dmn-i plat"><a href="{{ p }}gaming">Gaming</a></div>
     <div class="dmn-i plat"><a href="{{ p }}vergelijken">Producten</a></div>
 

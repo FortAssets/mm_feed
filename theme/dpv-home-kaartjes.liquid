@@ -344,7 +344,7 @@ html:not(#x) .dhd .tabs{position:relative;display:flex;flex-wrap:wrap;gap:8px;ma
 html:not(#x) .dhd .tabs .tab{display:inline-flex;align-items:center;flex:none;min-height:44px;padding:0 16px;border-radius:999px;border:var(--rand);background:var(--wit);color:var(--inkt);font-weight:600;font-size:14px;line-height:1;white-space:nowrap;cursor:pointer}
 html:not(#x) .dhd .tabs .tab:hover{background:#EEF1F7}
 html:not(#x) .dhd .tabs .tab.aan{background:var(--inkt);color:#fff}
-html:not(#x) .dhd .subs{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;min-height:38px;transition:opacity .15s}
+html:not(#x) .dhd .subs{position:relative;display:flex;flex-wrap:wrap;gap:6px;margin-top:12px;min-height:38px;transition:opacity .15s}
 html:not(#x):not(#y) body .dhd .subs .sk{flex:none;min-height:38px;padding:0 13px;border-radius:999px;border:var(--rand);background:var(--wit);color:var(--inkt);font-family:var(--body);font-size:13px;font-weight:500;line-height:1;letter-spacing:0;text-transform:none;white-space:nowrap;cursor:pointer;box-shadow:none}
 html:not(#x):not(#y) body .dhd .subs .sk:hover{background:#F1F3F8}
 html:not(#x):not(#y) body .dhd .subs .sk.aan{background:#F1F3F8;font-weight:700}
@@ -365,6 +365,7 @@ html:not(#x) .dhd .mini .extra{font-size:13px;color:var(--zacht);margin-top:2px}
 html:not(#x) .dhd .mini .knop{white-space:normal;text-align:center;line-height:1.2;padding-top:6px;padding-bottom:6px;max-width:100%}
 html:not(#x) .dhd .groot .knop{max-width:100%}
 html:not(#x) .dhd .c-voet{position:relative;z-index:1;margin:30px 10px 0 4px}
+@media (min-width:901px){html:not(#x) .dhd .minis{margin-top:-6px}}
 html:not(#x) .dhd .regel{font-size:13px;line-height:1.5;color:var(--zacht)}
 html:not(#x) .dhd .regel b{color:var(--inkt);font-weight:700}
 html:not(#x) .dhd .alle-l{display:inline-flex;align-items:center;min-height:44px;margin-top:12px;padding:0 16px;border:var(--rand);border-radius:10px;background:var(--wit);font-size:15px;font-weight:600;color:var(--inkt)}
@@ -384,13 +385,13 @@ html:not(#x) .dhd .pk{display:grid;grid-template-columns:84px minmax(0,1fr);gap:
 html:not(#x) .dhd .pk+.pk{border-top:var(--rand)}
 html:not(#x) .dhd .pk-foto{grid-row:1 / span 2;width:84px;height:84px;border-radius:10px;background:#F1F3F8;display:flex;align-items:center;justify-content:center;overflow:hidden}
 html:not(#x) .dhd .pk-foto img{max-width:68px;max-height:68px;width:auto;object-fit:contain;mix-blend-mode:multiply}
-html:not(#x) .dhd .pk h3{font-size:16px;line-height:1.25;letter-spacing:-0.02em}
+html:not(#x) .dhd .pk h3{font-size:16px;line-height:1.25;letter-spacing:-0.01em}
 html:not(#x) .dhd .pk h3 small{display:block;font-family:var(--body);font-weight:500;font-size:13px;letter-spacing:0;color:var(--zacht);margin-top:2px}
 html:not(#x) .dhd .pk-w{grid-column:2;display:grid;gap:8px;min-width:0}
 html:not(#x) .dhd .pw{display:flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:var(--rand);border-radius:10px;background:var(--wit);font-size:14px;font-weight:600;color:var(--inkt);min-width:0}
 html:not(#x) .dhd a.pw:not(.knop):hover{background:#F1F3F8}
 html:not(#x) .dhd .pw .wn{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-html:not(#x) .dhd .pw i{flex:none;font-style:normal;font-size:11px;line-height:1;font-weight:700;letter-spacing:.04em;text-transform:uppercase;border:1px solid var(--inkt);border-radius:999px;padding:3px 7px;background:var(--wit);color:var(--inkt)}
+html:not(#x) .dhd .pw i{flex:none;font-style:normal;font-size:11px;line-height:1;font-weight:700;letter-spacing:.02em;text-transform:uppercase;border:1px solid var(--inkt);border-radius:999px;padding:3px 7px;background:var(--wit);color:var(--inkt)}
 html:not(#x) .dhd .pw b{flex:none;margin-left:auto;font-family:var(--kop);font-weight:800;font-size:18px;letter-spacing:-0.03em;white-space:nowrap}
 html:not(#x) .dhd .pw b small{font-family:var(--body);font-weight:500;font-size:12px;letter-spacing:0;margin-left:4px}
 html:not(#x) .dhd a.knop.pw{width:calc(100% - 3px);justify-content:flex-start;min-height:48px;padding:0 14px;margin-bottom:3px}
@@ -1233,7 +1234,8 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
     }).join('');
     subs.setAttribute('aria-label', vraag || 'Maak een keuze');
     subs.classList.remove('bezig');
-    subs.scrollLeft = 0;
+    var gek = subs.querySelector('.sk.aan');
+    subs.scrollLeft = gek ? Math.max(0, gek.offsetLeft - 40) : 0;
   }
   // "Hoe is deze lijst bepaald?" staat voor de uitleg; de aanhef "Zo kiezen wij:" valt dan weg.
   function uitleg(t) { t = String(t || '').replace(/^Zo kiezen wij:\s*/, ''); return t.charAt(0).toUpperCase() + t.slice(1); }

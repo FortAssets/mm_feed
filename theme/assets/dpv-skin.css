@@ -804,3 +804,7 @@ html:not(#x):not(#y) .dtc-img img,html:not(#x):not(#y) .dtc-simg img{mix-blend-m
 /* knoppen binnen de site (geen doorklik): wit met een fijne rand, niet met inkt */
 html:not(#x):not(#y) a.bv-knop:not(.dpv-geel):not(.bestel){border:1px solid #CBD3DF !important;box-shadow:none !important}
 html:not(#x):not(#y) .pa-blok{border:1px solid #E3E8F0 !important;box-shadow:none !important}
+/* "Zoek in gewone taal": een zacht groen vlak (de kleur van de stip, licht), zodat het blok opvalt zonder fel te zijn */
+html:not(#x):not(#y) .dpvai-blok{background:#EAF6F0 !important;background-image:none !important;border:1px solid #CDEFE0 !important}
+html:not(#x):not(#y) .dpvai-blok .dpvai-veld{background:#fff !important;border:1px solid #BFE3D2 !important}
+html:not(#x):not(#y) .dpvai-blok .dpvai-hint button{border-color:#BFE3D2 !important}

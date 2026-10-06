@@ -34,6 +34,7 @@
         <div class="bv-rij"><span class="bv-rl">Winkel</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-cw"></div></div></div>
         <div class="bv-rij"><span class="bv-rl">Actie</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-ca"></div></div></div>
         <div class="bv-rij bv-soortrij"><span class="bv-rl">Soort</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-cs"></div></div></div>
+        <div class="bv-rij bv-folderrij"><span class="bv-rl">Folder</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-cf"></div></div></div>
       </div>
       <div class="bv-onder">
         <p class="bv-telling" id="bv-telling" aria-live="polite"></p>
@@ -50,6 +51,7 @@
           </select>
         </label>
         <button type="button" class="bv-reset" id="bv-reset" hidden>Filters wissen</button>
+        <button type="button" class="bv-naarfilters" id="bv-naarfilters">Filters en folders</button>
       </div>
     </div>
   </div>
@@ -158,9 +160,22 @@
 /* Vastgezet neemt de balk minder ruimte in: de telling en het sorteren staan
    al bovenaan, tijdens het scrollen heb je vooral de filters nodig. */
 .bv-bar.bv-vast .bv-telling{display:none}
-.bv-bar.bv-vast .bv-onder{padding-top:7px;margin-top:6px;justify-content:flex-end}
-.bv-bar.bv-vast .bv-zoek{margin-bottom:8px}
-.bv-bar.bv-vast .bv-zoek input{height:40px !important;min-height:40px !important}
+/* 6 okt: tijdens het scrollen loopt alleen de regel met het schap mee (waar je bent, schap kiezen, sorteren).
+   De week, het zoekveld en de filterrijen blijven bovenaan staan; de knop "Filters en folders" brengt je terug. */
+.bv-bar.bv-vast .bv-weken,.bv-bar.bv-vast .bv-zoek,.bv-bar.bv-vast .bv-rijen{display:none}
+.bv-bar.bv-vast{padding:8px 14px}
+.bv-bar.bv-vast .bv-onder{padding-top:0;margin-top:0;border-top:0;justify-content:flex-start;gap:8px 12px}
+.bv-naarfilters{display:none;font:inherit;font-size:13px;font-weight:700;color:#0D1B2A;background:#F1F3F8;border:0;border-radius:99px;padding:7px 13px;cursor:pointer;margin-left:auto}
+.bv-bar.bv-vast .bv-naarfilters{display:inline-block}
+/* Weekfolder in een venster op de eigen pagina */
+.bv-fo{position:fixed;inset:0;z-index:2147483000;background:rgba(13,27,42,.55);display:flex;align-items:center;justify-content:center;padding:18px}
+.bv-fo-vak{background:#fff;border-radius:14px;width:min(1100px,100%);height:min(92vh,100%);display:flex;flex-direction:column;overflow:hidden;box-shadow:6px 6px 0 #3FAE7A}
+.bv-fo-kop{display:flex;align-items:center;gap:12px;padding:10px 12px 10px 16px;border-bottom:1px solid #E3E8F0;flex:0 0 auto}
+.bv-fo-kop b{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-weight:800;font-size:18px;letter-spacing:-.03em;color:#0D1B2A;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bv-fo-kop a{font-size:13px;font-weight:700;color:#0D1B2A;text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+.bv-fo-kop button{width:40px;height:40px;border:0;border-radius:50%;background:#F1F3F8;color:#0D1B2A;font-size:22px;line-height:1;cursor:pointer;flex:0 0 40px}
+.bv-fo iframe{flex:1;width:100%;border:0;background:#F1F3F8}
+@media(max-width:700px){.bv-fo{padding:0}.bv-fo-vak{border-radius:0;height:100%;box-shadow:none}.bv-fo-kop a span{display:none}}
 
 /* Raster */
 /* Kaarten krijgen de hoogte van hun eigen inhoud. Rekten ze mee met de hoogste
@@ -316,6 +331,7 @@
 
 @media(max-width:820px){
   .bv-rl{display:none}
+  .bv-folderrij .bv-rl{display:block;flex:0 0 auto;margin-right:8px}
   .bv-rij{gap:0}
   .bv-bar{padding:10px 12px}
   .bv-barhouder{margin:0 0 12px}
@@ -747,6 +763,46 @@
       sel.addEventListener('change',function(){categorie=sel.value;getoond=STAP;tekenChips();teken()})}
   }
 
+  /* Weekfolder per winkel als knop in de filterbalk. Folders die op Publitas staan (en die van Dirk) mogen in een
+     venster op onze pagina; de andere winkels staan dat niet toe en openen in een nieuw tabblad. */
+  (function(){
+    var FOLDERS=[
+      ['ah','Albert Heijn','https://view.publitas.com/ah/',1],
+      ['jumbo','Jumbo','https://www.jumbo.com/aanbiedingen',0],
+      ['plus','PLUS','https://view.publitas.com/plus-folder-nl/',1],
+      ['lidl','Lidl','https://www.lidl.nl/c/service-contact-folders/s10008124',0],
+      ['aldi','Aldi','https://www.aldi.nl/aanbiedingen.html',0],
+      ['dirk','Dirk','https://www.dirk.nl/folder',1],
+      ['hoogvliet','Hoogvliet','https://folder.hoogvliet.com/',1],
+      ['vomar','Vomar','https://view.publitas.com/folder-deze-week/',1],
+      ['kruidvat','Kruidvat','https://view.publitas.com/kruidvat-nederland/',1],
+      ['etos','Etos','https://view.publitas.com/etos/',1],
+      ['trekpleister','Trekpleister','https://view.publitas.com/trekpleister/',1],
+      ['da','DA','https://view.publitas.com/da-drogisterij/',1],
+      ['action','Action','https://www.action.com/nl-nl/weekactie/',0]];
+    var cf=document.getElementById('bv-cf'); if(!cf)return;
+    cf.innerHTML=FOLDERS.map(function(f,i){
+      return '<button type="button" class="bv-fk" data-i="'+i+'" aria-haspopup="'+(f[3]?'dialog':'false')+'">'+stip(f[0])+e(f[1])+(f[3]?'':' <small>\u2197</small>')+'</button>'}).join('');
+    var venster=null, vorige=null;
+    function dicht(){if(!venster)return;venster.remove();venster=null;document.documentElement.style.overflow='';if(vorige)try{vorige.focus()}catch(err){}}
+    function open(f,knop){
+      vorige=knop;
+      venster=document.createElement('div');venster.className='bv-fo';venster.setAttribute('role','dialog');venster.setAttribute('aria-modal','true');venster.setAttribute('aria-label','Weekfolder '+f[1]);
+      venster.innerHTML='<div class="bv-fo-vak"><div class="bv-fo-kop"><b>Weekfolder '+e(f[1])+'</b><a href="'+e(f[2])+'" target="_blank" rel="nofollow noopener">Nieuw tabblad<span> openen</span> \u2197</a><button type="button" aria-label="Sluiten">&times;</button></div><iframe title="Weekfolder '+e(f[1])+'" src="'+e(f[2])+'" referrerpolicy="no-referrer"></iframe></div>';
+      document.body.appendChild(venster);document.documentElement.style.overflow='hidden';
+      venster.addEventListener('click',function(ev){if(ev.target===venster||ev.target.closest('.bv-fo-kop button'))dicht()});
+      venster.querySelector('button').focus();
+    }
+    document.addEventListener('keydown',function(ev){if(ev.key==='Escape')dicht()});
+    cf.addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;
+      var f=FOLDERS[+b.getAttribute('data-i')];
+      try{if(window.gtag)gtag('event','bv_folder',{winkel:f[0]})}catch(err){}
+      if(f[3])open(f,b);else window.open(f[2],'_blank','noopener')});
+    var nf=document.getElementById('bv-naarfilters');
+    if(nf)nf.addEventListener('click',function(){var h=document.getElementById('bv-barhouder');if(!h)return;
+      var y=h.getBoundingClientRect().top+window.pageYOffset-140;window.scrollTo({top:Math.max(0,y),behavior:'smooth'})});
+  })();
+
   /* De filterbalk zet zich vast zodra hij de bovenkant raakt. Het thema laat
      position:sticky niet toe, daarom meten we de vaste balken van het thema één
      keer en schuiven we er zelf onderlangs. */
@@ -763,7 +819,7 @@
     var hr=houder.getBoundingClientRect(), boven=bovenrand();
     var grid=document.getElementById('bv-grid'), gr=grid.getBoundingClientRect();
     var vast=hr.top<boven&&gr.bottom>boven+120;
-    if(vast){houder.style.height=bar.offsetHeight+'px';bar.classList.add('bv-vast');
+    if(vast){if(!bar.classList.contains('bv-vast'))houder.style.height=bar.offsetHeight+'px';bar.classList.add('bv-vast');
       bar.style.top=boven+'px';bar.style.left=hr.left+'px';bar.style.width=hr.width+'px'}
     else{houder.style.height='';bar.classList.remove('bv-vast');bar.style.top=bar.style.left=bar.style.width=''}}
   window.addEventListener('scroll',function(){if(!raf)raf=requestAnimationFrame(plak)},{passive:true});

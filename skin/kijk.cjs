@@ -73,7 +73,20 @@ const inPagina = () => {
     if (sh && sh !== 'none' && !/3px 3px 0px|0px 0px 0px|10px 10px 0px|8px 8px 0px|inset/.test(sh) && r.width > 80 && cs.position !== 'fixed') zie(vorm, 'schaduw ' + k + '|' + sh.slice(0, 44), {});
     if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.tagName) && !/checkbox|radio|range|hidden|submit|button/.test(e.type || '')) { if (!(bw >= 1 && isInkt(bc)) && !(e.parentElement && isInkt(p(getComputedStyle(e.parentElement).borderTopColor)) && parseFloat(getComputedStyle(e.parentElement).borderTopWidth) >= 1)) zie(vorm, 'veld ' + k + '|' + bw + ' ' + (bc ? bc.slice(0, 3) : ''), {}); }
   });
-  return { vorm, contrast, oud, overloop: document.documentElement.scrollWidth - innerWidth, titel: document.title };
+  // variant E: welke elementen hebben nog een inktrand (de gele knop, de beste keuze en gekozen keuzes mogen dat)
+  const inkt = {};
+  document.querySelectorAll('body *').forEach(e => {
+    if (e.closest('.dhd,.pvnav,footer,#dpvai-paneel,svg,[class*="Avada"],#shopify-pc__banner,.pvs')) return;
+    const r = e.getBoundingClientRect(); if (r.width < 20 || r.height < 14) return;
+    const cs = getComputedStyle(e); if (cs.display === 'none' || cs.visibility === 'hidden') return;
+    const bc = p(cs.borderTopColor), sh = cs.boxShadow;
+    const rand = (parseFloat(cs.borderTopWidth) > 0 && isInkt(bc)) || /rgb\(13, 27, 42\) 0px 0px 0px/.test(sh); if (!rand) return;
+    const bg = p(cs.backgroundColor); if (bg && bg[3] > .5 && (isInkt(bg) || (bg[0] > 230 && bg[1] > 170 && bg[2] < 80))) return;
+    if (/3FAE7A|63, 174, 122/i.test(sh)) return;
+    if (e.matches('.on,.aan,.actief,.active,.sel,[aria-pressed="true"],[aria-selected="true"],[aria-current]')) return;
+    zie(inkt, pad(e), {});
+  });
+  return { inkt, vorm, contrast, oud, overloop: document.documentElement.scrollWidth - innerWidth, titel: document.title };
 };
 (async () => {
   const b = await chromium.launch();
@@ -111,7 +124,7 @@ const inPagina = () => {
           }));
           fs.writeFileSync(f, JSON.stringify(d));
           await p.screenshot({ timeout: 30000, path: `${UIT}/${n}.jpg`, type: 'jpeg', quality: 62, fullPage: true, clip: { x: 0, y: 0, width: w === 'm' ? 390 : 1366, height: Math.min(d.hoogte, w === 'm' ? 12000 : 9000) } });
-          console.log('ok', n, 'contrast', Object.keys(d.contrast).length, 'oud', Object.keys(d.oud).length, 'vorm', Object.keys(d.vorm).length, 'overloop', d.overloop, 'h', d.hoogte);
+          console.log('ok', n, 'contrast', Object.keys(d.contrast).length, 'oud', Object.keys(d.oud).length, 'inkt', Object.keys(d.inkt).length, 'overloop', d.overloop, 'h', d.hoogte);
         }
       } catch (e) { console.log('FOUT', n, e.message.slice(0, 90)); }
       await Promise.race([p.close(), slaap(8000)]);

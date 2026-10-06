@@ -140,8 +140,6 @@
       var uit  = document.getElementById('dbsm-uit-{{ section.id }}');
       var LIJST = {{ section.settings.melding_lijst | default: 'iphone18-alert' | json }};
       var BRON  = {{ section.settings.melding_bron | default: 'preorder-strip' | json }};
-      var ONDERWERPEN = {{ section.settings.melding_onderwerpen | default: '' | json }}
-        .split(',').map(function (x) { return x.trim(); }).filter(Boolean);
 
       function zeg(t, goed) {
         uit.textContent = t;
@@ -155,23 +153,15 @@
         var oud = knop.textContent;
         knop.textContent = 'Bezig\u2026';
 
-        /* 3 okt: ook dit veld ging naar de mc-lijst en zette een adres er
-           zonder bevestiging op. Nu naar dezelfde nieuwsbrieflijst als de rest
-           van de site, met dubbele opt-in. LIJST is daarmee overbodig geworden
-           en gaat mee als bron, zodat je in de database nog ziet waar iemand
-           vandaan kwam. */
-        fetch('https://dpv-boodschappen.business-347.workers.dev/sm/api/aanmelden', {
+        fetch('https://mijn.deprijsvergelijker.com/api/mc/aanmelden', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: adres, bron: BRON || LIJST, onderwerpen: ONDERWERPEN })
+          body: JSON.stringify({ email: adres, lijst: LIJST, bron: BRON, voorkeur: 'alle' })
         })
           .then(function (r) { return r.json(); })
           .then(function (res) {
-            if (res && res.ok && res.status === 'al-actief') {
-              zeg('Je stond al op de lijst.', true);
-              veld.value = '';
-            } else if (res && res.ok) {
-              zeg('Bijna klaar: kijk in je mail en klik op de link erin.', true);
+            if (res && res.ok) {
+              zeg('Gelukt. Je hoort van ons zodra de pre-orders opengaan.', true);
               veld.value = '';
             } else {
               zeg('Er ging iets mis. Probeer het later nog eens.', false);
@@ -199,10 +189,14 @@
         {%- endif -%}
       {%- endif -%}
       {%- assign geteld = 0 -%}
+      {%- assign tagfilters = section.settings.tag_filter | split: ',' -%}
       {%- for article in lijst -%}
         {%- if geteld >= limiet -%}{%- break -%}{%- endif -%}
+        {%- comment -%} 6 okt: meer tags mogelijk, gescheiden door een komma; een artikel telt mee als het er een van heeft. {%- endcomment -%}
         {%- if section.settings.tag_filter != blank -%}
-          {%- unless article.tags contains section.settings.tag_filter -%}{%- continue -%}{%- endunless -%}
+          {%- assign past = false -%}
+          {%- for f in tagfilters -%}{%- assign ft = f | strip -%}{%- if article.tags contains ft -%}{%- assign past = true -%}{%- endif -%}{%- endfor -%}
+          {%- unless past -%}{%- continue -%}{%- endunless -%}
         {%- endif -%}
         {%- if section.settings.tag_uitsluiten != blank -%}
           {%- if article.tags contains section.settings.tag_uitsluiten -%}{%- continue -%}{%- endif -%}
@@ -233,173 +227,35 @@
 {
   "name": "DPV Blogstrip",
   "settings": [
-    {
-      "type": "text",
-      "id": "blog_handle",
-      "label": "Blog handle",
-      "default": "advies"
-    },
-    {
-      "type": "text",
-      "id": "eyebrow",
-      "label": "Eyebrow",
-      "default": "Advies & Kennisbank"
-    },
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Kop",
-      "default": "Lees je in voordat je kiest"
-    },
-    {
-      "type": "textarea",
-      "id": "subheading",
-      "label": "Subtekst"
-    },
-    {
-      "type": "text",
-      "id": "more_label",
-      "label": "Link onderaan",
-      "default": "Alle artikelen"
-    },
-    {
-      "type": "select",
-      "id": "image_fit",
-      "label": "Afbeeldingen",
-      "default": "cover",
-      "options": [
-        {
-          "value": "cover",
-          "label": "Vullend (sfeer- en reisfoto's)"
-        },
-        {
-          "value": "contain",
-          "label": "Volledig tonen (productfoto's)"
-        }
-      ]
-    },
-    {
-      "type": "range",
-      "id": "max_items",
-      "label": "Aantal artikelen",
-      "min": 3,
-      "max": 9,
-      "step": 3,
-      "default": 3
-    },
-    {
-      "type": "header",
-      "content": "Onderwerp en tijdelijke campagne"
-    },
-    {
-      "type": "text",
-      "id": "tag_filter",
-      "label": "Toon alleen artikelen met deze tag",
-      "info": "Het onderwerp van de pagina, bijvoorbeeld sim only, internet of telefoon. Leeg = alle artikelen uit de blog."
-    },
-    {
-      "type": "text",
-      "id": "aftel_datum",
-      "label": "Aftellen naar (JJJJ-MM-DD)",
-      "info": "Toont 'Nog X dagen tot de aankondiging' en de groene campagnestreep. Leeg = geen aftelling."
-    },
-    {
-      "type": "text",
-      "id": "verberg_na",
-      "label": "Verberg deze sectie na (JJJJ-MM-DD)",
-      "info": "De sectie verdwijnt vanzelf na deze datum. Leeg = altijd tonen."
-    },
-    {
-      "type": "url",
-      "id": "more_url",
-      "label": "Link onderaan",
-      "info": "Leeg = link naar de blog zelf."
-    },
-    {
-      "type": "text",
-      "id": "tag_uitsluiten",
-      "label": "Sla artikelen met deze tag over"
-    },
-    {
-      "type": "text",
-      "id": "blog_handle_2",
-      "label": "Tweede blog erbij (optioneel)"
-    },
-    {
-      "type": "header",
-      "content": "Aanmelding onder de aftelling"
-    },
-    {
-      "type": "paragraph",
-      "content": "Dit veld ging eerst naar /contact van Shopify en sloeg niets op, daarna naar de mc-lijst zonder bevestigingsmail. Sinds 3 oktober gaat het naar de nieuwsbrieflijst met dubbele opt-in, dezelfde lijst als de rest van de site. Kies hieronder een eigen bron, dan zie je in de database wat dit veld oplevert."
-    },
-    {
-      "type": "checkbox",
-      "id": "melding_aan",
-      "label": "E-mailveld tonen",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "melding_hint",
-      "label": "Hint in het veld",
-      "default": "jouw@email.nl"
-    },
-    {
-      "type": "text",
-      "id": "melding_knop",
-      "label": "Knoptekst",
-      "default": "Mail me"
-    },
-    {
-      "type": "textarea",
-      "id": "melding_fijn",
-      "label": "Kleine regel",
-      "default": "Eén bericht op de dag dat de pre-orders opengaan, met de prijzen per aanbieder. Afmelden kan altijd."
-    },
-    {
-      "type": "text",
-      "id": "melding_lijst",
-      "label": "Lijst",
-      "default": "iphone18-alert",
-      "info": "Wordt nu alleen nog als bron gebruikt; de lijst is overal dezelfde."
-    },
-    {
-      "type": "text",
-      "id": "melding_bron",
-      "label": "Bron",
-      "default": "preorder-strip",
-      "info": "Verschijnt in de kolom Bron op /mc/aanmeldingen. Houd hem anders dan die van het pre-orderblok."
-    },
-    {
-      "type": "text",
-      "id": "melding_tot",
-      "label": "Aanmelding stopt na (JJJJ-MM-DD)",
-      "info": "Na deze datum verdwijnt het e-mailveld vanzelf."
-    },
-    {
-      "type": "text",
-      "id": "melding_na_tekst",
-      "label": "Tekst na die datum",
-      "default": "De pre-orders zijn open, bekijk het aanbod →"
-    },
-    {
-      "type": "url",
-      "id": "melding_na_url",
-      "label": "Link na die datum"
-    },
-    {
-      "type": "text",
-      "id": "melding_onderwerpen",
-      "label": "Onderwerpen",
-      "default": "",
-      "info": "Komma gescheiden, bijvoorbeeld black-friday. Leeg laten zet alles aan."
-    }
+    { "type": "text", "id": "blog_handle", "label": "Blog handle", "default": "advies" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Advies & Kennisbank" },
+    { "type": "text", "id": "heading", "label": "Kop", "default": "Lees je in voordat je kiest" },
+    { "type": "textarea", "id": "subheading", "label": "Subtekst" },
+    { "type": "text", "id": "more_label", "label": "Link onderaan", "default": "Alle artikelen" },
+    { "type": "select", "id": "image_fit", "label": "Afbeeldingen", "default": "cover",
+      "options": [ { "value": "cover", "label": "Vullend (sfeer- en reisfoto's)" }, { "value": "contain", "label": "Volledig tonen (productfoto's)" } ] },
+    { "type": "range", "id": "max_items", "label": "Aantal artikelen", "min": 3, "max": 9, "step": 3, "default": 3 },
+
+    { "type": "header", "content": "Onderwerp en tijdelijke campagne" },
+    { "type": "text", "id": "tag_filter", "label": "Toon alleen artikelen met deze tag", "info": "Het onderwerp van de pagina, bijvoorbeeld sim only, internet of telefoon. Meer tags kan, met een komma ertussen. Leeg = alle artikelen uit de blog." },
+    { "type": "text", "id": "aftel_datum", "label": "Aftellen naar (JJJJ-MM-DD)", "info": "Toont 'Nog X dagen tot de aankondiging' en de groene campagnestreep. Leeg = geen aftelling." },
+    { "type": "text", "id": "verberg_na", "label": "Verberg deze sectie na (JJJJ-MM-DD)", "info": "De sectie verdwijnt vanzelf na deze datum. Leeg = altijd tonen." },
+    { "type": "url", "id": "more_url", "label": "Link onderaan", "info": "Leeg = link naar de blog zelf." },
+    { "type": "text", "id": "tag_uitsluiten", "label": "Sla artikelen met deze tag over" },
+    { "type": "text", "id": "blog_handle_2", "label": "Tweede blog erbij (optioneel)" },
+
+    { "type": "header", "content": "Aanmelding onder de aftelling" },
+    { "type": "paragraph", "content": "Dit veld ging naar /contact van Shopify en sloeg niets op. Sinds 26 augustus gaat het naar dezelfde worker als het pre-orderblok. Kies hieronder een eigen bron, dan zie je op /mc/aanmeldingen wat dit veld oplevert naast het blok verderop op de pagina." },
+    { "type": "checkbox", "id": "melding_aan", "label": "E-mailveld tonen", "default": false },
+    { "type": "text", "id": "melding_hint", "label": "Hint in het veld", "default": "jouw@email.nl" },
+    { "type": "text", "id": "melding_knop", "label": "Knoptekst", "default": "Mail me" },
+    { "type": "textarea", "id": "melding_fijn", "label": "Kleine regel", "default": "Eén bericht op de dag dat de pre-orders opengaan, met de prijzen per aanbieder. Afmelden kan altijd." },
+    { "type": "text", "id": "melding_lijst", "label": "Lijst", "default": "iphone18-alert", "info": "Dezelfde lijst als het pre-orderblok, zodat het één lijst blijft." },
+    { "type": "text", "id": "melding_bron", "label": "Bron", "default": "preorder-strip", "info": "Verschijnt in de kolom Bron op /mc/aanmeldingen. Houd hem anders dan die van het pre-orderblok." },
+    { "type": "text", "id": "melding_tot", "label": "Aanmelding stopt na (JJJJ-MM-DD)", "info": "Na deze datum verdwijnt het e-mailveld vanzelf." },
+    { "type": "text", "id": "melding_na_tekst", "label": "Tekst na die datum", "default": "De pre-orders zijn open, bekijk het aanbod →" },
+    { "type": "url", "id": "melding_na_url", "label": "Link na die datum" }
   ],
-  "presets": [
-    {
-      "name": "DPV Blogstrip"
-    }
-  ]
+  "presets": [ { "name": "DPV Blogstrip" } ]
 }
 {% endschema %}

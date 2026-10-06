@@ -1,0 +1,50 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "vergelijker": {
+      "type": "dpv-zorg-vergelijker",
+      "settings": {
+        "kop": "Wat een basisverzekering nu kost",
+        "sub": "Premies van 2026. Kies zelf op eigen risico, soort polis en prijs. Wij sorteren op premie en geven geen advies.",
+        "polissen": "VGZbewuzt Basisverzekering|label van VGZ|122.89|885|natura|internetverzekeraar;korting bij jaarbetaling|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-vgzbewuzt%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fvgz&cat=zorg&p=Zorgkiezer\nUnivé Zorg Select|Univé|125.40|885|natura|korting bij jaarbetaling|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-unive%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Funive&cat=zorg&p=Zorgkiezer\nVinkVink Basisverzekering|label van Menzis|142.40|385|natura|internetverzekeraar|VinkVink|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fawclick.php%3Fgid%3D423283%26mid%3D25754%26awinaffid%3D1528789%26linkid%3D2988775%26clickref%3Dzorg-vinkvink&cat=zorg&p=VinkVink\nNationale-Nederlanden Zorg Voordelig|Nationale-Nederlanden|142.45|385|natura|korting bij jaarbetaling|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-nn%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fnationale-nederlanden&cat=zorg&p=Zorgkiezer\nFBTO Basis|FBTO|148.75|385|natura|zelf modules kiezen;alle ziekenhuizen|FBTO|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D9845%26awinaffid%3D1528789%26clickref%3Dzorg-fbto%26ued%3Dhttps%253A%252F%252Fwww.fbto.nl%252Fzorgverzekering&cat=zorg&p=FBTO\na.s.r. Bewuste Keuze|a.s.r.|149.80|385|natura|vrije ziekenhuiskeuze|a.s.r.|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fs%3D4600995%26v%3D9786%26q%3D477069%26r%3D1528789%26clickref%3Dzorg-asr&cat=zorg&p=a.s.r.\nVGZ Basis Keuze|VGZ|149.90|385|natura|grote verzekeraar|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-vgz-basis%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fvgz&cat=zorg&p=Zorgkiezer\nMenzis Basis Voordelig|Menzis|151.25|385|natura|grote verzekeraar|Menzis|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fawclick.php%3Fgid%3D449222%26mid%3D37530%26awinaffid%3D1528789%26linkid%3D3255115%26clickref%3Dzorg-menzis-voordelig&cat=zorg&p=Menzis\nZilveren Kruis Basis Start|Zilveren Kruis|153.95|385|natura|grote verzekeraar|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-zk-start%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fzilveren-kruis&cat=zorg&p=Zorgkiezer\nVGZ Ruime Keuze|VGZ|154.25|385|natura|grote verzekeraar|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-vgz-ruime%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fvgz&cat=zorg&p=Zorgkiezer\nMenzis Basis|Menzis|156.25|385|natura|grote verzekeraar|Menzis|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fawclick.php%3Fgid%3D449222%26mid%3D37530%26awinaffid%3D1528789%26linkid%3D3255115%26clickref%3Dzorg-menzis-basis&cat=zorg&p=Menzis\nCZ Zorgbewustpolis|CZ|156.95|385|natura|grote verzekeraar|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-cz-bewust%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fcz&cat=zorg&p=Zorgkiezer\nFBTO Basis Plus|FBTO|159.25|385|natura|zelf modules kiezen;alle ziekenhuizen|FBTO|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D9845%26awinaffid%3D1528789%26clickref%3Dzorg-fbto%26ued%3Dhttps%253A%252F%252Fwww.fbto.nl%252Fzorgverzekering&cat=zorg&p=FBTO\nCZ Zorg-op-maatpolis|CZ|159.99|385|natura|grote verzekeraar|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-cz-opmaat%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fcz&cat=zorg&p=Zorgkiezer\nZilveren Kruis Basis Zeker|Zilveren Kruis|159.25|385|natura|grote verzekeraar|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-zk-zeker%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fzilveren-kruis&cat=zorg&p=Zorgkiezer\nFBTO Basis Vrij|FBTO|167.95|385|combinatie|zelf modules kiezen;alle ziekenhuizen|FBTO|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D9845%26awinaffid%3D1528789%26clickref%3Dzorg-fbto%26ued%3Dhttps%253A%252F%252Fwww.fbto.nl%252Fzorgverzekering&cat=zorg&p=FBTO\nVGZ Eigen Keuze|VGZ|171.65|385|combinatie|vrije keuze zonder contract|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-vgz-eigen%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fvgz&cat=zorg&p=Zorgkiezer\nMenzis Basis Vrij|Menzis|175.75|385|combinatie|vrije keuze zonder contract|Menzis|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fawclick.php%3Fgid%3D449222%26mid%3D37530%26awinaffid%3D1528789%26linkid%3D3255115%26clickref%3Dzorg-menzis-vrij&cat=zorg&p=Menzis\nZilveren Kruis Basis Exclusief|Zilveren Kruis|176.45|385|combinatie|vrije keuze zonder contract|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-zk-exclusief%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fzilveren-kruis&cat=zorg&p=Zorgkiezer\nCZ Zorgvariatiepolis|CZ|177.50|385|combinatie|vrije keuze zonder contract|Zorgkiezer|https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-cz-variatie%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fcz&cat=zorg&p=Zorgkiezer",
+        "alles_tekst": "Alle 65 basisverzekeringen bij Zorgkiezer",
+        "alles_url": "https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-alles%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fvergelijken&cat=zorg&p=Zorgkiezer",
+        "fijn": "Wij tonen een selectie die de bandbreedte laat zien, geen volledige vergelijking: er zijn ongeveer 65 basisverzekeringen. Wij vragen geen leeftijd, inkomen of gezondheidsgegevens en geven niets over jou door aan verzekeraars. Controleer het bedrag altijd bij de verzekeraar zelf voordat je afsluit. Klik je door en sluit je iets af, dan ontvangen wij een vergoeding. Jij betaalt hetzelfde."
+      }
+    },
+    "main": {
+      "type": "main-page",
+      "settings": {
+        "dividing_line": "none",
+        "spacing_top": 20,
+        "spacing_bottom": 80
+      }
+    },
+    "dpv-blogstrip": {
+      "type": "dpv-blog-strip",
+      "settings": {
+        "blog_handle": "advies",
+        "eyebrow": "Advies & Kennisbank",
+        "heading": "Zorgverzekering 2027: wat verandert er",
+        "subheading": "Eigen risico, premies en de dag waarop alle verzekeraars hun prijs bekendmaken.",
+        "more_label": "Alle adviesartikelen",
+        "max_items": 3,
+        "tag_filter": "zorg,zorgverzekering",
+        "tag_uitsluiten": "zakelijk"
+      }
+    }
+  },
+  "order": [
+    "vergelijker",
+    "dpv-blogstrip",
+    "main"
+  ]
+}

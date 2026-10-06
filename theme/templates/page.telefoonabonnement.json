@@ -1,0 +1,94 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "pv-hero": {
+      "type": "dpv-hero",
+      "settings": {
+        "page_title": "Telefoon + abonnement",
+        "hero_title": "Telefoon met abonnement vergelijken",
+        "hero_sub": "Vergelijk de nieuwste iPhone, Samsung, OnePlus en Android met abonnement van KPN, Odido en Vodafone. Altijd de eerlijke totaalprijs.",
+        "feed_endpoint": "/api/feed/telefoon"
+      }
+    },
+    "dpv-devices": {
+      "type": "dpv-device-cards",
+      "settings": {
+        "show_strip": false,
+        "strip_heading": "Populaire toestellen",
+        "strip_note": "De meest gekozen telefoons van dit moment",
+        "heading": "Populaire toestellen met abonnement",
+        "subnote": "Beste totaalprijs per toestel, onafhankelijk vergeleken",
+        "more_label": "Bekijk alle aanbiedingen",
+        "worker_url": "https://awin.business-347.workers.dev",
+        "limit": 6
+      }
+    },
+    "pv-seo-slot": {
+      "type": "pv-seo-slot",
+      "settings": {
+        "feed_endpoint": "/api/feed/telefoon"
+      }
+    },
+    "pv-compare": {
+      "type": "pvc2-tool",
+      "settings": {
+        "worker_url": "https://awin.business-347.workers.dev",
+        "feed_endpoint": "/api/feed/telefoon"
+      }
+    },
+    "dpv-mailhook": {
+      "type": "dpv-mail-hook",
+      "settings": {}
+    },
+    "dpv-zoekartikel": {
+      "type": "dpv-zoek-artikel",
+      "settings": {}
+    },
+    "dpv-skin": {
+      "type": "dpv-compare-skin",
+      "settings": {}
+    },
+    "dpv-blogstrip": {
+      "type": "dpv-blog-strip",
+      "settings": {
+        "blog_handle": "advies",
+        "eyebrow": "Advies & nieuws",
+        "heading": "Lees je in voordat je een toestel kiest",
+        "subheading": "Koopgidsen, nieuwe toestellen en waar je op let bij een telefoon met abonnement.",
+        "more_label": "Alle artikelen",
+        "image_fit": "contain",
+        "max_items": 3,
+        "tag_filter": "telefoon,telefoon met abonnement,smartphone,telefoons",
+        "tag_uitsluiten": "zakelijk",
+        "blog_handle_2": "news"
+      }
+    },
+    "dpv-capture": {
+      "type": "dpv-email-capture",
+      "settings": {
+        "heading": "Mis geen scherp abonnement",
+        "subtext": "Ontvang de beste telefoonaanbiedingen af en toe in je inbox."
+      }
+    },
+    "dpv-drawer": {
+      "type": "dpv-save-drawer",
+      "settings": {}
+    }
+  },
+  "order": [
+    "pv-hero",
+    "dpv-devices",
+    "pv-compare",
+    "dpv-mailhook",
+    "dpv-zoekartikel",
+    "dpv-skin",
+    "pv-seo-slot",
+    "dpv-blogstrip",
+    "dpv-capture",
+    "dpv-drawer"
+  ]
+}

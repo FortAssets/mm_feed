@@ -1,0 +1,62 @@
+name: Productpaginas
+
+# Een keer per dag, ruim na de ochtendrun van de shop feed (04:07 UTC), zodat
+# de prijzen van vandaag erin zitten. Maakt nieuwe productpagina's aan, werkt
+# prijzen en aanbod bij op de bestaande, en haalt specificaties op bij bol.
+#
+# Nodig: het geheim SHOPIFY_TOKEN (Admin API-token van een eigen app met de
+# rechten read_metaobjects en write_metaobjects). Zonder dat geheim telt de run
+# alleen wat er zou gebeuren en schrijft hij niets.
+on:
+  schedule:
+    - cron: '37 5 * * *'
+  workflow_dispatch:
+    inputs:
+      max_nieuw:
+        description: 'Hoogstens zoveel nieuwe paginas in deze run'
+        default: '5000'
+      specs_max:
+        description: 'Hoogstens zoveel specificaties in deze run'
+        default: '300'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: productpaginas
+  cancel-in-progress: false
+
+jobs:
+  paginas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Productpaginas bijwerken
+        env:
+          SHOPIFY_TOKEN: ${{ secrets.SHOPIFY_TOKEN }}
+          BOL_CLIENT_ID: ${{ secrets.BOL_CLIENT_ID }}
+          BOL_CLIENT_SECRET: ${{ secrets.BOL_CLIENT_SECRET }}
+          MAX_NIEUW: ${{ inputs.max_nieuw || '5000' }}
+          SPECS_MAX: ${{ inputs.specs_max || '300' }}
+        run: node productpaginas.mjs
+
+      # De stand en de kaart gaan terug de repo in. De kaart leest het thema om
+      # productkaarten aan hun pagina te koppelen.
+      - name: Stand bewaren
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/productpaginas.json data/productpaginas-stand.json 2>/dev/null || true
+          if git diff --cached --quiet; then echo "niets gewijzigd"; exit 0; fi
+          git commit -m "Productpaginas: stand en kaart bijgewerkt"
+          for i in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep 10
+          done
+          exit 1

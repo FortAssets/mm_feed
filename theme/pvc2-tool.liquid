@@ -1,0 +1,718 @@
+<script>window.PV_MV_LOGO={{ 'pv-meervoordeel-logo.svg' | asset_url | json }};</script>
+{% assign is_telefoon = false %}
+{% assign is_internet = false %}
+{% assign is_simonly = false %}
+{% if section.settings.feed_endpoint contains 'telefoon' %}{% assign is_telefoon = true %}{% endif %}
+{% if section.settings.feed_endpoint contains 'internet' %}{% assign is_internet = true %}{% endif %}
+{% if section.settings.feed_endpoint contains 'simonly' %}{% assign is_simonly = true %}{% endif %}
+{% assign pvloc = request.locale.iso_code | slice: 0, 2 | downcase %}
+
+<style>
+.pvx{font-family:'Inter',sans-serif;color:#0D1B2A;background:#fff;padding:16px 0 44px;width:100%;box-sizing:border-box;overflow-x:hidden}
+.pvx-outer{max-width:1180px;margin:0 auto;padding:0 20px;box-sizing:border-box;width:100%}
+.pvx-seg{display:inline-flex;background:#fff;border:1px solid #eaecf0;border-radius:11px;padding:3px;gap:3px;margin-bottom:12px}
+.pvx-seg-btn{border:none;background:transparent;border-radius:8px;padding:7px 18px;font-size:12.5px;font-weight:700;cursor:pointer;color:#566070;font-family:Inter,sans-serif;transition:all .15s;display:flex;align-items:center;gap:6px}
+.pvx-seg-btn.on{background:#1B3FA0;color:#fff}
+.pvx-seg-link,.pvx-seg-link:visited{text-decoration:none;color:#566070}
+.pvx-seg-link:hover{background:#EEF2FB;color:#1B3FA0}
+.pvx-merkbar{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px;margin-bottom:12px}
+.pvx-merk{display:flex;align-items:center;justify-content:center;height:52px;background:#fff;border:1px solid #eaecf0;border-radius:12px;cursor:pointer;padding:8px;transition:all .14s}
+.pvx-merk:hover{border-color:#c7d4f0}
+.pvx-merk.on{border:2px solid #1B3FA0;box-shadow:0 2px 10px rgba(27,63,160,.08)}
+.pvx-merk img{max-height:24px;max-width:72px;object-fit:contain}
+.pvx-merk.txt{font-size:12.5px;font-weight:700;color:#0D1B2A}
+.pvx-search{position:relative;margin-bottom:14px}
+.pvx-search input{width:100%;border:1px solid #eaecf0;border-radius:11px;padding:11px 14px 11px 42px;font-size:14px;background:#f8fafc;outline:none;font-family:Inter,sans-serif;box-sizing:border-box;transition:all .15s}
+.pvx-search input:focus{border-color:#1B3FA0;background:#fff;box-shadow:0 0 0 3px rgba(27,63,160,.08)}
+.pvx-search .si{position:absolute;left:15px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:16px}
+.pvx-layout{display:grid;grid-template-columns:248px 1fr;gap:22px;align-items:start;min-width:0}
+.pvx-side{min-width:0}
+.pvx-side-top{display:flex;justify-content:space-between;align-items:center;padding-bottom:10px}
+.pvx-side-top b{font-size:15px;font-weight:700}
+.pvx-reset{border:none;background:none;color:#1B3FA0;font-weight:700;font-size:12px;cursor:pointer;font-family:Inter,sans-serif}
+.pvx-acc{border-top:1px solid #eef1f6}
+.pvx-acc-h{width:100%;display:flex;justify-content:space-between;align-items:center;background:none;border:none;padding:12px 0;cursor:pointer;font-size:14px;font-weight:700;color:#0D1B2A;font-family:Inter,sans-serif}
+.pvx-acc-h .chev{color:#94a3b8;font-size:13px;transition:transform .2s}
+.pvx-acc-b{padding-bottom:15px}
+.pvx-lbl{font-size:12px;font-weight:700;color:#0D1B2A;margin-bottom:7px}
+.pvx-info{color:#1B3FA0;font-size:12px}
+.pvx-sel{appearance:none;-webkit-appearance:none;width:100%;border:1px solid #eaecf0;border-radius:10px;padding:10px 36px 10px 13px;font-size:14px;font-weight:600;color:#0D1B2A;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 13px center;cursor:pointer;outline:none;font-family:Inter,sans-serif;box-sizing:border-box;transition:all .15s}
+.pvx-sel:focus{border-color:#1B3FA0}
+.pvx-sel.active{border-color:#1B3FA0;background-color:#EEF2FB}
+.pvx-slval{font-size:13px;color:#566070;margin-bottom:9px}
+.pvx-slval b{color:#0D1B2A;font-weight:700}
+.pvx-range{width:100%;-webkit-appearance:none;appearance:none;height:5px;border-radius:5px;background:#e2e8f0;outline:none;margin:0 0 6px}
+.pvx-range::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;border-radius:50%;background:#1B3FA0;cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(27,63,160,.4)}
+.pvx-range::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:#1B3FA0;cursor:pointer;border:3px solid #fff;box-shadow:0 1px 5px rgba(27,63,160,.4)}
+.pvx-rends{display:flex;justify-content:space-between;font-size:12px;color:#94a3b8;margin-bottom:16px}
+.pvx-pchip{display:flex;align-items:center;gap:8px;border:1px solid #eaecf0;border-radius:10px;padding:8px 11px;cursor:pointer;font-size:13px;font-weight:600;color:#566070;background:#fff;transition:all .14s;width:100%;text-align:left;box-sizing:border-box;margin-bottom:6px;font-family:Inter,sans-serif}
+.pvx-pchip:hover:not(.on){border-color:#c7d4f0}
+.pvx-pchip.on{border-color:#1B3FA0;background:#EEF2FB;color:#1B3FA0}
+.pvx-results{min-width:0}
+.pvx-rhead{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:10px}
+.pvx-ct{font-size:14px;color:#566070}
+.pvx-ct b{color:#0D1B2A;font-weight:700}
+.pvx-sortwrap{display:flex;align-items:center;gap:8px}
+.pvx-sortwrap label{font-size:13px;color:#566070;font-weight:600}
+.pvx-sortwrap select{appearance:none;-webkit-appearance:none;border:1px solid #eaecf0;border-radius:10px;padding:9px 34px 9px 14px;font-size:13px;font-weight:700;color:#0D1B2A;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 12px center;cursor:pointer;outline:none;font-family:Inter,sans-serif}
+.pvx-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;min-width:0}
+.pvx-card{background:#fff;border-radius:15px;overflow:hidden;display:flex;flex-direction:column;position:relative;box-shadow:0 1px 2px rgba(16,24,40,.04),0 1px 3px rgba(16,24,40,.06);transition:box-shadow .2s,transform .2s;min-width:0}
+.pvx-card:hover{box-shadow:0 12px 32px rgba(16,24,40,.10);transform:translateY(-3px)}
+.pvx-pill{position:absolute;top:12px;right:12px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;background:#EEF2FB;color:#1B3FA0;border:1px solid #c7d4f0;z-index:2}
+.pvx-gpill{position:absolute;top:12px;left:12px;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;background:#FFF3E0;color:#9a5b00;border:1px solid #ffd699;z-index:2}
+.pvx-gifts{background:#F0FAF6;border:1px solid #c9ece0;border-radius:12px;padding:9px 11px;margin-bottom:10px}
+.pvx-gifts .gt{font-size:11px;font-weight:700;color:#00865c;margin-bottom:6px}
+.pvx-gchips{display:flex;flex-wrap:wrap;gap:5px}
+.pvx-gchips span{font-size:10px;background:#fff;border:1px solid #d9e5e0;color:#0D1B2A;padding:4px 8px;border-radius:999px;line-height:1.2}
+.pvx-gchips span.more{background:#EEF2FB;border-color:#dbe6fb;color:#1B3FA0}
+.pvx-imgzone{height:158px;display:flex;align-items:center;justify-content:center;padding:14px;position:relative;flex-shrink:0;background:#fff}
+.pvx-imgzone img.ti{max-height:134px;max-width:80%;object-fit:contain;filter:drop-shadow(0 12px 24px rgba(13,27,42,.16))}
+.pvx-tp{font-size:48px}
+.pvx-colors{position:absolute;bottom:10px;left:0;right:0;display:flex;justify-content:center;gap:6px}
+.pvx-cdot{width:15px;height:15px;border-radius:50%;border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25);cursor:pointer;padding:0}
+.pvx-cdot.sel{outline:2px solid #1B3FA0;outline-offset:1px}
+.pvx-cmore{font-size:10px;font-weight:700;color:#64748b;align-self:center}
+.pvx-cbody{padding:13px 15px 15px;display:flex;flex-direction:column;flex:1;min-width:0}
+.pvx-provrow{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.pvx-provname{font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:.6px}
+.pvx-via{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;color:#64748b;background:#f4f6fb;border:1px solid #e6eaf2;border-radius:20px;padding:3px 8px;margin-left:auto;white-space:nowrap}
+.pvx-via img{width:14px;height:14px;object-fit:contain;border-radius:3px}
+.pvx-nm{font-family:'Syne',sans-serif;font-size:14px;font-weight:700;color:#0D1B2A;line-height:1.3;margin-bottom:8px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.5em}
+.pvx-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:9px}
+.pvx-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:20px}
+.pvx-tag.b{background:#EEF2FB;color:#1B3FA0}.pvx-tag.g{background:#E6F7F2;color:#047857}.pvx-tag.a{background:#FEF3E2;color:#92400e}.pvx-tag.p{background:#F3F0FF;color:#6b2d8b}.pvx-tag.tv{background:#e0f2fe;color:#0369a1}.pvx-tag.n{background:#f1f5f9;color:#64748b}
+.pvx-tvinfo{display:flex;align-items:flex-start;gap:7px;background:#f8fafc;border:1px solid #e8edf5;border-radius:9px;padding:8px 10px;margin-bottom:9px;font-size:11px;color:#475569;line-height:1.4}
+.pvx-tvinfo b{color:#0369a1;font-weight:800}
+.pvx-tvlink{background:none;border:none;padding:0;margin:0;cursor:pointer;font:inherit;color:#0369a1;font-weight:800;display:inline-flex;align-items:center;gap:3px}
+.pvx-tvlink:hover{text-decoration:underline}
+.pvx-tvmodal{position:fixed;inset:0;background:rgba(13,27,42,.5);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px;-webkit-backdrop-filter:blur(2px);backdrop-filter:blur(2px)}
+.pvx-tvmodal.open{display:flex}
+.pvx-tvbox{background:#fff;border-radius:16px;max-width:520px;width:100%;max-height:80vh;overflow-y:auto;padding:22px;position:relative;box-shadow:0 24px 60px rgba(0,0,0,.28)}
+.pvx-tvx{position:absolute;top:12px;right:14px;background:none;border:none;font-size:26px;line-height:1;color:#94a3b8;cursor:pointer}
+.pvx-tvx:hover{color:#0D1B2A}
+.pvx-tvh{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;color:#0D1B2A;margin-bottom:6px;padding-right:24px}
+.pvx-tvh b{font-weight:800}
+.pvx-tvnote{font-size:11.5px;color:#94a3b8;line-height:1.45;margin-bottom:16px}
+.pvx-tvgrp{margin-bottom:14px}
+.pvx-tvgrp-t{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;color:#1B3FA0;margin-bottom:7px}
+.pvx-tvchips{display:flex;flex-wrap:wrap;gap:6px}
+.pvx-tvch{font-size:11.5px;font-weight:600;background:#f1f5f9;color:#334155;border-radius:7px;padding:5px 10px}
+.pvx-tvgrp:first-of-type .pvx-tvch{background:#eef2ff;color:#3730a3}
+.pvx-tvinfo .ic{font-size:13px;flex-shrink:0}
+.pvx-pricebox{background:#f8fafc;border-radius:12px;padding:11px 12px;margin-top:auto}
+.pvx-pm-row{display:flex;align-items:baseline;gap:4px}
+.pvx-amt{font-family:'Syne',sans-serif;font-size:23px;font-weight:800;color:#1B3FA0;line-height:1}
+.pvx-pm{font-size:11px;color:#94a3b8}
+.pvx-bd-row{display:flex;justify-content:space-between;font-size:12px;color:#64748b;margin-top:7px}
+.pvx-bd-row.tp{margin-top:8px;padding-top:8px;border-top:1px solid #e8edf5}
+.pvx-bd-row span.v{color:#0D1B2A;font-weight:700;text-align:right}
+.pvx-bd-row span.v.free{color:#047857}
+.pvx-bd-note{font-size:10px;color:#94a3b8;margin-top:7px;line-height:1.4}
+.pvx-vodanote{font-size:10px;color:#1B3FA0;background:#EEF2FB;border:1px solid #dbe6fb;border-radius:8px;padding:6px 8px;margin-top:8px;line-height:1.4;display:flex;gap:5px;align-items:flex-start}
+.pvx-go{display:block;text-align:center;background:#1B3FA0;color:#fff;border-radius:10px;padding:11px;font-size:13px;font-weight:700;text-decoration:none;margin-top:10px;transition:background .15s;font-family:Inter,sans-serif}
+.pvx-go:hover{background:#122d78}
+.pvx-empty{grid-column:1/-1;text-align:center;padding:50px;color:#94a3b8;background:#fff;border-radius:14px;border:1px dashed #eaecf0}
+.pvx-more{text-align:center;margin-top:22px}
+.pvx-more button{background:#fff;color:#1B3FA0;border:2px solid #1B3FA0;border-radius:10px;padding:11px 36px;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif}
+.pvx-more button:hover{background:#1B3FA0;color:#fff}
+.pvx-disc{font-size:11px;color:#c0ccd8;text-align:center;margin-top:18px}
+.pvx-mobfilter{display:none}
+.pvx-bk{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:4px}
+.pvx-bkbtn{border:1.5px solid #eaecf0;border-radius:11px;padding:9px 8px;text-align:center;cursor:pointer;background:#fff;transition:all .13s;font-family:Inter,sans-serif}
+.pvx-sw{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start}
+.pvx-swatch{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;width:46px;background:none;border:none;padding:0;font-family:inherit}
+.pvx-swdot{width:34px;height:34px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1.5px #e8edf5;transition:all .15s;position:relative;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800}
+.pvx-swatch:hover .pvx-swdot{box-shadow:0 0 0 1.5px #c7d6f5;transform:scale(1.06)}
+.pvx-swatch.on .pvx-swdot{box-shadow:0 0 0 2.5px #2563eb}
+.pvx-swlbl{font-size:10px;color:#475569;font-weight:600;text-align:center;line-height:1.1}
+.pvx-swatch.on .pvx-swlbl{color:#1B3FA0;font-weight:800}
+.pvx-swall{border:1.5px solid #eaecf0;border-radius:11px;padding:9px 13px;cursor:pointer;background:#fff;font-family:Inter,sans-serif;font-size:12px;font-weight:700;color:#475569;height:38px;align-self:flex-start}
+.pvx-swall.on{border-color:#1B3FA0;background:#f5f8ff;color:#1B3FA0}
+.pvx-bkbtn b{display:block;font-size:13px;font-weight:700;color:#0D1B2A;line-height:1.15}
+.pvx-bkbtn small{display:block;font-size:10px;color:#94a3b8;font-weight:600;margin-top:2px}
+.pvx-bkbtn.on{border-color:#1B3FA0;background:#EEF2FB}
+.pvx-bkbtn.on b{color:#1B3FA0}
+@media(max-width:1080px){.pvx-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:860px){
+  .pvx-layout{grid-template-columns:1fr}
+  .pvx-side{display:none;background:#fff;border:1px solid #eaecf0;border-radius:14px;padding:18px;margin-bottom:16px}
+  .pvx-side.open{display:block}
+  .pvx-mobfilter{display:block;width:100%;background:#1B3FA0;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:14px;font-family:Inter,sans-serif}
+}
+@media(max-width:560px){.pvx-grid{grid-template-columns:1fr}.pvx-merkbar{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}}
+</style>
+
+<div id="vergelijker"></div>
+<div class="pvx">
+<div class="pvx-outer">
+
+  {%- comment -%}
+    18 sep: de knop particulier/zakelijk stond alleen op telefoon en sim only.
+    Op internet was zakelijk daardoor onvindbaar, terwijl er 126 zakelijke
+    aanbiedingen van Odido in de feed zitten en Ziggo en KPN er handmatig bij
+    zijn gezet. Zakelijk internet is bovendien een markt waar de grote
+    vergelijkers nauwelijks iets doen.
+  {%- endcomment -%}
+{%- comment -%}
+  18 sep: de knop zakelijk filterde binnen deze pagina. Dat gaf drie problemen:
+  de titel en de uitleg bleven particulier, alle bedragen bleven inclusief btw
+  terwijl zakelijk exclusief hoort, en vanaf de telefoonpagina belandde je in
+  sim only. Nu is het een link naar de zakelijke vergelijker, die per categorie
+  zijn eigen pagina heeft. Het segment zelf is uit deze vergelijker gehaald,
+  zodat er niet twee wegen naar hetzelfde blijven bestaan.
+{%- endcomment -%}
+  {%- assign zak_url = section.settings.zakelijk_url -%}
+  {% if zak_url != blank %}
+  <div class="pvx-seg" id="pvx-seg">
+    <span class="pvx-seg-btn on">&#128100; <span data-t="segPart"></span></span>
+    <a class="pvx-seg-btn pvx-seg-link" href="{{ zak_url }}">&#128188; <span data-t="segZak"></span></a>
+  </div>
+  {% endif %}
+
+  {% if is_telefoon %}<div class="pvx-merkbar" id="pvx-merkbar"></div>{% endif %}
+
+  <div class="pvx-search">
+    <span class="si">&#128269;</span>
+    <input type="text" id="pvx-q" data-tph="searchPh" autocomplete="off">
+  </div>
+
+  <button class="pvx-mobfilter" id="pvx-mobfilter" onclick="pvxToggleSide(this)"></button>
+
+  <div class="pvx-layout">
+    <div class="pvx-side" id="pvx-side">
+      <div class="pvx-side-top"><b data-t="filters"></b><button class="pvx-reset" onclick="pvxReset()" data-t="reset"></button></div>
+
+      <div class="pvx-acc">
+        <button class="pvx-acc-h" onclick="pvxTog('a-data',this)"><span data-t="{% if is_internet %}speed{% else %}incData{% endif %}"></span><span class="chev">&#9650;</span></button>
+        <div class="pvx-acc-b" id="a-data"><div class="pvx-bk" id="pvx-databk"></div></div>
+      </div>
+      {% if is_internet %}
+      <div class="pvx-acc">
+        <button class="pvx-acc-h" onclick="pvxTog('a-tv',this)"><span data-t="tvFilter"></span><span class="chev">&#9650;</span></button>
+        <div class="pvx-acc-b" id="a-tv"><div class="pvx-bk" id="pvx-tvbk"></div></div>
+      </div>
+      {% endif %}
+      {% unless is_internet %}
+      <div class="pvx-acc" id="pvx-bel-acc">
+        <button class="pvx-acc-h" onclick="pvxTog('a-bel',this)"><span data-t="calls"></span><span class="chev">&#9650;</span></button>
+        <div class="pvx-acc-b" id="a-bel"><div class="pvx-bk" id="pvx-belbk"></div></div>
+      </div>
+      {% endunless %}
+
+      <div class="pvx-acc">
+        <button class="pvx-acc-h" onclick="pvxTog('a-prijs',this)"><span data-t="price"></span><span class="chev">&#9650;</span></button>
+        <div class="pvx-acc-b" id="a-prijs">
+          <div class="pvx-lbl" data-t="totalMonthly"></div>
+          <div class="pvx-bk" id="pvx-maandbk"></div>
+          {% if is_telefoon %}
+          <div class="pvx-lbl" style="margin-top:16px" data-t="deviceDown"></div>
+          <div class="pvx-bk" id="pvx-bijbk"></div>
+          <div class="pvx-lbl" style="margin-top:16px" data-t="shownPrice"></div>
+          <div class="pvx-bk" id="pvx-toonbk"></div>
+          {% endif %}
+          <input type="hidden" id="s-maand" value="100" data-max="100">
+          <input type="hidden" id="s-bij" value="2000" data-max="2000">
+          <input type="hidden" id="f-toon" value="maand">
+        </div>
+      </div>
+
+      <div class="pvx-acc">
+        <button class="pvx-acc-h" onclick="pvxTog('a-prov',this)"><span data-t="provider"></span><span class="chev">&#9650;</span></button>
+        <div class="pvx-acc-b" id="a-prov"><div id="pvx-prov-list"></div></div>
+      </div>
+
+      <div class="pvx-acc" id="pvx-via-acc">
+        <button class="pvx-acc-h" onclick="pvxTog('a-via',this)"><span data-t="seller"></span><span class="chev">&#9650;</span></button>
+        <div class="pvx-acc-b" id="a-via"><div id="pvx-via-list"></div></div>
+      </div>
+
+      <div class="pvx-acc">
+        <button class="pvx-acc-h" onclick="pvxTog('a-meer',this)"><span data-t="moreFilters"></span><span class="chev">&#9660;</span></button>
+        <div class="pvx-acc-b" id="a-meer" style="display:none">
+          <div class="pvx-lbl" data-t="contract"></div>
+          <div class="pvx-bk" id="pvx-ctrbk"></div>
+          {% if is_telefoon %}
+          <div class="pvx-lbl" style="margin-top:16px" data-t="storage"></div>
+          <div class="pvx-bk" id="pvx-storbk"></div>
+          {%- comment -%}
+            18 sep: filter op toestel. Met ruim duizend aanbiedingen is scrollen
+            geen doen als je al weet welk toestel je wilt; de zoekbalk hielp
+            maar half omdat je dan de naam exact moet typen. Dit is een lijst
+            van wat er in de feed zit.
+          {%- endcomment -%}
+          <div class="pvx-lbl" style="margin-top:16px" data-t="deviceFilter"></div>
+          <select id="f-model" class="pvx-sel" onchange="pvxChg(this)"></select>
+          <div class="pvx-lbl" style="margin-top:16px" data-t="colour"></div>
+          <div class="pvx-bk" id="pvx-kleurbk"></div>
+          {% endif %}
+          {% unless is_internet %}
+          <div class="pvx-lbl" style="margin-top:16px" data-t="network"></div>
+          <div class="pvx-bk" id="pvx-netbk"></div>
+          {% endunless %}
+          <input type="hidden" id="f-ctr" value="">
+          <input type="hidden" id="f-stor" value="">
+          <input type="hidden" id="f-kleur" value="">
+          <input type="hidden" id="f-net" value="">
+        </div>
+      </div>
+    </div>
+
+    <div class="pvx-results">
+      <div class="pvx-rhead"><span class="pvx-ct" id="pvx-ct"></span>
+        <div class="pvx-sortwrap"><label data-t="sortBy"></label><select id="pvx-sort" onchange="pvxSort(this.value)"></select></div>
+      </div>
+      <div class="pvx-grid" id="pvx-grid"><div class="pvx-empty" data-t="loading"></div></div>
+      <div class="pvx-more" id="pvx-more" style="display:none"><button onclick="pvxMore()" data-t="loadMore"></button></div>
+      <p class="pvx-disc" data-t="disclaimer"></p>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+(function(){
+var W='{{ section.settings.worker_url }}';
+var EP='{{ section.settings.feed_endpoint }}';
+var PT=EP.replace('/api/feed/','');
+var isTelefoon=(PT==='telefoon'),isInternet=(PT==='internet'),isSimonly=(PT==='simonly');
+var LOC='{{ pvloc }}'; if(['nl','en','tr','pl','uk'].indexOf(LOC)<0)LOC='nl';
+var SORT='pop',ALL=[],SHOWN=9,PAGE=9,GROUPS=[];
+var activeMerk='',activeProv='',activeReseller='',SEG='particulier',activeData='',activeCalls='';
+// Zakelijk heeft sinds 18 september een eigen vergelijker. Wie hier met de oude
+// link ?zakelijk=1 binnenkomt, sturen we daarheen door; anders zou hij op een
+// pagina staan waar dat segment niet meer bestaat.
+try{
+  if(new URLSearchParams(location.search).get('zakelijk')==='1'){
+    var zdoel={{ section.settings.zakelijk_url | json }};
+    if(zdoel) location.replace(zdoel);
+  }
+}catch(e){}
+
+var TR={
+nl:{segPart:'Particulier',segZak:'Zakelijk',searchPh:'Zoek een toestel: iPhone 17, Samsung Galaxy S26\u2026',filters:'Filters',reset:'Wis alles',price:'Prijs',shownPrice:'Getoonde prijs',optMonth:'Maandprijs',optDevice:'Toestelprijs',totalMonthly:'Totale maandprijs',max:'Maximaal',deviceDown:'Bijbetaling toestel (eenmalig)',provider:'Provider',speed:'Snelheid',incData:'Inbegrepen data',moreFilters:'Meer filters',contract:'Looptijd',allContracts:'Alle looptijden',monthly:'Maandelijks',m12:'12 maanden',m24:'24 maanden',storage:'Geheugen',allStorage:'Alle opslag',colour:'Kleur',allColours:'Alle kleuren',deviceFilter:'Toestel',allDevices:'Alle toestellen',network:'Mobiel netwerk',allNetworks:'Alle netwerken',sortBy:'Sorteer op:',loading:'Aanbiedingen ophalen\u2026',loadMore:'Meer aanbiedingen laden \u25bc',filtersShow:'\u2699 Filters tonen',filtersHide:'\u25b2 Filters verbergen',disclaimer:'\u2020 Prijzen dagelijks bijgewerkt. Klik door voor de actuele prijs bij de aanbieder. Wij ontvangen mogelijk een vergoeding bij afsluiting via affiliate links. Zakelijke abonnementsprijzen zijn excl. btw; maandelijkse toestelbetalingen zijn btw-vrijgesteld en eenmalige toestelbetalingen zijn exclusief btw.',results:'resultaten',resultsZak:'(zakelijk \u00b7 excl. btw)',forQ:'voor',noResults:'Geen aanbiedingen gevonden',noResultsZak:'Er zijn momenteel geen zakelijke contracten in dit filter.',sortPop:'Meest gekozen',sortSpeed:'Hoogste snelheid',sortPrice:'Laagste prijs',sortPriceM:'Laagste maandprijs',sortDev:'Laagste toestelbetaling /mnd',sortDown:'Laagste bijbetaling',sortData:'Meeste data',allProviders:'Alle providers',allBrands:'Alle merken',unlimited:'Onbeperkt data',cardMonth:'/mnd',cardTotal:'/mnd totaal',devicePriceLbl:'toestel los',sub:'Abonnement',deviceMonthly:'Toestelbetaling',oneOff:'Eenmalige betaling',none:'Geen',inclBtw:'incl. btw',exclBtw:'excl. btw',devicePriceNote:'Toestelprijs',spreadOver:'gespreid over',months:'mnd',viewOffer:'Bekijk aanbieding \u203a',loadErr:'Kon aanbiedingen niet laden. Probeer het later opnieuw.',allBundles:'Alle bundels',allSpeeds:'Alle snelheden',unlimitedShort:'Onbeperkt',callsIncl:'Onbeperkt bellen',calls:'Bellen',callsAll:'Maakt niet uit',callsBundle:'Met belbundel',callsUnlim:'Onbeperkt bellen',dataAll:'Alle bundels',dataTo5:'t/m 5 GB',data5_20:'5 \u2013 20 GB',data20_50:'20 \u2013 50 GB',dataUnlim:'Onbeperkt',spdAll:'Alle snelheden',sub_light:'licht gebruik',sub_avg:'gemiddeld',sub_much:'veel',sub_carefree:'zorgeloos',sub_bundle:'bijv. 200 min',tvFilter:'Televisie',tvAll:'Maakt niet uit',tvWith:'Met tv',tvWithout:'Alleen internet',tvChannels:'zenders',tvIncl:'incl. tv',pMaand:'Maandprijs',pBij:'Bijbetaling toestel',pToon:'Getoonde prijs',pAll:'Alles',pAllSub:'elke prijs',pFree:'\u20ac0',pFreeSub:'geen bijbetaling',pLow:'laag',pMid:'gemiddeld',pHigh:'hoog',pRuim:'ruim',pPrem:'premium',pBudget:'budget',pAnyBij:'maakt niet uit',tShowMonth:'Per maand',tShowMonthSub:'maandbedrag',tShowTotal:'Toestel los',tShowTotalSub:'prijs toestel',tShowOne:'Eenmalig',tShowOneSub:'+ maandbedrag',giftTitle:'Gratis cadeau naar keuze',giftBadge:'cadeau',note_odido:'Klantvoordeel mogelijk bij meerdere abonnementen, zie prijs bij aanbieder.',note_kpn:'Combivoordeel mogelijk bij meerdere abonnementen, zie prijs bij aanbieder.',note_voda:'Extra korting mogelijk bij meerdere abonnementen, zie prijs bij aanbieder.',note_simyo:'Extra data met KPN Thuis Internet, zie voorwaarden bij aanbieder.',note_hn:'Combivoordeel met internet van hollandsnieuwe of Ziggo, zie prijs bij aanbieder.',note_ben:'Klantvoordeel bij een ander Ben-abonnement of Odido Internet, zie prijs bij aanbieder.'},
+en:{segPart:'Personal',segZak:'Business',searchPh:'Search a device: iPhone 17, Samsung Galaxy S26\u2026',filters:'Filters',reset:'Clear all',price:'Price',shownPrice:'Shown price',optMonth:'Monthly price',optDevice:'Device price',totalMonthly:'Total monthly price',max:'Up to',deviceDown:'Device down payment (one-off)',provider:'Provider',speed:'Speed',incData:'Included data',moreFilters:'More filters',contract:'Contract length',allContracts:'All contract lengths',monthly:'Monthly',m12:'12 months',m24:'24 months',storage:'Storage',allStorage:'All storage',colour:'Colour',allColours:'All colours',deviceFilter:'Device',allDevices:'All devices',network:'Mobile network',allNetworks:'All networks',sortBy:'Sort by:',loading:'Fetching offers\u2026',loadMore:'Load more offers \u25bc',filtersShow:'\u2699 Show filters',filtersHide:'\u25b2 Hide filters',disclaimer:'\u2020 Prices updated daily. Click through for the current price at the provider. We may receive a commission when you sign up via affiliate links. Business subscription prices are excl. VAT; monthly device payments are VAT-exempt and one-off device payments are excl. VAT.',results:'results',resultsZak:'(business \u00b7 excl. VAT)',forQ:'for',noResults:'No offers found',noResultsZak:'There are currently no business contracts in this filter.',sortPop:'Most chosen',sortSpeed:'Highest speed',sortPrice:'Lowest price',sortPriceM:'Lowest monthly price',sortDev:'Lowest device payment /mo',sortDown:'Lowest down payment',sortData:'Most data',allProviders:'All providers',allBrands:'All brands',unlimited:'Unlimited data',cardMonth:'/mo',cardTotal:'/mo total',devicePriceLbl:'device price',sub:'Subscription',deviceMonthly:'Device payment',oneOff:'One-off payment',none:'None',inclBtw:'incl. VAT',exclBtw:'excl. VAT',devicePriceNote:'Device price',spreadOver:'spread over',months:'mo',viewOffer:'View offer \u203a',loadErr:'Could not load offers. Please try again later.',allBundles:'All bundles',allSpeeds:'All speeds',unlimitedShort:'Unlimited',callsIncl:'Unlimited calls',calls:'Calling',callsAll:'Doesn\u2019t matter',callsBundle:'With call bundle',callsUnlim:'Unlimited calls',dataAll:'All bundles',dataTo5:'up to 5 GB',data5_20:'5 \u2013 20 GB',data20_50:'20 \u2013 50 GB',dataUnlim:'Unlimited',spdAll:'All speeds',sub_light:'light use',sub_avg:'average',sub_much:'heavy',sub_carefree:'carefree',sub_bundle:'e.g. 200 min',tvFilter:'Television',tvAll:'Doesn\u2019t matter',tvWith:'With TV',tvWithout:'Internet only',tvChannels:'channels',tvIncl:'incl. TV',pMaand:'Monthly price',pBij:'Device payment',pToon:'Shown price',pAll:'All',pAllSub:'any price',pFree:'\u20ac0',pFreeSub:'no payment',pLow:'low',pMid:'average',pHigh:'high',pRuim:'spacious',pPrem:'premium',pBudget:'budget',pAnyBij:'any',tShowMonth:'Per month',tShowMonthSub:'monthly',tShowTotal:'Total',tShowTotalSub:'over term',tShowOne:'One-off',tShowOneSub:'+ monthly',giftTitle:'Free gift of your choice',giftBadge:'gift',note_odido:'Customer discount possible with multiple subscriptions \u2014 see price at provider.',note_kpn:'Combi discount possible with multiple subscriptions \u2014 see price at provider.',note_voda:'Extra discount possible with multiple subscriptions \u2014 see price at provider.',note_simyo:'Extra data with KPN Home Internet \u2014 see terms at provider.',note_hn:'Combi discount with hollandsnieuwe or Ziggo internet \u2014 see price at provider.',note_ben:'Customer discount with another Ben subscription or Odido Internet \u2014 see price at provider.'},
+tr:{segPart:'Bireysel',segZak:'Kurumsal',searchPh:'Cihaz ara: iPhone 17, Samsung Galaxy S26\u2026',filters:'Filtreler',reset:'T\u00fcm\u00fcn\u00fc temizle',price:'Fiyat',shownPrice:'G\u00f6sterilen fiyat',optMonth:'Ayl\u0131k fiyat',optDevice:'Cihaz fiyat\u0131',totalMonthly:'Toplam ayl\u0131k fiyat',max:'En fazla',deviceDown:'Cihaz pe\u015finat\u0131 (tek seferlik)',provider:'Sa\u011flay\u0131c\u0131',speed:'H\u0131z',incData:'Dahil internet',moreFilters:'Daha fazla filtre',contract:'S\u00f6zle\u015fme s\u00fcresi',allContracts:'T\u00fcm s\u00fcreler',monthly:'Ayl\u0131k',m12:'12 ay',m24:'24 ay',storage:'Depolama',allStorage:'T\u00fcm depolama',colour:'Renk',allColours:'T\u00fcm renkler',deviceFilter:'Cihaz',allDevices:'T\u00fcm cihazlar',network:'Mobil \u015febeke',allNetworks:'T\u00fcm \u015febekeler',sortBy:'S\u0131rala:',loading:'Teklifler al\u0131n\u0131yor\u2026',loadMore:'Daha fazla teklif y\u00fckle \u25bc',filtersShow:'\u2699 Filtreleri g\u00f6ster',filtersHide:'\u25b2 Filtreleri gizle',disclaimer:'\u2020 Fiyatlar g\u00fcnl\u00fck g\u00fcncellenir. G\u00fcncel fiyat i\u00e7in sa\u011flay\u0131c\u0131ya t\u0131klay\u0131n. Affiliate ba\u011flant\u0131lar\u0131 \u00fczerinden abonelik a\u00e7\u0131l\u0131rsa komisyon alabiliriz. Kurumsal abonelik fiyatlar\u0131 KDV hari\u00e7tir; ayl\u0131k cihaz \u00f6demeleri KDV\u0027den muaft\u0131r ve tek seferlik cihaz \u00f6demeleri KDV hari\u00e7tir.',results:'sonu\u00e7',resultsZak:'(kurumsal \u00b7 KDV hari\u00e7)',forQ:'i\u00e7in',noResults:'Teklif bulunamad\u0131',noResultsZak:'Bu filtrede \u015fu anda kurumsal s\u00f6zle\u015fme yok.',sortPop:'En \u00e7ok se\u00e7ilen',sortSpeed:'En y\u00fcksek h\u0131z',sortPrice:'En d\u00fc\u015f\u00fck fiyat',sortPriceM:'En d\u00fc\u015f\u00fck ayl\u0131k fiyat',sortDev:'En d\u00fc\u015f\u00fck cihaz \u00f6demesi /ay',sortDown:'En d\u00fc\u015f\u00fck pe\u015finat',sortData:'En \u00e7ok internet',allProviders:'T\u00fcm sa\u011flay\u0131c\u0131lar',allBrands:'T\u00fcm markalar',unlimited:'S\u0131n\u0131rs\u0131z internet',cardMonth:'/ay',cardTotal:'/ay toplam',devicePriceLbl:'cihaz fiyat\u0131',sub:'Abonelik',deviceMonthly:'Cihaz \u00f6demesi',oneOff:'Tek seferlik \u00f6deme',none:'Yok',inclBtw:'KDV dahil',exclBtw:'KDV hari\u00e7',devicePriceNote:'Cihaz fiyat\u0131',spreadOver:'\u015fu s\u00fcreye yay\u0131lm\u0131\u015f',months:'ay',viewOffer:'Teklifi g\u00f6r \u203a',loadErr:'Teklifler y\u00fcklenemedi. L\u00fctfen daha sonra tekrar deneyin.',allBundles:'T\u00fcm paketler',allSpeeds:'T\u00fcm h\u0131zlar',unlimitedShort:'S\u0131n\u0131rs\u0131z',callsIncl:'S\u0131n\u0131rs\u0131z konu\u015fma',calls:'Arama',callsAll:'Fark etmez',callsBundle:'Arama paketli',callsUnlim:'S\u0131n\u0131rs\u0131z arama',dataAll:'T\u00fcm paketler',dataTo5:'5 GB\u2019a kadar',data5_20:'5 \u2013 20 GB',data20_50:'20 \u2013 50 GB',dataUnlim:'S\u0131n\u0131rs\u0131z',spdAll:'T\u00fcm h\u0131zlar',sub_light:'az kullan\u0131m',sub_avg:'orta',sub_much:'y\u00fcksek',sub_carefree:'s\u0131n\u0131rs\u0131z',sub_bundle:'\u00f6rn. 200 dk',tvFilter:'Televizyon',tvAll:'Fark etmez',tvWith:'TV ile',tvWithout:'Sadece internet',tvChannels:'kanal',tvIncl:'TV dahil',pMaand:'Ayl\u0131k fiyat',pBij:'Cihaz \u00f6demesi',pToon:'G\u00f6sterilen fiyat',pAll:'Hepsi',pAllSub:'her fiyat',pFree:'\u20ac0',pFreeSub:'\u00f6deme yok',pLow:'d\u00fc\u015f\u00fck',pMid:'orta',pHigh:'y\u00fcksek',pRuim:'geni\u015f',pPrem:'premium',pBudget:'ekonomik',pAnyBij:'fark etmez',tShowMonth:'Ayl\u0131k',tShowMonthSub:'ayl\u0131k tutar',tShowTotal:'Toplam',tShowTotalSub:'s\u00fcre boyunca',tShowOne:'Tek seferlik',tShowOneSub:'+ ayl\u0131k',giftTitle:'Se\u00e7iminize g\u00f6re \u00fccretsiz hediye',giftBadge:'hediye',note_odido:'Birden fazla abonelikte m\u00fc\u015fteri indirimi m\u00fcmk\u00fcn \u2014 fiyat i\u00e7in sa\u011flay\u0131c\u0131ya bak\u0131n.',note_kpn:'Birden fazla abonelikte kombi indirimi m\u00fcmk\u00fcn \u2014 fiyat i\u00e7in sa\u011flay\u0131c\u0131ya bak\u0131n.',note_voda:'Birden fazla abonelikte ek indirim m\u00fcmk\u00fcn \u2014 fiyat i\u00e7in sa\u011flay\u0131c\u0131ya bak\u0131n.',note_simyo:'KPN Home Internet ile ekstra internet \u2014 ko\u015fullar i\u00e7in sa\u011flay\u0131c\u0131ya bak\u0131n.',note_hn:'hollandsnieuwe veya Ziggo interneti ile kombi indirimi \u2014 fiyat i\u00e7in sa\u011flay\u0131c\u0131ya bak\u0131n.',note_ben:'Ba\u015fka bir Ben aboneli\u011fi veya Odido Internet ile m\u00fc\u015fteri indirimi \u2014 fiyat i\u00e7in sa\u011flay\u0131c\u0131ya bak\u0131n.'},
+pl:{segPart:'Prywatny',segZak:'Firmowy',searchPh:'Szukaj urz\u0105dzenia: iPhone 17, Samsung Galaxy S26\u2026',filters:'Filtry',reset:'Wyczy\u015b\u0107 wszystko',price:'Cena',shownPrice:'Pokazywana cena',optMonth:'Cena miesi\u0119czna',optDevice:'Cena urz\u0105dzenia',totalMonthly:'\u0141\u0105czna cena miesi\u0119czna',max:'Maks.',deviceDown:'Dop\u0142ata do urz\u0105dzenia (jednorazowo)',provider:'Operator',speed:'Pr\u0119dko\u015b\u0107',incData:'Internet w pakiecie',moreFilters:'Wi\u0119cej filtr\u00f3w',contract:'Okres umowy',allContracts:'Wszystkie okresy',monthly:'Miesi\u0119cznie',m12:'12 miesi\u0119cy',m24:'24 miesi\u0105ce',storage:'Pami\u0119\u0107',allStorage:'Ca\u0142a pami\u0119\u0107',colour:'Kolor',allColours:'Wszystkie kolory',deviceFilter:'Urz\u0105dzenie',allDevices:'Wszystkie urz\u0105dzenia',network:'Sie\u0107 kom\u00f3rkowa',allNetworks:'Wszystkie sieci',sortBy:'Sortuj wed\u0142ug:',loading:'Pobieranie ofert\u2026',loadMore:'Za\u0142aduj wi\u0119cej ofert \u25bc',filtersShow:'\u2699 Poka\u017c filtry',filtersHide:'\u25b2 Ukryj filtry',disclaimer:'\u2020 Ceny aktualizowane codziennie. Kliknij, aby zobaczy\u0107 aktualn\u0105 cen\u0119 u operatora. Mo\u017cemy otrzyma\u0107 prowizj\u0119 za zawarcie umowy przez linki afiliacyjne. Ceny abonament\u00f3w firmowych s\u0105 bez VAT; miesi\u0119czne raty za urz\u0105dzenie s\u0105 zwolnione z VAT, a jednorazowe p\u0142atno\u015bci za urz\u0105dzenie s\u0105 bez VAT.',results:'wynik\u00f3w',resultsZak:'(firmowy \u00b7 bez VAT)',forQ:'dla',noResults:'Nie znaleziono ofert',noResultsZak:'Obecnie brak ofert firmowych w tym filtrze.',sortPop:'Najcz\u0119\u015bciej wybierane',sortSpeed:'Najwy\u017csza pr\u0119dko\u015b\u0107',sortPrice:'Najni\u017csza cena',sortPriceM:'Najni\u017csza cena miesi\u0119czna',sortDev:'Najni\u017csza op\u0142ata za urz\u0105dzenie /mies.',sortDown:'Najni\u017csza dop\u0142ata',sortData:'Najwi\u0119cej internetu',allProviders:'Wszyscy operatorzy',allBrands:'Wszystkie marki',unlimited:'Internet bez limitu',cardMonth:'/mies.',cardTotal:'/mies. \u0142\u0105cznie',devicePriceLbl:'cena urz\u0105dzenia',sub:'Abonament',deviceMonthly:'Op\u0142ata za urz\u0105dzenie',oneOff:'Op\u0142ata jednorazowa',none:'Brak',inclBtw:'z VAT',exclBtw:'bez VAT',devicePriceNote:'Cena urz\u0105dzenia',spreadOver:'roz\u0142o\u017cona na',months:'mies.',viewOffer:'Zobacz ofert\u0119 \u203a',loadErr:'Nie uda\u0142o si\u0119 za\u0142adowa\u0107 ofert. Spr\u00f3buj ponownie p\u00f3\u017aniej.',allBundles:'Wszystkie pakiety',allSpeeds:'Wszystkie pr\u0119dko\u015bci',unlimitedShort:'Bez limitu',callsIncl:'Rozmowy bez limitu',calls:'Rozmowy',callsAll:'Bez znaczenia',callsBundle:'Z pakietem rozm\u00f3w',callsUnlim:'Rozmowy bez limitu',dataAll:'Wszystkie pakiety',dataTo5:'do 5 GB',data5_20:'5 \u2013 20 GB',data20_50:'20 \u2013 50 GB',dataUnlim:'Bez limitu',spdAll:'Wszystkie pr\u0119dko\u015bci',sub_light:'ma\u0142e u\u017cycie',sub_avg:'\u015brednie',sub_much:'du\u017ce',sub_carefree:'bez zmartwie\u0144',sub_bundle:'np. 200 min',tvFilter:'Telewizja',tvAll:'Bez znaczenia',tvWith:'Z TV',tvWithout:'Tylko internet',tvChannels:'kana\u0142\u00f3w',tvIncl:'z TV',pMaand:'Cena miesi\u0119czna',pBij:'Dop\u0142ata do telefonu',pToon:'Pokazana cena',pAll:'Wszystko',pAllSub:'dowolna cena',pFree:'\u20ac0',pFreeSub:'bez dop\u0142aty',pLow:'niska',pMid:'\u015brednia',pHigh:'wysoka',pRuim:'du\u017ca',pPrem:'premium',pBudget:'bud\u017cet',pAnyBij:'bez znaczenia',tShowMonth:'Miesi\u0119cznie',tShowMonthSub:'kwota mies.',tShowTotal:'\u0141\u0105cznie',tShowTotalSub:'przez okres',tShowOne:'Jednorazowo',tShowOneSub:'+ miesi\u0119cznie',giftTitle:'Darmowy prezent do wyboru',giftBadge:'prezent',note_odido:'Mo\u017cliwy rabat klienta przy kilku abonamentach \u2014 sprawd\u017a cen\u0119 u operatora.',note_kpn:'Mo\u017cliwy rabat combi przy kilku abonamentach \u2014 sprawd\u017a cen\u0119 u operatora.',note_voda:'Mo\u017cliwy dodatkowy rabat przy kilku abonamentach \u2014 sprawd\u017a cen\u0119 u operatora.',note_simyo:'Dodatkowe dane z KPN Home Internet \u2014 sprawd\u017a warunki u operatora.',note_hn:'Rabat combi z internetem hollandsnieuwe lub Ziggo \u2014 sprawd\u017a cen\u0119 u operatora.',note_ben:'Rabat klienta przy innym abonamencie Ben lub Odido Internet \u2014 sprawd\u017a cen\u0119 u operatora.'},
+uk:{segPart:'\u041f\u0440\u0438\u0432\u0430\u0442\u043d\u0438\u0439',segZak:'\u0411\u0456\u0437\u043d\u0435\u0441',searchPh:'\u041f\u043e\u0448\u0443\u043a \u043f\u0440\u0438\u0441\u0442\u0440\u043e\u044e: iPhone 17, Samsung Galaxy S26\u2026',filters:'\u0424\u0456\u043b\u044c\u0442\u0440\u0438',reset:'\u041e\u0447\u0438\u0441\u0442\u0438\u0442\u0438 \u0432\u0441\u0435',price:'\u0426\u0456\u043d\u0430',shownPrice:'\u041f\u043e\u043a\u0430\u0437\u0430\u043d\u0430 \u0446\u0456\u043d\u0430',optMonth:'\u0429\u043e\u043c\u0456\u0441\u044f\u0447\u043d\u0430 \u0446\u0456\u043d\u0430',optDevice:'\u0426\u0456\u043d\u0430 \u043f\u0440\u0438\u0441\u0442\u0440\u043e\u044e',totalMonthly:'\u0417\u0430\u0433\u0430\u043b\u044c\u043d\u0430 \u0449\u043e\u043c\u0456\u0441\u044f\u0447\u043d\u0430 \u0446\u0456\u043d\u0430',max:'\u0414\u043e',deviceDown:'\u0414\u043e\u043f\u043b\u0430\u0442\u0430 \u0437\u0430 \u043f\u0440\u0438\u0441\u0442\u0440\u0456\u0439 (\u0440\u0430\u0437\u043e\u0432\u0430)',provider:'\u041e\u043f\u0435\u0440\u0430\u0442\u043e\u0440',speed:'\u0428\u0432\u0438\u0434\u043a\u0456\u0441\u0442\u044c',incData:'\u0406\u043d\u0442\u0435\u0440\u043d\u0435\u0442 \u0443 \u043f\u0430\u043a\u0435\u0442\u0456',moreFilters:'\u0411\u0456\u043b\u044c\u0448\u0435 \u0444\u0456\u043b\u044c\u0442\u0440\u0456\u0432',contract:'\u0422\u0435\u0440\u043c\u0456\u043d \u043a\u043e\u043d\u0442\u0440\u0430\u043a\u0442\u0443',allContracts:'\u0423\u0441\u0456 \u0442\u0435\u0440\u043c\u0456\u043d\u0438',monthly:'\u0429\u043e\u043c\u0456\u0441\u044f\u0447\u043d\u043e',m12:'12 \u043c\u0456\u0441\u044f\u0446\u0456\u0432',m24:'24 \u043c\u0456\u0441\u044f\u0446\u0456',storage:'\u041f\u0430\u043c\u02bf\u044f\u0442\u044c',allStorage:'\u0423\u0441\u044f \u043f\u0430\u043c\u02bf\u044f\u0442\u044c',colour:'\u041a\u043e\u043b\u0456\u0440',allColours:'\u0423\u0441\u0456 \u043a\u043e\u043b\u044c\u043e\u0440\u0438',deviceFilter:'\u041f\u0440\u0438\u0441\u0442\u0440\u0456\u0439',allDevices:'\u0423\u0441\u0456 \u043f\u0440\u0438\u0441\u0442\u0440\u043e\u0457',network:'\u041c\u043e\u0431\u0456\u043b\u044c\u043d\u0430 \u043c\u0435\u0440\u0435\u0436\u0430',allNetworks:'\u0423\u0441\u0456 \u043c\u0435\u0440\u0435\u0436\u0456',sortBy:'\u0421\u043e\u0440\u0442\u0443\u0432\u0430\u0442\u0438:',loading:'\u0417\u0430\u0432\u0430\u043d\u0442\u0430\u0436\u0435\u043d\u043d\u044f \u043f\u0440\u043e\u043f\u043e\u0437\u0438\u0446\u0456\u0439\u2026',loadMore:'\u0417\u0430\u0432\u0430\u043d\u0442\u0430\u0436\u0438\u0442\u0438 \u0431\u0456\u043b\u044c\u0448\u0435 \u25bc',filtersShow:'\u2699 \u041f\u043e\u043a\u0430\u0437\u0430\u0442\u0438 \u0444\u0456\u043b\u044c\u0442\u0440\u0438',filtersHide:'\u25b2 \u0421\u0445\u043e\u0432\u0430\u0442\u0438 \u0444\u0456\u043b\u044c\u0442\u0440\u0438',disclaimer:'\u2020 \u0426\u0456\u043d\u0438 \u043e\u043d\u043e\u0432\u043b\u044e\u044e\u0442\u044c\u0441\u044f \u0449\u043e\u0434\u043d\u044f. \u041d\u0430\u0442\u0438\u0441\u043d\u0456\u0442\u044c, \u0449\u043e\u0431 \u043f\u043e\u0431\u0430\u0447\u0438\u0442\u0438 \u0430\u043a\u0442\u0443\u0430\u043b\u044c\u043d\u0443 \u0446\u0456\u043d\u0443 \u0443 \u043e\u043f\u0435\u0440\u0430\u0442\u043e\u0440\u0430. \u041c\u0438 \u043c\u043e\u0436\u0435\u043c\u043e \u043e\u0442\u0440\u0438\u043c\u0430\u0442\u0438 \u043a\u043e\u043c\u0456\u0441\u0456\u044e \u0437\u0430 \u043e\u0444\u043e\u0440\u043c\u043b\u0435\u043d\u043d\u044f \u0447\u0435\u0440\u0435\u0437 \u043f\u0430\u0440\u0442\u043d\u0435\u0440\u0441\u044c\u043a\u0456 \u043f\u043e\u0441\u0438\u043b\u0430\u043d\u043d\u044f. \u0426\u0456\u043d\u0438 \u0431\u0456\u0437\u043d\u0435\u0441-\u0442\u0430\u0440\u0438\u0444\u0456\u0432 \u0431\u0435\u0437 \u041f\u0414\u0412; \u0449\u043e\u043c\u0456\u0441\u044f\u0447\u043d\u0456 \u043f\u043b\u0430\u0442\u0435\u0436\u0456 \u0437\u0430 \u043f\u0440\u0438\u0441\u0442\u0440\u0456\u0439 \u0437\u0432\u0456\u043b\u044c\u043d\u0435\u043d\u0456 \u0432\u0456\u0434 \u041f\u0414\u0412, \u0430 \u0440\u0430\u0437\u043e\u0432\u0456 \u043f\u043b\u0430\u0442\u0435\u0436\u0456 \u0437\u0430 \u043f\u0440\u0438\u0441\u0442\u0440\u0456\u0439 \u2014 \u0431\u0435\u0437 \u041f\u0414\u0412.',results:'\u0440\u0435\u0437\u0443\u043b\u044c\u0442\u0430\u0442\u0456\u0432',resultsZak:'(\u0431\u0456\u0437\u043d\u0435\u0441 \u00b7 \u0431\u0435\u0437 \u041f\u0414\u0412)',forQ:'\u0434\u043b\u044f',noResults:'\u041f\u0440\u043e\u043f\u043e\u0437\u0438\u0446\u0456\u0439 \u043d\u0435 \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e',noResultsZak:'\u0423 \u0446\u044c\u043e\u043c\u0443 \u0444\u0456\u043b\u044c\u0442\u0440\u0456 \u043d\u0430\u0440\u0430\u0437\u0456 \u043d\u0435\u043c\u0430\u0454 \u0431\u0456\u0437\u043d\u0435\u0441-\u043a\u043e\u043d\u0442\u0440\u0430\u043a\u0442\u0456\u0432.',sortPop:'\u041d\u0430\u0439\u043f\u043e\u043f\u0443\u043b\u044f\u0440\u043d\u0456\u0448\u0456',sortSpeed:'\u041d\u0430\u0439\u0432\u0438\u0449\u0430 \u0448\u0432\u0438\u0434\u043a\u0456\u0441\u0442\u044c',sortPrice:'\u041d\u0430\u0439\u043d\u0438\u0436\u0447\u0430 \u0446\u0456\u043d\u0430',sortPriceM:'\u041d\u0430\u0439\u043d\u0438\u0436\u0447\u0430 \u0449\u043e\u043c\u0456\u0441\u044f\u0447\u043d\u0430 \u0446\u0456\u043d\u0430',sortDev:'\u041d\u0430\u0439\u043d\u0438\u0436\u0447\u0430 \u043e\u043f\u043b\u0430\u0442\u0430 \u0437\u0430 \u043f\u0440\u0438\u0441\u0442\u0440\u0456\u0439 /\u043c\u0456\u0441.',sortDown:'\u041d\u0430\u0439\u043d\u0438\u0436\u0447\u0430 \u0434\u043e\u043f\u043b\u0430\u0442\u0430',sortData:'\u041d\u0430\u0439\u0431\u0456\u043b\u044c\u0448\u0435 \u0456\u043d\u0442\u0435\u0440\u043d\u0435\u0442\u0443',allProviders:'\u0423\u0441\u0456 \u043e\u043f\u0435\u0440\u0430\u0442\u043e\u0440\u0438',allBrands:'\u0423\u0441\u0456 \u0431\u0440\u0435\u043d\u0434\u0438',unlimited:'\u0411\u0435\u0437\u043b\u0456\u043c\u0456\u0442\u043d\u0438\u0439 \u0456\u043d\u0442\u0435\u0440\u043d\u0435\u0442',cardMonth:'/\u043c\u0456\u0441.',cardTotal:'/\u043c\u0456\u0441. \u0437\u0430\u0433\u0430\u043b\u043e\u043c',devicePriceLbl:'\u0446\u0456\u043d\u0430 \u043f\u0440\u0438\u0441\u0442\u0440\u043e\u044e',sub:'\u0410\u0431\u043e\u043d\u0435\u043c\u0435\u043d\u0442',deviceMonthly:'\u041e\u043f\u043b\u0430\u0442\u0430 \u0437\u0430 \u043f\u0440\u0438\u0441\u0442\u0440\u0456\u0439',oneOff:'\u0420\u0430\u0437\u043e\u0432\u0438\u0439 \u043f\u043b\u0430\u0442\u0456\u0436',none:'\u041d\u0435\u043c\u0430\u0454',inclBtw:'\u0437 \u041f\u0414\u0412',exclBtw:'\u0431\u0435\u0437 \u041f\u0414\u0412',devicePriceNote:'\u0426\u0456\u043d\u0430 \u043f\u0440\u0438\u0441\u0442\u0440\u043e\u044e',spreadOver:'\u0440\u043e\u0437\u043f\u043e\u0434\u0456\u043b\u0435\u043d\u043e \u043d\u0430',months:'\u043c\u0456\u0441.',viewOffer:'\u041f\u0435\u0440\u0435\u0433\u043b\u044f\u043d\u0443\u0442\u0438 \u043f\u0440\u043e\u043f\u043e\u0437\u0438\u0446\u0456\u044e \u203a',loadErr:'\u041d\u0435 \u0432\u0434\u0430\u043b\u043e\u0441\u044f \u0437\u0430\u0432\u0430\u043d\u0442\u0430\u0436\u0438\u0442\u0438 \u043f\u0440\u043e\u043f\u043e\u0437\u0438\u0446\u0456\u0457. \u0421\u043f\u0440\u043e\u0431\u0443\u0439\u0442\u0435 \u043f\u0456\u0437\u043d\u0456\u0448\u0435.',allBundles:'\u0423\u0441\u0456 \u043f\u0430\u043a\u0435\u0442\u0438',allSpeeds:'\u0423\u0441\u0456 \u0448\u0432\u0438\u0434\u043a\u043e\u0441\u0442\u0456',unlimitedShort:'\u0411\u0435\u0437\u043b\u0456\u043c\u0456\u0442',callsIncl:'\u0411\u0435\u0437\u043b\u0456\u043c\u0456\u0442\u043d\u0456 \u0434\u0437\u0432\u0456\u043d\u043a\u0438',calls:'\u0414\u0437\u0432\u0456\u043d\u043a\u0438',callsAll:'\u041d\u0435\u0432\u0430\u0436\u043b\u0438\u0432\u043e',callsBundle:'\u0417 \u043f\u0430\u043a\u0435\u0442\u043e\u043c \u0445\u0432\u0438\u043b\u0438\u043d',callsUnlim:'\u0411\u0435\u0437\u043b\u0456\u043c\u0456\u0442\u043d\u0456 \u0434\u0437\u0432\u0456\u043d\u043a\u0438',dataAll:'\u0423\u0441\u0456 \u043f\u0430\u043a\u0435\u0442\u0438',dataTo5:'\u0434\u043e 5 \u0413\u0411',data5_20:'5 \u2013 20 \u0413\u0411',data20_50:'20 \u2013 50 \u0413\u0411',dataUnlim:'\u0411\u0435\u0437\u043b\u0456\u043c\u0456\u0442',spdAll:'\u0423\u0441\u0456 \u0448\u0432\u0438\u0434\u043a\u043e\u0441\u0442\u0456',sub_light:'\u043c\u0430\u043b\u0435 \u0432\u0438\u043a\u043e\u0440\u0438\u0441\u0442\u0430\u043d\u043d\u044f',sub_avg:'\u0441\u0435\u0440\u0435\u0434\u043d\u0454',sub_much:'\u0431\u0430\u0433\u0430\u0442\u043e',sub_carefree:'\u0431\u0435\u0437 \u0442\u0443\u0440\u0431\u043e\u0442',sub_bundle:'\u043d\u0430\u043f\u0440. 200 \u0445\u0432',tvFilter:'\u0422\u0435\u043b\u0435\u0431\u0430\u0447\u0435\u043d\u043d\u044f',tvAll:'\u041d\u0435\u0432\u0430\u0436\u043b\u0438\u0432\u043e',tvWith:'\u0417 TV',tvWithout:'\u041b\u0438\u0448\u0435 \u0456\u043d\u0442\u0435\u0440\u043d\u0435\u0442',tvChannels:'\u043a\u0430\u043d\u0430\u043b\u0456\u0432',tvIncl:'\u0437 TV',pMaand:'\u0426\u0456\u043d\u0430 \u043d\u0430 \u043c\u0456\u0441\u044f\u0446\u044c',pBij:'\u0414\u043e\u043f\u043b\u0430\u0442\u0430 \u0437\u0430 \u0442\u0435\u043b\u0435\u0444\u043e\u043d',pToon:'\u041f\u043e\u043a\u0430\u0437\u0430\u043d\u0430 \u0446\u0456\u043d\u0430',pAll:'\u0423\u0441\u0435',pAllSub:'\u0431\u0443\u0434\u044c-\u044f\u043a\u0430',pFree:'\u20ac0',pFreeSub:'\u0431\u0435\u0437 \u0434\u043e\u043f\u043b\u0430\u0442\u0438',pLow:'\u043d\u0438\u0437\u044c\u043a\u0430',pMid:'\u0441\u0435\u0440\u0435\u0434\u043d\u044f',pHigh:'\u0432\u0438\u0441\u043e\u043a\u0430',pRuim:'\u0432\u0435\u043b\u0438\u043a\u0430',pPrem:'\u043f\u0440\u0435\u043c\u0456\u0443\u043c',pBudget:'\u0431\u044e\u0434\u0436\u0435\u0442',pAnyBij:'\u043d\u0435\u0432\u0430\u0436\u043b\u0438\u0432\u043e',tShowMonth:'\u041d\u0430 \u043c\u0456\u0441\u044f\u0446\u044c',tShowMonthSub:'\u0449\u043e\u043c\u0456\u0441\u044f\u0446\u044f',tShowTotal:'\u0417\u0430\u0433\u0430\u043b\u043e\u043c',tShowTotalSub:'\u0437\u0430 \u0442\u0435\u0440\u043c\u0456\u043d',tShowOne:'\u0420\u0430\u0437\u043e\u0432\u043e',tShowOneSub:'+ \u0449\u043e\u043c\u0456\u0441.',giftTitle:'\u0411\u0435\u0437\u043a\u043e\u0448\u0442\u043e\u0432\u043d\u0438\u0439 \u043f\u043e\u0434\u0430\u0440\u0443\u043d\u043e\u043a \u043d\u0430 \u0432\u0438\u0431\u0456\u0440',giftBadge:'\u043f\u043e\u0434\u0430\u0440\u0443\u043d\u043e\u043a',note_odido:'\u041c\u043e\u0436\u043b\u0438\u0432\u0430 \u0437\u043d\u0438\u0436\u043a\u0430 \u043a\u043b\u0456\u0454\u043d\u0442\u0430 \u043f\u0440\u0438 \u043a\u0456\u043b\u044c\u043a\u043e\u0445 \u043a\u043e\u043d\u0442\u0440\u0430\u043a\u0442\u0430\u0445 \u2014 \u0434\u0438\u0432\u0456\u0442\u044c\u0441\u044f \u0446\u0456\u043d\u0443 \u0443 \u043e\u043f\u0435\u0440\u0430\u0442\u043e\u0440\u0430.',note_kpn:'\u041c\u043e\u0436\u043b\u0438\u0432\u0430 \u043a\u043e\u043c\u0431\u0456-\u0437\u043d\u0438\u0436\u043a\u0430 \u043f\u0440\u0438 \u043a\u0456\u043b\u044c\u043a\u043e\u0445 \u043a\u043e\u043d\u0442\u0440\u0430\u043a\u0442\u0430\u0445 \u2014 \u0434\u0438\u0432\u0456\u0442\u044c\u0441\u044f \u0446\u0456\u043d\u0443 \u0443 \u043e\u043f\u0435\u0440\u0430\u0442\u043e\u0440\u0430.',note_voda:'\u041c\u043e\u0436\u043b\u0438\u0432\u0430 \u0434\u043e\u0434\u0430\u0442\u043a\u043e\u0432\u0430 \u0437\u043d\u0438\u0436\u043a\u0430 \u043f\u0440\u0438 \u043a\u0456\u043b\u044c\u043a\u043e\u0445 \u043a\u043e\u043d\u0442\u0440\u0430\u043a\u0442\u0430\u0445 \u2014 \u0434\u0438\u0432\u0456\u0442\u044c\u0441\u044f \u0446\u0456\u043d\u0443 \u0443 \u043e\u043f\u0435\u0440\u0430\u0442\u043e\u0440\u0430.',note_simyo:'\u0414\u043e\u0434\u0430\u0442\u043a\u043e\u0432\u0456 \u0434\u0430\u043d\u0456 \u0437 KPN Home Internet \u2014 \u0434\u0438\u0432\u0456\u0442\u044c\u0441\u044f \u0443\u043c\u043e\u0432\u0438 \u0443 \u043e\u043f\u0435\u0440\u0430\u0442\u043e\u0440\u0430.',note_hn:'\u041a\u043e\u043c\u0431\u0456-\u0437\u043d\u0438\u0436\u043a\u0430 \u0437 \u0456\u043d\u0442\u0435\u0440\u043d\u0435\u0442\u043e\u043c hollandsnieuwe \u0430\u0431\u043e Ziggo \u2014 \u0434\u0438\u0432\u0456\u0442\u044c\u0441\u044f \u0446\u0456\u043d\u0443 \u0443 \u043e\u043f\u0435\u0440\u0430\u0442\u043e\u0440\u0430.',note_ben:'\u0417\u043d\u0438\u0436\u043a\u0430 \u043a\u043b\u0456\u0454\u043d\u0442\u0430 \u043f\u0440\u0438 \u0456\u043d\u0448\u043e\u043c\u0443 \u043a\u043e\u043d\u0442\u0440\u0430\u043a\u0442\u0456 Ben \u0430\u0431\u043e Odido Internet \u2014 \u0434\u0438\u0432\u0456\u0442\u044c\u0441\u044f \u0446\u0456\u043d\u0443 \u0443 \u043e\u043f\u0435\u0440\u0430\u0442\u043e\u0440\u0430.'}
+};
+var T=TR[LOC]||TR.nl;
+var TR_EXTRA={nl:{seller:'Verkoop via',direct:'Rechtstreeks van provider',allSellers:'Alle verkopers',via:'via'},en:{seller:'Sold via',direct:'Directly from provider',allSellers:'All sellers',via:'via'},tr:{seller:'Sat\u0131c\u0131',direct:'Do\u011frudan operat\u00f6rden',allSellers:'T\u00fcm sat\u0131c\u0131lar',via:'via'},pl:{seller:'Sprzedawca',direct:'Bezpo\u015brednio od operatora',allSellers:'Wszyscy sprzedawcy',via:'przez'},uk:{seller:'\u041f\u0440\u043e\u0434\u0430\u0432\u0435\u0446\u044c',direct:'\u041d\u0430\u043f\u0440\u044f\u043c\u0443 \u0432\u0456\u0434 \u043e\u043f\u0435\u0440\u0430\u0442\u043e\u0440\u0430',allSellers:'\u0423\u0441\u0456 \u043f\u0440\u043e\u0434\u0430\u0432\u0446\u0456',via:'via'}};
+var TE=TR_EXTRA[LOC]||TR_EXTRA.nl;for(var tek in TE){if(T[tek]===undefined)T[tek]=TE[tek];}
+
+function applyStatic(){
+ document.querySelectorAll('[data-t]').forEach(function(el){var k=el.getAttribute('data-t');if(T[k]!==undefined)el.textContent=T[k];});
+ document.querySelectorAll('[data-tph]').forEach(function(el){var k=el.getAttribute('data-tph');if(T[k]!==undefined)el.setAttribute('placeholder',T[k]);});
+ var mf=document.getElementById('pvx-mobfilter');if(mf)mf.textContent=T.filtersShow;
+}
+window.pvxToggleSide=function(btn){var s=document.getElementById('pvx-side');s.classList.toggle('open');btn.textContent=s.classList.contains('open')?T.filtersHide:T.filtersShow;};
+
+// Zakelijke internetpakketten van Ziggo en KPN. Die zitten niet in een feed:
+// Ziggo Zakelijk levert er geen en van KPN Zakelijk hebben we alleen de
+// mobiele feed. Daarom hier handmatig, overgenomen van hun eigen tarievenpagina
+// op 18 september 2026. Alle bedragen zijn exclusief btw, zoals bij zakelijk
+// gebruikelijk; de feedprijzen van Odido Zakelijk zijn dat ook.
+//
+// Bij het bijwerken: kijk op ziggo.nl/zakelijk/tarieven en kpn.com/zakelijk.
+// Zet de datum hieronder mee, die tonen we in de kleine letters.
+var ZAK_INTERNET_PEIL='18 september 2026';
+var ZAK_INTERNET=[
+ {n:'Ziggo Zakelijk Internet Xtra 400',m:'Ziggo Zakelijk',p:44,s:400,u:'ziggo-xtra-400'},
+ {n:'Ziggo Zakelijk Internet Xtra 800',m:'Ziggo Zakelijk',p:50,s:800,u:'ziggo-xtra-800'},
+ {n:'Ziggo Zakelijk Internet Xtra 1.2 Gbit',m:'Ziggo Zakelijk',p:52,s:1200,u:'ziggo-xtra-1200'},
+ {n:'Ziggo Zakelijk Internet Xtra 2.2 Gbit',m:'Ziggo Zakelijk',p:58,s:2200,u:'ziggo-xtra-2200'},
+ {n:'Ziggo Zakelijk Internet Start Pro',m:'Ziggo Zakelijk',p:60,s:200,u:'ziggo-pro-start',ip:true},
+ {n:'Ziggo Zakelijk Internet Complete Pro',m:'Ziggo Zakelijk',p:70,s:600,u:'ziggo-pro-complete',ip:true},
+ {n:'Ziggo Zakelijk Internet Giga Pro',m:'Ziggo Zakelijk',p:75,s:1000,u:'ziggo-pro-giga',ip:true},
+ {n:'KPN Kleinzakelijk Internet',m:'KPN Zakelijk',p:35,s:50,u:'kpn-kleinzakelijk'},
+ {n:'KPN EEN MKB Internet',m:'KPN Zakelijk',p:0,s:0,u:'kpn-een-mkb',ip:true,offerte:true}
+];
+function zakInternetRijen(){
+ var uit=[];
+ for(var i=0;i<ZAK_INTERNET.length;i++){
+  var z=ZAK_INTERNET[i];
+  var doel = z.m==='KPN Zakelijk'
+    ? 'https://glp8.net/c/?si=19863&li=1855892&wi=394405&ws=zakelijk-internet'
+    : 'https://www.awin1.com/cread.php?awinmid=8470&awinaffid=1528789&clickref=zakelijk-internet&ued=' + encodeURIComponent('https://www.ziggo.nl/zakelijk/internet');
+  var extra=[];
+  if(z.ip)extra.push('Vast IP-adres');
+  if(z.offerte)extra.push('Prijs op aanvraag');
+  uit.push({
+   id:'zak-'+z.u, name:z.n, merchantName:z.m, network:z.m,
+   price:z.p, displayPrice: z.offerte ? 'Op aanvraag' : ('\u20ac'+String(z.p)),
+   speedMbit:z.s, hasTV:false, dataGB:0,
+   contractMonths:12, contractLabel:'12 maanden',
+   isZakelijk:true, zakNotitie:extra.join(' \u00b7 '),
+   affiliateUrl:'https://awin.business-347.workers.dev/api/go?u='+encodeURIComponent(doel)+'&cat=internet-zakelijk&p='+encodeURIComponent(z.m)
+  });
+ }
+ return uit;
+}
+
+var MERKEN=[
+ {n:'Apple',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/apple.svg?v=1781513743'},
+ {n:'Samsung',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/samsung.svg?v=1781513837'},
+ {n:'Google',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/google.svg?v=1781513768'},
+ {n:'OnePlus',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/OnePlus.webp?v=1781513820'},
+ {n:'Xiaomi',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/xiaomi-1-logo.svg?v=1781513840'},
+ {n:'OPPO',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/oppo.svg?v=1781513813'},
+ {n:'Motorola',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/motorola.svg?v=1781513790'},
+ {n:'Nokia',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/nokia.svg?v=1781513799'},
+ {n:'Fairphone',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/fairphone_1.svg?v=1781513759'},
+ {n:'HMD',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/hmd.svg?v=1781513777'},
+ {n:'Emporia',img:'https://cdn.shopify.com/s/files/1/0777/5617/0568/files/emporia.svg?v=1781513752'}
+];
+
+var SORTS=isTelefoon?[['pop',T.sortPop],['price',T.sortPriceM],['devasc',T.sortDev],['down',T.sortDown],['data',T.sortData]]
+:isInternet?[['pop',T.sortSpeed],['price',T.sortPrice],['name','A-Z']]
+:[['pop',T.sortPop],['price',T.sortPrice],['data',T.sortData],['name','A-Z']];
+var sortSel=document.getElementById('pvx-sort');
+SORTS.forEach(function(s){var o=document.createElement('option');o.value=s[0];o.textContent=s[1];sortSel.appendChild(o);});
+
+// Databuckets als radio-kaartjes (variant A). Waarden zijn RANGES: 'min-max' in GB, leeg = alles.
+var DATA_BUCKETS=isInternet
+  ?[['',T.spdAll,''],['0-100','tot 100','Mbit'],['100-250','100\u2013250','Mbit'],['250-500','250\u2013500','Mbit'],['500-1000','500\u2013 1 Gbit','Mbit'],['1000-','1 Gbit+','snel']]
+  :[['',T.dataAll,''],['0-5',T.dataTo5,T.sub_light],['5-20',T.data5_20,T.sub_avg],['20-50',T.data20_50,T.sub_much],['999-',T.dataUnlim,T.sub_carefree]];
+var BEL_BUCKETS=[['',T.callsAll,''],['bundle',T.callsBundle,T.sub_bundle],['unlim',T.callsUnlim,'']];
+// Zenderinfo per provider (aantal zenders + highlight). Feed levert dit niet, dus handmatig.
+var TV_INFO={
+  odido:{count:65,note:'Basispakket met 65 zenders, bijna alles in HD. Kijk via de Mediabox of de Odido TV-app in de hele EU.',ch:{'Algemeen':['NPO 1','NPO 2','NPO 3','RTL 4','RTL 5','SBS 6','RTL 7','Net5','Veronica','RTL 8','RTL Z','SBS 9'],'Entertainment':['Comedy Central','Paramount Network','FOX','TLC','24Kitchen','Investigation Discovery','Spike','ONS','RTL Lounge','RTL Crime'],'Sport (inbegrepen)':['ESPN 1','Ziggo Sport'],'Nieuws':['NOS','NPO Nieuws','CNN','BBC World News','EuroNews'],'Kennis & documentaire':['Discovery Channel','National Geographic','HISTORY','Animal Planet','NPO 2 Extra'],'Muziek':['MTV','Xite','TV538','Slam! TV'],'Kinderen':['Nickelodeon','Disney Channel','NPO Zapp','Cartoon Network'],'Engels':['BBC One','BBC Two','BBC First'],'Belgisch':['één','Canvas','Ketnet','VTM'],'Duits':['Das Erste (ARD)','ZDF','WDR','RTL Television'],'Regionaal':['Jouw regionale omroep']}},
+  ziggo:{count:70,note:'Ruim 70 zenders. Sinds 1 juli 2026 zitten alle vier ESPN-zenders standaard in elk pakket. Kijk ook via Ziggo GO.',ch:{'Algemeen':['NPO 1','NPO 2','NPO 3','RTL 4','RTL 5','SBS 6','RTL 7','Net5','Veronica','RTL 8','RTL Z','SBS 9'],'Entertainment':['Comedy Central','Spike','Viceland','ONS','24Kitchen','TLC','Food Network','Fine Living','RTL Lounge'],'Sport (inbegrepen)':['Ziggo Sport','ESPN 1','ESPN 2','ESPN 3','ESPN 4'],'Nieuws':['NOS','CNN','BBC World News','EuroNews'],'Kennis & documentaire':['Discovery Channel','National Geographic','HISTORY','Animal Planet','NPO 2 Extra'],'Muziek':['MTV','TV538','Xite','Stingray'],'Kinderen':['Nickelodeon','Disney Channel','Cartoon Network','NPO Zapp'],'Engels':['BBC One','BBC Two','BBC First'],'Belgisch':['één','Canvas','Ketnet','VTM'],'Duits':['Das Erste (ARD)','ZDF','RTL Deutschland','ProSieben'],'Regionaal':['Jouw regionale omroep']}},
+  youfone:{count:47,note:'TV Standaard: 47 meest bekeken zenders, allemaal in HD. ESPN 1 gratis inbegrepen. Kijk mee via de Youfone TV-app.',ch:{'Algemeen':['NPO 1','NPO 2','NPO 3','RTL 4','RTL 5','SBS 6','RTL 7','Net5','Veronica','RTL 8','RTL Z'],'Entertainment':['Comedy Central','Paramount Network','24Kitchen','TLC','Investigation Discovery','ONS'],'Sport (inbegrepen)':['ESPN 1'],'Nieuws':['NOS','CNN','BBC World News'],'Kennis & documentaire':['Discovery Channel','National Geographic','HISTORY','Animal Planet'],'Muziek':['MTV','TV538','Xite'],'Kinderen':['Nickelodeon','Disney Channel','NPO Zapp'],'Engels':['BBC One','BBC Two','BBC First'],'Belgisch':['één','Canvas','Ketnet'],'Duits':['Das Erste (ARD)','ZDF'],'Regionaal':['14 regionale omroepen']}},
+  onlinenl:{count:50,note:'Ruim basispakket via het KPN-netwerk, met ESPN 1. Uit te breiden met extra zenderpakketten.',ch:{'Algemeen':['NPO 1','NPO 2','NPO 3','RTL 4','RTL 5','SBS 6','RTL 7','Net5','Veronica','RTL 8','RTL Z'],'Entertainment':['Comedy Central','Paramount Network','24Kitchen','TLC','Investigation Discovery','ONS'],'Sport (inbegrepen)':['ESPN 1'],'Nieuws':['NOS','CNN','BBC World News'],'Kennis & documentaire':['Discovery Channel','National Geographic','HISTORY','Animal Planet'],'Muziek':['MTV','TV538','Xite'],'Kinderen':['Nickelodeon','Disney Channel','NPO Zapp'],'Engels':['BBC One','BBC Two','BBC First'],'Belgisch':['één','Canvas','Ketnet'],'Duits':['Das Erste (ARD)','ZDF'],'Regionaal':['14 regionale omroepen']}}
+};
+TV_INFO['online.nl']=TV_INFO.onlinenl;
+TV_INFO.delta={count:60,note:'Ruim basispakket, uitbreidbaar.',ch:{'Algemeen':['NPO 1','NPO 2','NPO 3','RTL 4','RTL 5','RTL 7','SBS 6','Net5','Veronica'],'Sport (inbegrepen)':['ESPN 1'],'Nieuws':['NOS','CNN','BBC World News'],'Kinderen':['Nickelodeon','Disney Channel']}};
+function tvInfoFor(d){
+  var k=(d.network||d.merchantName||'').toLowerCase();
+  for(var key in TV_INFO){if(k.indexOf(key)>=0)return TV_INFO[key];}
+  return null;
+}
+function tvKeyFor(d){
+  var k=(d.network||d.merchantName||'').toLowerCase();
+  for(var key in TV_INFO){if(k.indexOf(key)>=0)return key;}
+  return '';
+}
+// Modal met alle zenders per categorie.
+window.pvxTvModal=function(pk){
+  var info=TV_INFO[pk];if(!info)return;
+  var ov=document.getElementById('pvx-tvmodal');
+  if(!ov){ov=document.createElement('div');ov.id='pvx-tvmodal';ov.className='pvx-tvmodal';
+    ov.onclick=function(e){if(e.target===ov)ov.classList.remove('open');};
+    document.body.appendChild(ov);}
+  var provName=(pk.charAt(0).toUpperCase()+pk.slice(1)).replace('.nl','.nl');
+  var body='';
+  if(info.ch){for(var grp in info.ch){
+    var chips=info.ch[grp].map(function(c){return '<span class="pvx-tvch">'+c+'</span>';}).join('');
+    body+='<div class="pvx-tvgrp"><div class="pvx-tvgrp-t">'+grp+'</div><div class="pvx-tvchips">'+chips+'</div></div>';
+  }}
+  ov.innerHTML='<div class="pvx-tvbox"><button type="button" class="pvx-tvx" onclick="document.getElementById(\'pvx-tvmodal\').classList.remove(\'open\')">&times;</button>'+
+    '<div class="pvx-tvh"><b>'+provName+'</b> \u00b7 '+info.count+' '+T.tvChannels+' in het basispakket</div>'+
+    '<div class="pvx-tvnote">'+info.note+'. Zenderaanbod kan wijzigen; kijk op de site van de aanbieder voor het actuele overzicht.</div>'+
+    body+'</div>';
+  ov.classList.add('open');
+};
+var activeTv='';
+var TV_BUCKETS=[['',T.tvAll,''],['with',T.tvWith,''],['without',T.tvWithout,'']];
+// Prijs-chips: maandprijs (max-waarde per chip), bijbetaling (max), getoonde prijs (weergave)
+var MAAND_BUCKETS=[[9999,T.pAll,T.pAllSub],[15,'< \u20ac15',T.pBudget],[25,'\u20ac15\u201325',T.pMid],[40,'\u20ac25\u201340',T.pRuim],[60,'\u20ac40\u201360',T.pHigh],[999,'\u20ac60+',T.pPrem]];
+var BIJ_BUCKETS=[[999999,T.pAll,T.pAnyBij],[0,T.pFree,T.pFreeSub],[100,'< \u20ac100',T.pLow],[300,'\u20ac100\u2013300',T.pMid],[600,'\u20ac300\u2013600',T.pHigh],[9999,'\u20ac600+',T.pPrem]];
+var TOON_BUCKETS=[['maand',T.tShowMonth,T.tShowMonthSub],['toestel',T.tShowTotal,T.tShowTotalSub]];
+var activeMaand=9999,activeBij=999999,activeToon='maand';var TOON0=isTelefoon?'toestel':'maand';activeToon=TOON0;(function(){var f=document.getElementById('f-toon');if(f)f.value=TOON0;})();
+function buildBuckets(){
+  var dc=document.getElementById('pvx-databk');
+  if(dc){dc.innerHTML='';DATA_BUCKETS.forEach(function(o){
+    var b=document.createElement('button');b.type='button';
+    b.className='pvx-bkbtn'+(activeData===o[0]?' on':'');
+    b.innerHTML='<b>'+o[1]+'</b>'+(o[2]?'<small>'+o[2]+'</small>':'');
+    b.onclick=function(){activeData=o[0];buildBuckets();SHOWN=PAGE;pvxRender();};
+    dc.appendChild(b);});}
+  var bc=document.getElementById('pvx-belbk');
+  if(bc){bc.innerHTML='';BEL_BUCKETS.forEach(function(o){
+    var b=document.createElement('button');b.type='button';
+    b.className='pvx-bkbtn'+(activeCalls===o[0]?' on':'');
+    b.innerHTML='<b>'+o[1]+'</b>'+(o[2]?'<small>'+o[2]+'</small>':'');
+    b.onclick=function(){activeCalls=o[0];buildBuckets();SHOWN=PAGE;pvxRender();};
+    bc.appendChild(b);});}
+  var tc=document.getElementById('pvx-tvbk');
+  if(tc){tc.innerHTML='';TV_BUCKETS.forEach(function(o){
+    var b=document.createElement('button');b.type='button';
+    b.className='pvx-bkbtn'+(activeTv===o[0]?' on':'');
+    b.innerHTML='<b>'+o[1]+'</b>';
+    b.onclick=function(){activeTv=o[0];buildBuckets();SHOWN=PAGE;pvxRender();};
+    tc.appendChild(b);});}
+  var mc=document.getElementById('pvx-maandbk');
+  if(mc){mc.innerHTML='';MAAND_BUCKETS.forEach(function(o){
+    var b=document.createElement('button');b.type='button';
+    b.className='pvx-bkbtn'+(activeMaand===o[0]?' on':'');
+    b.innerHTML='<b>'+o[1]+'</b>'+(o[2]?'<small>'+o[2]+'</small>':'');
+    b.onclick=function(){activeMaand=o[0];var sm=document.getElementById('s-maand');if(sm)sm.value=(o[0]>=999?9999:o[0]);buildBuckets();SHOWN=PAGE;pvxRender();};
+    mc.appendChild(b);});}
+  var jc=document.getElementById('pvx-bijbk');
+  if(jc){jc.innerHTML='';BIJ_BUCKETS.forEach(function(o){
+    var b=document.createElement('button');b.type='button';
+    b.className='pvx-bkbtn'+(activeBij===o[0]?' on':'');
+    b.innerHTML='<b>'+o[1]+'</b>'+(o[2]?'<small>'+o[2]+'</small>':'');
+    b.onclick=function(){activeBij=o[0];var sb=document.getElementById('s-bij');if(sb)sb.value=o[0];buildBuckets();SHOWN=PAGE;pvxRender();};
+    jc.appendChild(b);});}
+  var oc=document.getElementById('pvx-toonbk');
+  if(oc){oc.innerHTML='';TOON_BUCKETS.forEach(function(o){
+    var b=document.createElement('button');b.type='button';
+    b.className='pvx-bkbtn'+(activeToon===o[0]?' on':'');
+    b.innerHTML='<b>'+o[1]+'</b>'+(o[2]?'<small>'+o[2]+'</small>':'');
+    b.onclick=function(){activeToon=o[0];var ft=document.getElementById('f-toon');if(ft)ft.value=o[0];buildBuckets();SHOWN=PAGE;pvxRender();};
+    oc.appendChild(b);});}
+}
+
+function fmtEur(v){if(!v||v<=0)return'\u20ac0';var r=Math.round(v*100)/100;return'\u20ac'+(r%1===0?r.toFixed(0):r.toFixed(2).replace('.',','));}
+function fix(n){return(n||'').replace(/T-Mobile NL/gi,'Odido').replace(/T-Mobile/gi,'Odido').replace(/Odido Zakelijk Mobiel NL/gi,'Odido Zakelijk').replace(/Odido Mobiel NL/gi,'Odido').replace(/Odido Zakelijk NL/gi,'Odido Zakelijk').replace(/Odido Thuis NL/gi,'Odido Thuis').replace(/Vodafone Mobiel NL/gi,'Vodafone').replace(/Vodafone Zakelijk NL/gi,'Vodafone Zakelijk').replace(/Vodafone Thuis NL/gi,'Vodafone Thuis').replace(/Ben NL/gi,'Ben').replace(/Simyo NL/gi,'Simyo').replace(/YouFone TV NL/gi,'Youfone').trim();}
+var EXCLUDE=['lyca','lycamobile'];
+function isExcl(d){var m=(d.merchantName||'').toLowerCase();for(var i=0;i<EXCLUDE.length;i++)if(m.includes(EXCLUDE[i]))return true;return false;}
+function provNote(d){var h=((d.merchantName||'')+' '+(d.network||'')).toLowerCase();if(h.indexOf('odido')>=0||h.indexOf('t-mobile')>=0)return T.note_odido;if(h.indexOf('kpn')>=0)return T.note_kpn;if(h.indexOf('vodafone')>=0)return T.note_voda;if(h.indexOf('simyo')>=0)return T.note_simyo;if(h.indexOf('hollandsnieuwe')>=0||h.indexOf('hollands nieuwe')>=0)return T.note_hn;if(/\bben\b/.test(h))return T.note_ben;return'';}
+function pkey(n){if(typeof pvProvKey==='function')return pvProvKey(n);return((n||'')).toLowerCase().split(' ')[0];}
+function provName(n){if(typeof pvProvName==='function')return pvProvName(n);return fix(n);}
+function provDomain(name){var n=(name||'').toLowerCase();if(n.indexOf('hollandsnieuwe')>=0||n.indexOf('hollands nieuwe')>=0)return'hollandsnieuwe.nl';if(n.indexOf('kpn')>=0)return'kpn.com';if(n.indexOf('odido')>=0||n.indexOf('t-mobile')>=0)return'odido.nl';if(n.indexOf('vodafone')>=0)return'vodafone.nl';if(n.indexOf('ziggo')>=0)return'ziggo.nl';if(n.indexOf('lebara')>=0)return'lebara.nl';if(n.indexOf('simyo')>=0)return'simyo.nl';if(n.indexOf('simpel')>=0)return'simpel.nl';if(n.indexOf('youfone')>=0)return'youfone.nl';if(n.indexOf('50plus')>=0||n.indexOf('50 plus')>=0||n.indexOf('50+')>=0)return'50plusmobiel.nl';if(n.indexOf("let's go")>=0||n.indexOf('lets go')>=0)return'letsgomobile.nl';if(/\bben\b/.test(n))return'ben.nl';if(n.indexOf('budget')>=0)return'budgetthuis.nl';if(n.indexOf('delta')>=0)return'delta.nl';if(n.indexOf('caiway')>=0)return'caiway.nl';if(n.indexOf('online.nl')>=0||n.indexOf('online')===0)return'online.nl';if(n.indexOf('freedom')>=0)return'freedom.nl';if(n.indexOf('solcon')>=0)return'solcon.nl';if(n.indexOf('kliksafe')>=0)return'kliksafe.nl';if(n.indexOf('tele2')>=0)return'tele2.nl';if(n.indexOf('mediamarkt')>=0)return'mediamarkt.nl';if(n.indexOf('mobiel.nl')>=0)return'mobiel.nl';return'';}
+function provLogo(name,size){var s=size||28;var dom=provDomain(name);if(dom){var px=s>=48?128:64;var g='https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size='+px+'&url=https://'+dom;var ddg='https://icons.duckduckgo.com/ip3/'+dom+'.ico';return'<img src="'+g+'" alt="'+provName(name)+'" loading="lazy" style="width:'+s+'px;height:'+s+'px;object-fit:contain;border-radius:'+Math.max(5,Math.round(s/5))+'px;flex-shrink:0;background:#fff;border:1px solid #eef1f6;padding:2px;box-sizing:border-box" onerror="if(this.dataset.fb){this.style.display=\'none\'}else{this.dataset.fb=1;this.src=\''+ddg+'\'}">';}if(typeof pvLogoBox==='function')return pvLogoBox(name,s);return'<span style="width:'+s+'px;height:'+s+'px;border-radius:7px;background:#1B3FA0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;flex-shrink:0">'+provName(name).replace(/\s.*/,'').substring(0,4).toUpperCase()+'</span>';}
+var RESELLER_LOGOS={'Mobiel.nl':'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://mobiel.nl','MediaMarkt':'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://mediamarkt.nl'};
+function resellerOf(d){if(d&&d.reseller)return d.reseller;var m=((d&&d.merchantName)||'').toLowerCase();if(m.indexOf('mobiel.nl')>=0)return 'Mobiel.nl';if(m.indexOf('mediamarkt')>=0)return 'MediaMarkt';return '';}
+function resellerLogoUrl(d,name){return RESELLER_LOGOS[name]||(d&&d.resellerLogo)||'';}
+function provSrc(d){var r=resellerOf(d);if(r)return d.network||'';return (d&&d.merchantName)||'';}
+var POPULAIR_TEL=['iphone 18 pro max','iphone 18 pro','iphone 18 air','iphone 18 fold','iphone 18','iphone 17 pro max','iphone 17 pro','iphone 17 plus','iphone 17','iphone 16 pro max','iphone 16 pro','iphone 16','samsung galaxy s26 ultra','samsung s26 ultra','samsung galaxy s26+','samsung galaxy s26','samsung s26','galaxy s25 ultra','oneplus 13 pro','oneplus 13','pixel 9 pro','pixel 9','xiaomi 15'];
+function popScore(d){if(isTelefoon){var n=(d.name||'').toLowerCase();for(var i=0;i<POPULAIR_TEL.length;i++)if(n.includes(POPULAIR_TEL[i]))return POPULAIR_TEL.length-i;return 0;}if(isInternet)return(d.speedMbit||0);if(d.dataGB>=999)return 200-Math.round(d.price);return(d.dataGB||0)*10-d.price;}
+function getEenmalig(d){var v=(d.deviceDownPayment!==undefined&&d.deviceDownPayment!==null&&d.deviceDownPayment!=='')?parseFloat(d.deviceDownPayment):((d.initialCost!==undefined&&d.initialCost!==null&&d.initialCost!=='')?parseFloat(d.initialCost):0);if(v&&v>0)return Math.round(v*100)/100;if(isTelefoon){var dm=(d.deviceMonthlyCost&&parseFloat(d.deviceMonthlyCost)>0)?parseFloat(d.deviceMonthlyCost):0;var dt=(d.deviceTotalPrice&&parseFloat(d.deviceTotalPrice)>0)?parseFloat(d.deviceTotalPrice):0;var cm=d.contractMonths||0;if(dt>0){var oneoff=dt-(dm*cm);return oneoff>0?Math.round(oneoff*100)/100:0;}}return 0;}
+function getDevMaand(d){return(d.deviceMonthlyCost&&parseFloat(d.deviceMonthlyCost)>0)?parseFloat(d.deviceMonthlyCost):0;}
+function getBase(d){return(d.baseMonthlyCost&&parseFloat(d.baseMonthlyCost)>0)?parseFloat(d.baseMonthlyCost):0;}
+function getSub(d){var b=getBase(d);return b>0?Math.round(b*100)/100:0;}
+function getDevTotal(d){return(d.deviceTotalPrice&&parseFloat(d.deviceTotalPrice)>0)?parseFloat(d.deviceTotalPrice):0;}
+function getDevExBtw(d){return(d.deviceTotalExBtw&&parseFloat(d.deviceTotalExBtw)>0)?parseFloat(d.deviceTotalExBtw):0;}
+var ZAK_RE=/\b(zakelijk|zakelijke|business|b2b|zzp|mkb)\b/;
+var ENT_RE=/enterprise edition|\bee\b|xcover/;
+function isZak(d){if(typeof d.isZakelijk==='boolean')return d.isZakelijk;var nm=(d.name||'').toLowerCase(),me=(d.merchantName||'').toLowerCase();if(ENT_RE.test(nm)&&!ZAK_RE.test(me))return false;if(ZAK_RE.test(me))return true;if(ZAK_RE.test(nm))return true;return false;}
+var TKEYS=['iphone','ipad','apple','samsung','galaxy','s21','s22','s23','s24','s25','s26','pixel','xiaomi','redmi','poco','oppo','sony','xperia','motorola','moto','nokia','oneplus','one plus','huawei','fairphone','honor','realme','nothing phone','flip','fold','tab s','tablet','hmd','emporia'];
+var SIMEXCL=['sim only','sim-only','simonly','databundel',' gb data',' gb surf'];
+function isSimOnly(d){var n=(d.name||'').toLowerCase(),m=(d.model||'').toLowerCase(),b=(d.brand||'').toLowerCase();for(var j=0;j<SIMEXCL.length;j++)if(n.includes(SIMEXCL[j]))return true;if(m&&m.length>2)return false;for(var i=0;i<TKEYS.length;i++)if(n.includes(TKEYS[i])||m.includes(TKEYS[i])||b.includes(TKEYS[i]))return false;return true;}
+function segBase(d){if(isExcl(d))return false;var z=isZak(d);if(SEG==='zakelijk'){if(!z)return false;}else{if(z)return false;}if(isSimonly&&!isSimOnly(d))return false;if(isTelefoon&&isSimOnly(d))return false;return true;}
+function matchMerk(d,merk){if(!merk)return true;var n=(d.name||'').toLowerCase(),b=(d.brand||'').toLowerCase();var k=merk.toLowerCase();if(k==='apple')return n.includes('iphone')||n.includes('ipad')||b.includes('apple');if(k==='samsung')return n.includes('samsung')||n.includes('galaxy')||b.includes('samsung');if(k==='google')return n.includes('pixel')||b.includes('google');if(k==='oneplus')return n.includes('oneplus')||n.includes('one plus')||b.includes('oneplus');if(k==='xiaomi')return n.includes('xiaomi')||n.includes('redmi')||n.includes('poco')||b.includes('xiaomi');if(k==='oppo')return n.includes('oppo')||b.includes('oppo');if(k==='motorola')return n.includes('motorola')||n.includes('moto ')||b.includes('motorola');if(k==='nokia')return n.includes('nokia')||b.includes('nokia');if(k==='fairphone')return n.includes('fairphone')||b.includes('fairphone');if(k==='hmd')return n.includes('hmd')||b.includes('hmd');if(k==='emporia')return n.includes('emporia')||b.includes('emporia');return n.includes(k)||b.includes(k);}
+function getStorage(d){var s=(d.storage||'').toUpperCase().replace(/\s/g,'');if(/^\d+(GB|TB)$/.test(s))return s;var n=(d.name||'').toUpperCase();var tb=n.match(/(\d+)\s?TB/);if(tb)return tb[1]+'TB';var re=/(\d{2,4})\s?GB/g,m;while((m=re.exec(n))!==null){var v=parseInt(m[1]);if(v>=32)return v+'GB';}return'';}
+// Naam van het toestel zonder kleur en opslag, zodat alle varianten van
+// hetzelfde toestel onder e'e'n noemer vallen.
+function modelNaam(d){
+  var m=(d.model||'').trim(), b=(d.brand||'').trim();
+  if(m.length>1) return (b? b+' ':'')+m;
+  var n=fix(d.name||'');
+  var kl=(d.colour||'').trim();
+  if(kl) n=n.replace(new RegExp(kl.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'ig'),'');
+  n=n.replace(/\b\d{2,4}\s?(GB|TB)\b/ig,'').replace(/\s{2,}/g,' ').trim();
+  return n;
+}
+function getKleur(d){var c=(d.colour||'').trim();if(!c)return'';return c.charAt(0).toUpperCase()+c.slice(1).toLowerCase();}
+var HKLEUR=[['zwart','#1a1a1a'],['wit','#f5f5f5'],['grijs','#8b9096'],['zilver','#c8ccd0'],['blauw','#2563eb'],['groen','#16a34a'],['paars','#7c3aed'],['roze','#ec4899'],['rood','#dc2626'],['oranje','#ea580c'],['goud','#d4af37'],['bruin','#78503a']];
+function hoofdKleur(d){var c=(d.colour||'').toLowerCase();if(!c)return'';
+  if(/zwart|black|obsidian|jetblack|jet black|midnight|graphite|grafiet|space|onyx|carbon|nacht|charcoal|silhouette/.test(c))return'zwart';
+  if(/wit|white|porcelain|ceramic|ivoor|ivory|cream|moonstone|glacier|snow|chalk|cotton|fog|frost|dry ice|arctic|frostbite/.test(c))return'wit';
+  if(/zilver|silver|platinum|titanium natural|natural titanium|aluminium|steel|mist|seal/.test(c))return'zilver';
+  if(/grijs|grey|gray|shadow|slate|stone|tapestry/.test(c))return'grijs';
+  if(/blauw|blue|navy|cobalt|indigo|sapphire|teal|ultramarine|ultramarijn|denim|sky|marine|nile|spruce/.test(c))return'blauw';
+  if(/groen|green|mint|sage|emerald|olive|jade|lime|forest|scarab/.test(c))return'groen';
+  if(/paars|purple|violet|lavender|lavendel|lila|lilac|plum|amethyst/.test(c))return'paars';
+  if(/roze|pink|rose|magenta|coral|peach|blossom|sakura|berry/.test(c))return'roze';
+  if(/rood|red|ruby|crimson|scarlet|cherry|burgundy|bordeaux|zinfandel|overture/.test(c))return'rood';
+  if(/oranje|orange|amber|sunset|apricot|copper|bronze|terracotta/.test(c))return'oranje';
+  if(/geel|yellow|gold|goud|champagne|sand|beige|khaki|desert|starlight|sunlight|lemon/.test(c))return'goud';
+  if(/bruin|brown|mocha|coffee|chocolate|tan|walnut|hazel|umber|tundra/.test(c))return'bruin';
+  return'';}
+var KLEUR_NL={zwart:'Zwart',wit:'Wit',grijs:'Grijs',zilver:'Zilver',blauw:'Blauw',groen:'Groen',paars:'Paars',roze:'Roze',rood:'Rood',oranje:'Oranje',goud:'Goud',bruin:'Bruin'};
+function getImages(d){var a=[];if(Array.isArray(d.images))a=d.images.slice();if(d.image&&a.indexOf(d.image)<0)a.unshift(d.image);return a.filter(function(u){return u&&/^https?:/.test(u);});}
+function hay(d){return[fix(d.name||''),d.model||'',d.brand||'',d.colour||'',provName(provSrc(d)||''),resellerOf(d)||''].join(' ').toLowerCase();}
+function matchQ(h,q){return q.toLowerCase().replace(/[^a-z0-9\s]/g,' ').trim().split(/\s+/).filter(Boolean).every(function(w){return h.includes(w);});}
+var CMAP={zwart:'#1c1c20',black:'#1c1c20',midnight:'#1d2433',graphite:'#41444b',grafiet:'#41444b',cosmic:'#41444b',wit:'#f2f2f2',white:'#f2f2f2',starlight:'#ece6dd',creme:'#efe6d8',blauw:'#2d4a8a',blue:'#2d4a8a',navy:'#1d2f6e',teal:'#2a8c8c',rood:'#c0392b',red:'#c0392b',groen:'#1e7a4f',green:'#1e7a4f',mint:'#a8d5c2',geel:'#e6c14a',goud:'#d4af6a',gold:'#d4af6a',paars:'#6b2d8b',purple:'#6b2d8b',lila:'#b9a7e0',roze:'#e7a4b8',pink:'#e7a4b8',zilver:'#c9ccd4',silver:'#c9ccd4',grijs:'#8a8d93',gray:'#8a8d93',titanium:'#8a8d93',oranje:'#e67e22',orange:'#e67e22'};
+function colorCss(name){var n=(name||'').toLowerCase();for(var k in CMAP)if(n.includes(k))return CMAP[k];return'#cdd2dc';}
+function niceContract(d){
+  var m=d.contractMonths||0;
+  if(m>=24)return (isInternet?'2 jaar':'24 mnd');
+  if(m>=12)return (isInternet?'1 jaar':'12 mnd');
+  if(m<=1&&m>=0&&d.contractLabel&&/maand|monthly|month/i.test(d.contractLabel))return T.monthly;
+  return d.contractLabel||'';
+}
+function varKey(d){if(!isTelefoon)return d.id;var m=(d.model||'').toLowerCase().trim(),b=(d.brand||'').toLowerCase().trim();var base=m?(b+'|'+m):((d.name||'').toLowerCase().replace((d.colour||'').toLowerCase(),'').replace(/\s+/g,' ').trim());return resellerOf(d)+'~'+pkey(provSrc(d))+'|'+base+'|'+getStorage(d)+'|'+(d.dataGB||0)+'|'+(d.contractMonths||0);}
+function groupItems(items){var map={},out=[];items.forEach(function(d){var k=varKey(d);if(!(k in map)){map[k]=out.length;out.push({items:[],sel:0});}out[map[k]].items.push(d);});return out;}
+
+var GIFTS={
+ s500:['Corendon waardebon t.w.v. \u20ac300,-','Hisense 43 inch Smart TV'],
+ s1000:['Corendon waardebon t.w.v. \u20ac400,-','Sonos Beam Gen2','Meta Quest 3S 128GB','Ninja CREAMi ijsmachine','Dyson V8 Absolute','Hisense 55 inch Smart TV','Apple iPad 2025 64GB','Samsung Galaxy S24 FE 5G 128GB','Dreame L10s Ultra Gen 2'],
+ s2000:['PlayStation 5 Slim Digital','Corendon waardebon t.w.v. \u20ac500,-','bol.com cadeaukaart t.w.v. \u20ac400,-','Albert Heijn cadeaukaart t.w.v. \u20ac400,-','Jumbo cadeaukaart t.w.v. \u20ac400,-','Samsung 65 inch Smart TV','Sage Barista Express','Nintendo Switch 2','Dyson Airwrap','Dreame L50 Ultra AE Robotstofzuiger']
+};
+function getGifts(d){
+ if(!isInternet)return null;
+ // Primair: cadeaus die de worker meestuurt (d.gifts.items).
+ if(d.gifts&&d.gifts.items&&d.gifts.items.length)return d.gifts.items;
+ // Fallback: Ziggo-detectie op naam/merchant/network + snelheid.
+ var hay=((d.merchantName||'')+' '+(d.network||'')+' '+(d.name||'')).toLowerCase();
+ if(hay.indexOf('ziggo')<0)return null;
+ var sp=d.speedMbit||0,nm=(d.name||'').toLowerCase();
+ if(sp>=2000||nm.indexOf('2 gbit')>=0)return GIFTS.s2000;
+ if(sp>=1000||nm.indexOf('1 gbit')>=0)return GIFTS.s1000;
+ if(sp>=500)return GIFTS.s500;
+ return null;
+}
+function giftHtml(d){
+ var g=getGifts(d);if(!g||!g.length)return'';
+ var chips='';
+ g.forEach(function(x){chips+='<span>'+x+'</span>';});
+ return '<div class="pvx-gifts"><div class="gt">&#127873; '+T.giftTitle+'</div><div class="pvx-gchips">'+chips+'</div></div>';
+}
+
+window.pvxTog=function(id,btn){var el=document.getElementById(id);var open=el.style.display!=='none';el.style.display=open?'none':'block';var c=btn.querySelector('.chev');if(c)c.innerHTML=open?'&#9660;':'&#9650;';};
+window.pvxChg=function(s){s.value&&s.value!=='0'&&s.value!==''?s.classList.add('active'):s.classList.remove('active');SHOWN=PAGE;pvxRender();};
+window.pvxSeg=function(){};  // zakelijk heeft een eigen pagina
+window.pvxSort=function(k){SORT=k;SHOWN=PAGE;pvxRender();};
+window.pvxMore=function(){SHOWN+=PAGE;pvxRender();};
+window.pvxReset=function(){activeMerk='';activeProv='';activeReseller='';activeData='';activeCalls='';activeTv='';activeMaand=9999;activeBij=999999;activeToon=TOON0;var _sm=document.getElementById('s-maand');if(_sm)_sm.value=9999;var _sb=document.getElementById('s-bij');if(_sb)_sb.value=2000;var _ft=document.getElementById('f-toon');if(_ft)_ft.value=TOON0;document.getElementById('pvx-q').value='';['f-ctr','f-stor','f-kleur','f-net','f-model'].forEach(function(id){var e=document.getElementById(id);if(e){e.value='';e.classList&&e.classList.remove('active')}});document.getElementById('pvx-sort').selectedIndex=0;SORT='pop';buildMerk();buildProv();buildVia();buildBuckets();buildMoreFilters();SHOWN=PAGE;pvxRender();};
+
+function buildMerk(){var bar=document.getElementById('pvx-merkbar');if(!bar)return;bar.innerHTML='';var all=document.createElement('div');all.className='pvx-merk txt'+(activeMerk===''?' on':'');all.textContent=T.allBrands;all.onclick=function(){activeMerk='';buildMerk();SHOWN=PAGE;pvxRender();};bar.appendChild(all);MERKEN.forEach(function(m){var d=document.createElement('div');d.className='pvx-merk'+(activeMerk===m.n?' on':'');d.innerHTML='<img src="'+m.img+'" alt="'+m.n+'" loading="lazy" onerror="this.parentNode.classList.add(\'txt\');this.parentNode.textContent=\''+m.n+'\'">';d.onclick=function(){activeMerk=(activeMerk===m.n?'':m.n);buildMerk();SHOWN=PAGE;pvxRender();};bar.appendChild(d);});}
+function buildProv(){var seen={},order=[];ALL.forEach(function(d){if(!segBase(d))return;var k=pkey(provSrc(d));if(!k)return;if(!seen[k]){seen[k]=provName(provSrc(d));order.push(k);}});var list=document.getElementById('pvx-prov-list');if(!list)return;list.innerHTML='';var all=document.createElement('button');all.className='pvx-pchip'+(activeProv?'':' on');all.innerHTML='<span style="width:22px;height:22px;background:#f1f5f9;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">&#127968;</span><span>'+T.allProviders+'</span>';all.onclick=function(){activeProv='';buildProv();SHOWN=PAGE;pvxRender();};list.appendChild(all);order.forEach(function(k){var nm=seen[k],b=document.createElement('button');b.className='pvx-pchip'+(activeProv===k?' on':'');b.innerHTML=provLogo(nm,22)+'<span>'+nm+'</span>';b.onclick=function(){activeProv=(activeProv===k?'':k);buildProv();SHOWN=PAGE;pvxRender();};list.appendChild(b);});}
+function buildVia(){var list=document.getElementById('pvx-via-list');if(!list)return;var seen={},order=[],logos={};ALL.forEach(function(d){if(!segBase(d))return;var r=resellerOf(d);if(r&&!seen[r]){seen[r]=1;order.push(r);logos[r]=resellerLogoUrl(d,r);}});var acc=document.getElementById('pvx-via-acc');if(!order.length){if(acc)acc.style.display='none';return;}if(acc)acc.style.display='';list.innerHTML='';var all=document.createElement('button');all.className='pvx-pchip'+(activeReseller?'':' on');all.innerHTML='<span style="width:22px;height:22px;background:#f1f5f9;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">&#127978;</span><span>'+T.allSellers+'</span>';all.onclick=function(){activeReseller='';buildVia();SHOWN=PAGE;pvxRender();};list.appendChild(all);var dir=document.createElement('button');dir.className='pvx-pchip'+(activeReseller==='direct'?' on':'');dir.innerHTML='<span style="width:22px;height:22px;background:#f1f5f9;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0">&#9989;</span><span>'+T.direct+'</span>';dir.onclick=function(){activeReseller=(activeReseller==='direct'?'':'direct');buildVia();SHOWN=PAGE;pvxRender();};list.appendChild(dir);order.forEach(function(r){var b=document.createElement('button');b.className='pvx-pchip'+(activeReseller===r?' on':'');var lg=logos[r]?'<img src="'+logos[r]+'" alt="" style="width:22px;height:22px;object-fit:contain;border-radius:5px;flex-shrink:0" onerror="this.style.display=\'none\'">':'';b.innerHTML=lg+'<span>'+r+'</span>';b.onclick=function(){activeReseller=(activeReseller===r?'':r);buildVia();SHOWN=PAGE;pvxRender();};list.appendChild(b);});}
+// Generieke chip-bouwer voor 'meer filters'. Zet de waarde op de hidden input (id) en herrendert.
+function chipFilter(containerId,inputId,opts){
+  var c=document.getElementById(containerId);if(!c)return;var cur=(document.getElementById(inputId)||{}).value||'';
+  c.innerHTML='';opts.forEach(function(o){
+    var b=document.createElement('button');b.type='button';
+    b.className='pvx-bkbtn'+(cur===o[0]?' on':'');
+    b.innerHTML='<b>'+o[1]+'</b>'+(o[2]?'<small>'+o[2]+'</small>':'');
+    b.onclick=function(){var inp=document.getElementById(inputId);if(inp)inp.value=o[0];buildMoreFilters();SHOWN=PAGE;pvxRender();};
+    c.appendChild(b);
+  });
+}
+function buildMoreFilters(){
+  // Looptijd (vast)
+  chipFilter('pvx-ctrbk','f-ctr',[['',T.allContracts,''],['0',T.monthly,''],['12',T.m12,''],['24',T.m24,'']]);
+  // Netwerk (vast, alleen telefoon/simonly)
+  chipFilter('pvx-netbk','f-net',[['',T.allNetworks,''],['kpn','KPN',''],['odido','Odido',''],['vodafone','Vodafone','']]);
+  // Geheugen (dynamisch, telefoon) — alleen echte opslag vanaf 64 GB
+  if(isTelefoon){
+    function gbVal(s){return s.indexOf('TB')>=0?parseInt(s)*1024:parseInt(s);}
+    var stor={};ALL.forEach(function(d){if(!segBase(d))return;var s=getStorage(d);if(s&&gbVal(s)>=64)stor[s]=1;});
+    var sk=Object.keys(stor).sort(function(a,b){return gbVal(a)-gbVal(b);});
+    chipFilter('pvx-storbk','f-stor',[['',T.allStorage,'']].concat(sk.map(function(s){return [s,s,''];})));
+    // Toestellen: alleen tonen wat in dit segment daadwerkelijk te koop is.
+    var sel=document.getElementById('f-model');
+    if(sel){
+      var huidig=sel.value, modellen={};
+      ALL.forEach(function(d){ if(!segBase(d))return; var m=modelNaam(d); if(m&&m.length>2) modellen[m]=(modellen[m]||0)+1; });
+      var lijst=Object.keys(modellen).sort(function(a,b){return a.localeCompare(b)});
+      sel.innerHTML='';
+      var o0=document.createElement('option'); o0.value=''; o0.textContent=T.allDevices; sel.appendChild(o0);
+      lijst.forEach(function(m){ var o=document.createElement('option'); o.value=m; o.textContent=m+' ('+modellen[m]+')'; sel.appendChild(o); });
+      if(huidig && lijst.indexOf(huidig)>=0) sel.value=huidig;
+      sel.classList.toggle('active', !!sel.value);
+    }
+    // Kleur — 12 hoofdkleuren als bolletjes (alleen tonen wat in de feed zit)
+    renderKleurSwatch();
+  }
+}
+function renderKleurSwatch(){
+  var c=document.getElementById('pvx-kleurbk');if(!c)return;
+  var present={};ALL.forEach(function(d){if(!segBase(d))return;var h=hoofdKleur(d);if(h)present[h]=1;});
+  var cur=(document.getElementById('f-kleur')||{}).value||'';
+  c.className='pvx-sw';c.innerHTML='';
+  var all=document.createElement('button');all.type='button';all.className='pvx-swall'+(cur?'':' on');all.textContent=T.allColours;
+  all.onclick=function(){var i=document.getElementById('f-kleur');if(i)i.value='';buildMoreFilters();SHOWN=PAGE;pvxRender();};
+  c.appendChild(all);
+  HKLEUR.forEach(function(o){if(!present[o[0]])return;
+    var b=document.createElement('button');b.type='button';b.className='pvx-swatch'+(cur===o[0]?' on':'');b.title=KLEUR_NL[o[0]];
+    var lightCol=(o[0]==='wit'||o[0]==='zilver'||o[0]==='goud');
+    b.innerHTML='<span class="pvx-swdot" style="background:'+o[1]+';color:'+(lightCol?'#0D1B2A':'#fff')+'">'+(cur===o[0]?'\u2713':'')+'</span><span class="pvx-swlbl">'+KLEUR_NL[o[0]]+'</span>';
+    b.onclick=function(){var i=document.getElementById('f-kleur');if(i)i.value=(cur===o[0]?'':o[0]);buildMoreFilters();SHOWN=PAGE;pvxRender();};
+    c.appendChild(b);
+  });
+}
+function buildSubFilters(){buildMoreFilters();}
+
+function gv(id){var e=document.getElementById(id);return e?e.value:'';}
+function getFiltered(){var q=document.getElementById('pvx-q').value.trim();var minData=0,ctr=gv('f-ctr'),stor=gv('f-stor'),kleur=gv('f-kleur'),net=gv('f-net');var maxMaand=parseFloat((document.getElementById('s-maand')||{}).value||9999),maxBij=parseFloat((document.getElementById('s-bij')||{}).value||999999);return ALL.filter(function(d){if(!segBase(d))return false;if(activeMerk&&!matchMerk(d,activeMerk))return false;if(activeProv&&pkey(provSrc(d))!==activeProv)return false;if(activeReseller==='direct'&&resellerOf(d))return false;if(activeReseller&&activeReseller!=='direct'&&resellerOf(d)!==activeReseller)return false;if(q&&!matchQ(hay(d),q))return false;/* Zoek je op Pro, dan hoort de Pro Max er niet bij: "iPhone 18 Pro Max" bevat immers "iPhone 18 Pro". Zoek je op iPhone 18, dan zie je nog gewoon de hele serie. */if(q&&/\bpro\b/.test(q.toLowerCase())&&!/\bmax\b/.test(q.toLowerCase())&&/pro max/.test((d.name||'').toLowerCase()))return false;if(activeData){var _p=activeData.split('-');var _lo=parseFloat(_p[0])||0;var _hi=(_p.length>1&&_p[1]!=='')?parseFloat(_p[1]):Infinity;if(isInternet){var _s=d.speedMbit||0;if(activeData==='1000-'){if(_s<1000)return false;}else{if(_s<_lo||_s>=_hi)return false;}}else{var _g=d.dataGB||0;if(activeData==='999-'){if(_g<999)return false;}else{if(_g>=999)return false;if(_g<=_lo&&_lo>0)return false;if(_g>_hi)return false;}}}if(activeTv==='with'&&!d.hasTV)return false;if(activeTv==='without'&&d.hasTV)return false;var c=gv('f-ctr');if(c==='0'&&(d.contractMonths||0)>1)return false;if(c==='12'&&d.contractMonths!==12)return false;if(c==='24'&&d.contractMonths!==24)return false;if(stor&&getStorage(d)!==stor)return false;var mdl=gv('f-model');if(mdl&&modelNaam(d)!==mdl)return false;if(kleur&&hoofdKleur(d)!==kleur)return false;if(net){var nh=fix(d.network||'').toLowerCase()+' '+provName(d.merchantName||'').toLowerCase();if(!nh.includes(net))return false;}if(activeCalls&&!isInternet){var _ml=(d.minutesLabel||'').toLowerCase();if(activeCalls==='unlim'){if(_ml.indexOf('onbeperkt')<0&&_ml.indexOf('unlimited')<0&&_ml.indexOf('bez limitu')<0&&_ml.indexOf('s\u0131n\u0131rs\u0131z')<0&&_ml.indexOf('\u0431\u0435\u0437\u043b\u0456\u043c')<0)return false;}else if(activeCalls==='bundle'){if(!_ml)return false;}}if(!prijsMatch(d))return false;if(!bijMatch(d))return false;return true;});}
+function prijsMatch(d){var p=d.price||0;switch(activeMaand){case 9999:return true;case 15:return p<15;case 25:return p>=15&&p<25;case 40:return p>=25&&p<40;case 60:return p>=40&&p<60;case 999:return p>=60;}return true;}
+function bijMatch(d){if(!isTelefoon)return true;var e=getEenmalig(d)||0;switch(activeBij){case 999999:return true;case 0:return e<=0;case 100:return e>0&&e<100;case 300:return e>=100&&e<300;case 600:return e>=300&&e<600;case 9999:return e>=600;}return true;}
+
+function card(gi){var g=GROUPS[gi],d=g.items[g.sel]||g.items[0];var rsl=resellerOf(d);var provDisp=provSrc(d);var nm=fix(d.name||''),me=provName(provDisp),zak=isZak(d);if(!me&&rsl){me=(d.brand||'').trim()||rsl;}var toonEl=document.getElementById('f-toon');var toon=toonEl?toonEl.value:'maand';
+var gifts=giftHtml(d);
+var pill=zak?'<div class="pvx-pill">&#128188; '+T.segZak+'</div>':'';
+if(gifts)pill+='<div class="pvx-gpill">&#127873; '+T.giftBadge+'</div>';
+var imgs=isTelefoon?getImages(d):[];var mainImg=imgs.length?imgs[0]:d.image;
+var imgInner=isTelefoon?(mainImg?'<img src="'+mainImg+'" alt="'+nm+'" class="ti" id="pvximg-'+gi+'" loading="lazy" onerror="this.outerHTML=\'<span class=pvx-tp>&#128241;</span>\'">':'<span class="pvx-tp">&#128241;</span>'):provLogo(provDisp,80);
+var dots='';if(isTelefoon&&g.items.length>1){var seen={},dh='',cnt=0;g.items.forEach(function(v,vi){var kl=getKleur(v)||('V'+(vi+1));if(seen[kl])return;seen[kl]=1;cnt++;if(cnt>5)return;dh+='<button class="pvx-cdot'+(vi===g.sel?' sel':'')+'" style="background:'+colorCss(kl)+'" title="'+kl+'" onclick="pvxVar('+gi+','+vi+')"></button>';});if(cnt>5)dh+='<span class="pvx-cmore">+'+(cnt-5)+'</span>';if(cnt>1)dots='<div class="pvx-colors">'+dh+'</div>';}
+var tags=[];if(d.dataGB>=999)tags.push('<span class="pvx-tag g">'+T.unlimited+'</span>');else if(d.dataGB>0)tags.push('<span class="pvx-tag b">'+d.dataGB+' GB</span>');if(d.minutesLabel&&!isInternet)tags.push('<span class="pvx-tag g">&#128222; '+d.minutesLabel+'</span>');if(d.contractLabel)tags.push('<span class="pvx-tag a">&#128197; '+niceContract(d)+'</span>');var st=getStorage(d);if(st&&isTelefoon&&nm.toUpperCase().replace(/\s/g,'').indexOf(st)<0)tags.push('<span class="pvx-tag p">'+st+'</span>');if(d.speedMbit>0&&isInternet)tags.push('<span class="pvx-tag b">'+d.speedMbit+' Mbit/s</span>');
+if(isInternet&&d.hasTV)tags.push('<span class="pvx-tag tv">&#128250; '+T.tvIncl+'</span>');else if(isInternet&&!d.hasTV)tags.push('<span class="pvx-tag n">'+T.tvWithout+'</span>');
+var tvInfo='';if(isInternet&&d.hasTV){var _ti=tvInfoFor(d);if(_ti){var _pk=tvKeyFor(d);tvInfo='<div class="pvx-tvinfo"><span class="ic">&#128250;</span><span><button type="button" class="pvx-tvlink" onclick="pvxTvModal(\''+_pk+'\')"><b>'+_ti.count+' '+T.tvChannels+'</b> &#9432;</button> \u00b7 '+_ti.note+'</span></div>';}}
+var een=getEenmalig(d),dm=getDevMaand(d),sub=getSub(d),dtot=getDevTotal(d),dexb=getDevExBtw(d);var cm=d.contractMonths||0;
+var bigP,bigL;if(isTelefoon&&toon==='toestel'&&dtot>0){bigP=fmtEur(dtot);bigL=T.devicePriceLbl+(zak?' '+T.inclBtw:'');}else{bigP=d.displayPrice;bigL=(isTelefoon?T.cardTotal:T.cardMonth)+(zak?' *':'');}
+var bd='';
+if(isTelefoon){
+ if(sub>0)bd+='<div class="pvx-bd-row tp"><span>'+T.sub+'</span><span class="v">'+fmtEur(sub)+T.cardMonth+(zak?' '+T.exclBtw:'')+'</span></div>';
+ if(dm>0)bd+='<div class="pvx-bd-row"><span>'+T.deviceMonthly+'</span><span class="v">'+fmtEur(dm)+T.cardMonth+(zak?' '+T.inclBtw:'')+'</span></div>';
+ bd+='<div class="pvx-bd-row"><span>'+T.oneOff+'</span><span class="v'+(een>0?'':' free')+'">'+(een>0?fmtEur(een)+(zak?' '+T.inclBtw:''):T.none)+'</span></div>';
+ if(dtot>0&&!(toon==='toestel'))bd+='<div class="pvx-bd-note">'+T.devicePriceNote+' '+fmtEur(dtot)+(zak?' '+T.inclBtw:'')+(zak&&dexb>0?', '+fmtEur(dexb)+' '+T.exclBtw:'')+'.</div>';
+}else if(isInternet){bd+='<div class="pvx-bd-row tp"><span>'+T.oneOff+'</span><span class="v'+(een>0?'':' free')+'">'+(een>0?fmtEur(een):'\u20ac0')+'</span></div>';}
+var pn=provNote(d);if(pn)bd+='<div class="pvx-vodanote"><span>&#128176;</span><span>'+pn+'</span></div>';
+if(d.zakNotitie)bd+='<div class="pvx-vodanote"><span>&#128188;</span><span>'+d.zakNotitie+' \u00b7 tarief van '+ZAK_INTERNET_PEIL+', excl. btw</span></div>';
+var rlg=rsl?resellerLogoUrl(d,rsl):'';
+var viaBadge=rsl?'<span class="pvx-via">'+(rlg?'<img src="'+rlg+'" alt="" onerror="this.style.display=\'none\'">':'')+T.via+' '+rsl+'</span>':'';
+return '<div class="pvx-card" id="pvxg-'+gi+'">'+pill+'<div class="pvx-imgzone">'+imgInner+dots+'</div><div class="pvx-cbody"><div class="pvx-provrow">'+provLogo(provDisp,28)+'<span class="pvx-provname">'+me+'</span>'+viaBadge+'</div><div class="pvx-nm" title="'+nm+'">'+nm+'</div><div class="pvx-tags">'+tags.join('')+'</div>'+tvInfo+gifts+'<div class="pvx-pricebox"><div class="pvx-pm-row"><span class="pvx-amt">'+bigP+'</span><span class="pvx-pm">'+bigL+'</span></div>'+bd+'</div><a href="'+d.affiliateUrl+'" target="_blank" rel="nofollow sponsored" class="pvx-go">'+T.viewOffer+'</a></div></div>';}
+window.pvxVar=function(gi,vi){if(!GROUPS[gi])return;GROUPS[gi].sel=vi;var el=document.getElementById('pvxg-'+gi);if(el)el.outerHTML=card(gi);};
+
+function pvxRender(){
+ var items=getFiltered();
+ items.sort(function(a,b){if(SORT==='pop'){var pa=popScore(a),pb=popScore(b);if(pa!==pb)return pb-pa;/* 17 sep: binnen hetzelfde toestel op TOTAALPRIJS sorteren, niet op maandbedrag. Een aanbieding van 1 euro per maand met 3.128 euro vooruit stond bovenaan als goedkoopste, terwijl dat juist de duurste van de lijst was. */var ta=getEenmalig(a)+a.price*(a.contractMonths||24),tb=getEenmalig(b)+b.price*(b.contractMonths||24);if(ta!==tb)return ta-tb;return a.price-b.price;}if(SORT==='price')return a.price-b.price;if(SORT==='devasc')return getDevMaand(a)-getDevMaand(b);if(SORT==='down')return getEenmalig(a)-getEenmalig(b);if(SORT==='data')return(b.dataGB||0)-(a.dataGB||0);return fix(a.name||'').localeCompare(fix(b.name||''));});
+ GROUPS=groupItems(items);var total=GROUPS.length;
+ var q=document.getElementById('pvx-q').value.trim();
+ document.getElementById('pvx-ct').innerHTML='<b>'+total+'</b> '+T.results+(SEG==='zakelijk'?' '+T.resultsZak:'')+(q?' '+T.forQ+' &ldquo;'+q+'&rdquo;':'');
+ var grid=document.getElementById('pvx-grid'),more=document.getElementById('pvx-more');
+ if(!total){grid.innerHTML='<div class="pvx-empty"><p style="font-size:2rem;margin:0 0 10px">'+(SEG==='zakelijk'?'&#128188;':'&#128270;')+'</p><p style="font-weight:700;margin:0">'+T.noResults+'</p>'+(SEG==='zakelijk'?'<p style="font-size:13px;margin-top:6px">'+T.noResultsZak+'</p>':'')+'<p style="font-size:13px;margin-top:6px"><button onclick="pvxReset()" style="color:#1B3FA0;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit">'+T.reset+'</button></p></div>';more.style.display='none';return;}
+ var html='';for(var i=0;i<Math.min(SHOWN,total);i++)html+=card(i);grid.innerHTML=html;more.style.display=SHOWN<total?'block':'none';
+}
+window.pvxRender=pvxRender;
+window.pvxSetFilters=function(o){
+  o=o||{};
+  if(typeof o.data==='string')activeData=o.data;
+  if(typeof o.calls==='string')activeCalls=o.calls;
+  if(o.maxMaand!=null){var mm=o.maxMaand;activeMaand=(mm<15?15:mm<25?25:mm<40?40:mm<60?60:9999);var sm=document.getElementById('s-maand');if(sm)sm.value=mm;}
+  buildBuckets();SHOWN=PAGE;pvxRender();
+};
+
+applyStatic();
+var si=document.getElementById('pvx-q'),st;si.addEventListener('input',function(){clearTimeout(st);st=setTimeout(function(){SHOWN=PAGE;pvxRender();},250);});
+buildMerk();buildBuckets();buildMoreFilters();
+
+function loadFeed(attempt){fetch(W+EP).then(function(r){return r.json();}).then(function(j){if(j&&j.success&&Array.isArray(j.data)&&j.data.length){ALL=j.data;if(isInternet){ALL=ALL.concat(zakInternetRijen())}buildProv();buildVia();buildSubFilters();pvxRender();}else if(attempt<3){setTimeout(function(){loadFeed(attempt+1);},2500);}else{pvxRender();}}).catch(function(e){if(attempt<3){setTimeout(function(){loadFeed(attempt+1);},2500);}else{document.getElementById('pvx-grid').innerHTML='<div class="pvx-empty">'+T.loadErr+'</div>';}});}
+if(W&&W.indexOf('your-worker')<0){loadFeed(0);}else{pvxRender();}
+})();
+</script>
+{% schema %}
+{
+  "name": "PV Vergelijker KPN",
+  "settings": [
+    {
+      "type": "text",
+      "id": "worker_url",
+      "label": "Worker URL",
+      "default": "https://awin.business-347.workers.dev"
+    },
+    {
+      "type": "text",
+      "id": "feed_endpoint",
+      "label": "Endpoint",
+      "default": "/api/feed/telefoon"
+    },
+    {
+      "type": "text",
+      "id": "zakelijk_url",
+      "label": "Link naar zakelijk",
+      "info": "Laat leeg om de knop te verbergen",
+      "default": "/pages/zakelijk-telefoon"
+    }
+  ],
+  "presets": [
+    {
+      "name": "PV Vergelijker KPN"
+    }
+  ]
+}
+{% endschema %}

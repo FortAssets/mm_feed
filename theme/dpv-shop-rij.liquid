@@ -142,7 +142,7 @@
 #{{ rid }} .dsr-spoor::-webkit-scrollbar{display:none}
 #{{ rid }} .dsr-kop>.dsr-pijlen{flex:0 0 auto;display:flex;gap:6px;margin-left:6px}
 #{{ rid }} .dsr-kop>.dsr-pijlen[hidden]{display:none}
-#{{ rid }} .dsr-pijlen button{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--ink);background:#fff;color:var(--ink);
+#{{ rid }} .dsr-pijlen button{width:36px;height:36px;border-radius:50%;border:1px solid #CBD3DF;background:#fff;color:var(--ink);
  display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
 #{{ rid }} .dsr-pijlen button:hover{background:#F1F3F8}
 #{{ rid }} .dsr-pijlen button svg{width:16px;height:16px}
@@ -152,7 +152,7 @@
 
 /* de kaart: op een telefoon anderhalve kaart in beeld, breed vier naast elkaar */
 #{{ rid }} .dsr-k{flex:0 0 238px;min-width:0;scroll-snap-align:start;display:flex;flex-direction:column;background:#fff;color:var(--ink);
- border:1.5px solid var(--ink);border-radius:14px;padding:12px;position:relative}
+ border:1px solid var(--rd);border-radius:14px;padding:12px;position:relative}
 @media(min-width:620px){#{{ rid }} .dsr-k{flex-basis:252px}}
 @media(min-width:1000px){#{{ rid }} .dsr-k{flex-basis:calc((100% - 42px) / 4)}}
 #{{ rid }}.dsr-donker .dsr-k{border-color:#fff}
@@ -188,13 +188,13 @@
    link naar de vergelijker met het product al ingevuld. */
 #{{ rid }} .dsr-meer,#{{ rid }} .dsr-meer:visited{display:block;text-align:center;font-size:12.5px;font-weight:600;color:var(--bl);text-decoration:none;margin-top:8px;padding:5px 0}
 #{{ rid }} .dsr-meer:hover{color:var(--bl2);text-decoration:underline}
-#{{ rid }} .dsr-b{position:absolute;top:9px;left:9px;font-size:11px;font-weight:700;border:1.5px solid var(--ink);border-radius:999px;padding:4px 9px;line-height:1.2;z-index:2}
+#{{ rid }} .dsr-b{position:absolute;top:9px;left:9px;font-size:11px;font-weight:700;border:1px solid #CBD3DF;border-radius:999px;padding:4px 9px;line-height:1.2;z-index:2}
 /* wit op dit groen leest slecht: donkere tekst */
 #{{ rid }} .dsr-b.scheelt{background:var(--gr);color:var(--ink)}
 #{{ rid }} .dsr-b.laag{background:var(--ink);color:#fff}
 #{{ rid }} .dsr-fijn{padding:0 16px;margin:0;font-size:11.5px;font-weight:500;color:var(--mut2);line-height:1.5}
 @media(min-width:900px){#{{ rid }} .dsr-fijn{padding:0 20px}}
-#{{ rid }} .dsr-sk{flex:0 0 238px;border:1.5px solid var(--ink);border-radius:14px;overflow:hidden;background:#fff;padding:12px}
+#{{ rid }} .dsr-sk{flex:0 0 238px;border:1px solid #E3E8F0;border-radius:14px;overflow:hidden;background:#fff;padding:12px}
 #{{ rid }} .dsr-sk i{display:block;height:140px;border-radius:12px;background:linear-gradient(90deg,#F1F3F8,#F8F9FB,#F1F3F8);
  background-size:200% 100%;animation:dsr-golf 1.2s linear infinite}
 #{{ rid }} .dsr-sk u{display:block;height:10px;margin:10px 0 0;border-radius:5px;background:#F1F3F8}

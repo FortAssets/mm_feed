@@ -7,35 +7,35 @@ html:not(#x):not(#y) :is(.rte,.article-template__content,.pv-seo-content,.den-ui
 
 /* --- De hoofdkaart van een pagina: inktrand en het verschoven groene vlak (een per scherm) --- */
 /* sim only, telefoon, internet: de beste aanbieding bovenaan */
-html:not(#x):not(#y) .dpv-winner{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:8px 8px 0 #3FAE7A !important}
+html:not(#x):not(#y) .dpv-winner{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:6px 6px 0 #3FAE7A !important}
 /* zorgverzekering: de polis met de laagste premie */
-html:not(#x):not(#y) .zc-kaart.zc-eerste{border:1.5px solid #0D1B2A !important;background:#fff !important;box-shadow:8px 8px 0 #3FAE7A !important}
+html:not(#x):not(#y) .zc-kaart.zc-eerste{border:1.5px solid #0D1B2A !important;background:#fff !important;box-shadow:6px 6px 0 #3FAE7A !important}
 /* boodschappen: het zoek- en filterblok is de vergelijker */
-html:not(#x):not(#y) .bv-bar{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:8px 8px 0 #3FAE7A !important}
+html:not(#x):not(#y) .bv-bar{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:6px 6px 0 #3FAE7A !important}
 /* contact: het formulier */
-html:not(#x):not(#y) .pvc-kaart:has(form){box-shadow:8px 8px 0 #3FAE7A !important}
-@media(min-width:800px){html:not(#x):not(#y) .dpv-winner,html:not(#x):not(#y) .bv-bar,html:not(#x):not(#y) .pvc-kaart:has(form){box-shadow:10px 10px 0 #3FAE7A !important}}
+html:not(#x):not(#y) .pvc-kaart:has(form){box-shadow:6px 6px 0 #3FAE7A !important}
+@media(min-width:800px){html:not(#x):not(#y) .dpv-winner,html:not(#x):not(#y) .bv-bar,html:not(#x):not(#y) .pvc-kaart:has(form){box-shadow:7px 7px 0 #3FAE7A !important}}
 
 /* --- Vergelijker (sim only, telefoon, internet): de kaarten hadden een rand en een lijn van schaduw tegelijk --- */
-html:not(#x):not(#y) .pvx-card,html:not(#x):not(#y) .pvx-card:hover{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:none !important}
+html:not(#x):not(#y) .pvx-card,html:not(#x):not(#y) .pvx-card:hover{border:1px solid #E3E8F0 !important;border-radius:14px !important;box-shadow:none !important}
 
 /* --- "Zoek in gewone taal" (boven de vergelijkers en in het zwevende venster) --- */
-html:not(#x):not(#y) .dpvai-blok{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
-html:not(#x):not(#y) .dpvai-veld{border:1.5px solid #0D1B2A !important;border-radius:10px !important}
-html:not(#x):not(#y) .dpvai-chip{background:#fff !important;border:1.5px solid #0D1B2A !important;color:#0D1B2A !important}
+html:not(#x):not(#y) .dpvai-blok{border:1px solid #E3E8F0 !important;border-radius:14px !important}
+html:not(#x):not(#y) .dpvai-veld{border:1px solid #CBD3DF !important;border-radius:10px !important}
+html:not(#x):not(#y) .dpvai-chip{background:#fff !important;border:1px solid #CBD3DF !important;color:#0D1B2A !important}
 html:not(#x):not(#y) .dpvai-chip:hover{background:#F1F3F8 !important}
-html:not(#x):not(#y) #dpvai-paneel{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) #dpvai-paneel{border:1px solid #E3E8F0 !important;border-radius:14px !important}
 
 /* --- Aanmeldblok "Mis geen scherp abonnement" --- */
-html:not(#x):not(#y) .dpvc-box{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
-html:not(#x):not(#y) .dpvc-form input{border:1.5px solid #0D1B2A !important;border-radius:10px !important}
+html:not(#x):not(#y) .dpvc-box{border:1px solid #E3E8F0 !important;border-radius:14px !important}
+html:not(#x):not(#y) .dpvc-form input{border:1px solid #CBD3DF !important;border-radius:10px !important}
 
 /* --- Artikelen: blokken met aanbiedingen in de tekst --- */
-html:not(#x):not(#y) .pvblog-grid>div,html:not(#x):not(#y) .rte .dpv-inline{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) .pvblog-grid>div,html:not(#x):not(#y) .rte .dpv-inline{border:1px solid #E3E8F0 !important;border-radius:14px !important}
 /* Het blok "de laagste prijzen van vanochtend" onder een artikel stond op een donker vlak, omdat de klasse .dab
    elders een groene knop is. Hier is het de sectie: geen eigen vlak, de inhoud op lichtgrijs met inktrand. */
 html:not(#x):not(#y) section.dab{background:none !important;color:#0D1B2A !important;display:block !important;border-radius:0 !important;padding:0 16px !important}
-html:not(#x):not(#y) .dab-in{background:#F1F3F8 !important;border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) .dab-in{background:#F1F3F8 !important;border:1px solid #E3E8F0 !important;border-radius:14px !important}
 html:not(#x):not(#y) .dab-eerste{border-color:#0D1B2A !important;box-shadow:none !important}
 html:not(#x):not(#y) .dab-vlag{background:#3FAE7A !important;color:#0D1B2A !important}
 
@@ -52,7 +52,7 @@ html:not(#x):not(#y) .bfr-rij button:hover{background:#F1F3F8 !important}
 html:not(#x):not(#y) .bfr-rij input{border-radius:10px !important}
 
 /* --- Kaarten die bij de steekproef nog een lichte rand hadden --- */
-html:not(#x):not(#y) :is(.pv-faq-item,.dihm,.pvz-trust,.pvz-final,.zk-hero,.bs-mc,.dpv-eb,.duo-aanmeld,.kk-blok,.ip-mail,.dg-c,article.ar>.slot){border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:none !important}
+html:not(#x):not(#y) :is(.pv-faq-item,.dihm,.pvz-trust,.pvz-final,.zk-hero,.bs-mc,.dpv-eb,.duo-aanmeld,.kk-blok,.ip-mail,.dg-c,article.ar>.slot){border:1px solid #E3E8F0 !important;border-radius:14px !important;box-shadow:none !important}
 /* tip- en verwijsblokken in lopende tekst: lichtgrijs vlak met de inktstreep links */
 html:not(#x):not(#y) .pv-related,html:not(#x):not(#y) .pv-tip{background:#F1F3F8 !important}
 
@@ -63,25 +63,25 @@ html:not(#x):not(#y) td a.knop.dpv-geel{display:inline-flex !important;align-ite
 /* --- Toestellen: de hele pagina lag op een grijsblauw vlak; de bovenkant hoort wit te zijn --- */
 html:not(#x):not(#y) .pvtv{background:#fff !important}
 /* --- Black Friday: de sprongknoppen bovenaan zijn pillen met inktrand --- */
-html:not(#x):not(#y) .bfr-chips a{border:1.5px solid #0D1B2A !important;background:#fff !important;color:#0D1B2A !important}
+html:not(#x):not(#y) .bfr-chips a{border:1px solid #CBD3DF !important;background:#fff !important;color:#0D1B2A !important}
 html:not(#x):not(#y) .bfr-chips a:hover{background:#F1F3F8 !important}
 
 /* ===== Nalopen 6 okt, tweede ronde ===== */
 /* --- iPhone 18 pre-order: de donkere kop van het gekozen model en de donkere vlakjes achter de modelfoto's.
        Vlak achter een productfoto is lichtgrijs; de tekst wordt inkt. --- */
-html:not(#x):not(#y) .pp-mhead{background:#F1F3F8 !important;background-image:none !important;color:#0D1B2A !important;border-bottom:1.5px solid #0D1B2A !important}
+html:not(#x):not(#y) .pp-mhead{background:#F1F3F8 !important;background-image:none !important;color:#0D1B2A !important;border-bottom:1px solid #E3E8F0 !important}
 html:not(#x):not(#y) .pp-mhead :is(p,span,li,b,strong){color:#0D1B2A !important}
 html:not(#x):not(#y) .pp-mhead :is(.pp-mtitel span,.pp-mnoot){color:#4A5A70 !important}
-html:not(#x):not(#y) .pp-mhead .pp-kleuren i{box-shadow:0 0 0 1px #0D1B2A !important}
+html:not(#x):not(#y) .pp-mhead .pp-kleuren i{box-shadow:0 0 0 1px #CBD3DF !important}
 html:not(#x):not(#y) .pp-mtegel .pp-mbeeld{background:#F1F3F8 !important;background-image:none !important}
 html:not(#x):not(#y) .pp-modus button{box-shadow:none !important}
 
 /* --- Artikelen: aanmeldblok met inline stijl op een donker vlak (zorgpremies 2027 en soortgelijke blokken).
        Wordt lichtgrijs met inktrand; veld wit met inktrand; de knop is intern en dus inkt. --- */
-html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"]{background:#F1F3F8 !important;color:#0D1B2A !important;border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"]{background:#F1F3F8 !important;color:#0D1B2A !important;border:1px solid #E3E8F0 !important;border-radius:14px !important}
 html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] :is(p,span,b,strong,label,h2,h3){color:#0D1B2A !important}
 html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] p[style*="rgba(255,255,255"]{color:#4A5A70 !important}
-html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] input{background:#fff !important;color:#0D1B2A !important;border:1.5px solid #0D1B2A !important;border-radius:10px !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] input{background:#fff !important;color:#0D1B2A !important;border:1px solid #CBD3DF !important;border-radius:10px !important;-webkit-text-fill-color:#0D1B2A !important}
 html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] input::placeholder{color:#4A5A70 !important;-webkit-text-fill-color:#4A5A70 !important}
 html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] button{background:#0D1B2A !important;color:#fff !important;border:1.5px solid #0D1B2A !important;border-radius:10px !important;min-height:44px}
 html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] a{color:#2456D6 !important}
@@ -89,21 +89,38 @@ html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] a{color:#2456D6 !impo
 html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] p[id^="zam-uit"]{color:#0D1B2A !important;font-weight:600}
 
 /* --- Artikelen: losse blokken onder en in de tekst zonder inktrand --- */
-html:not(#x):not(#y) .dan-in{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:none !important}
-html:not(#x):not(#y) .dan-mailrij input{border:1.5px solid #0D1B2A !important;border-radius:10px !important}
-html:not(#x):not(#y) .rte :is(div,aside,p)[style*="border:1px solid"][style*="border-radius"]{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) .dan-in{border:1px solid #E3E8F0 !important;border-radius:14px !important;box-shadow:none !important}
+html:not(#x):not(#y) .dan-mailrij input{border:1px solid #CBD3DF !important;border-radius:10px !important}
+html:not(#x):not(#y) .rte :is(div,aside,p)[style*="border:1px solid"][style*="border-radius"]{border:1px solid #E3E8F0 !important;border-radius:14px !important}
 
 /* --- "Zoek in gewone taal" boven de vergelijkers: de voorbeeldzoekopdrachten zijn pillen met inktrand --- */
-html:not(#x):not(#y) .dpvai-hint button{background:#fff !important;border:1.5px solid #0D1B2A !important;color:#0D1B2A !important;border-radius:999px !important}
+html:not(#x):not(#y) .dpvai-hint button{background:#fff !important;border:1px solid #CBD3DF !important;color:#0D1B2A !important;border-radius:999px !important}
 html:not(#x):not(#y) .dpvai-hint button:hover{background:#F1F3F8 !important}
-html:not(#x):not(#y) .dpvai-blok{border-width:1.5px !important}
-html:not(#x):not(#y) .dpvai-veld{border-width:1.5px !important}
+html:not(#x):not(#y) .dpvai-blok{border-width:1px !important}
+html:not(#x):not(#y) .dpvai-veld{border-width:1px !important}
 
 /* --- Belafspraak: de velden en de kaart van het formulier --- */
-html:not(#x):not(#y) .pv-wrap :is(input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=hidden]):not([type=range]),select,textarea){border:1.5px solid #0D1B2A !important;border-radius:10px !important;background-color:#fff !important;color:#0D1B2A !important}
-html:not(#x):not(#y) .pv-wrap>div>div:has(>div>:is(input,select)){border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:none !important}
+html:not(#x):not(#y) .pv-wrap :is(input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=hidden]):not([type=range]),select,textarea){border:1px solid #CBD3DF !important;border-radius:10px !important;background-color:#fff !important;color:#0D1B2A !important}
+html:not(#x):not(#y) .pv-wrap>div>div:has(>div>:is(input,select)){border:1px solid #CBD3DF !important;border-radius:14px !important;box-shadow:none !important}
 
 /* --- Zoekpagina en zoekvenster: het veld had een lichte rand (bij Dawn zit de rand in .field:after) --- */
-html:not(#x):not(#y) .search__input.field__input{border:1.5px solid #0D1B2A !important;border-radius:10px !important;box-shadow:none !important}
+html:not(#x):not(#y) .search__input.field__input{border:1px solid #CBD3DF !important;border-radius:10px !important;box-shadow:none !important}
 html:not(#x):not(#y) .field:has(>.search__input):after,html:not(#x):not(#y) .field:has(>.search__input):before{box-shadow:none !important;border:0 !important}
-html:not(#x):not(#y) .template-search__results .product-grid>li{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) .template-search__results .product-grid>li{border:1px solid #E3E8F0 !important;border-radius:14px !important}
+
+
+/* ===== Variant E "Zacht grijs" (6 okt, gekozen door de eigenaar): minder omlijning op de binnenpagina's =====
+   Fijne lijn #E3E8F0 om kaarten, #CBD3DF om velden en pillen. De inktrand blijft alleen op de gele doorklikknop
+   en op de beste keuze per pagina (met het groene verschoven vlak). Bovenkant van de pagina: lichtgrijze band. */
+html:not(#x):not(#y) .pvc-kaart:has(form){border:1.5px solid #0D1B2A !important}
+/* bovenkant van de vergelijkpagina's: lichtgrijze band met een lijn eronder */
+html:not(#x):not(#y) .dph-hero{background:#F1F3F8 !important;background-image:none !important;border-bottom:1px solid #E3E8F0 !important}
+/* de beste keuze bij de populaire toestellen: inktrand en het groene verschoven vlak */
+html:not(#x):not(#y) .dtc-card.best{border:1.5px solid #0D1B2A !important;box-shadow:6px 6px 0 #3FAE7A !important}
+html:not(#x):not(#y) .dtc-tag{background:#3FAE7A !important;color:#0D1B2A !important}
+/* vlak achter een productfoto is lichtgrijs, net als op de homepage */
+html:not(#x):not(#y) .dtc-img,html:not(#x):not(#y) .dtc-simg{background:#F1F3F8 !important;background-image:none !important}
+html:not(#x):not(#y) .dtc-img img,html:not(#x):not(#y) .dtc-simg img{mix-blend-mode:multiply}
+/* knoppen binnen de site (geen doorklik): wit met een fijne rand, niet met inkt */
+html:not(#x):not(#y) a.bv-knop:not(.dpv-geel):not(.bestel){border:1px solid #CBD3DF !important;box-shadow:none !important}
+html:not(#x):not(#y) .pa-blok{border:1px solid #E3E8F0 !important;box-shadow:none !important}

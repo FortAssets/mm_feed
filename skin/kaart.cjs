@@ -2,7 +2,7 @@
 // (STIJLGIDS-KAARTJES.md) en maakt uit de oorspronkelijke opmaak (bladen.json) de vormregels voor
 // kaarten en invoervelden. Schrijft k-basis.css en k-vorm.css; bouw.sh plakt alles aan elkaar.
 const fs = require('fs'), postcss = require('postcss');
-const INKT = '#0D1B2A', ZACHT = '#4A5A70', GRIJS = '#F1F3F8', LIJN = '#E3E8F0', BLAUW = '#2456D6', GEEL = '#F9C31F';
+const VELD = '#CBD3DF', INKT = '#0D1B2A', ZACHT = '#4A5A70', GRIJS = '#F1F3F8', LIJN = '#E3E8F0', BLAUW = '#2456D6', GEEL = '#F9C31F';
 const KOP = "'Bricolage Grotesque','Instrument Sans',system-ui,sans-serif", TEKST = "'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif";
 const KLEUR = /#([0-9a-fA-F]{6})\b|rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)/g;
 const isKop = (sel) => /(^|[\s>+~,(])h[1-3]\b|titel|title|\bkop\b|-kop\b|heading|prijs|price|bedrag|-pr\b|amount/i.test(sel);
@@ -36,7 +36,7 @@ function kaartKleur(x, a, soort, prop, sel) {
   }
   // rand
   if (blauw) return a >= 0.5 ? INKT : rgba(INKT, a);
-  if (x === 'C9D8FA' || tintD) return /^(border|border-color|outline|outline-color)$/.test(prop) ? INKT : LIJN;
+  if (x === 'C9D8FA' || tintD) return /^(border|border-color|outline|outline-color)$/.test(prop) ? VELD : LIJN;
   if (x === 'D9E1EC' || tintL) return LIJN;
   return null;
 }
@@ -49,6 +49,7 @@ function zetOm(css, naam) {
       if (d.prop === 'font-family') { if (/Montserrat/.test(d.value)) { d.value = isKop(sel) ? KOP : TEKST; n++; } return; }
       const soort = d.prop.startsWith('--') ? (/bg|back|fill|surface|tint/i.test(d.prop) ? 'vlak' : /border|line|rand/i.test(d.prop) ? 'rand' : 'tekst') : soortVan(d.prop);
       if (!soort) return;
+      const band = soort === 'vlak' && /E3ECFF 0%?,\s*#F4F7FF 100%\)/i.test(d.value);
       let alle = true, soorten = new Set(), anders = false;
       let v = d.value.replace(KLEUR, (m, hx, r, g, b, a) => {
         const x = hx || [r, g, b].map((q) => (+q).toString(16).padStart(2, '0')).join('');
@@ -63,6 +64,7 @@ function zetOm(css, naam) {
         if (alle && k.every((c) => c === INKT)) v = INKT;
         else if (k.every((c) => /^(#FFFFFF|#F1F3F8|#FFF|RGB\(255, ?255, ?255\))$/i.test(c))) v = k.includes(GRIJS) && !k.some((c) => /FFF/i.test(c)) ? GRIJS : '#FFFFFF';
       }
+      if (band) { v = GRIJS; if (!/::|:hover/.test(sel)) rule.append({ prop: 'border-bottom', value: '1px solid ' + LIJN, important: true }); }
       d.value = v; n++;
     });
     // gele knoppen uit de herstellingen krijgen de vorm van de doorklikknop
@@ -103,15 +105,16 @@ for (const blad of Object.values(B)) {
     const rand = D.border, straal = D['border-radius'] ? px(D['border-radius']) : -1;
     const bg = D.background || D['background-color'];
     const hover = /:hover|:focus|:active|\.actief|\.active|\.on\b|\.sel\b|\[aria-(selected|pressed|current)|:checked/.test(sel);
-    if (veld && rand && !/none|^0/.test(rand)) { nieuw.push(['border-color', INKT], ['border-width', '1.5px'], ['border-radius', '10px']); if (D['box-shadow']) nieuw.push(['box-shadow', 'none']); }
+    if (veld && rand && !/none|^0/.test(rand)) { nieuw.push(['border-color', VELD], ['border-width', '1px'], ['border-radius', '10px']); if (D['box-shadow']) nieuw.push(['box-shadow', 'none']); }
     else {
       if (rand && lichteRand(rand) && !/none|^0|dashed|dotted/.test(rand) && px(rand) <= 2 && (straal >= 6 || (straal < 0 && bg && witVlak(bg) && D.padding))) {
-        nieuw.push(['border-color', INKT]); if (px(rand) < 1.5) nieuw.push(['border-width', '1.5px']);
-        if (straal >= 12 && straal <= 28 && (!bg || witVlak(bg))) nieuw.push(['border-radius', '14px']);
+        const kaart = straal >= 12 && straal <= 28;
+        if (!hover) nieuw.push(['border-color', kaart || straal < 0 ? LIJN : VELD]); if (px(rand) > 1) nieuw.push(['border-width', '1px']);
+        if (kaart && (!bg || witVlak(bg))) nieuw.push(['border-radius', '14px']);
       }
       if (D['box-shadow'] && grijzeSchaduw(D['box-shadow'])) {
         // een kaart zonder rand maar met schaduw krijgt een inktlijn van schaduw (verandert de maat niet)
-        if (!hover && bg && witVlak(bg) && (!rand || /none|^0/.test(rand)) && straal >= 8 && !/fixed|sticky/.test(D.position || '')) nieuw.push(['box-shadow', '0 0 0 1.5px ' + INKT]);
+        if (!hover && bg && witVlak(bg) && (!rand || /none|^0/.test(rand)) && straal >= 8 && !/fixed|sticky/.test(D.position || '')) nieuw.push(['box-shadow', '0 0 0 1px ' + LIJN]);
         else if (!/fixed|sticky|absolute/.test(D.position || '')) nieuw.push(['box-shadow', hover && !rand ? null : 'none']);
       }
     }
@@ -123,5 +126,5 @@ for (const blad of Object.values(B)) {
     const r = postcss.rule({ selector: sels.map(hoger).join(',') }); nw.forEach(([prop, value]) => r.append({ prop, value, important: true })); doel.append(r); nv++;
   });
 }
-fs.writeFileSync('k-vorm.css', '/* --- vormen: kaarten en velden met inktrand, geen grijze schaduw (kaart.cjs) --- */\n' + uit.toString().replace(/\n\s*/g, '').replace(/;\}/g, '}'));
+fs.writeFileSync('k-vorm.css', '/* --- vormen: kaarten en velden met een fijne lijn (variant E), geen grijze schaduw (kaart.cjs) --- */\n' + uit.toString().replace(/\n\s*/g, '').replace(/;\}/g, '}'));
 console.log('vormregels', nv);

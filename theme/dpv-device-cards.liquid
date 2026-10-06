@@ -1,0 +1,196 @@
+{%- comment -%}
+  DPV Toestelkaarten: populaire toestellen + dealkaarten met productfoto +
+  wettelijk verplichte voorbeeldberekening toestelbundel (opgebouwd uit live data).
+{%- endcomment -%}
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Inter:wght@400;500;600;700;800&display=swap');
+.dtc{padding:36px 0 8px;font-family:'Inter',system-ui,sans-serif;color:#0D1B2A}
+.dtc *{box-sizing:border-box}
+.dtc-wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.dtc-label{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.dtc-label h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:23px;margin:0;white-space:nowrap}
+.dtc-rule{flex:1;height:1px;background:#e8edf5}
+.dtc-note{font-size:13px;color:#64748b;margin-bottom:18px}
+.dtc-more{display:inline-block;margin-top:12px;font-size:13.5px;font-weight:700;color:#1e3a8a;text-decoration:none}
+
+.dtc-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:34px}
+.dtc-scard{background:#fff;border:1px solid #e8edf5;border-radius:16px;overflow:hidden;text-decoration:none;color:inherit;transition:border-color .13s,transform .13s,box-shadow .13s}
+.dtc-scard:hover{border-color:#dbe4ff;transform:translateY(-2px);box-shadow:0 14px 34px -18px rgba(13,27,42,.18)}
+.dtc-simg{height:120px;background:linear-gradient(180deg,#eff4ff,#fff);display:flex;align-items:center;justify-content:center;padding:12px;position:relative}
+.dtc-simg img{max-height:100%;max-width:100%;object-fit:contain}
+.dtc-sbadge{position:absolute;left:8px;bottom:8px;background:#fff;border:1px solid #e8edf5;color:#059669;font-size:9.5px;font-weight:800;padding:3px 8px;border-radius:20px;line-height:1.3;box-shadow:0 2px 8px rgba(13,27,42,.08)}
+.dtc-sbody{padding:10px 12px 13px}
+.dtc-sbrand{display:block;font-size:11px;color:#64748b;font-weight:600}
+.dtc-smodel{display:block;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:13.5px;line-height:1.25}
+
+.dtc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dtc-card{background:#fff;border:1px solid #e8edf5;border-radius:20px;overflow:hidden;position:relative;display:flex;flex-direction:column;transition:border-color .13s,transform .13s,box-shadow .13s}
+.dtc-card:hover{border-color:#dbe4ff;transform:translateY(-2px);box-shadow:0 18px 44px -20px rgba(13,27,42,.2)}
+.dtc-card.best{border:2px solid #059669;box-shadow:0 18px 44px -22px rgba(5,150,105,.25)}
+.dtc-tag{position:absolute;top:12px;left:12px;background:#059669;color:#fff;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:3px 10px;border-radius:20px;z-index:2}
+.dtc-img{height:170px;background:linear-gradient(180deg,#eff4ff,#fff);display:flex;align-items:center;justify-content:center;padding:18px}
+.dtc-img img{max-height:100%;max-width:100%;object-fit:contain}
+.dtc-body{padding:16px 18px 18px;display:flex;flex-direction:column;flex:1}
+.dtc-name{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16.5px;line-height:1.2;margin-bottom:9px}
+.dtc-specs{display:flex;align-items:center;gap:8px;margin-bottom:13px;min-height:26px}
+.dtc-gb{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:14.5px}
+.dtc-min{font-size:12.5px;color:#64748b;flex:1 1 auto;min-width:0}
+.dtc-logo{width:26px;height:26px;flex:0 0 26px;border-radius:7px;border:1px solid #e8edf5;background:#fff;padding:2px;object-fit:contain}
+.dtc-price{display:flex;align-items:baseline;gap:6px;flex-wrap:wrap;padding-top:12px;border-top:1px solid #e8edf5}
+.dtc-price .p{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:26px;color:#059669;line-height:1}
+.dtc-price .per{font-size:12.5px;color:#64748b}
+.dtc-een{width:100%;font-size:12.5px;font-weight:600;margin-top:4px}
+.dtc-een.vrij{color:#059669}
+.dtc-tot{width:100%;font-size:11px;color:#94a3b8;margin-top:2px}
+.dtc-los{gap:4px 18px;align-items:flex-end}
+.dtc-kol{display:flex;flex-direction:column}
+.dtc-kol small{font-size:12px;font-weight:600;color:#4A5A70;margin-bottom:2px}
+.dtc-los .p2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;line-height:1.3;color:#0D1B2A}
+.dtc-los .dtc-tot{font-size:12px;color:#4A5A70;margin-top:4px}
+.dtc-cta{display:block;text-align:center;background:#059669;color:#fff!important;font-weight:700;font-size:14.5px;padding:12px;border-radius:12px;text-decoration:none;margin-top:14px;box-shadow:0 8px 18px -10px rgba(5,150,105,.6)}
+.dtc-card .dpv-save{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:10px;z-index:2;box-shadow:0 2px 8px rgba(13,27,42,.08)}
+
+.dtc-calc{background:#fff;border:1px solid #e8edf5;border-radius:18px;padding:20px 22px;margin-top:26px;overflow-x:auto}
+.dtc-calc h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px;margin:0 0 12px}
+.dtc-calc table{width:100%;border-collapse:collapse;font-size:12.5px;min-width:640px}
+.dtc-calc th{text-align:left;font-weight:700;color:#64748b;font-size:11px;text-transform:uppercase;letter-spacing:.04em;padding:0 10px 8px 0;border-bottom:1px solid #e8edf5;white-space:nowrap}
+.dtc-calc td{padding:9px 10px 9px 0;border-bottom:1px solid #f1f5f9;white-space:nowrap}
+.dtc-calc td:first-child{font-weight:600;white-space:normal}
+.dtc-fine{font-size:11px;color:#94a3b8;line-height:1.55;margin-top:12px}
+.dtc-fine a{color:#2563eb;text-decoration:none;font-weight:600}
+.dtc-skel{background:#f1f5f9;border-radius:16px;height:250px;animation:dtcp 1.2s ease-in-out infinite alternate}
+@keyframes dtcp{from{opacity:.55}to{opacity:1}}
+@media(max-width:1000px){.dtc-strip{grid-template-columns:repeat(3,1fr)}.dtc-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.dtc-strip{grid-template-columns:repeat(2,1fr)}.dtc-grid{grid-template-columns:1fr}}
+</style>
+
+<div class="dtc" id="dtc-{{ section.id }}">
+  <div class="dtc-wrap">
+    {% if section.settings.show_strip %}
+    <div class="dtc-label"><h2>{{ section.settings.strip_heading }}</h2><div class="dtc-rule"></div></div>
+    <div class="dtc-note">{{ section.settings.strip_note }}</div>
+    <div class="dtc-strip" data-dtc-strip></div>
+    {% endif %}
+
+    <div class="dtc-label"><h2>{{ section.settings.heading }}</h2><div class="dtc-rule"></div></div>
+    <div class="dtc-note" data-dtc-note>{{ section.settings.subnote }}</div>
+    <div class="dtc-grid" data-dtc-grid>
+      <div class="dtc-skel"></div><div class="dtc-skel"></div><div class="dtc-skel"></div>
+    </div>
+    <a class="dtc-more" href="#vergelijker">{{ section.settings.more_label }} &rsaquo;</a>
+
+    <div class="dtc-calc" data-dtc-calc style="display:none">
+      <h3>Voorbeeldberekening toestelbundel</h3>
+      <table>
+        <thead><tr><th>Aanbieding</th><th>Totale toestelkosten</th><th>Eenmalige betaling</th><th>Totaal kredietbedrag</th><th>Termijnbedrag</th><th>Duur</th><th>Vaste rente / JKP</th></tr></thead>
+        <tbody data-dtc-calcrows></tbody>
+      </table>
+      <p class="dtc-fine">Een toestel op afbetaling is een aflopend goederenkrediet van de gekozen aanbieder. Kijk altijd naar de totaalprijs over de looptijd, niet alleen naar de maandprijs. Bij een kredietbedrag vanaf &euro;250 volgt een registratie bij het BKR, wat je leenruimte voor bijvoorbeeld een hypotheek kan beperken. Lees hierover in onze gids <a href="/blogs/advies/telefoonabonnement-zonder-bkr-registratie-zo-regel-je-het">telefoonabonnement zonder BKR-registratie</a>. Bepaal zelf of de toestelbetaling bij jouw persoonlijke situatie past. Prijzen worden dagelijks bijgewerkt; controleer de actuele voorwaarden bij de aanbieder.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var ROOT=document.getElementById('dtc-{{ section.id }}');
+  if(!ROOT||ROOT.dataset.init) return; ROOT.dataset.init='1';
+  var W={{ section.settings.worker_url | json }}, LIMIT={{ section.settings.limit | json }};
+  var q=function(s){return ROOT.querySelector(s)};
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function euro(n){var v=Math.round((+n||0)*100)/100; var s=(v%1===0)?v+',-':v.toFixed(2).replace('.',','); return '\u20AC'+s}
+  var DOM={odido:'odido.nl',kpn:'kpn.com',vodafone:'vodafone.nl',ben:'ben.nl',simyo:'simyo.nl',youfone:'youfone.nl',lebara:'lebara.nl',simpel:'simpel.nl',hollandsnieuwe:'hollandsnieuwe.nl'};
+  function logo(n){var m=(n||'').toLowerCase();for(var k in DOM){if(m.indexOf(k)>-1)return 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://'+DOM[k]}return 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://'+m.replace(/[^a-z0-9]/g,'')+'.nl'}
+  var BM='<svg viewBox="0 0 24 24"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>';
+  function merkVan(naam){var m=(naam||'').split(' ')[0]; return m}
+  function modelVan(naam){var p=(naam||'').split(' '); p.shift(); return p.join(' ')}
+
+  function stripCard(c){
+    return '<a class="dtc-scard" href="'+esc(c.url)+'" rel="sponsored noopener" target="_blank">'
+      +'<div class="dtc-simg">'+(c.image?'<img src="'+esc(c.image)+'" alt="'+esc(c.device)+'" loading="lazy">':'')
+      +(c.downPayment>0?'':'<span class="dtc-sbadge">geen aanbetaling</span>')+'</div>'
+      +'<div class="dtc-sbody"><span class="dtc-sbrand">'+esc(merkVan(c.device))+'</span>'
+      +'<span class="dtc-smodel">'+esc(modelVan(c.device))+'</span></div></a>';
+  }
+
+  function dealCard(c,i){
+    var gb = c.unlimited ? 'Onbeperkt' : (c.dataGB>0 ? c.dataGB+' GB' : (c.storage||''));
+    var mid = c.minutes || (c.storage && !c.dataGB ? 'bij '+c.provider : c.storage||'');
+    var spec = '<span class="dtc-gb">'+esc(gb)+'</span><span class="dtc-min">'+esc(mid)+'</span>'
+             + '<img class="dtc-logo" src="'+logo(c.provider)+'" alt="'+esc(c.provider)+'" loading="lazy">';
+    var een = c.downPayment>0
+      ? '<span class="dtc-een">+ '+euro(c.downPayment)+' eenmalig</span>'
+      : '<span class="dtc-een vrij">geen aanbetaling</span>';
+    var id='dtc-'+i+'-'+(c.device||'').toLowerCase().replace(/[^a-z0-9]+/g,'-');
+    var spec2=[c.storage||'','bij '+c.provider].filter(Boolean).join(' \u00B7 ');
+    return '<div class="dtc-card'+(c.best?' best':'')+'">'
+      +(c.best?'<span class="dtc-tag">Beste keuze</span>':'')
+      +'<button type="button" class="dpv-save" aria-label="Bewaar deal" data-id="'+esc(id)+'" data-name="'+esc(c.device)+'" data-spec="'+esc(spec2)+'" data-price="'+esc(euro(c.price))+'" data-logo="'+esc(c.image||logo(c.provider))+'" data-url="'+esc(c.url)+'">'+BM+'</button>'
+      +'<div class="dtc-img">'+(c.image?'<img src="'+esc(c.image)+'" alt="'+esc(c.device)+'" loading="lazy">':'')+'</div>'
+      +'<div class="dtc-body"><div class="dtc-name">'+esc(c.device)+'</div>'
+      +'<div class="dtc-specs">'+spec+'</div>'
+      +prijsBlok(c,een)
+      +'<a class="dtc-cta" href="'+esc(c.url)+'" rel="sponsored noopener" target="_blank">Bekijk deze deal &rarr;</a>'
+      +'</div></div>';
+  }
+
+  // Toestelprijs los van het abonnement: wat je voor het toestel betaalt (vooraf plus termijnen) en daarnaast het abonnement per maand.
+  function prijsBlok(c,een){
+    var mnd=parseInt((c.contract||'').replace(/\D/g,''),10)||0;
+    if(!(c.deviceTotal>0)||!(c.bundleMonthly>=0)||!mnd){
+      return '<div class="dtc-price"><span class="p">'+euro(c.price)+'</span><span class="per">/mnd</span>'
+        +een+'<span class="dtc-tot">totaal '+euro(c.totalPrice)+' over '+esc(c.contract||'de looptijd')+'</span></div>';
+    }
+    var opbouw=(c.downPayment>0?euro(c.downPayment)+' vooraf, daarna ':'')+mnd+' x '+euro(c.deviceMonthly)+(c.downPayment>0?'':', niets vooraf');
+    return '<div class="dtc-price dtc-los"><span class="dtc-kol"><small>Toestel los</small><span class="p">'+euro(c.deviceTotal)+'</span></span>'
+      +'<span class="dtc-kol"><small>Abonnement</small><span class="p2">'+euro(c.bundleMonthly)+'<span class="per"> /mnd</span></span></span>'
+      +'<span class="dtc-tot">'+opbouw+'</span></div>';
+  }
+
+  function calcRow(c){
+    var mnd = parseInt((c.contract||'').replace(/\D/g,''),10) || 24;
+    var krediet = Math.max(Math.round(((c.totalPrice||0) - (c.downPayment||0))*100)/100, 0);
+    var termijn = mnd>0 ? Math.round((krediet/mnd)*100)/100 : 0;
+    return '<tr><td>'+esc(c.device)+' + '+esc(c.provider)+'</td>'
+      +'<td>'+euro(c.totalPrice)+'</td><td>'+euro(c.downPayment)+'</td><td>'+euro(krediet)+'</td>'
+      +'<td>'+euro(termijn)+'</td><td>'+mnd+' maanden</td><td>0%</td></tr>';
+  }
+
+  fetch(W+'/api/cards/telefoon?limit='+LIMIT,{cache:'no-store'})
+    .then(function(r){return r.json()})
+    .then(function(res){
+      var cards=(res&&res.cards)?res.cards:[];
+      if(!cards.length){ q('[data-dtc-grid]').innerHTML='<div class="dtc-note">Aanbiedingen konden even niet geladen worden.</div>'; return }
+      var strip=q('[data-dtc-strip]');
+      if(strip) strip.innerHTML=cards.slice(0,6).map(stripCard).join('');
+      q('[data-dtc-grid]').innerHTML=cards.slice(0,6).map(dealCard).join('');
+      var metKrediet=cards.filter(function(c){return (c.totalPrice||0)>0}).slice(0,3);
+      if(metKrediet.length){
+        q('[data-dtc-calcrows]').innerHTML=metKrediet.map(calcRow).join('');
+        q('[data-dtc-calc]').style.display='block';
+      }
+      if(res.updatedAt){
+        var d=new Date(res.updatedAt);
+        q('[data-dtc-note]').textContent={{ section.settings.subnote | json }}+' \u00B7 bijgewerkt '+d.toLocaleDateString('nl-NL',{day:'numeric',month:'long'});
+      }
+      if(window.dpvSaved) window.dpvSaved.refresh();
+    })
+    .catch(function(){ q('[data-dtc-grid]').innerHTML='<div class="dtc-note">Aanbiedingen konden even niet geladen worden.</div>' });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "DPV Toestelkaarten",
+  "settings": [
+    { "type": "checkbox", "id": "show_strip", "label": "Toon strip populaire toestellen", "default": true },
+    { "type": "text", "id": "strip_heading", "label": "Kop strip", "default": "Populaire toestellen" },
+    { "type": "text", "id": "strip_note", "label": "Subtekst strip", "default": "De meest gekozen telefoons van dit moment" },
+    { "type": "text", "id": "heading", "label": "Kop deals", "default": "Populaire toestellen met abonnement" },
+    { "type": "text", "id": "subnote", "label": "Subtekst deals", "default": "Beste totaalprijs per toestel, onafhankelijk vergeleken" },
+    { "type": "text", "id": "more_label", "label": "Link onderaan", "default": "Bekijk alle aanbiedingen" },
+    { "type": "text", "id": "worker_url", "label": "Worker URL", "default": "https://awin.business-347.workers.dev" },
+    { "type": "range", "id": "limit", "label": "Aantal toestellen", "min": 6, "max": 12, "step": 1, "default": 6 }
+  ],
+  "presets": [ { "name": "DPV Toestelkaarten" } ]
+}
+{% endschema %}

@@ -1,0 +1,1002 @@
+{%- comment -%}
+  DPV AI-zoekbalk.
+
+  Plaatst zichzelf boven de vergelijker (.pvx-outer) op elke pagina waar die
+  staat. De AI schrijft geen antwoord: hij levert filterwaarden, en dit script
+  zet ze in de bestaande vergelijker.
+
+  Hoe de filters landen:
+    data / bellen / maxMaand   -> window.pvxSetFilters()  (bestaat al)
+    looptijd                   -> chip in #pvx-ctrbk aanklikken
+    netwerk                    -> chip in #pvx-netbk aanklikken
+    maxEenmalig                -> schuif #s-bij
+    zoekterm                   -> tekstveld #pvx-q
+    zakelijk                   -> knop .pvx-seg-btn[data-seg=zakelijk]
+    categorie                  -> naar de bijbehorende pagina navigeren
+
+  De chips worden op volgorde aangeklikt, niet op tekst: de vergelijker is
+  vijftalig, dus op label matchen breekt zodra iemand naar Engels schakelt.
+{%- endcomment -%}
+
+<style>
+.dpvai{max-width:1100px;margin:0 auto 18px;padding:0 24px;font-family:'Inter',system-ui,sans-serif}
+.dpvai-veld{display:flex;align-items:center;gap:11px;background:#fff;border:2px solid #e8edf5;border-radius:15px;padding:13px 15px;transition:border-color .15s,box-shadow .15s}
+.dpvai-veld:focus-within{border-color:#059669;box-shadow:0 0 0 4px rgba(5,150,105,.09)}
+
+/* --- donker blok bovenaan --- */
+.dpvai-blok{background:linear-gradient(160deg,#0f2f47,#0D1B2A);border-radius:19px;padding:17px 16px 18px}
+.dpvai-blok .kp{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.dpvai-blok .kp b{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px;color:#fff}
+.dpvai-blok .pil{font-size:9px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;background:#059669;color:#fff;border-radius:20px;padding:3px 8px}
+.dpvai-blok .sub{margin:0 0 12px;font-size:12px;color:#b6c6d6;line-height:1.5}
+.dpvai-blok .dpvai-veld{border-color:#059669}
+.dpvai-blok .dpvai-hint button{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.17);color:#dbe4ff}
+.dpvai-blok .dpvai-hint button:hover{background:rgba(255,255,255,.18)}
+
+/* --- zwevende knop (alleen mobiel) --- */
+/* Op alle schermbreedtes. Eerder stond hij op desktop uit, omdat een
+   zwevende knop naast een vergelijker als chatbot kan lezen. Maar dan zie je
+   hem op je eigen scherm nooit, en site-breed betekent site-breed. */
+.dpvai-fab{position:fixed;right:14px;bottom:16px;z-index:99991;display:flex;align-items:center;gap:8px;
+  background:#059669;color:#fff;border:none;border-radius:999px;padding:13px 18px;
+  font:800 13.5px 'Inter',system-ui,sans-serif;cursor:pointer;
+  box-shadow:0 14px 30px -10px rgba(5,150,105,.7);
+  opacity:0;transform:translateY(14px) scale(.94);pointer-events:none;
+  transition:opacity .22s ease,transform .22s cubic-bezier(.2,.9,.3,1.2)}
+.dpvai-fab.aan{opacity:1;transform:none;pointer-events:auto}
+/* Zichtbaarheid loopt via de klasse 'aan', niet via display: zo houden we de
+   in- en uitfade. Op desktop iets ruimer van de rand af. */
+@media(min-width:901px){ .dpvai-fab{right:22px;bottom:22px;padding:14px 20px;font-size:14px} }
+/* taalkiezer wijkt uit zodra de knop er staat */
+body.dpvai-fab-open .pvlang{bottom:74px !important;transition:bottom .22s ease}
+@media(min-width:901px){ body.dpvai-fab-open .pvlang{bottom:86px !important} }
+
+/* --- paneel onderin --- */
+.dpvai-ovl{position:fixed;inset:0;background:rgba(13,27,42,.45);z-index:99992;opacity:0;pointer-events:none;transition:opacity .2s}
+.dpvai-ovl.aan{opacity:1;pointer-events:auto}
+.dpvai-paneel{position:fixed;left:12px;right:12px;bottom:14px;z-index:99993;background:#fff;border:1px solid #e8edf5;
+  border-radius:19px;padding:15px;box-shadow:0 -12px 44px -12px rgba(13,27,42,.5);
+  transform:translateY(130%);transition:transform .26s cubic-bezier(.2,.9,.3,1)}
+.dpvai-paneel.aan{transform:none}
+.dpvai-paneel .kp{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.dpvai-paneel .kp b{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15px}
+.dpvai-paneel .kp button{background:none;border:none;color:#94a3b8;font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
+
+/* --- boodschappen: winkels onder elkaar, goedkoopste eerst --- */
+.dpvai-bood .dpvmb,#dpvai-paneel .dpvmb{display:none !important}
+.dpvai-bood{margin-top:11px;background:#fff;border:1px solid #e8edf5;border-radius:15px;padding:14px 15px;display:none;max-height:52vh;overflow:auto}
+.dpvai-bood.aan{display:block}
+.dpvai-sr{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;padding:10px 4px;border-top:1px solid #E3E8F0;text-decoration:none;color:#0D1B2A}
+.dpvai-sr:first-of-type{border-top:none}
+.dpvai-sr:hover .dpvai-st{text-decoration:underline}
+.dpvai-ss{font-size:10.5px;font-weight:700;color:#4A5A70;background:#F1F3F8;border-radius:999px;padding:3px 9px;white-space:nowrap}
+.dpvai-st{font-size:14.5px;font-weight:600;line-height:1.3}
+.dpvai-sp{color:#94a3b8;font-size:18px}
+.dpvai-bood .lbl{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;margin-bottom:9px}
+.dpvai-bg{margin:0 0 13px}
+.dpvai-bg:last-of-type{margin-bottom:4px}
+.dpvai-bg h4{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:15.5px;margin:0 0 2px;color:#0D1B2A}
+.dpvai-bg .per{font-size:11.5px;color:#94a3b8;font-weight:700;margin:0 0 7px}
+.dpvai-br{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:2px 9px;align-items:center;padding:7px 0;border-top:1px solid #f1f5f9;text-decoration:none;color:inherit}
+.dpvai-br:first-of-type{border-top:none}
+.dpvai-br.best{background:#f0fdf4;border-radius:9px;padding:7px 8px;border-top:none}
+.dpvai-bw{font-size:11.5px;font-weight:800;line-height:1;padding:4px 8px;border-radius:7px;white-space:nowrap}
+.dpvai-bp{text-align:right;font-weight:800;font-size:14.5px;white-space:nowrap;color:#0D1B2A}
+.dpvai-bp s{font-weight:700;font-size:11.5px;color:#94a3b8;margin-left:3px}
+.dpvai-bm{grid-column:2 / -1;font-size:11.5px;color:#64748b;font-weight:600;line-height:1.35}
+.dpvai-bm b{color:#047857;font-weight:800}
+.dpvai-bbest{font-size:10px;font-weight:800;color:#047857;background:#dcfce7;border-radius:99px;padding:2px 7px;margin-left:6px;white-space:nowrap}
+.dpvai-bmeer{font-size:12px;color:#64748b;margin:2px 0 0}
+@media(max-width:700px){.dpvai-bood{max-height:46vh}}
+
+/* --- landpaneel --- */
+.dpvai-land{margin-top:11px;background:#fff;border:1px solid var(--rand,#e8edf5);border-radius:15px;padding:14px 15px;display:none}
+.dpvai-land.aan{display:block}
+.dpvai-land .lbl{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;margin-bottom:9px}
+.dpvai-land h4{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:16px;margin:0 0 9px;color:#0D1B2A}
+.dpvai-rij{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-top:1px solid #f1f5f9;font-size:13px;line-height:1.45}
+.dpvai-rij:first-of-type{border-top:none}
+.dpvai-rij .ic{flex:0 0 17px;margin-top:1px}
+.dpvai-rij b{color:#0D1B2A}
+.dpvai-rij .det{color:#64748b;display:block;font-size:12px;margin-top:1px}
+.dpvai-geen{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.55;color:#78350f;margin-bottom:11px}
+.dpvai-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.dpvai-links a{font-size:12.5px;font-weight:700;text-decoration:none;border-radius:11px;padding:9px 13px;border:1.5px solid #dbe4ff;color:#1B3FA0;background:#eff4ff}
+.dpvai-links a.groen{background:#059669;color:#fff;border-color:#059669}
+.dpvai-peil{font-size:11px;color:#94a3b8;margin-top:10px;line-height:1.45}
+.dpvai-veld input{flex:1;border:none;outline:none;font:400 15.5px/1.3 inherit;color:#0D1B2A;background:none;min-width:0}
+.dpvai-veld input::placeholder{color:#94a3b8}
+.dpvai-go{background:#059669;color:#fff;border:none;border-radius:11px;padding:10px 18px;font:700 14px inherit;cursor:pointer;white-space:nowrap}
+.dpvai-go:hover{background:#047857}
+.dpvai-go[disabled]{opacity:.6;cursor:wait}
+.dpvai-hint{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.dpvai-hint button{font:600 12.5px inherit;color:#1B3FA0;background:#eff4ff;border:1px solid #dbe4ff;border-radius:999px;padding:7px 12px;cursor:pointer}
+.dpvai-hint button:hover{background:#dbe4ff}
+
+.dpvai-uit{margin-top:11px;background:#fff;border:1px solid #e8edf5;border-radius:15px;padding:13px 15px;display:none}
+.dpvai-uit.aan{display:block}
+.dpvai-lbl{display:flex;align-items:center;gap:6px;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#94a3b8;margin-bottom:8px}
+.dpvai-zin{font-size:13.5px;line-height:1.5;color:#334155}
+.dpvai-chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.dpvai-chip{font:700 11.5px inherit;border-radius:999px;padding:6px 11px;background:#f0fdf4;color:#047857;border:1px solid #a7f3d0;display:inline-flex;align-items:center;gap:6px;cursor:pointer}
+.dpvai-chip span{color:#94a3b8;font-weight:700}
+.dpvai-chip:hover{background:#dcfce7}
+
+.dpvai-nee{margin-top:11px;background:#fffbeb;border:1px solid #fde68a;border-radius:15px;padding:14px 15px;display:none}
+.dpvai-nee.aan{display:block}
+.dpvai-nee .lbl{font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#b45309;margin-bottom:7px}
+.dpvai-nee p{margin:0 0 9px;font-size:13.5px;line-height:1.55;color:#78350f}
+.dpvai-nee a{font:700 13px inherit;color:#1B3FA0;text-decoration:none;border-bottom:1.5px solid #dbe4ff}
+.dpvai-spin{width:15px;height:15px;border:2px solid #a7f3d0;border-top-color:#059669;border-radius:50%;animation:dpvaiSpin .7s linear infinite}
+@keyframes dpvaiSpin{to{transform:rotate(360deg)}}
+/* De extra voorbeelden en de uitlegregel bestaan om de desktopkolom op
+   gelijke hoogte te brengen met de linkerkolom. Op mobiel staat alles onder
+   elkaar, dus valt er niets te vullen — daar zijn het vijf regels ruis boven
+   de eerste prijs. Twee voorbeelden is genoeg om te laten zien wat de
+   bedoeling is. */
+@media(max-width:700px){
+  .dpvai-blok .dpvai-hint button:nth-of-type(n+3){display:none}
+  .dpvai-extra{display:none}
+  .dpvai-blok{padding:14px 13px 15px}
+  .dpvai-blok .sub{margin-bottom:10px}
+  .dpvai-blok .dpvai-hint{margin-top:8px}
+}
+
+@media(max-width:700px){
+  .dpvai{padding:0 16px}
+  .dpvai-veld{padding:11px 13px;gap:9px}
+  .dpvai-veld input{font-size:15px}
+  .dpvai-go{padding:9px 14px;font-size:13px}
+}
+</style>
+
+<script>
+(function(){
+  if (window.__dpvAi) return;
+  window.__dpvAi = true;
+
+  var API = {{ section.settings.api_url | default: 'https://dpv-ai.business-347.workers.dev/zoek' | json }};
+  var HULP = {{ section.settings.hulp_url | default: '/pages/bellen-internet-buitenland' | json }};
+  // Zonetabel: handmatig onderhouden, met 173 schrijfwijzen voor landnamen.
+  // De regel is simpel en dekt elk land ter wereld:
+  //   1. staat het in euBasis of in de euExtra van die provider -> in de bundel
+  //   2. staat het in een uitzonderingsblok -> in de bundel, maar alleen bij die tiers
+  //   3. anders -> niet gedekt; toon de eSIM en de landengids
+  // Punt drie klopt voor de tweehonderd landen die we niet expliciet kennen.
+  var ZONES = {"euBasis":["Belgie","Duitsland","Frankrijk","Spanje","Italie","Portugal","Griekenland","Oostenrijk","Polen","Tsjechie","Kroatie","Hongarije","Ierland","Denemarken","Zweden","Finland","Luxemburg","Malta","Cyprus","Bulgarije","Roemenie","Slovenie","Slowakije","Estland","Letland","Litouwen"],"providers":{"kpn":{"naam":"KPN","euExtra":["IJsland","Noorwegen","Moldavie","Oekraine","Verenigd Koninkrijk","Zwitserland"],"uitzonderingen":[],"buitenZone":"Buitenlandbundel nodig, anders 2,50 euro per MB.","notitie":"Ook de Noordzee via Tampnet en de Canarische Eilanden. Turkije, Marokko en Suriname vallen er expliciet NIET onder.","peildatum":"2026-08-05"},"vodafone":{"naam":"Vodafone","euExtra":["IJsland","Liechtenstein","Moldavie","Monaco","Noorwegen","Oekraine","San Marino","Andorra","Albanie","Turkije","Verenigd Koninkrijk","Zwitserland"],"uitzonderingen":[{"landen":["Canada","Bonaire","Curacao","Aruba","Sint Maarten","Marokko","Suriname","Verenigde Staten","Zuid-Afrika"],"tiers":["Unlimited Max"],"detail":"25 GB per maand"}],"buitenZone":"Alles-in-1 Wereld dagbundel of buitenbundeltarief.","notitie":"EU-databundel per abonnement: Unlimited Start 50 GB, Plus 75 GB, Max 100 GB.","peildatum":"2026-08-05"},"odido":{"naam":"Odido","euExtra":["IJsland","Liechtenstein","Noorwegen","Verenigd Koninkrijk"],"uitzonderingen":[{"landen":["Turkije","Verenigde Staten","Zwitserland"],"tiers":["Unlimited Plus","Unlimited Snelst","Unlimited Premium"],"detail":"Zone Buitenland Plus"}],"buitenZone":"Internet Op Reis-pas nodig.","notitie":"Zone Buitenland Plus geldt alleen bij de hogere Unlimited-tiers.","peildatum":"2026-06"},"simyo":{"naam":"Simyo","euExtra":["Andorra","IJsland","Liechtenstein","Moldavie","Monaco","Noorwegen","Oekraine","San Marino","Verenigd Koninkrijk","Zwitserland"],"uitzonderingen":[],"buitenZone":"Buitenlandbundel, anders 5 euro per MB.","notitie":"Ook de Noordzee via Tampnet.","peildatum":"2026-08-05"},"hollandsnieuwe":{"naam":"hollandsnieuwe","euExtra":["IJsland","Liechtenstein","Noorwegen"],"uitzonderingen":[],"buitenZone":"Hogere tarieven buiten de EU.","notitie":"","peildatum":"2026-08-05"},"youfone":{"naam":"Youfone","euExtra":["IJsland","Liechtenstein","Noorwegen"],"uitzonderingen":[],"buitenZone":"Buitenlandbundel nodig.","notitie":"Nog te verifieren welke landen Youfone extra meerekent.","peildatum":"2026-08-05"},"ben":{"naam":"Ben","euExtra":[],"uitzonderingen":[],"buitenZone":"","notitie":"ONBEKEND. Ben blokkeert elke automatische browser met een 403; nog niet handmatig nagekeken.","peildatum":""},"lebara":{"naam":"Lebara","euExtra":[],"uitzonderingen":[],"buitenZone":"Wereldbundel nodig.","notitie":"Nog te verifieren.","peildatum":"2026-08-05"}},"alias":{"turkije":"Turkije","turkiye":"Turkije","turkey":"Turkije","verenigde staten":"Verenigde Staten","vs":"Verenigde Staten","v s":"Verenigde Staten","amerika":"Verenigde Staten","usa":"Verenigde Staten","united states":"Verenigde Staten","verenigde staten van amerika":"Verenigde Staten","verenigd koninkrijk":"Verenigd Koninkrijk","vk":"Verenigd Koninkrijk","engeland":"Verenigd Koninkrijk","groot brittannie":"Verenigd Koninkrijk","uk":"Verenigd Koninkrijk","united kingdom":"Verenigd Koninkrijk","schotland":"Verenigd Koninkrijk","wales":"Verenigd Koninkrijk","zwitserland":"Zwitserland","switzerland":"Zwitserland","curacao":"Curacao","duitsland":"Duitsland","germany":"Duitsland","deutschland":"Duitsland","belgie":"Belgie","belgium":"Belgie","frankrijk":"Frankrijk","france":"Frankrijk","spanje":"Spanje","spain":"Spanje","espana":"Spanje","italie":"Italie","italy":"Italie","portugal":"Portugal","griekenland":"Griekenland","greece":"Griekenland","oostenrijk":"Oostenrijk","austria":"Oostenrijk","polen":"Polen","poland":"Polen","tsjechie":"Tsjechie","czech":"Tsjechie","kroatie":"Kroatie","croatia":"Kroatie","hongarije":"Hongarije","hungary":"Hongarije","ierland":"Ierland","ireland":"Ierland","denemarken":"Denemarken","denmark":"Denemarken","zweden":"Zweden","sweden":"Zweden","finland":"Finland","noorwegen":"Noorwegen","norway":"Noorwegen","ijsland":"IJsland","iceland":"IJsland","liechtenstein":"Liechtenstein","luxemburg":"Luxemburg","luxembourg":"Luxemburg","malta":"Malta","cyprus":"Cyprus","bulgarije":"Bulgarije","bulgaria":"Bulgarije","roemenie":"Roemenie","romania":"Roemenie","slovenie":"Slovenie","slovenia":"Slovenie","slowakije":"Slowakije","slovakia":"Slowakije","estland":"Estland","estonia":"Estland","letland":"Letland","latvia":"Letland","litouwen":"Litouwen","lithuania":"Litouwen","andorra":"Andorra","monaco":"Monaco","san marino":"San Marino","vaticaanstad":"Vaticaanstad","vaticaan":"Vaticaanstad","oekraine":"Oekraine","ukraine":"Oekraine","moldavie":"Moldavie","moldova":"Moldavie","albanie":"Albanie","albania":"Albanie","servie":"Servie","serbia":"Servie","bosnie":"Bosnie","bosnie en herzegovina":"Bosnie","bosnia":"Bosnie","noord macedonie":"Noord-Macedonie","macedonie":"Noord-Macedonie","montenegro":"Montenegro","kosovo":"Kosovo","rusland":"Rusland","russia":"Rusland","wit rusland":"Wit-Rusland","belarus":"Wit-Rusland","marokko":"Marokko","morocco":"Marokko","egypte":"Egypte","egypt":"Egypte","tunesie":"Tunesie","tunisia":"Tunesie","algerije":"Algerije","algeria":"Algerije","zuid afrika":"Zuid-Afrika","south africa":"Zuid-Afrika","kaapverdie":"Kaapverdie","cape verde":"Kaapverdie","cabo verde":"Kaapverdie","gambia":"Gambia","senegal":"Senegal","ghana":"Ghana","nigeria":"Nigeria","kenia":"Kenia","kenya":"Kenia","tanzania":"Tanzania","zanzibar":"Tanzania","ethiopie":"Ethiopie","suriname":"Suriname","canada":"Canada","mexico":"Mexico","brazilie":"Brazilie","brazil":"Brazilie","argentinie":"Argentinie","colombia":"Colombia","peru":"Peru","chili":"Chili","chile":"Chili","aruba":"Aruba","bonaire":"Bonaire","sint maarten":"Sint Maarten","st maarten":"Sint Maarten","dominicaanse republiek":"Dominicaanse Republiek","dominicaanse rep":"Dominicaanse Republiek","thailand":"Thailand","indonesie":"Indonesie","indonesia":"Indonesie","bali":"Indonesie","vietnam":"Vietnam","maleisie":"Maleisie","malaysia":"Maleisie","singapore":"Singapore","filipijnen":"Filipijnen","philippines":"Filipijnen","japan":"Japan","zuid korea":"Zuid-Korea","south korea":"Zuid-Korea","china":"China","hongkong":"Hongkong","hong kong":"Hongkong","india":"India","sri lanka":"Sri Lanka","nepal":"Nepal","pakistan":"Pakistan","verenigde arabische emiraten":"Verenigde Arabische Emiraten","vae":"Verenigde Arabische Emiraten","dubai":"Verenigde Arabische Emiraten","abu dhabi":"Verenigde Arabische Emiraten","emiraten":"Verenigde Arabische Emiraten","israel":"Israel","jordanie":"Jordanie","jordan":"Jordanie","saoedi arabie":"Saoedi-Arabie","qatar":"Qatar","oman":"Oman","australie":"Australie","australia":"Australie","nieuw zeeland":"Nieuw-Zeeland","new zealand":"Nieuw-Zeeland"}};
+
+  // Landengidsen die daadwerkelijk bestaan. Nooit naar een verzonnen slug
+  // linken; een 404 is erger dan geen link.
+  var GIDSEN = {
+    'Turkije':'turkije','Verenigde Staten':'amerika','Thailand':'thailand','Egypte':'egypte',
+    'Marokko':'marokko','Verenigde Arabische Emiraten':'dubai','Spanje':'spanje',
+    'Griekenland':'griekenland','Indonesie':'indonesie','Zwitserland':'zwitserland',
+    'Suriname':'suriname','Canada':'canada','Kaapverdie':'kaapverdie','Gambia':'gambia',
+    'Oostenrijk':'oostenrijk'
+  };
+  var ESIM_PAD = {{ section.settings.esim_url | default: '/pages/internet-op-vakantie' | json }};
+  var BOOD_API = {{ section.settings.bood_api | default: 'https://dpv-boodschappen.business-347.workers.dev' | json }};
+  var BOOD_PAD = {{ section.settings.bood_pad | default: '/pages/boodschappen' | json }};
+
+  function landSleutel(t){
+    return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
+      .replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+  }
+  function herkenLand(tekst){
+    var k = landSleutel(tekst);
+    if (ZONES.alias[k]) return ZONES.alias[k];
+    k = k.replace(/^(de|het|in|naar)\s+/, '');
+    return ZONES.alias[k] || null;
+  }
+  // Geeft per provider terug of het land gedekt is en onder welke voorwaarde.
+  function dekking(land){
+    var uit = [];
+    for (var id in ZONES.providers) {
+      var p = ZONES.providers[id];
+      if (!p.euExtra.length && !p.uitzonderingen.length && !p.buitenZone) {
+        uit.push({ naam: p.naam, hoe: 'onbekend' });
+        continue;
+      }
+      if (ZONES.euBasis.indexOf(land) > -1 || p.euExtra.indexOf(land) > -1) {
+        uit.push({ naam: p.naam, hoe: 'bundel', detail: 'zit in de EU-zone' });
+        continue;
+      }
+      var gevonden = null;
+      for (var i = 0; i < p.uitzonderingen.length; i++) {
+        if (p.uitzonderingen[i].landen.indexOf(land) > -1) { gevonden = p.uitzonderingen[i]; break; }
+      }
+      if (gevonden) {
+        uit.push({ naam: p.naam, hoe: 'tier',
+          detail: 'alleen bij ' + gevonden.tiers.join(', ') + (gevonden.detail ? ' — ' + gevonden.detail : '') });
+      } else {
+        uit.push({ naam: p.naam, hoe: 'nee', detail: p.buitenZone || '' });
+      }
+    }
+    return uit;
+  }
+
+  var PADEN = { simonly: '/pages/sim-only', telefoon: '/pages/telefoonabonnement', internet: '/pages/internet-tv' };
+
+  var VOORBEELDEN = [
+    'goedkoopste sim only',
+    'onbeperkt bellen onder de 15 euro',
+    'iPhone 17 zonder aanbetaling'
+  ];
+  // In de hero is meer ruimte, en die vullen we liever met voorbeelden dan met
+  // wit. Twee extra zinnen die laten zien dat hij meer kan dan prijs en data.
+  // Vier voorbeelden, niet vijf: met vijf viel de rij over twee regels uiteen
+  // en stond er eentje in zijn eentje onderaan. "Maandelijks opzegbaar" is de
+  // minst onderscheidende van de vijf — dat kan elke vergelijker.
+  var VOORBEELDEN_HERO = VOORBEELDEN.concat([
+    'internetten in Turkije'
+  ]);
+  var EXTRA = 'Werkt ook op <b>looptijd</b>, <b>aanbetaling</b>, <b>netwerk</b> en <b>bestemming</b>. Vragen die we niet kunnen beantwoorden zeggen we eerlijk — we verzinnen niets.';
+  var TITEL = {{ section.settings.titel | default: 'Zoek in gewone taal' | json }};
+  var SUB   = {{ section.settings.subtekst | default: 'Typ wat je zoekt, wij zetten de filters.' | json }};
+  var KNOP  = {{ section.settings.knoptekst | default: 'Zoekhulp' | json }};
+
+  function el(tag, cls, html){ var e=document.createElement(tag); if(cls)e.className=cls; if(html!=null)e.innerHTML=html; return e; }
+
+  // ---------- filters toepassen ----------
+
+  // chipFilter rendert knoppen in vaste volgorde; op index klikken is
+  // taalonafhankelijk, op labeltekst matchen breekt bij Engels of Turks.
+  function klikChip(containerId, index){
+    var c = document.getElementById(containerId);
+    if (!c) return false;
+    var knoppen = c.querySelectorAll('button');
+    if (!knoppen[index]) return false;
+    knoppen[index].click();
+    return true;
+  }
+  function zetSchuif(id, waarde){
+    var s = document.getElementById(id);
+    if (!s) return false;
+    var max = parseFloat(s.getAttribute('data-max') || s.max || '0') || 0;
+    s.value = (max && waarde > max) ? max : waarde;
+    s.dispatchEvent(new Event('input', { bubbles: true }));
+    s.dispatchEvent(new Event('change', { bubbles: true }));
+    return true;
+  }
+
+  function zetSort(waarde){
+    var sel = document.getElementById('pvx-sort');
+    if (!sel) return false;
+    var bestaat = false;
+    for (var i = 0; i < sel.options.length; i++) { if (sel.options[i].value === waarde) bestaat = true; }
+    if (!bestaat) return false;
+    sel.value = waarde;
+    sel.dispatchEvent(new Event('change', { bubbles: true }));
+    return true;
+  }
+
+  function pas(f){
+    // zakelijk eerst: dat hertekent de hele lijst
+    if (f.zakelijk) {
+      var zb = document.querySelector('.pvx-seg-btn[data-seg=zakelijk]');
+      if (zb && zb.className.indexOf('on') < 0) zb.click();
+    }
+    // vrije tekst (toestel of aanbieder)
+    var q = document.getElementById('pvx-q');
+    if (q) {
+      q.value = f.zoekterm || '';
+      q.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    // looptijd: index 0 alle, 1 maandelijks, 2 twaalf, 3 vierentwintig
+    if (f.looptijd !== null) {
+      var li = { '0': 1, '12': 2, '24': 3 }[String(f.looptijd)];
+      if (li) klikChip('pvx-ctrbk', li);
+    }
+    // netwerk: index 0 alle, 1 kpn, 2 odido, 3 vodafone
+    if (f.netwerk) {
+      var ni = { kpn: 1, odido: 2, vodafone: 3 }[f.netwerk];
+      if (ni) klikChip('pvx-netbk', ni);
+    }
+    if (f.maxEenmalig !== null) zetSchuif('s-bij', f.maxEenmalig);
+    // Sortering. De opties verschillen per categorie, dus eerst kijken of hij
+    // bestaat; anders zet je de select op een waarde die de tool niet kent.
+    if (f.sorteer) zetSort(f.sorteer);
+    // data, bellen en maandprijs via de bestaande haak
+    if (typeof window.pvxSetFilters === 'function') {
+      window.pvxSetFilters({
+        data: f.data === null ? '' : f.data,
+        calls: f.bellen === null ? '' : f.bellen,
+        maxMaand: f.maxMaand
+      });
+    }
+  }
+
+  function scrollNaarLijst(){
+    var t = document.querySelector('.pvx-results') || document.querySelector('.pvx-outer');
+    if (!t) return;
+    var y = t.getBoundingClientRect().top + window.pageYOffset - 90;
+    window.scrollTo({ top: y < 0 ? 0 : y, behavior: 'smooth' });
+  }
+
+  // ---------- opbouwen ----------
+
+  // Eén zoekveld, twee ingangen. Het veld verhuist tussen het blok bovenaan
+  // en het paneel onderin; er is dus nooit dubbele status.
+  function veldHtml(){
+    return '<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>' +
+      '<input type="text" id="dpvai-in" placeholder="Zoek in gewone taal: goedkoopste met 20 GB" autocomplete="off">' +
+      '<button type="button" class="dpvai-go" id="dpvai-go">Zoek</button>';
+  }
+  function hintHtml(lijst){
+    var h = '';
+    (lijst || VOORBEELDEN).forEach(function(v){ h += '<button type="button" data-v="' + v.replace(/"/g,'&quot;') + '">' + v + '</button>'; });
+    return h;
+  }
+  function koppelVeld(scope){
+    var go = scope.querySelector('#dpvai-go');
+    var inp = scope.querySelector('#dpvai-in');
+    if (go) go.addEventListener('click', zoek);
+    if (inp) inp.addEventListener('keydown', function(e){ if (e.key === 'Enter') zoek(); });
+    scope.querySelectorAll('.dpvai-hint button').forEach(function(b){
+      b.addEventListener('click', function(){
+        var i = document.getElementById('dpvai-in');
+        if (i) i.value = b.getAttribute('data-v');
+        zoek();
+      });
+    });
+  }
+
+  function bouw(){
+    // Site-breed. De zwevende knop en het paneel komen op ELKE pagina; het
+    // donkere blok alleen waar een vergelijker staat, want daar kan het iets
+    // filteren. Op een blog of providerpagina zou een blok zonder resultaten
+    // eronder alleen maar verwarren.
+    bouwZwevend();
+
+    if (document.getElementById('dpvai')) return;
+    var outer = document.querySelector('.pvx-outer');
+    // Op de homepage staat geen vergelijker, maar wél een hero met een
+    // keuzekaart. Daar hoort het zoekblok juist het meest thuis: het is de
+    // eerste plek waar iemand kijkt. Zoeken stuurt dan door naar de
+    // categoriepagina met de filters al gezet.
+    var heroKaart = (location.pathname === '/') ? document.querySelector('.dhh-panel') : null;
+    if (!outer && !heroKaart) return;
+
+    // De oude keuzerij ("Ik zoek sim only met ... voor max ...") deed hetzelfde
+    // als deze zoekbalk, maar met dropdowns. Weg ermee, en wij nemen zijn plek
+    // in de hero over — dan staat de zoekbalk boven de vouw in plaats van
+    // ergens halverwege.
+    var oudeRij = document.getElementById('pvh-smart');
+    var plek = null, naast = null;
+    if (oudeRij && oudeRij.parentNode) {
+      plek = oudeRij.parentNode; naast = oudeRij.nextSibling;
+      oudeRij.parentNode.removeChild(oudeRij);
+    }
+
+    var wrap = el('div', 'dpvai'); wrap.id = 'dpvai';
+    var blok = el('div', 'dpvai-blok');
+    blok.innerHTML =
+      '<div class="kp"><b>' + TITEL + '</b><span class="pil">Nieuw</span></div>' +
+      '<p class="sub">' + SUB + '</p>' +
+      '<div class="dpvai-veld">' + veldHtml() + '</div>' +
+      '<div class="dpvai-hint">' + hintHtml(heroKaart ? VOORBEELDEN_HERO : VOORBEELDEN) + '</div>' +
+      (heroKaart ? '<div class="dpvai-extra">' + EXTRA + '</div>' : '');
+    wrap.appendChild(blok);
+    wrap.appendChild(el('div', 'dpvai-bood', ''));
+    wrap.appendChild(el('div', 'dpvai-land', ''));
+    wrap.appendChild(el('div', 'dpvai-uit', ''));
+    wrap.appendChild(el('div', 'dpvai-nee', ''));
+    if (heroKaart) {
+      // De keuzetegels en de knop verhuizen naar de linkerkolom, zodat de
+      // rechterkaart vrijkomt voor de zoekbalk. Het label "Waarmee wil je
+      // beginnen?" en de statistiekenrij vervallen: die zeiden hetzelfde als
+      // de tegels en de vinkjes eronder.
+      // De tegels blijven in de rechterkolom staan; die kolom is nu
+      // zoekveld + categorieën onder elkaar. Eerder verhuisden ze naar
+      // links, maar dat hoort bij een indeling die we niet meer gebruiken.
+      var label = heroKaart.querySelector('.dhh-plabel');
+      if (label) label.remove();
+      var stats = heroKaart.querySelector('.dhh-stats');
+      if (stats) stats.remove();
+      var cta = heroKaart.querySelector('.dhh-cta');
+      if (cta) cta.remove();
+      heroKaart.style.background = 'none';
+      heroKaart.style.border = 'none';
+      heroKaart.style.boxShadow = 'none';
+      heroKaart.style.padding = '0';
+      wrap.style.padding = '0';
+      var eersteCat = heroKaart.querySelector('.dhh-cats');
+      if (eersteCat) heroKaart.insertBefore(wrap, eersteCat);
+      else heroKaart.appendChild(wrap);
+    }
+    else if (plek) { wrap.style.padding = '0'; plek.insertBefore(wrap, naast); }
+    else outer.parentNode.insertBefore(wrap, outer);
+    koppelVeld(blok);
+
+    koppelObserver(blok);
+  }
+
+  function bouwZwevend(){
+    // Deze functie wordt vanuit start() herhaald aangeroepen (de opbouw wacht
+    // tot de vergelijker geladen is). Zonder deze controle bouwde hij bij elke
+    // ronde een nieuwe knop en een nieuw paneel: dubbele elementen, dubbele
+    // voorbeeldknoppen en meerdere velden met hetzelfde id.
+    if (!document.getElementById('dpvai-fab')) {
+      var fab = el('button', 'dpvai-fab');
+      fab.id = 'dpvai-fab'; fab.type = 'button';
+      fab.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg>' + KNOP;
+      document.body.appendChild(fab);
+
+      var ovl = el('div', 'dpvai-ovl'); ovl.id = 'dpvai-ovl';
+      document.body.appendChild(ovl);
+
+      var pan = el('div', 'dpvai-paneel'); pan.id = 'dpvai-paneel';
+      pan.innerHTML = '<div class="kp"><b>' + TITEL + '</b><button type="button" id="dpvai-dicht" aria-label="Sluiten">&times;</button></div>' +
+        '<div class="dpvai-veld"></div><div class="dpvai-hint">' + hintHtml() + '</div>' +
+        '<div class="dpvai-bood"></div>';
+      document.body.appendChild(pan);
+
+      fab.addEventListener('click', openPaneel);
+      ovl.addEventListener('click', sluitPaneel);
+      pan.querySelector('#dpvai-dicht').addEventListener('click', sluitPaneel);
+      koppelVeld(pan);
+    }
+  }
+
+  // Pas beslissen als de opbouw klaar is. Deze functie werd eerder binnen
+  // bouwZwevend() aangeroepen, vóórdat het blok bestond, waardoor de knop ook
+  // op een pagina mét vergelijker meteen aan stond.
+  function bepaalModus(){
+    var blok = document.querySelector('.dpvai-blok');
+    var fab = document.getElementById('dpvai-fab');
+    if (!fab) return;
+    if (blok) {
+      // Er is een blok: de knop wacht tot dat uit beeld scrolt.
+      document.body.classList.remove('dpvai-overal');
+      return;
+    }
+    // Geen blok: de knop is de enige ingang, dus ook op desktop tonen.
+    document.body.classList.add('dpvai-overal');
+    fab.className = 'dpvai-fab aan';
+    document.body.classList.add('dpvai-fab-open');
+  }
+
+  // Knop verschijnt zodra het blok uit beeld is. Geen scroll-listener.
+  function koppelObserver(blok){
+    if (!('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function(entries){
+      var zichtbaar = entries[0].isIntersecting;
+      var fab = document.getElementById('dpvai-fab');
+      if (!fab || paneelOpen) return;
+      fab.className = 'dpvai-fab' + (zichtbaar ? '' : ' aan');
+      document.body.classList.toggle('dpvai-fab-open', !zichtbaar);
+    }, { threshold: 0.12 }).observe(blok);
+  }
+
+  var paneelOpen = false;
+  function veldNaar(scope){
+    var doel = scope.querySelector('.dpvai-veld');
+    if (!doel) return;
+    var huidig = document.getElementById('dpvai-in');
+    var waarde = huidig ? huidig.value : '';
+    // Eerst alle veldhouders legen: er mag er maar één #dpvai-in bestaan,
+    // anders pakt getElementById de verkeerde en typ je in een onzichtbaar veld.
+    var alle = document.querySelectorAll('.dpvai-veld');
+    for (var i = 0; i < alle.length; i++) alle[i].innerHTML = '';
+    doel.innerHTML = veldHtml();
+    koppelVeld(scope);
+    var nieuw = doel.querySelector('#dpvai-in');
+    if (nieuw) { nieuw.value = waarde; }
+    return nieuw;
+  }
+  function openPaneel(){
+    var pan = document.getElementById('dpvai-paneel');
+    var ovl = document.getElementById('dpvai-ovl');
+    var fab = document.getElementById('dpvai-fab');
+    if (!pan) return;
+    paneelOpen = true;
+    var inp = veldNaar(pan);
+    pan.className = 'dpvai-paneel aan';
+    if (ovl) ovl.className = 'dpvai-ovl aan';
+    if (fab) fab.className = 'dpvai-fab';
+    setTimeout(function(){ if (inp) inp.focus(); }, 120);
+  }
+  function sluitPaneel(){
+    var pan = document.getElementById('dpvai-paneel');
+    var ovl = document.getElementById('dpvai-ovl');
+    var fab = document.getElementById('dpvai-fab');
+    paneelOpen = false;
+    // waarde terug naar het blok bovenaan
+    var blok = document.querySelector('.dpvai-blok');
+    if (blok) veldNaar(blok);
+    if (pan) pan.className = 'dpvai-paneel';
+    if (ovl) ovl.className = 'dpvai-ovl';
+    if (fab && document.body.classList.contains('dpvai-fab-open')) fab.className = 'dpvai-fab aan';
+  }
+
+  function toonLand(landRuw){
+    var vak = document.querySelector('.dpvai-land');
+    if (!vak) return null;
+    var land = herkenLand(landRuw);
+    if (!land) { vak.className = 'dpvai-land'; return null; }
+
+    var lijst = dekking(land);
+    var werkt = lijst.filter(function(d){ return d.hoe === 'bundel' || d.hoe === 'tier'; });
+    var niet  = lijst.filter(function(d){ return d.hoe === 'nee'; });
+    var onbek = lijst.filter(function(d){ return d.hoe === 'onbekend'; });
+
+    var h = '<div class="lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 010 18M12 3a15 15 0 000 18"/></svg>Bellen en internetten in ' + land + '</div>';
+
+    if (!werkt.length) {
+      h += '<div class="dpvai-geen"><b>Geen enkel Nederlands abonnement dekt ' + land + '.</b> ' +
+           'Je betaalt daar per MB of moet een losse buitenlandbundel kopen. Een eSIM is bijna altijd voordeliger.</div>';
+    } else {
+      h += '<h4>Werkt in ' + land + '</h4>';
+      werkt.forEach(function(d){
+        h += '<div class="dpvai-rij"><span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="3"><path d="M4 12l6 6L20 6"/></svg></span>' +
+             '<span><b>' + d.naam + '</b><span class="det">' + d.detail + '</span></span></div>';
+      });
+      if (niet.length) {
+        h += '<div class="dpvai-rij"><span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><path d="M6 6l12 12M18 6L6 18"/></svg></span>' +
+             '<span><b>Niet inbegrepen bij ' + niet.map(function(d){ return d.naam; }).join(', ') + '</b>' +
+             '<span class="det">Daar is een losse bundel voor nodig.</span></span></div>';
+      }
+    }
+    if (onbek.length) {
+      h += '<div class="dpvai-rij"><span class="ic"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg></span>' +
+           '<span><b>Nog niet gecontroleerd: ' + onbek.map(function(d){ return d.naam; }).join(', ') + '</b>' +
+           '<span class="det">Wij geven liever geen antwoord dan een verkeerd antwoord.</span></span></div>';
+    }
+
+    h += '<div class="dpvai-links">';
+    if (GIDSEN[land]) h += '<a href="/blogs/advies/internet-esim-' + GIDSEN[land] + '">Onze ' + land + '-gids &rsaquo;</a>';
+    h += '<a class="groen" href="' + ESIM_PAD + '">Vergelijk eSIM voor ' + land + ' &rsaquo;</a></div>';
+    h += '<div class="dpvai-peil">Dekking met de hand bijgehouden en periodiek gecontroleerd bij de aanbieders. Controleer de voorwaarden bij je provider voor je vertrekt.</div>';
+
+    vak.innerHTML = h;
+    vak.className = 'dpvai-land aan';
+    return land;
+  }
+
+  function toonUitleg(f){
+    var uit = document.querySelector('.dpvai-uit');
+    var nee = document.querySelector('.dpvai-nee');
+    nee.className = 'dpvai-nee';
+    uit.className = 'dpvai-uit aan';
+    uit.innerHTML =
+      '<div class="dpvai-lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></svg>Zo heb ik het gelezen</div>' +
+      '<div class="dpvai-zin"></div><div class="dpvai-chips"></div>';
+    uit.querySelector('.dpvai-zin').textContent = f.zin || 'Filters aangepast.';
+
+    var chips = uit.querySelector('.dpvai-chips');
+    var labels = [];
+    if (f.zakelijk) labels.push(['Zakelijk', function(){ var b=document.querySelector('.pvx-seg-btn[data-seg=particulier]'); if(b)b.click(); }]);
+    if (f.zoekterm) labels.push([f.zoekterm, function(){ var q=document.getElementById('pvx-q'); if(q){q.value='';q.dispatchEvent(new Event('input',{bubbles:true}));} }]);
+    if (f.data) labels.push([{ '0-5':'t/m 5 GB','5-20':'5 tot 20 GB','20-50':'20 tot 50 GB','999-':'Onbeperkt data' }[f.data] || f.data,
+      function(){ if(window.pvxSetFilters) window.pvxSetFilters({ data:'' }); }]);
+    if (f.bellen) labels.push([f.bellen === 'unlim' ? 'Onbeperkt bellen' : 'Met belbundel',
+      function(){ if(window.pvxSetFilters) window.pvxSetFilters({ calls:'' }); }]);
+    if (f.maxMaand !== null) labels.push(['Max €' + f.maxMaand + ' p/m',
+      function(){ if(window.pvxSetFilters) window.pvxSetFilters({ maxMaand: 9999 }); }]);
+    if (f.maxEenmalig !== null) labels.push([f.maxEenmalig === 0 ? 'Geen aanbetaling' : 'Aanbetaling tot €' + f.maxEenmalig,
+      function(){ zetSchuif('s-bij', 99999); }]);
+    if (f.looptijd !== null) labels.push([{ '0':'Maandelijks opzegbaar','12':'12 maanden','24':'24 maanden' }[String(f.looptijd)],
+      function(){ klikChip('pvx-ctrbk', 0); }]);
+    if (f.netwerk) labels.push([{ kpn:'KPN-netwerk', odido:'Odido-netwerk', vodafone:'Vodafone-netwerk' }[f.netwerk],
+      function(){ klikChip('pvx-netbk', 0); }]);
+    if (f.sorteer) labels.push([{ price:'Goedkoopste eerst', data:'Meeste data eerst', down:'Laagste aanbetaling eerst', pop:'Meest gekozen' }[f.sorteer] || f.sorteer,
+      function(){ zetSort('pop'); }]);
+
+    labels.forEach(function(p){
+      var c = el('button', 'dpvai-chip');
+      c.type = 'button';
+      c.textContent = p[0];
+      c.appendChild(el('span', null, '×'));
+      c.addEventListener('click', function(){ p[1](); c.remove(); });
+      chips.appendChild(c);
+    });
+  }
+
+  function toonNee(reden){
+    var uit = document.querySelector('.dpvai-uit');
+    var nee = document.querySelector('.dpvai-nee');
+    uit.className = 'dpvai-uit';
+    nee.className = 'dpvai-nee aan';
+    nee.innerHTML = '<div class="lbl">Hier kan ik niet op filteren</div><p></p>' +
+      '<a href="' + HULP + '">Lees onze uitleg &rsaquo;</a>';
+    nee.querySelector('p').textContent = (reden || 'Deze vraag valt buiten wat ik kan filteren.') +
+      ' Ik vergelijk op prijs, data, bellen, looptijd en aanbetaling — daarbuiten ga ik niets verzinnen.';
+  }
+
+  // ---- Boodschappen ---------------------------------------------------------
+  // Typ je een merk, dan hoef je niet naar de vergelijker: dan laten we hier
+  // meteen zien welke winkels het deze week in de aanbieding hebben, de
+  // goedkoopste bovenaan. Alleen als het merk in onze eigen lijst staat, want
+  // anders gaan we prijzen van losse folderregels naast elkaar zetten die niet
+  // hetzelfde product zijn.
+  var BOODKLEUR = { ah:['#00A0E2','#fff'], jumbo:['#FFC800','#1A1A1A'], plus:['#6AA521','#fff'], dirk:['#E30613','#fff'],
+    lidl:['#0050AA','#FFF000'], aldi:['#00005F','#fff'], hoogvliet:['#009A44','#fff'], vomar:['#D1001C','#fff'],
+    kruidvat:['#E3000F','#fff'], action:['#0B64B4','#fff'], etos:['#1A1A1A','#fff'], da:['#E6007E','#fff'], trekpleister:['#F18A00','#fff'] };
+  function boodVeilig(t){ return String(t == null ? '' : t).replace(/[&<>"]/g, function(c){
+    return { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]; }); }
+  function boodEuro(n){ return n == null ? '' : '\u20ac' + Number(n).toLocaleString('nl-NL', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+  function boodVak(){
+    var pan = document.getElementById('dpvai-paneel');
+    if (pan && pan.className.indexOf('aan') > -1) { var inPan = pan.querySelector('.dpvai-bood'); if (inPan) return inPan; }
+    return document.querySelector('#dpvai .dpvai-bood') || (pan ? pan.querySelector('.dpvai-bood') : null);
+  }
+  function boodLeeg(){
+    var vakken = document.querySelectorAll('.dpvai-bood');
+    for (var i = 0; i < vakken.length; i++) { vakken[i].className = 'dpvai-bood'; vakken[i].innerHTML = ''; }
+    hintTonen(true);
+  }
+  // Staat er een antwoord, dan zijn de voorbeeldzinnen alleen maar ruis en
+  // duwen ze het antwoord uit beeld.
+  function hintTonen(aan){
+    var h = document.querySelectorAll('#dpvai-paneel .dpvai-hint');
+    for (var i = 0; i < h.length; i++) h[i].style.display = aan ? '' : 'none';
+  }
+  // Zoekt bij de boodschappenworker en groepeert per product. Levert null als
+  // er geen merk uit onze lijst bij zit; dan gaat de gewone zoekhulp verder.
+  function boodZoek(v){
+    return fetch(BOOD_API + '/sm/api/zoek?q=' + encodeURIComponent(v))
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        if (!j || !j.resultaten || !j.resultaten.length) return null;
+        var groepen = [], per = {};
+        j.resultaten.forEach(function(x){
+          if (!x.product_id) return;
+          var g = per[x.product_id];
+          if (!g) { g = per[x.product_id] = { naam: x.productNaam || x.titel, eenheid: x.eenheid, rijen: [] }; groepen.push(g); }
+          if (g.rijen.some(function(y){ return y.winkel === x.winkel; })) return;
+          g.rijen.push(x);
+        });
+        if (!groepen.length) return null;
+        var maat = function(x){ return x.perEenheid || (x.prijs ? 1000 + x.prijs : 1e6); };
+        groepen.forEach(function(g){ g.rijen.sort(function(a, b){ return maat(a) - maat(b); }); });
+        groepen.sort(function(a, b){ return b.rijen.length - a.rijen.length; });
+        return groepen.slice(0, 3);
+      })
+      .catch(function(){ return null; });
+  }
+  function toonBoodschappen(groepen, v){
+    var vak = boodVak();
+    if (!vak) return false;
+    var h = '<div class="lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M3 5h2l2 11h11l2-8H7"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>Deze week in de aanbieding</div>';
+    groepen.forEach(function(g){
+      // "Goedkoopst" alleen als er echt te vergelijken valt: minstens twee
+      // winkels met een prijs per liter, kilo of stuk.
+      var vgl = g.rijen.filter(function(x){ return x.perEenheid; });
+      var best = vgl.length > 1 ? vgl[0] : null;
+      h += '<div class="dpvai-bg"><h4>' + boodVeilig(g.naam) + '</h4>' +
+        '<p class="per">' + g.rijen.length + (g.rijen.length === 1 ? ' winkel' : ' winkels') +
+        (g.eenheid ? ' \u00b7 prijs per ' + boodVeilig(g.eenheid) : '') + '</p>';
+      g.rijen.slice(0, 6).forEach(function(x){
+        var k = BOODKLEUR[x.winkel] || ['#334155', '#fff'];
+        var prijs = x.prijs ? boodEuro(x.prijs) : '\u2192';
+        h += '<a class="dpvai-br' + (x === best ? ' best' : '') + '" href="' + boodVeilig(x.url || BOOD_PAD) + '" target="_blank" rel="sponsored nofollow noopener">' +
+          '<span class="dpvai-bw" style="background:' + k[0] + ';color:' + k[1] + '">' + boodVeilig(x.winkelNaam || x.winkel) + '</span>' +
+          '<span></span>' +
+          '<span class="dpvai-bp">' + prijs + (x === best ? '<span class="dpvai-bbest">Goedkoopst</span>' : '') + '</span>' +
+          '<span class="dpvai-bm">' + boodVeilig(x.actie || '') +
+          (x.perEenheid ? ' \u00b7 <b>' + boodEuro(x.perEenheid) + ' per ' + boodVeilig(g.eenheid || 'stuk') + '</b>' : '') +
+          (x.titel && x.titel !== g.naam ? ' \u00b7 ' + boodVeilig(x.titel) : '') + '</span></a>';
+      });
+      if (g.rijen.length > 6) h += '<p class="dpvai-bmeer">En nog ' + (g.rijen.length - 6) + ' winkels.</p>';
+      h += '</div>';
+    });
+    h += '<div class="dpvai-links"><a class="groen" href="' + BOOD_PAD + '?zoek=' + encodeURIComponent(v) + '">Alle aanbiedingen voor \u201c' + boodVeilig(v) + '\u201d &rsaquo;</a></div>';
+    vak.innerHTML = h;
+    vak.className = 'dpvai-bood aan';
+    hintTonen(false);
+    return true;
+  }
+
+  function zoek(){
+    var inp = document.getElementById('dpvai-in');
+    var knop = document.getElementById('dpvai-go');
+    var v = (inp.value || '').trim();
+    if (v.length < 3) { inp.focus(); return; }
+
+    var oud = knop.innerHTML;
+    knop.disabled = true;
+    knop.innerHTML = '<span class="dpvai-spin"></span>';
+    boodLeeg();
+
+    // Eerst kijken of dit een merk uit de schappen is. Zo ja, dan is het
+    // antwoord hier al compleet en hoeft de bezoeker nergens heen.
+    Promise.all([boodZoek(v), siteZoek(v)]).then(function(beide){
+      var groepen = beide[0], site = beide[1];
+      if (groepen && toonBoodschappen(groepen, v)) {
+        knop.disabled = false; knop.innerHTML = oud;
+        var uitVak = document.querySelector('.dpvai-uit'); if (uitVak) uitVak.className = 'dpvai-uit';
+        var neeVak = document.querySelector('.dpvai-nee'); if (neeVak) neeVak.className = 'dpvai-nee';
+        var landVak2 = document.querySelector('.dpvai-land'); if (landVak2) landVak2.className = 'dpvai-land';
+        var vak = boodVak();
+        var pan = document.getElementById('dpvai-paneel');
+        if (vak && !(pan && pan.className.indexOf('aan') > -1)) {
+          try { vak.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {}
+        }
+        return;
+      }
+      // Staat er een pagina of artikel over precies dit onderwerp, dan is dat
+      // het antwoord. Niet doorsturen naar een vergelijker waar het (nog) niet
+      // in staat, zoals bij een toestel dat pas in de pre-order komt.
+      if (site && site.sterk) {
+        var heeftVgl = !!document.querySelector('.pvx-outer');
+        if (toonSite(site, v, !heeftVgl)) {
+          if (heeftVgl) vraagAi(v, knop, oud, true);
+          else { knop.disabled = false; knop.innerHTML = oud; }
+          return;
+        }
+      }
+      vraagAi(v, knop, oud, false, site);
+    });
+  }
+
+  // ---- De site zelf: pagina's en artikelen ---------------------------------
+  // De zoekfunctie van de winkel kent elke gepubliceerde pagina en elk artikel,
+  // dus een nieuw artikel is meteen vindbaar zonder dat hier iets bijgehouden
+  // hoeft te worden.
+  var SITE_STOP = { de:1, het:1, een:1, van:1, voor:1, met:1, bij:1, naar:1, wat:1, hoe:1, kan:1, wil:1, mijn:1, over:1, the:1, and:1, kopen:1, prijs:1, goedkoop:1, goedkoopste:1 };
+  function siteWoorden(t){
+    var n = String(t || '').toLowerCase();
+    try { n = n.normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch (e) {}
+    return n.replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter(function(w){ return (w.length >= 3 || /^\d+$/.test(w)) && !SITE_STOP[w]; });
+  }
+  // Een vraag met een getal, een bedrag of een bundelwoord is een filtervraag
+  // voor de vergelijker, ook als er toevallig een artikel over bestaat.
+  function siteFiltervraag(v){
+    return /\d\s*(gb|mb|min|euro|maand|mnd|jaar)|\u20ac|onder de |tot \d|max |maximaal|onbeperkt|aanbetaling|maandelijks opzegbaar|goedkoopste? (sim|abonnement|internet)/i.test(v);
+  }
+  function siteZoek(v){
+    var u = '/search/suggest.json?q=' + encodeURIComponent(v) +
+      '&resources[type]=article,page&resources[limit]=6&resources[limit_scope]=each';
+    return fetch(u, { headers: { accept: 'application/json' } })
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){
+        var res = j && j.resources && j.resources.results;
+        if (!res) return null;
+        var schoon = function(x, soort){ return { titel: x.title || '', url: String(x.url || '').split('?')[0], soort: soort }; };
+        var lijst = (res.pages || []).slice(0, 3).map(function(x){ return schoon(x, 'Pagina'); })
+          .concat((res.articles || []).slice(0, 5).map(function(x){ return schoon(x, 'Artikel'); }))
+          .filter(function(x){ return x.titel && x.url; });
+        if (!lijst.length) return null;
+        var w = siteWoorden(v);
+        var raak = w.length > 0 && lijst.some(function(x){
+          var t = ' ' + siteWoorden(x.titel).join(' ') + ' ';
+          return w.every(function(q){ return t.indexOf(' ' + q) > -1; });
+        });
+        return { lijst: lijst, sterk: raak && !siteFiltervraag(v) };
+      })
+      .catch(function(){ return null; });
+  }
+  function toonSite(site, v, metKnop){
+    var vak = boodVak();
+    if (!vak || !site || !site.lijst.length) return false;
+    var h = '<div class="lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M5 4h11l3 3v13H5z"/><path d="M8 10h8M8 14h8M8 18h5"/></svg>Hierover op De Prijsvergelijker</div>';
+    site.lijst.forEach(function(x){
+      h += '<a class="dpvai-sr" href="' + boodVeilig(x.url) + '"><span class="dpvai-ss">' + x.soort + '</span><span class="dpvai-st">' + boodVeilig(x.titel) + '</span><span class="dpvai-sp">&rsaquo;</span></a>';
+    });
+    h += '<div class="dpvai-links"><a href="/search?q=' + encodeURIComponent(v) + '&type=article,page">Alles over \u201c' + boodVeilig(v) + '\u201d &rsaquo;</a>' +
+      (metKnop ? '<a class="groen" href="#" data-dpvai-vgl>Toch abonnementen vergelijken &rsaquo;</a>' : '') + '</div>';
+    vak.innerHTML = h;
+    vak.className = 'dpvai-bood aan';
+    hintTonen(false);
+    var k = vak.querySelector('[data-dpvai-vgl]');
+    if (k) k.addEventListener('click', function(e){
+      e.preventDefault();
+      var knop = document.getElementById('dpvai-go');
+      var oud = knop ? knop.innerHTML : '';
+      if (knop) { knop.disabled = true; knop.innerHTML = '<span class="dpvai-spin"></span>'; }
+      vraagAi(v, knop || { }, oud, false);
+    });
+    var uitVak = document.querySelector('.dpvai-uit'); if (uitVak) uitVak.className = 'dpvai-uit';
+    var neeVak = document.querySelector('.dpvai-nee'); if (neeVak) neeVak.className = 'dpvai-nee';
+    return true;
+  }
+
+  // blijf: er staan al pagina's en artikelen in beeld; dan alleen de filters
+  // op deze pagina zetten en nergens heen sturen.
+  // site: zwakke treffers van de site; die tonen we als de zoekhulp zelf niets kan.
+  function vraagAi(v, knop, oud, blijf, site){
+    fetch(API, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ q: v })
+    }).then(function(r){
+      return r.json().then(function(j){ return { status: r.status, j: j }; });
+    }).then(function(res){
+      knop.disabled = false; knop.innerHTML = oud;
+      var j = res.j || {};
+      if (!j.ok) { if (blijf) return; if (site && toonSite(site, v, false)) return; toonNee(j.bericht || 'De zoekhulp is even niet bereikbaar.'); return; }
+      var f = j.filters || {};
+
+      if (f.kanNiet) { if (blijf) return; if (site && toonSite(site, v, false)) return; toonNee(f.reden); return; }
+
+      // Andere categorie? Dan hoort de bezoeker op een andere pagina.
+      var pad = PADEN[f.categorie];
+      if (blijf && pad && location.pathname.indexOf(pad) < 0) return;
+      if (pad && location.pathname.indexOf(pad) < 0) {
+        try { sessionStorage.setItem('dpvai:filters', JSON.stringify(f)); } catch (e) {}
+        location.href = pad;
+        return;
+      }
+
+      // Geen vergelijker op deze pagina (blog, providerpagina, homepage)?
+      // Dan filters bewaren en doorsturen naar de juiste categoriepagina.
+      if (!document.querySelector('.pvx-outer')) {
+        try { sessionStorage.setItem('dpvai:filters', JSON.stringify(f)); } catch (e) {}
+        location.href = PADEN[f.categorie] || PADEN.simonly;
+        return;
+      }
+      if (paneelOpen && !blijf) sluitPaneel();
+      var landVak = document.querySelector('.dpvai-land');
+      if (landVak) landVak.className = 'dpvai-land';
+      if (f.land) toonLand(f.land);
+      pas(f);
+      toonUitleg(f);
+      if (!blijf) scrollNaarLijst();
+    }).catch(function(e){
+      knop.disabled = false; knop.innerHTML = oud;
+      if (blijf) return;
+      if (site && toonSite(site, v, false)) return;
+      toonNee('Geen verbinding met de zoekhulp.');
+      console.log('[dpv-ai]', e);
+    });
+  }
+
+  // Filters die van een andere pagina meekomen alsnog toepassen.
+  function herstel(){
+    var raw = null;
+    try { raw = sessionStorage.getItem('dpvai:filters'); sessionStorage.removeItem('dpvai:filters'); } catch (e) {}
+    if (!raw) return;
+    var f; try { f = JSON.parse(raw); } catch (e) { return; }
+    var pogingen = 0;
+    var iv = setInterval(function(){
+      pogingen++;
+      if (typeof window.pvxSetFilters === 'function' && document.querySelector('.pvx-card')) {
+        clearInterval(iv);
+        pas(f); toonUitleg(f);
+        var i = document.getElementById('dpvai-in');
+        if (i && f.zin) i.value = '';
+      } else if (pogingen > 40) clearInterval(iv);
+    }, 250);
+  }
+
+  // ---------- Filters uit de URL ----------
+  // Zodat een menulink direct een resultaat kan tonen in plaats van een
+  // pagina waar de bezoeker alsnog zelf moet filteren.
+  //
+  // Het hergebruikt pas() — dezelfde weg die de zoekbalk neemt. Er zit dus
+  // geen tweede filterimplementatie in de site die uit de pas kan lopen.
+  //
+  // Blijft een gewone link: kent de tool een waarde niet, of draait dit
+  // script niet, dan land je gewoon op de ongefilterde pagina. Nooit een fout.
+  //
+  // Voorbeelden:
+  //   /pages/sim-only?data=onbeperkt
+  //   /pages/sim-only?max=15&sorteer=price
+  //   /pages/sim-only?looptijd=0
+  //   /pages/telefoonabonnement?aanbetaling=0
+  //   /pages/telefoonabonnement?q=iPhone
+  //   /pages/internet-tv?netwerk=kpn
+  function urlFilters(){
+    var p;
+    try { p = new URLSearchParams(location.search); } catch (e) { return; }
+    if (!p.toString()) return;
+    if (!document.querySelector('.pvx-outer')) return;
+    if (document.body.dataset.dpvUrlKlaar) return;
+    document.body.dataset.dpvUrlKlaar = '1';
+
+    // Zelfde vorm als wat de worker teruggeeft, zodat pas() er niets van merkt.
+    // De databereiken zijn vaste waarden ('0-5', '5-20', '20-50', '999-'); een
+    // los getal in de URL vertalen we naar het bijbehorende bereik.
+    var f = { categorie: null, data: null, bellen: null, maxMaand: null, maxEenmalig: null,
+              looptijd: null, netwerk: null, zoekterm: null, zakelijk: false, sorteer: null,
+              land: null, zin: '', kanNiet: false, reden: '' };
+    var iets = false;
+    var getal = function (v) { var n = parseInt(v, 10); return isNaN(n) ? null : n; };
+
+    // data=onbeperkt, of data=20 -> het bereik waar 20 GB in valt
+    var d = (p.get('data') || '').toLowerCase();
+    if (d) {
+      if (d === 'onbeperkt' || d === 'unlimited' || d === '999-') f.data = '999-';
+      else if (['0-5', '5-20', '20-50'].indexOf(d) > -1) f.data = d;
+      else {
+        var g = getal(d);
+        if (g !== null) f.data = g >= 50 ? '999-' : (g >= 20 ? '20-50' : (g >= 5 ? '5-20' : '0-5'));
+      }
+      if (f.data) iets = true;
+    }
+
+    // bellen=onbeperkt of bellen=bundel
+    var b = (p.get('bellen') || '').toLowerCase();
+    if (b) {
+      f.bellen = (b === 'onbeperkt' || b === 'unlim') ? 'unlim' : (b === 'bundel' || b === 'bundle' ? 'bundle' : null);
+      if (f.bellen) iets = true;
+    }
+
+    if (p.get('max') !== null) { f.maxMaand = getal(p.get('max')); iets = f.maxMaand !== null || iets; }
+    if (p.get('aanbetaling') !== null) { f.maxEenmalig = getal(p.get('aanbetaling')); iets = f.maxEenmalig !== null || iets; }
+    if (p.get('looptijd') !== null) { f.looptijd = getal(p.get('looptijd')); iets = f.looptijd !== null || iets; }
+
+    var n = (p.get('netwerk') || '').toLowerCase();
+    if (['kpn', 'odido', 'vodafone'].indexOf(n) > -1) { f.netwerk = n; iets = true; }
+
+    if (p.get('q')) { f.zoekterm = p.get('q').slice(0, 40); iets = true; }
+
+    var so = p.get('sorteer');
+    if (['price', 'data', 'down', 'pop'].indexOf(so) > -1) { f.sorteer = so; iets = true; }
+
+    // tv=met of tv=zonder. pas() kent dit veld niet, dus we klikken de knop
+    // in de vergelijker zelf aan — dezelfde weg die de zoekbalk voor
+    // netwerk en looptijd neemt.
+    var tv = (p.get('tv') || '').toLowerCase();
+    if (tv === 'met' || tv === 'zonder') {
+      var bak = document.getElementById('pvx-tvbk');
+      if (bak) {
+        var idx = (tv === 'met') ? 1 : 2;
+        var knop = bak.children[idx];
+        if (knop) { knop.click(); iets = true; }
+      }
+    }
+
+    // ?zakelijk=1 wordt door de vergelijker zelf afgehandeld, niet door pas().
+    // Maar wie daarop klikt wil net zo goed meteen de lijst zien, dus alleen
+    // doorscrollen — zonder filters te zetten, want die staan al goed.
+    var alleenScroll = (p.get('zakelijk') === '1' && !iets);
+    if (alleenScroll) {
+      var n = 0;
+      (function w(){
+        if (document.querySelector('.pvx-results .pvx-card') || n > 24) { setTimeout(scrollNaarLijst, 300); return; }
+        n++; setTimeout(w, 250);
+      })();
+      return;
+    }
+
+    if (!iets) return;
+
+    // De vergelijker vult zichzelf via fetch; wachten tot er kaarten staan.
+    var pogingen = 0;
+    (function wacht(){
+      if (document.querySelector('.pvx-results .pvx-card') || pogingen > 24) {
+        pas(f);
+        toonUitleg(f);
+        // Doorscrollen naar de lijst. Wie via een menulink binnenkomt heeft al
+        // gekozen wat hij wil zien; die bovenaan de pagina laten landen
+        // betekent dat hij het werk nog een keer moet doen.
+        // Even wachten tot de lijst opnieuw is opgebouwd, anders scroll je
+        // naar de hoogte van de oude lijst.
+        setTimeout(scrollNaarLijst, 260);
+        return;
+      }
+      pogingen++;
+      setTimeout(wacht, 250);
+    })();
+  }
+
+  function start(){
+    bouw();
+    bepaalModus();
+    urlFilters();
+    if (document.getElementById('dpvai')) herstel();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
+  var t = 0, tik = setInterval(function(){ start(); if (++t > 20 || document.getElementById('dpvai')) clearInterval(tik); }, 400);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "DPV AI-zoekbalk",
+  "settings": [
+    { "type": "paragraph", "content": "Plaatst een zoekbalk boven de vergelijker. De AI zet een zin om in filters; de vergelijker doet de rest." },
+    { "type": "text", "id": "api_url", "label": "AI-worker endpoint", "default": "https://dpv-ai.business-347.workers.dev/zoek" },
+    { "type": "text", "id": "hulp_url", "label": "Link bij vragen die hij niet kan filteren", "default": "/pages/bellen-internet-buitenland" },
+    { "type": "text", "id": "titel", "label": "Kop boven de zoekbalk", "default": "Zoek in gewone taal" },
+    { "type": "text", "id": "subtekst", "label": "Subtekst", "default": "Typ wat je zoekt, wij zetten de filters." },
+    { "type": "text", "id": "knoptekst", "label": "Tekst op de zwevende knop", "default": "Zoekhulp" },
+    { "type": "text", "id": "esim_url", "label": "Link naar de eSIM-vergelijker", "default": "/pages/internet-op-vakantie" },
+    { "type": "text", "id": "bood_api", "label": "Adres van de boodschappenworker", "default": "https://dpv-boodschappen.business-347.workers.dev" },
+    { "type": "text", "id": "bood_pad", "label": "Link naar de boodschappenpagina", "default": "/pages/boodschappen" }
+  ],
+  "presets": [ { "name": "DPV AI-zoekbalk" } ]
+}
+{% endschema %}

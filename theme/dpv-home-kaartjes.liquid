@@ -873,7 +873,7 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
   }
   function mnd(k) { return parseInt(String(k.contract || '').replace(/\D/g, ''), 10) || 0; }
   function duur(k) { var m = mnd(k); return m === 12 ? '1 jaar' : m === 24 ? '2 jaar' : m ? m + ' maanden' : 'maandelijks opzegbaar'; }
-  function ga(k, cat) { return WORKER + '/api/go?u=' + encodeURIComponent(k.url) + '&cat=' + cat + '&p=' + encodeURIComponent(k.provider || ''); }
+  function ga(k, cat) { return 'https://go.deprijsvergelijker.com/api/go?u=' + encodeURIComponent(k.url) + '&cat=' + cat + '&p=' + encodeURIComponent(k.provider || ''); }
   function q(el, f) { return el.querySelector('[data-f="' + f + '"]'); }
   function zet(el, f, tekst) { var x = q(el, f); if (x) x.textContent = tekst; }
   function doorklik(a, url, pos, naam, tab, aff) {

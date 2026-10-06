@@ -133,3 +133,35 @@ html:not(#x):not(#y) .pvs-wrap{border-top:1px solid #D9DEE8 !important}
 html:not(#x):not(#y) .pvs-label{color:#4A5A70 !important}
 html:not(#x):not(#y) .pvs-links a{background:#fff !important;border:1.5px solid #0D1B2A !important;color:#0D1B2A !important}
 </style>
+
+{%- comment -%}
+  6 okt. Kliklinks via ons eigen adres go.deprijsvergelijker.com in plaats van
+  awin.business-347.workers.dev. Zelfde worker en zelfde route (/api/go), dus
+  de klik wordt gewoon geteld. Dit vangt alle secties, paginateksten en lijsten
+  die het oude adres nog bevatten. Links in artikeltekst blijven van
+  dpv-merklinks (die zet ze om naar /go/deal met de bron erbij).
+{%- endcomment -%}
+<script id="dpv-klikdomein">
+(function () {
+  var OUD = 'awin.business-347.workers.dev/api/go', NW = 'go.deprijsvergelijker.com/api/go';
+  var ART = '.article-template__content, article .rte, [itemprop="articleBody"]';
+  var bezig = false;
+  function zet() {
+    bezig = false;
+    var l = document.querySelectorAll('a[href*="' + OUD + '"]');
+    for (var i = 0; i < l.length; i++) {
+      if (l[i].closest(ART)) continue;
+      l[i].setAttribute('href', l[i].getAttribute('href').replace(OUD, NW));
+    }
+  }
+  function plan() { if (bezig) return; bezig = true; (window.requestAnimationFrame || setTimeout)(zet); }
+  zet();
+  document.addEventListener('DOMContentLoaded', zet);
+  try { new MutationObserver(plan).observe(document.documentElement, { childList: true, subtree: true, attributes: true, attributeFilter: ['href'] }); } catch (e) {}
+  // Laatste vangnet: een link die net voor de klik is gezet.
+  document.addEventListener('pointerdown', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href*="' + OUD + '"]') : null;
+    if (a && !a.closest(ART)) a.setAttribute('href', a.getAttribute('href').replace(OUD, NW));
+  }, true);
+})();
+</script>

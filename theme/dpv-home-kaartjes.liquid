@@ -365,10 +365,13 @@ html:not(#x) .dhd .mini .extra{font-size:13px;color:var(--zacht);margin-top:2px}
 html:not(#x) .dhd .mini .knop{white-space:normal;text-align:center;line-height:1.2;padding-top:6px;padding-bottom:6px;max-width:100%}
 html:not(#x) .dhd .groot .knop{max-width:100%}
 html:not(#x) .dhd .c-voet{position:relative;z-index:1;margin:30px 10px 0 4px}
-@media (min-width:901px){html:not(#x) .dhd .minis{margin-top:-6px}}
+@media (min-width:901px){html:not(#x) .dhd .minis{margin-top:-6px}
+/* Twee rijen subkeuzes gereserveerd (boodschappen heeft er zes), zodat de logobalk bij het wisselen op zijn plek blijft. */
+html:not(#x) .dhd .subs{min-height:82px;align-content:flex-start}
+html:not(#x) .dhd .hero-onder{margin-top:18px}}
 html:not(#x) .dhd .regel{font-size:13px;line-height:1.5;color:var(--zacht)}
 html:not(#x) .dhd .regel b{color:var(--inkt);font-weight:700}
-html:not(#x) .dhd .alle-l{display:inline-flex;align-items:center;min-height:44px;margin-top:12px;padding:0 16px;border:var(--rand);border-radius:10px;background:var(--wit);font-size:15px;font-weight:600;color:var(--inkt)}
+html:not(#x) .dhd .alle-l{display:inline-block;min-height:44px;margin-top:12px;padding:10px 16px;line-height:1.4;border:var(--rand);border-radius:10px;background:var(--wit);font-size:15px;font-weight:600;color:var(--inkt)}
 html:not(#x) .dhd .alle-l:hover{background:#F1F3F8}
 html:not(#x) .dhd .alle-l::after{content:"\00a0\203A"}
 html:not(#x) .dhd .sein{margin-top:12px;font-size:14px;color:var(--zacht)}
@@ -409,7 +412,7 @@ html:not(#x) .dhd .groot .info{margin-top:10px}
 html:not(#x) .dhd .tags{margin-top:8px}
 html:not(#x) .dhd .mini .label{grid-template-areas:"top knop" "prijs knop" "bundel knop" "extra knop"}
 html:not(#x) .dhd .mini .extra{grid-area:extra}
-html:not(#x) .dhd .mini .knop{max-width:132px}
+html:not(#x) .dhd .mini .knop{max-width:132px;padding-left:8px;padding-right:8px;font-size:13px;overflow-wrap:anywhere}
 html:not(#x) .dhd .c-voet{margin:22px 8px 0 0}
 html:not(#x) .dhd .cluster.is-prod{padding:0 8px 0 0;margin-top:14px}
 html:not(#x) .dhd .pblok{box-shadow:8px 8px 0 var(--groen)}

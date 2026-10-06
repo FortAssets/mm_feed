@@ -745,3 +745,45 @@ html:not(#x):not(#y) .pvtv{background:#fff !important}
 /* --- Black Friday: de sprongknoppen bovenaan zijn pillen met inktrand --- */
 html:not(#x):not(#y) .bfr-chips a{border:1.5px solid #0D1B2A !important;background:#fff !important;color:#0D1B2A !important}
 html:not(#x):not(#y) .bfr-chips a:hover{background:#F1F3F8 !important}
+
+/* ===== Nalopen 6 okt, tweede ronde ===== */
+/* --- iPhone 18 pre-order: de donkere kop van het gekozen model en de donkere vlakjes achter de modelfoto's.
+       Vlak achter een productfoto is lichtgrijs; de tekst wordt inkt. --- */
+html:not(#x):not(#y) .pp-mhead{background:#F1F3F8 !important;background-image:none !important;color:#0D1B2A !important;border-bottom:1.5px solid #0D1B2A !important}
+html:not(#x):not(#y) .pp-mhead :is(p,span,li,b,strong){color:#0D1B2A !important}
+html:not(#x):not(#y) .pp-mhead :is(.pp-mtitel span,.pp-mnoot){color:#4A5A70 !important}
+html:not(#x):not(#y) .pp-mhead .pp-kleuren i{box-shadow:0 0 0 1px #0D1B2A !important}
+html:not(#x):not(#y) .pp-mtegel .pp-mbeeld{background:#F1F3F8 !important;background-image:none !important}
+html:not(#x):not(#y) .pp-modus button{box-shadow:none !important}
+
+/* --- Artikelen: aanmeldblok met inline stijl op een donker vlak (zorgpremies 2027 en soortgelijke blokken).
+       Wordt lichtgrijs met inktrand; veld wit met inktrand; de knop is intern en dus inkt. --- */
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"]{background:#F1F3F8 !important;color:#0D1B2A !important;border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] :is(p,span,b,strong,label,h2,h3){color:#0D1B2A !important}
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] p[style*="rgba(255,255,255"]{color:#4A5A70 !important}
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] input{background:#fff !important;color:#0D1B2A !important;border:1.5px solid #0D1B2A !important;border-radius:10px !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] input::placeholder{color:#4A5A70 !important;-webkit-text-fill-color:#4A5A70 !important}
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] button{background:#0D1B2A !important;color:#fff !important;border:1.5px solid #0D1B2A !important;border-radius:10px !important;min-height:44px}
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] a{color:#2456D6 !important}
+/* de melding na het aanmelden kreeg van het script een lichte kleur voor op donker */
+html:not(#x):not(#y) .rte div[style*="background:#0D1B2A"] p[id^="zam-uit"]{color:#0D1B2A !important;font-weight:600}
+
+/* --- Artikelen: losse blokken onder en in de tekst zonder inktrand --- */
+html:not(#x):not(#y) .dan-in{border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:none !important}
+html:not(#x):not(#y) .dan-mailrij input{border:1.5px solid #0D1B2A !important;border-radius:10px !important}
+html:not(#x):not(#y) .rte :is(div,aside,p)[style*="border:1px solid"][style*="border-radius"]{border:1.5px solid #0D1B2A !important;border-radius:14px !important}
+
+/* --- "Zoek in gewone taal" boven de vergelijkers: de voorbeeldzoekopdrachten zijn pillen met inktrand --- */
+html:not(#x):not(#y) .dpvai-hint button{background:#fff !important;border:1.5px solid #0D1B2A !important;color:#0D1B2A !important;border-radius:999px !important}
+html:not(#x):not(#y) .dpvai-hint button:hover{background:#F1F3F8 !important}
+html:not(#x):not(#y) .dpvai-blok{border-width:1.5px !important}
+html:not(#x):not(#y) .dpvai-veld{border-width:1.5px !important}
+
+/* --- Belafspraak: de velden en de kaart van het formulier --- */
+html:not(#x):not(#y) .pv-wrap :is(input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=hidden]):not([type=range]),select,textarea){border:1.5px solid #0D1B2A !important;border-radius:10px !important;background-color:#fff !important;color:#0D1B2A !important}
+html:not(#x):not(#y) .pv-wrap>div>div:has(>div>:is(input,select)){border:1.5px solid #0D1B2A !important;border-radius:14px !important;box-shadow:none !important}
+
+/* --- Zoekpagina en zoekvenster: het veld had een lichte rand (bij Dawn zit de rand in .field:after) --- */
+html:not(#x):not(#y) .search__input.field__input{border:1.5px solid #0D1B2A !important;border-radius:10px !important;box-shadow:none !important}
+html:not(#x):not(#y) .field:has(>.search__input):after,html:not(#x):not(#y) .field:has(>.search__input):before{box-shadow:none !important;border:0 !important}
+html:not(#x):not(#y) .template-search__results .product-grid>li{border:1.5px solid #0D1B2A !important;border-radius:14px !important}

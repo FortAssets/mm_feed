@@ -51,7 +51,7 @@
           </select>
         </label>
         <button type="button" class="bv-reset" id="bv-reset" hidden>Filters wissen</button>
-        <button type="button" class="bv-naarfilters" id="bv-naarfilters">Filters en folders</button>
+        <button type="button" class="bv-naarfilters" id="bv-naarfilters">Filters</button>
       </div>
     </div>
   </div>
@@ -362,6 +362,12 @@
   .bv-kies span{display:none}
   .bv-kies select{max-width:none;flex:1;min-width:0;text-overflow:ellipsis;font-size:12.5px;padding:6px 6px}
   .bv-kies{flex:1;min-width:0}
+  /* vaste balk op een telefoon: waar je bent, schap kiezen en terug naar de filters; sorteren staat bovenaan */
+  .bv-bar.bv-vast .bv-onder{flex-wrap:nowrap}
+  .bv-bar.bv-vast .bv-kies:has(#bv-sort){display:none}
+  .bv-bar.bv-vast .bv-kies{flex:1 1 90px}
+  .bv-bar.bv-vast .bv-nuschap{flex:0 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .bv-bar.bv-vast .bv-naarfilters{flex:0 0 auto;margin-left:0;padding:7px 11px}
   .bv-telling{display:none}
   .bv-dgrid{gap:0}
   .bv-dn{white-space:normal}
@@ -819,7 +825,7 @@
   function plak(){raf=0;if(!houder||!bar)return;
     var hr=houder.getBoundingClientRect(), boven=bovenrand();
     var grid=document.getElementById('bv-grid'), gr=grid.getBoundingClientRect();
-    var vast=hr.top<boven&&gr.bottom>boven+120;
+    var vast=(bar.classList.contains('bv-vast')?hr.bottom<boven+60:hr.bottom<boven+8)&&gr.bottom>boven+120;
     if(vast){if(!bar.classList.contains('bv-vast'))houder.style.height=bar.offsetHeight+'px';bar.classList.add('bv-vast');
       bar.style.top=boven+'px';bar.style.left=hr.left+'px';bar.style.width=hr.width+'px'}
     else{houder.style.height='';bar.classList.remove('bv-vast');bar.style.top=bar.style.left=bar.style.width=''}}

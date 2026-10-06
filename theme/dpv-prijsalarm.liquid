@@ -314,6 +314,10 @@
           if (res.status === 'al-actief') {
             deel('gelukt-kop').textContent = 'Je stond er al bij';
             deel('gelukt-tekst').textContent = 'Dit adres ontvangt de wekelijkse mail al. Je hoeft niets te doen.';
+          } else if (res.status !== 'bevestig') {
+            // 6 okt: de worker meldt sinds v1.76 direct aan, zonder bevestigingsmail.
+            deel('gelukt-kop').textContent = 'Je bent aangemeld';
+            deel('gelukt-tekst').textContent = 'Je staat op de lijst. Je krijgt een mail met wat je gaat ontvangen; afmelden kan altijd met een klik.';
           }
           toon('gelukt');
         } else {

@@ -89,7 +89,7 @@
       <button type="button" data-bf-stuur>Zet het seintje aan</button>
     </div>
     <div class="dpvbf-uit" data-bf-uit>&nbsp;</div>
-    <p class="dpvbf-fijn">Je krijgt eerst een mail met één link om te bevestigen. Klik je daarna bij meer producten op de knop, dan komen die in dezelfde mail. Afmelden kan met één klik.</p>
+    <p class="dpvbf-fijn">Je krijgt één mail van ons als je seintje aanstaat. Klik je daarna bij meer producten op de knop, dan komen die in dezelfde mail op 27 november. Afmelden kan met één klik.</p>
   </div>
 </div>
 
@@ -164,9 +164,10 @@
       }
       zet('dpvBfMail', adres); onthoud(p.id); zetAan(p.id);
       elUit.className = 'dpvbf-uit goed';
-      elUit.textContent = d.status === 'al-actief'
-        ? 'Staat aan. Je hoort van ons op 27 november.'
-        : 'Bijna klaar: wij hebben je een mail gestuurd. Klik daarin op de link om te bevestigen.';
+      // 6 okt: de worker zet het seintje sinds v1.76 direct aan, zonder bevestigingsmail.
+      elUit.textContent = d.status === 'bevestig'
+        ? 'Bijna klaar: wij hebben je een mail gestuurd. Klik daarin op de link om te bevestigen.'
+        : 'Staat aan. Je hoort van ons op 27 november.';
       elStuur.textContent = 'Gelukt';
     });
   }

@@ -1462,9 +1462,11 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
         if (res && res.ok) {
           var al = res.status === 'al-actief', p = document.createElement('p'), b = document.createElement('b');
           p.className = 'ok'; p.setAttribute('role', 'status');
-          b.textContent = al ? 'Je stond er al bij' : 'Kijk even in je mail';
+          // 6 okt: de worker meldt sinds v1.76 direct aan, zonder bevestigingsmail.
+          var wacht = res.status === 'bevestig';
+          b.textContent = al ? 'Je stond er al bij' : (wacht ? 'Kijk even in je mail' : 'Je staat op de lijst');
           p.appendChild(b);
-          p.appendChild(document.createTextNode(al ? 'Dit adres krijgt het seintje al. Je hoeft niets te doen.' : 'Wij hebben je een bericht gestuurd met één link erin. Klik erop en je krijgt het seintje.'));
+          p.appendChild(document.createTextNode(al ? 'Dit adres krijgt het seintje al. Je hoeft niets te doen.' : (wacht ? 'Wij hebben je een bericht gestuurd met één link erin. Klik erop en je krijgt het seintje.' : 'Je krijgt een mail zodra de premies van 2027 er zijn. Afmelden kan altijd met een klik.')));
           form.textContent = ''; form.appendChild(p);
           meet('dhd_aanmelding', { bron: 'zorgpremies-2027' });
         } else {

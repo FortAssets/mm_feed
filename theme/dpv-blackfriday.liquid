@@ -260,6 +260,11 @@
         zeg('Je stond al op de lijst. Je hoort van ons op 27 november.', true);
         veld.value = '';
         knop.textContent = 'Je staat op de lijst';
+      } else if (res && res.ok && res.status !== 'bevestig') {
+        // 6 okt: de worker meldt sinds v1.76 direct aan, zonder bevestigingsmail.
+        zeg('Gelukt. Je staat op de lijst en hoort van ons op 27 november.', true);
+        veld.value = '';
+        knop.textContent = 'Je staat op de lijst';
       } else if (res && res.ok) {
         zeg('Bijna klaar: kijk in je mail en klik op de link erin. Zonder die klik sturen wij je niets.', true);
         veld.value = '';

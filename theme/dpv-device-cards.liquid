@@ -134,15 +134,16 @@
   }
 
   // Toestelprijs los van het abonnement: wat je voor het toestel betaalt (vooraf plus termijnen) en daarnaast het abonnement per maand.
+  function eur2(n){var v=Math.round((+n||0)*100)/100;return '\u20AC'+(v%1===0?v.toLocaleString('nl-NL'):v.toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2}))}
   function prijsBlok(c,een){
     var mnd=parseInt((c.contract||'').replace(/\D/g,''),10)||0;
     if(!(c.deviceTotal>0)||!(c.bundleMonthly>=0)||!mnd){
       return '<div class="dtc-price"><span class="p">'+euro(c.price)+'</span><span class="per">/mnd</span>'
         +een+'<span class="dtc-tot">totaal '+euro(c.totalPrice)+' over '+esc(c.contract||'de looptijd')+'</span></div>';
     }
-    var opbouw=(c.downPayment>0?euro(c.downPayment)+' vooraf, daarna ':'')+mnd+' x '+euro(c.deviceMonthly)+(c.downPayment>0?'':', niets vooraf');
-    return '<div class="dtc-price dtc-los"><span class="dtc-kol"><small>Toestel los</small><span class="p">'+euro(c.deviceTotal)+'</span></span>'
-      +'<span class="dtc-kol"><small>Abonnement</small><span class="p2">'+euro(c.bundleMonthly)+'<span class="per"> /mnd</span></span></span>'
+    var opbouw=(c.downPayment>0?eur2(c.downPayment)+' vooraf, daarna ':'')+mnd+' x '+eur2(c.deviceMonthly)+(c.downPayment>0?'':', niets vooraf');
+    return '<div class="dtc-price dtc-los"><span class="dtc-kol"><small>Toestel los</small><span class="p">'+eur2(c.deviceTotal)+'</span></span>'
+      +'<span class="dtc-kol"><small>Abonnement</small><span class="p2">'+eur2(c.bundleMonthly)+'<span class="per"> /mnd</span></span></span>'
       +'<span class="dtc-tot">'+opbouw+'</span></div>';
   }
 

@@ -1205,7 +1205,7 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
       }).join('');
       cF.hidden = true; cA.hidden = true; cP.hidden = false; cluster.classList.add('is-prod');
       bezig(false);
-    }).catch(function () { if (mijn === st.vraag) fout(naam); });
+    }).catch(function () { if (mijn === st.vraag) mislukt(naam); });
   }
 
   // ---- Hoofdknoppen en subkeuzes --------------------------------------------
@@ -1218,7 +1218,7 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
     cluster.setAttribute('aria-busy', aan ? 'true' : 'false');
     if (!aan) { cluster.style.minHeight = ''; cV.hidden = false; }
   }
-  function fout(naam) {
+  function mislukt(naam) {
     if (actief !== naam) return;
     // De hoogte van wat er stond blijft gereserveerd, zodat de pagina eronder niet omhoog schiet.
     cluster.style.minHeight = cluster.offsetHeight + 'px';
@@ -1272,7 +1272,7 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
     var st = staat[naam];
     if (st && st.klaar) return bouw(naam);
     bezig(true); subs.classList.add('bezig');
-    haal(naam).then(function () { if (actief === naam) bouw(naam); }).catch(function () { fout(naam); });
+    haal(naam).then(function () { if (actief === naam) bouw(naam); }).catch(function () { mislukt(naam); });
   }
 
   var tabs = [].slice.call(wortel.querySelectorAll('.tabs .tab'));

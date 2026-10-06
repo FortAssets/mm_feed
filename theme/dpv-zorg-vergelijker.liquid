@@ -344,10 +344,6 @@
       <div id="zc-lijst" class="zc-lijst" aria-live="polite"></div>
 
       <a class="zc-alles" href="{{ section.settings.alles_url }}" rel="nofollow sponsored noopener" target="_blank">{{ section.settings.alles_tekst }}</a>
-      {%- comment -%} 6 okt: Poliswijzer erbij als tweede plek voor de volledige vergelijking. {%- endcomment -%}
-      {%- if section.settings.alles2_url != blank -%}
-      <a class="zc-alles" href="{{ section.settings.alles2_url }}" rel="nofollow sponsored noopener" target="_blank">{{ section.settings.alles2_tekst }}</a>
-      {%- endif -%}
       <p class="zc-fijn">{{ section.settings.fijn }}</p>
 
       {%- if section.settings.ab_aan -%}
@@ -964,8 +960,6 @@
       "default": "FBTO Basis|FBTO|148.75|385|natura|zelf modules kiezen|FBTO|https://www.fbto.nl/zorgverzekering" },
     { "type": "text", "id": "alles_tekst", "label": "Knop onderaan", "default": "Alle 65 basisverzekeringen bij Zorgkiezer" },
     { "type": "text", "id": "alles_url", "label": "Link onderaan", "default": "https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-alles%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fvergelijken&cat=zorg&p=Zorgkiezer" },
-    { "type": "text", "id": "alles2_tekst", "label": "Tweede knop onderaan", "default": "Of vergelijk alle zorgverzekeringen bij Poliswijzer" },
-    { "type": "text", "id": "alles2_url", "label": "Link tweede knop", "default": "https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fawclick.php%3Fgid%3D503119%26mid%3D107738%26awinaffid%3D1528789%26linkid%3D3777735%26clickref%3Dzorg-poliswijzer&cat=zorg&p=Poliswijzer" },
     { "type": "textarea", "id": "fijn", "label": "Kleine letters", "default": "Wij tonen een selectie die de bandbreedte laat zien, geen volledige vergelijking: er zijn ongeveer 65 basisverzekeringen. Wij vragen geen leeftijd, inkomen of gezondheidsgegevens en geven niets over jou door aan verzekeraars. Controleer het bedrag altijd bij de verzekeraar zelf voordat je afsluit. Klik je door en sluit je iets af, dan ontvangen wij een vergoeding. Jij betaalt hetzelfde." },
 
     { "type": "header", "content": "Veelgestelde vragen" },

@@ -6,7 +6,7 @@
 .pvnav{background:#fff;border-bottom:1px solid #e7ebf3;position:sticky;top:0;z-index:100;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
 .pvnav-inner{display:flex;align-items:center;height:70px;max-width:1200px;margin:0 auto;padding:0 20px}
 .pvnav-logo{display:inline-flex;align-items:center;gap:11px;flex-shrink:0;text-decoration:none;line-height:1}
-.pvnav-merk{width:38px;height:38px;flex-shrink:0;display:block}
+.pvnav-merk{width:46px;height:46px;flex-shrink:0;display:block;margin:-4px -2px -4px -4px}
 .pvnav-woord{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;font-size:22px;letter-spacing:-.02em;background:linear-gradient(135deg,#1D3A6B,#0D1B2A);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#1e3a8a}
 .pvnav-woord .g{-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:#3FAE7A;color:#3FAE7A}
 /* Tussen 1101 en 1320 staat het volledige menu nog naast het logo, maar past
@@ -20,7 +20,7 @@
 }
 /* Vangnet: laat het middenmenu krimpen in plaats van de rest wegduwen. */
 .pvnav-links{min-width:0}
-@media(max-width:520px){.pvnav-woord{font-size:19px}.pvnav-merk{width:34px;height:34px}.pvnav-logo{gap:9px}}
+@media(max-width:520px){.pvnav-woord{font-size:19px}.pvnav-merk{width:41px;height:41px}.pvnav-logo{gap:9px}}
 .pvnav-links{flex:1;display:flex;align-items:center;justify-content:center;gap:8px;list-style:none;margin:0;padding:0}
 .pvnav-links a{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:#475569;text-decoration:none;padding:8px 11px;border-radius:9px;transition:all .15s;white-space:nowrap}
 .pvnav-links a:hover,.pvnav-links a.active{color:#2563eb;background:#eef2fb}
@@ -51,7 +51,7 @@
 @media(min-width:1101px){.pvnav-mobile{display:none!important}}
 </style><nav class="pvnav" role="navigation">
   <div class="pvnav-inner">
-    <a href="/" class="pvnav-logo" aria-label="De Prijsvergelijker"><svg class="pvnav-merk" viewBox="0 0 64 64" aria-hidden="true" focusable="false"><defs><linearGradient id="pvnavmerk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1D3A6B"/><stop offset="1" stop-color="#0D1B2A"/></linearGradient></defs><rect width="64" height="64" rx="14" fill="url(#pvnavmerk)"/><path d="M14 44V20h9.5c5.8 0 9.6 3.4 9.6 8.7 0 5.2-3.8 8.6-9.6 8.6H20v6.7h-6Zm6-11.8h3c2.4 0 3.9-1.3 3.9-3.5S31.4 25.2 29 25.2h-3v7Z" fill="#fff"/><circle cx="46" cy="44" r="9" fill="#3FAE7A"/></svg><span class="pvnav-woord">De<span class="g">Prijs</span>vergelijker</span></a>
+    <a href="/" class="pvnav-logo" aria-label="De Prijsvergelijker"><svg class="pvnav-merk" viewBox="0 0 80 80" aria-hidden="true" focusable="false"><g transform="rotate(-7 40 40)"><path d="M14 26a12 12 0 0 1 12-12h34l14 14v36a12 12 0 0 1-12 12H26a12 12 0 0 1-12-12Z" fill="#3FAE7A"/><path d="M7 19A12 12 0 0 1 19 7h33l14 14v35a12 12 0 0 1-12 12H19A12 12 0 0 1 7 56Z" fill="#fff" stroke="#0D1B2A" stroke-width="3" stroke-linejoin="round"/><circle cx="17" cy="17" r="4" fill="#0D1B2A"/><g transform="translate(8 9) scale(.92)"><path d="M14 44V20h9.5c5.8 0 9.6 3.4 9.6 8.7 0 5.2-3.8 8.6-9.6 8.6H20v6.7h-6Zm6-11.8h3c2.4 0 3.9-1.3 3.9-3.5S25.4 25.2 23 25.2h-3v7Z" fill="#0D1B2A"/><circle cx="46" cy="44" r="9" fill="#3FAE7A" stroke="#0D1B2A" stroke-width="2.5"/></g></g></svg><span class="pvnav-woord">De<span class="g">Prijs</span>vergelijker</span></a>
     <ul class="pvnav-links">
       <li><a href="/pages/telefoonabonnement"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><line x1="10" y1="18.5" x2="14" y2="18.5"/></svg> Telefoon</a></li>
       <li><a href="/pages/toestellen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><line x1="10.5" y1="18.5" x2="13.5" y2="18.5"/><path d="M9.5 6.2l5 0M9.5 9l3.2 0"/></svg> Los toestel</a></li>

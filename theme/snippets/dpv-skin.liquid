@@ -101,3 +101,29 @@
   });
 })();
 </script>
+{%- comment -%}
+  6 okt. Kop en voet in de kaartjesstijl van de nieuwe homepage: wit, met een
+  inktlijn onder de kop en boven de voet. Alleen kleur en letter; de opbouw,
+  het menu en de links van pv-header en pv-footer blijven zoals ze zijn.
+  Staat hier en niet in dpv-skin.css, omdat dat bestand door skin.cjs wordt
+  gemaakt en dit blok daarna moet winnen (vandaar :not(#y)).
+{%- endcomment -%}
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+html:not(#x):not(#y) .pvnav{background:#fff !important;border-bottom:1.5px solid #0D1B2A !important;font-family:'Instrument Sans',system-ui,sans-serif !important}
+html:not(#x):not(#y) .pvnav-woord{background:none !important;-webkit-text-fill-color:#0D1B2A !important;color:#0D1B2A !important;letter-spacing:-.03em}
+html:not(#x):not(#y) .pvnav-woord .g{-webkit-text-fill-color:#3FAE7A !important;color:#3FAE7A !important}
+html:not(#x):not(#y) .pvnav-links a,html:not(#x):not(#y) .pvnav-mobile a{font-family:'Instrument Sans',system-ui,sans-serif !important}
+html:not(#x):not(#y) footer.pvf{background:#fff !important;background-image:none !important;border-top:1.5px solid #0D1B2A;color:#4A5A70 !important;font-family:'Instrument Sans',system-ui,sans-serif !important}
+html:not(#x):not(#y) footer.pvf .pvf-wrap,html:not(#x):not(#y) footer.pvf .pvf-grid,html:not(#x):not(#y) footer.pvf .pvf-brand p,html:not(#x):not(#y) footer.pvf .pvf-bottom,html:not(#x):not(#y) footer.pvf .pvf-bottom p,html:not(#x):not(#y) footer.pvf .pvf-trustpilot span{color:#4A5A70 !important}
+html:not(#x):not(#y) footer.pvf a.pvf-logo{-webkit-text-fill-color:#0D1B2A !important;color:#0D1B2A !important;letter-spacing:-.03em}
+html:not(#x):not(#y) footer.pvf a.pvf-logo .g{-webkit-text-fill-color:#3FAE7A !important;color:#3FAE7A !important}
+html:not(#x):not(#y) footer.pvf h5{color:#0D1B2A !important;font-family:'Instrument Sans',system-ui,sans-serif !important;font-size:15px;font-weight:700;letter-spacing:0;text-transform:none}
+html:not(#x):not(#y) footer.pvf .pvf-col a,html:not(#x):not(#y) footer.pvf .pvf-bottom-links a{color:#4A5A70 !important}
+html:not(#x):not(#y) footer.pvf .pvf-col a:hover,html:not(#x):not(#y) footer.pvf .pvf-bottom-links a:hover{color:#0D1B2A !important;text-decoration:underline}
+html:not(#x):not(#y) footer.pvf .pvf-col ul a.pvf-uit{color:#0D1B2A !important}
+html:not(#x):not(#y) footer.pvf .pvf-badge{background:#fff;border:1.5px solid #0D1B2A;color:#0D1B2A !important}
+html:not(#x):not(#y) footer.pvf .pvf-trustpilot{background:#fff;border:1.5px solid #0D1B2A}
+html:not(#x):not(#y) footer.pvf .pvf-trustpilot strong{color:#0D1B2A}
+html:not(#x):not(#y) footer.pvf .pvf-bottom{border-top:1px solid #D9DEE8}
+</style>

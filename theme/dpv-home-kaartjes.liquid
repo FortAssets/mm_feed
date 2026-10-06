@@ -318,6 +318,8 @@ html:not(#x) .dhd .lees a{display:block;padding:9px 0}}
 /* ---- wat het thema nodig heeft bovenop het ontwerp ---- */
 #shopify-section-dpv-zorg-home{display:none}
 html:not(#x) .dhd .dpvmb{display:none !important}
+/* De huisstijllaag zet met !important Montserrat op elke kop; hier houden de koppen hun eigen letter. */
+html:not(#x):not(#y) .dhd h1,html:not(#x):not(#y) .dhd h2,html:not(#x):not(#y) .dhd h3{font-family:var(--kop) !important}
 html:not(#x) .dhd{position:relative;width:100%;text-align:left;-webkit-font-smoothing:antialiased}
 html:not(#x) .dhd [hidden]{display:none !important}
 html:not(#x) .dhd h1,html:not(#x) .dhd h2,html:not(#x) .dhd h3{color:var(--inkt);text-transform:none}

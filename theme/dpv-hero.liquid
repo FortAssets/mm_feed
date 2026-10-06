@@ -1,0 +1,161 @@
+<style>
+.dph-hero{background:linear-gradient(180deg,#f4f8ff 0%,#fbfcfe 100%);border-bottom:1px solid #e8edf5;padding:34px 0 30px;font-family:'Inter',system-ui,sans-serif;color:#0D1B2A}
+.dph-hero *{box-sizing:border-box}
+.dph-wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+.dph-bc{font-size:12.5px;color:#94a3b8;margin-bottom:13px}
+.dph-bc a{color:#94a3b8;text-decoration:none}
+.dph-bc a:hover{color:#64748b}
+.dph-bc .cur{color:#64748b}
+.dph-eyebrow{display:inline-flex;align-items:center;gap:7px;font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#2563eb;background:#fff;border:1px solid #dbe4ff;padding:6px 13px;border-radius:20px;margin-bottom:15px}
+.dph-eyebrow svg{width:13px;height:13px}
+.dph-titlerow{display:flex;align-items:center;gap:13px;margin-bottom:9px}
+.dph-ico{width:44px;height:44px;border-radius:13px;background:#eff4ff;border:1px solid #dbe4ff;display:flex;align-items:center;justify-content:center;color:#2563eb;flex:0 0 44px}
+.dph-ico svg{width:22px;height:22px}
+.dph-title{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(26px,4vw,34px);letter-spacing:-.02em;line-height:1.1;margin:0}
+.dph-sub{font-size:15px;color:#64748b;max-width:60ch;margin:0 0 20px;line-height:1.6}
+.dph-smart{background:#fff;border:1px solid #e8edf5;border-radius:16px;padding:13px;display:flex;gap:9px;flex-wrap:wrap;align-items:center;box-shadow:0 14px 40px -22px rgba(13,27,42,.16)}
+.dph-q{font-size:13.5px;font-weight:700}
+.dph-search{flex:1 1 240px;min-width:180px;position:relative}
+.dph-search .si{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:#94a3b8}
+.dph-search input{width:100%;border:1.5px solid #e8edf5;border-radius:11px;padding:11px 13px 11px 38px;font-size:14px;font-family:inherit;outline:none;background:#fff;color:#0D1B2A}
+.dph-search input:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+.dph-sel{appearance:none;-webkit-appearance:none;border:1.5px solid #e8edf5;border-radius:999px;padding:11px 32px 11px 15px;font-size:13.5px;font-weight:700;color:#1e3a8a;background:#fff url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 24 24' fill='none' stroke='%231e3a8a' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>") no-repeat right 12px center;cursor:pointer;font-family:inherit;outline:none}
+.dph-go{background:#059669;color:#fff;border:none;border-radius:11px;padding:12px 24px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap;box-shadow:0 8px 20px -8px rgba(5,150,105,.5);margin-left:auto}
+.dph-go:hover{background:#047857}
+.dph-trust{display:flex;gap:18px;flex-wrap:wrap;margin-top:16px}
+.dph-trust span{font-size:12.5px;font-weight:600;color:#64748b}
+.dph-trust span::before{content:"✓ ";color:#059669;font-weight:800}
+.dph-geld{background:#fff;border:1px solid #e8edf5;border-radius:14px;padding:12px 14px;margin-top:16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.dph-geld img{height:32px;width:auto;max-width:170px;border-radius:8px;background:#fff;display:block}
+.dph-geld .t{flex:1;min-width:200px}
+.dph-geld strong{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:12.5px;display:block;color:#0D1B2A}
+.dph-geld span{font-size:11px;color:#64748b;line-height:1.4;display:block}
+@media(max-width:700px){.dph-go{width:100%;margin-left:0}}
+</style>
+
+{%- assign ep = section.settings.feed_endpoint -%}
+{%- if ep contains 'telefoon' -%}{%- assign khcat = 'tel' -%}{%- elsif ep contains 'internet' -%}{%- assign khcat = 'int' -%}{%- else -%}{%- assign khcat = 'sim' -%}{%- endif -%}
+
+{%- capture dph_icon -%}
+{%- if khcat == 'tel' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M11 18h2"/></svg>
+{%- elsif khcat == 'int' -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5a10 10 0 0 1 14 0"/><path d="M8.5 16a5 5 0 0 1 7 0"/><path d="M2 9a15 15 0 0 1 20 0"/><circle cx="12" cy="19.5" r="1" fill="currentColor" stroke="none"/></svg>
+{%- else -%}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4.5A2.5 2.5 0 0 1 7.5 2h6L19 7.5V19.5A2.5 2.5 0 0 1 16.5 22h-9A2.5 2.5 0 0 1 5 19.5z"/><rect x="9" y="12" width="6" height="6" rx="1"/><path d="M9 15h6"/><path d="M12 12v6"/></svg>
+{%- endif -%}
+{%- endcapture -%}
+
+{%- if khcat == 'tel' -%}{%- assign t_eyebrow = 'Telefoonabonnement vergelijken' -%}{%- elsif khcat == 'int' -%}{%- assign t_eyebrow = 'Internet & TV vergelijken' -%}{%- else -%}{%- assign t_eyebrow = 'Sim only vergelijken' -%}{%- endif -%}
+
+<div class="dph-hero">
+  <div class="dph-wrap">
+    <div class="dph-bc"><a href="/">Home</a> / <span class="cur">{{ section.settings.page_title }}</span></div>
+    <span class="dph-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h7a2 2 0 0 1 2 2v13a1.6 1.6 0 0 0-1.6-1.6H4Z"/><path d="M20 4.5h-7a2 2 0 0 0-2 2v13a1.6 1.6 0 0 1 1.6-1.6H20Z"/></svg>{{ t_eyebrow }}</span>
+    <div class="dph-titlerow">
+      <span class="dph-ico" aria-hidden="true">{{ dph_icon }}</span>
+      <h1 class="dph-title">{{ section.settings.hero_title }}</h1>
+    </div>
+    <p class="dph-sub">{{ section.settings.hero_sub }}</p>
+
+    <div class="dph-smart" id="pvh-smart">
+      {%- if khcat == 'tel' -%}
+        <span class="dph-q">Ik zoek</span>
+        <div class="dph-search"><span class="si"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></span><input type="text" id="pvh-sq" placeholder="iPhone 17, Samsung Galaxy S26…"></div>
+        <span class="dph-q">met</span>
+        <select class="dph-sel" id="pvh-sdata"><option value="">elke bundel</option><option value="0-5">t/m 5 GB</option><option value="5-20">5 tot 20 GB</option><option value="20-50">20 tot 50 GB</option><option value="999-">onbeperkt data</option></select>
+        <span class="dph-q">voor max.</span>
+        <select class="dph-sel" id="pvh-sprice"><option value="">elke prijs</option><option value="20">€ 20 /mnd</option><option value="35">€ 35 /mnd</option><option value="50">€ 50 /mnd</option><option value="75">€ 75 /mnd</option></select>
+      {%- elsif khcat == 'int' -%}
+        <span class="dph-q">Ik zoek internet</span>
+        <span class="dph-q">vanaf</span>
+        <select class="dph-sel" id="pvh-sdata"><option value="">elke snelheid</option><option value="0-100">tot 100 Mbit</option><option value="100-250">100 tot 250 Mbit</option><option value="250-500">250 tot 500 Mbit</option><option value="1000-">1 Gbit+</option></select>
+        <span class="dph-q">voor max.</span>
+        <select class="dph-sel" id="pvh-sprice"><option value="">elke prijs</option><option value="35">€ 35 /mnd</option><option value="50">€ 50 /mnd</option><option value="65">€ 65 /mnd</option><option value="85">€ 85 /mnd</option></select>
+      {%- else -%}
+        <span class="dph-q">Ik zoek sim only met</span>
+        <select class="dph-sel" id="pvh-sdata"><option value="">elke bundel</option><option value="0-5">t/m 5 GB</option><option value="5-20">5 tot 20 GB</option><option value="20-50">20 tot 50 GB</option><option value="999-">onbeperkt data</option></select>
+        <span class="dph-q">en</span>
+        <select class="dph-sel" id="pvh-scalls"><option value="">alle belopties</option><option value="bundle">een belbundel</option><option value="unlim">onbeperkt bellen</option></select>
+        <span class="dph-q">voor max.</span>
+        <select class="dph-sel" id="pvh-sprice"><option value="">elke prijs</option><option value="5">€ 5 /mnd</option><option value="10">€ 10 /mnd</option><option value="15">€ 15 /mnd</option><option value="25">€ 25 /mnd</option></select>
+      {%- endif -%}
+      <button class="dph-go" id="pvh-smart-go" type="button">Vergelijk &#9660;</button>
+    </div>
+
+    <div class="dph-trust">
+      <span>100% onafhankelijk</span>
+      <span>Gratis overstapservice</span>
+      <span>14 dagen bedenktijd</span>
+      <span>9,2 klantscore</span>
+    </div>
+
+    {% if khcat == 'tel' %}
+    <div class="dph-geld">
+      <img src="https://cdn.shopify.com/s/files/1/0777/5617/0568/files/IMG_3008.webp?v=1781169871" alt="Let op! Geld lenen kost geld" loading="lazy">
+      <div class="t"><strong>Let op: een toestel op afbetaling is lenen</strong><span>Je betaalt het toestel gespreid via je abonnement. Kijk altijd naar de totaalprijs over de looptijd, niet alleen de maandprijs.</span></div>
+    </div>
+    {% endif %}
+  </div>
+</div>
+
+<script>
+(function(){
+  var go=document.getElementById('pvh-smart-go');
+  if(!go)return;
+  function scrollToComparer(){
+    var pvx=document.querySelector('.pvx');
+    var anchorEl=document.getElementById('vergelijker');
+    var target=pvx||anchorEl;
+    if(pvx&&anchorEl){
+      var pt=pvx.getBoundingClientRect().top+window.pageYOffset;
+      var at=anchorEl.getBoundingClientRect().top+window.pageYOffset;
+      target=(pt>at)?pvx:anchorEl;
+      if(pt<=5&&at<=5)target=pvx;
+    }
+    if(!target)return;
+    var hdr=document.querySelector('header.pv-header,.pv-header,header[role="banner"]');
+    var off=(hdr&&getComputedStyle(hdr).position==='fixed')?hdr.offsetHeight:0;
+    var y=target.getBoundingClientRect().top+window.pageYOffset-off-16;
+    if(y<0)y=0;
+    window.scrollTo({top:y,behavior:'smooth'});
+  }
+  go.addEventListener('click',function(){
+    var sq=document.getElementById('pvh-sq');
+    var pvq=document.getElementById('pvx-q');
+    if(pvq){
+      pvq.value=sq?sq.value:'';
+      var ev=document.createEvent('HTMLEvents');ev.initEvent('input',true,false);pvq.dispatchEvent(ev);
+    }
+    var sd=document.getElementById('pvh-sdata');
+    var sc=document.getElementById('pvh-scalls');
+    var sp=document.getElementById('pvh-sprice');
+    function apply(){
+      if(typeof window.pvxSetFilters==='function'){
+        window.pvxSetFilters({
+          data: sd?sd.value:'',
+          calls: sc?sc.value:'',
+          maxMaand: (sp&&sp.value)?parseFloat(sp.value):null
+        });
+        return true;
+      }
+      return false;
+    }
+    if(!apply()){
+      var tries=0,iv=setInterval(function(){tries++;if(apply()||tries>20)clearInterval(iv);},100);
+    }
+    scrollToComparer();
+    setTimeout(scrollToComparer,350);
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "DPV Hero (licht)",
+  "settings": [
+    { "type": "text", "id": "page_title", "label": "Breadcrumb", "default": "Vergelijken" },
+    { "type": "text", "id": "hero_title", "label": "Titel", "default": "Vergelijken" },
+    { "type": "textarea", "id": "hero_sub", "label": "Subtitel", "default": "Vind de beste deal." },
+    { "type": "text", "id": "feed_endpoint", "label": "Feed endpoint (bepaalt categorie)", "default": "/api/feed/simonly" }
+  ],
+  "presets": [ { "name": "DPV Hero (licht)" } ]
+}
+{% endschema %}

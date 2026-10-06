@@ -1,0 +1,116 @@
+{%- comment -%}
+  DPV Vergelijker-skin
+  Alleen CSS: geeft de bestaande pvc2-tool kaarten de nieuwe DPV-stijl.
+  Raakt geen logica aan — verwijder deze sectie uit de template om alles terug te draaien.
+{%- endcomment -%}
+<style>
+/* ---------- kaart ---------- */
+.pvx-grid .pvx-card{
+  background:#fff!important;
+  border:1px solid #e8edf5!important;
+  border-radius:18px!important;
+  overflow:hidden!important;
+  box-shadow:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  transition:box-shadow .15s ease, transform .15s ease, border-color .15s ease!important;
+}
+.pvx-grid .pvx-card:hover{
+  border-color:#dbe4ff!important;
+  box-shadow:0 16px 40px -18px rgba(13,27,42,.18)!important;
+  transform:translateY(-2px)!important;
+}
+
+/* ---------- afbeelding ---------- */
+.pvx-grid .pvx-imgzone{
+  height:150px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  background:#fff!important;
+  padding:16px!important;
+  border-bottom:1px solid #e8edf5!important;
+  position:relative!important;
+}
+.pvx-grid .pvx-imgzone img{max-height:100%!important;max-width:100%!important;object-fit:contain!important}
+.pvx-grid .pvx-colors{position:absolute!important;left:12px!important;bottom:10px!important;display:flex!important;gap:5px!important}
+.pvx-grid .pvx-cdot{width:13px!important;height:13px!important;border-radius:50%!important;border:1.5px solid #fff!important;box-shadow:0 0 0 1px #e8edf5!important;padding:0!important;cursor:pointer!important}
+.pvx-grid .pvx-cdot.sel{box-shadow:0 0 0 2px #059669!important}
+
+/* ---------- body ---------- */
+.pvx-grid .pvx-cbody{
+  padding:14px 16px 16px!important;
+  display:flex!important;
+  flex-direction:column!important;
+  flex:1 1 auto!important;
+  font-family:'Inter',system-ui,sans-serif!important;
+}
+.pvx-grid .pvx-provrow{
+  display:flex!important;align-items:center!important;gap:7px!important;
+  margin-bottom:6px!important;min-height:auto!important;
+}
+.pvx-grid .pvx-provrow img{width:18px!important;height:18px!important;border-radius:4px!important;padding:0!important;border:none!important}
+.pvx-grid .pvx-provname{
+  font-size:11px!important;font-weight:800!important;letter-spacing:.05em!important;
+  text-transform:uppercase!important;color:#64748b!important;
+}
+.pvx-grid .pvx-via{font-size:10.5px!important;color:#94a3b8!important;text-transform:none!important;letter-spacing:0!important;font-weight:500!important;display:inline-flex!important;align-items:center!important;gap:4px!important}
+.pvx-grid .pvx-via img{width:13px!important;height:13px!important}
+
+.pvx-grid .pvx-nm{
+  font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif!important;
+  font-weight:800!important;font-size:15px!important;line-height:1.25!important;
+  color:#0D1B2A!important;margin-bottom:9px!important;
+}
+
+/* ---------- tags ---------- */
+.pvx-grid .pvx-tags{display:flex!important;gap:5px!important;flex-wrap:wrap!important;margin-bottom:11px!important}
+.pvx-grid .pvx-tag{
+  font-size:10.5px!important;font-weight:700!important;padding:3px 9px!important;
+  border-radius:20px!important;border:none!important;
+  background:#eff4ff!important;color:#2563eb!important;
+}
+.pvx-grid .pvx-tag.g{background:#f0fdf4!important;color:#059669!important}
+.pvx-grid .pvx-tag.p{background:#f5f3ff!important;color:#6d28d9!important}
+
+/* ---------- prijs ---------- */
+.pvx-grid .pvx-pricebox{
+  margin-top:auto!important;background:transparent!important;border:none!important;
+  border-top:1px solid #e8edf5!important;padding:11px 0 0!important;
+}
+.pvx-grid .pvx-pm-row{display:flex!important;align-items:baseline!important;gap:5px!important;margin-bottom:7px!important}
+.pvx-grid .pvx-amt{
+  font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif!important;
+  font-weight:800!important;font-size:23px!important;color:#059669!important;line-height:1!important;
+}
+.pvx-grid .pvx-pm{font-size:11.5px!important;color:#64748b!important}
+.pvx-grid .pvx-bd-row{
+  display:flex!important;justify-content:space-between!important;gap:8px!important;
+  font-size:11.5px!important;color:#64748b!important;padding:2px 0!important;border:none!important;
+}
+.pvx-grid .pvx-bd-row .v{font-weight:700!important;color:#0D1B2A!important;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif!important}
+.pvx-grid .pvx-bd-note{font-size:10.5px!important;color:#94a3b8!important;margin-top:4px!important;line-height:1.4!important}
+
+/* ---------- knop ---------- */
+.pvx-grid .pvx-go{
+  display:block!important;text-align:center!important;
+  background:#059669!important;color:#fff!important;
+  font-weight:700!important;font-size:13.5px!important;
+  padding:12px!important;border-radius:12px!important;
+  text-decoration:none!important;margin-top:12px!important;
+  border:none!important;box-shadow:0 8px 18px -10px rgba(5,150,105,.6)!important;
+}
+.pvx-grid .pvx-go:hover{background:#047857!important}
+
+/* ---------- bewaarknop past in de nieuwe kaart ---------- */
+.pvx-grid .pvx-card .dpv-save{top:10px!important;right:10px!important;width:34px!important;height:34px!important;border-radius:10px!important;background:#fff!important}
+
+@media(max-width:560px){
+  .pvx-grid .pvx-imgzone{height:130px!important}
+  .pvx-grid .pvx-amt{font-size:21px!important}
+}
+</style>
+
+{% schema %}
+{ "name": "DPV Vergelijker-skin", "settings": [], "presets": [ { "name": "DPV Vergelijker-skin" } ] }
+{% endschema %}

@@ -179,7 +179,7 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
 <style>[id$="__dpv-nieuws"]{display:none !important}</style>
 {%- endunless -%}
 
-<section class="dab" id="aanbod" data-onderwerp="{{ onderwerp }}" data-handle="{{ article.handle }}">
+<section class="dab" id="aanbod" data-onderwerp="{{ onderwerp }}" data-handle="{{ article.handle }}" data-titel="{{ article.title | escape }}">
   <div class="dab-in">
     <p class="dab-eyebrow">Advertentie</p>
 
@@ -350,6 +350,21 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
     return r;
   }
 
+  // Hoe goed past een toestel bij dit artikel? Het model in de titel telt het zwaarst, daarna het merk.
+  var SPOOR = ' ' + ((blok.getAttribute('data-titel') || '') + ' ' + HANDLE).toLowerCase().replace(/[^a-z0-9]+/g, ' ') + ' ';
+  function past(toestel) {
+    var n = String(toestel || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    var model = n.replace(/^(apple|samsung|google|oneplus|nothing|xiaomi|motorola|fairphone)\s+/, '');
+    var kort = model.replace(/^galaxy\s+/, '');
+    if (SPOOR.indexOf(' ' + model + ' ') > -1 || SPOOR.indexOf(' ' + kort + ' ') > -1) return 100 + kort.length;
+    var zonderZ = kort.replace(/^z\s+/, '');
+    if (zonderZ !== kort && SPOOR.indexOf(' ' + zonderZ + ' ') > -1) return 100 + zonderZ.length;
+    var merk = n.split(' ')[0];
+    var MERKWOORD = { apple: ['iphone', 'apple'], samsung: ['samsung', 'galaxy'], google: ['pixel', 'google'] }[merk] || [merk];
+    for (var i = 0; i < MERKWOORD.length; i++) if (SPOOR.indexOf(' ' + MERKWOORD[i] + ' ') > -1) return 1;
+    return 0;
+  }
+
   var vak = document.getElementById('dab-deals');
   var cat = vak ? vak.getAttribute('data-cat') : '';
 
@@ -365,7 +380,7 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
     if (c) {
       var v = velden(cat, c);
       div.innerHTML = (v.beeld ? '<img src="' + esc(v.beeld) + '" alt="" loading="lazy">' : '') +
-        '<div class="dpv-inline-tx">' + (cat === 'telefoon' ? 'Populair vandaag: ' : 'Laagste prijs vandaag: ') + '<b>' + esc(v.naam) + ' ' + euro(v.prijs) + ' per maand</b>' +
+        '<div class="dpv-inline-tx">' + (cat === 'telefoon' ? (c._past >= 100 ? 'Vandaag: ' : 'Populair vandaag: ') : 'Laagste prijs vandaag: ') + '<b>' + esc(v.naam) + ' ' + euro(v.prijs) + ' per maand</b>' +
         '<small>Advertentie \u00b7 vanochtend gemeten</small></div>' +
         '<a class="dpv-inline-k" href="' + link(c, cat) + '" target="_blank" rel="sponsored nofollow noopener">Bekijk</a>';
     } else if (ONDERWERP === 'zorg') {
@@ -412,7 +427,7 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
 
   // Eén keer opnieuw proberen: bij drukte geeft de worker soms even niets.
   function haal() {
-    var u = W + '/api/cards/' + cat + '?limit=' + (ONDERWERP === 'iphone' ? 20 : 3);
+    var u = W + '/api/cards/' + cat + '?limit=' + (cat === 'telefoon' ? 20 : 3);
     return fetch(u, { cache: 'no-store' }).then(function (r) { if (!r.ok) throw 0; return r.json(); })
       .catch(function () { return new Promise(function (ok) { setTimeout(ok, 1500); }).then(function () { return fetch(u).then(function (r) { return r.json(); }); }); });
   }
@@ -424,6 +439,13 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
           var ip = kaarten.filter(function (c) { return /iphone/i.test(c.device || ''); });
           if (ip.length) kaarten = ip;
         }
+        /* 6 okt: onder een artikel over de Galaxy Z Fold 8 stond de iPhone 18 Pro Max bovenaan, omdat dit blok de
+           populairste toestellen toonde, los van het artikel. Nu eerst het toestel uit de titel van het artikel, dan
+           andere toestellen van hetzelfde merk, en pas daarna de rest. */
+        if (cat === 'telefoon') {
+          kaarten.forEach(function (c, i) { c._nr = i; c._past = past(c.device); });
+          kaarten.sort(function (a, b) { return (b._past - a._past) || (a._nr - b._nr); });
+        }
         kaarten = kaarten.slice(0, 3);
         if (!kaarten.length) throw 0;
         vak.innerHTML = kaarten.map(function (c, i) {
@@ -431,7 +453,7 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
           return '<div class="dab-kaart' + (i === 0 && cat !== 'telefoon' ? ' dab-eerste' : '') + '">' +
             // Bij telefoons zijn dit de populairste toestellen, niet per se de
             // goedkoopste; het label zegt dus ook niet "laagste prijs".
-            '<span class="dab-vlag">' + (cat === 'telefoon' ? 'Populair' : (i === 0 ? 'Laagste prijs' : 'Nr. ' + (i + 1))) + '</span>' +
+            '<span class="dab-vlag">' + (cat === 'telefoon' ? (c._past >= 100 ? 'Uit dit artikel' : 'Populair') : (i === 0 ? 'Laagste prijs' : 'Nr. ' + (i + 1))) + '</span>' +
             '<div class="dab-hoofd">' + (v.beeld ? '<img class="dab-logo" src="' + esc(v.beeld) + '" alt="" loading="lazy" width="40" height="40" onerror="this.onerror=null;this.src=\'' + esc(logo(c.provider)) + '\'">' : '') +
             '<div style="min-width:0"><p class="dab-naam">' + esc(v.naam) + '</p><p class="dab-spec">' + esc(v.spec) + '</p></div></div>' +
             '<div class="dab-prijs"><b>' + euro(v.prijs) + '</b><span>per maand</span></div>' +

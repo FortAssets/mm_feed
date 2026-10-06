@@ -772,13 +772,17 @@
 
   /* Weekfolder per winkel als knop in de filterbalk. Folders die op Publitas staan (en die van Dirk) mogen in een
      venster op onze pagina; de andere winkels staan dat niet toe en openen in een nieuw tabblad. */
+  /* De folder van Lidl heeft elke week een eigen adres met het weeknummer erin (hah-wk41-2026). */
+  function lidlFolder(){try{var d=new Date();var t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));var dag=t.getUTCDay()||7;
+      t.setUTCDate(t.getUTCDate()+4-dag);var j=t.getUTCFullYear();var wk=Math.ceil(((t-Date.UTC(j,0,1))/864e5+1)/7);
+      return 'https://www.lidl.nl/l/folders/hah-wk'+(wk<10?'0':'')+wk+'-'+j+'/view/flyer/page/1'}catch(e){return 'https://www.lidl.nl/c/service-contact-folders/s10008124'}}
   (function(){
     var FOLDERS=[
       ['ah','Albert Heijn','https://view.publitas.com/ah/',1],
-      ['jumbo','Jumbo','https://www.jumbo.com/aanbiedingen',0],
+      ['jumbo','Jumbo','https://view.publitas.com/jumbo-supermarkten/',1],
       ['plus','PLUS','https://view.publitas.com/plus-folder-nl/',1],
-      ['lidl','Lidl','https://www.lidl.nl/c/service-contact-folders/s10008124',0],
-      ['aldi','Aldi','https://www.aldi.nl/aanbiedingen.html',0],
+      ['lidl','Lidl',lidlFolder(),0],
+      ['aldi','Aldi','https://www.aldi.nl/folders/folder-van-deze-week.html?page=1',0],
       ['dirk','Dirk','https://www.dirk.nl/folder',1],
       ['hoogvliet','Hoogvliet','https://folder.hoogvliet.com/',1],
       ['vomar','Vomar','https://view.publitas.com/folder-deze-week/',1],
@@ -973,12 +977,12 @@
     }).catch(function(){});
 
     var FOLDER=[
-      ['ah','Albert Heijn','https://www.ah.nl/bonus'],
-      ['jumbo','Jumbo','https://www.jumbo.com/aanbiedingen'],
+      ['ah','Albert Heijn','https://view.publitas.com/ah/'],
+      ['jumbo','Jumbo','https://view.publitas.com/jumbo-supermarkten/'],
       ['plus','PLUS','https://www.plus.nl/aanbiedingen'],
       ['dirk','Dirk','https://www.dirk.nl/folder'],
-      ['lidl','Lidl','https://www.lidl.nl/c/folder/s10007813'],
-      ['aldi','Aldi','https://www.aldi.nl/aanbiedingen.html'],
+      ['lidl','Lidl',lidlFolder()],
+      ['aldi','Aldi','https://www.aldi.nl/folders/folder-van-deze-week.html?page=1'],
       ['hoogvliet','Hoogvliet','https://folder.hoogvliet.com/'],
       ['vomar','Vomar','https://www.vomar.nl/folder'],
       ['kruidvat','Kruidvat','https://www.kruidvat.nl/acties'],

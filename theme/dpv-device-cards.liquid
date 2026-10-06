@@ -42,11 +42,7 @@
 .dtc-een{width:100%;font-size:12.5px;font-weight:600;margin-top:4px}
 .dtc-een.vrij{color:#059669}
 .dtc-tot{width:100%;font-size:11px;color:#94a3b8;margin-top:2px}
-.dtc-los{gap:4px 18px;align-items:flex-end}
-.dtc-kol{display:flex;flex-direction:column}
-.dtc-kol small{font-size:12px;font-weight:600;color:#4A5A70;margin-bottom:2px}
-.dtc-los .p2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:18px;line-height:1.3;color:#0D1B2A}
-.dtc-los .dtc-tot{font-size:12px;color:#4A5A70;margin-top:4px}
+.dtc-price .dtc-tot{font-size:12px;color:#4A5A70;margin-top:3px}
 .dtc-cta{display:block;text-align:center;background:#059669;color:#fff!important;font-weight:700;font-size:14.5px;padding:12px;border-radius:12px;text-decoration:none;margin-top:14px;box-shadow:0 8px 18px -10px rgba(5,150,105,.6)}
 .dtc-card .dpv-save{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:10px;z-index:2;box-shadow:0 2px 8px rgba(13,27,42,.08)}
 
@@ -136,15 +132,14 @@
   // Toestelprijs los van het abonnement: wat je voor het toestel betaalt (vooraf plus termijnen) en daarnaast het abonnement per maand.
   function eur2(n){var v=Math.round((+n||0)*100)/100;return '\u20AC'+(v%1===0?v.toLocaleString('nl-NL'):v.toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2}))}
   function prijsBlok(c,een){
+    /* 6 okt: de totale maandprijs staat voorop; wat het toestel los kost en wat het abonnement kost staat er klein onder. */
     var mnd=parseInt((c.contract||'').replace(/\D/g,''),10)||0;
-    if(!(c.deviceTotal>0)||!(c.bundleMonthly>=0)||!mnd){
-      return '<div class="dtc-price"><span class="p">'+euro(c.price)+'</span><span class="per">/mnd</span>'
-        +een+'<span class="dtc-tot">totaal '+euro(c.totalPrice)+' over '+esc(c.contract||'de looptijd')+'</span></div>';
-    }
-    var opbouw=(c.downPayment>0?eur2(c.downPayment)+' vooraf, daarna ':'')+mnd+' x '+eur2(c.deviceMonthly)+(c.downPayment>0?'':', niets vooraf');
-    return '<div class="dtc-price dtc-los"><span class="dtc-kol"><small>Toestel los</small><span class="p">'+eur2(c.deviceTotal)+'</span></span>'
-      +'<span class="dtc-kol"><small>Abonnement</small><span class="p2">'+eur2(c.bundleMonthly)+'<span class="per"> /mnd</span></span></span>'
-      +'<span class="dtc-tot">'+opbouw+'</span></div>';
+    var vooraf=c.downPayment>0?'<span class="dtc-een">+ '+eur2(c.downPayment)+' eenmalig</span>':'<span class="dtc-een vrij">geen aanbetaling</span>';
+    var klein=(c.deviceTotal>0&&c.bundleMonthly>=0&&mnd)
+      ? 'Toestel los '+eur2(c.deviceTotal)+' \u00B7 abonnement '+eur2(c.bundleMonthly)+' /mnd'
+      : 'totaal '+eur2(c.totalPrice)+' over '+esc(c.contract||'de looptijd');
+    return '<div class="dtc-price"><span class="p">'+eur2(c.price)+'</span><span class="per">/mnd</span>'
+      +vooraf+'<span class="dtc-tot">'+klein+'</span></div>';
   }
 
   function calcRow(c){

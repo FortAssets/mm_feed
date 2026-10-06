@@ -808,8 +808,8 @@ html:not(#x):not(#y) body .dhd .knop-inkt[disabled]{opacity:.6;cursor:default}
       var el = wortel.querySelectorAll('[data-meting]');
       for (var i = 0; i < el.length; i++) {
         el[i].textContent = el[i].getAttribute('data-meting') === 'lang'
-          ? 'Prijzen gemeten op ' + dag + ' ' + o.year + ', ' + tijd
-          : ', laatste meting ' + dag + ' ' + tijd;
+          ? 'Prijzen van ' + dag + ' ' + o.year
+          : ', laatst bijgewerkt op ' + dag;
       }
     } catch (e) {}
   }

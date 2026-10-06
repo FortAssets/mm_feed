@@ -813,3 +813,10 @@ html:not(#x):not(#y) .dpvai-blok .dpvai-hint button{border-color:#BFE3D2 !import
 html:not(#x):not(#y) .rte [style*="border:2px solid #059669"]{border:1.5px solid #3FAE7A !important}
 /* keuzelijst bovenaan de vergelijkingsartikelen is een veld */
 html:not(#x):not(#y) .vgk-sel{border:1px solid #CBD3DF !important;border-radius:10px !important}
+/* zorgpagina: het aanmeldblok voor de premies van 2027 stond op een donker vlak; nu lichtgrijs met inkttekst */
+html:not(#x):not(#y) .zv-mail{background:#F1F3F8 !important;background-image:none !important;color:#0D1B2A !important;border:0 !important}
+html:not(#x):not(#y) .zv-mail :is(h2,h3,p,span,b,strong,label,small,div):not(button):not(button *){color:#0D1B2A !important}
+html:not(#x):not(#y) .zv-mail :is(p,small){color:#4A5A70 !important}
+html:not(#x):not(#y) .zv-mail input{background:#fff !important;color:#0D1B2A !important;border:1px solid #CBD3DF !important;-webkit-text-fill-color:#0D1B2A !important}
+html:not(#x):not(#y) .zv-mail input::placeholder{color:#4A5A70 !important;-webkit-text-fill-color:#4A5A70 !important}
+html:not(#x):not(#y) .zv-mail a{color:#2456D6 !important}

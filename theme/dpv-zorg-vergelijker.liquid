@@ -1,0 +1,991 @@
+{%- comment -%}
+  Zorgpagina: hero, vergelijker, drie stappen, soorten polis, vragen.
+
+  Uitgangspunten, en die blijven staan:
+  - Wij vragen geen leeftijd, inkomen of gezondheidsgegevens. De filters gaan
+    alleen over het product.
+  - Wij geven geen advies. De labels boven de kaarten zijn feiten (laagste
+    premie, laagste totaal), geen aanbeveling.
+  - Afsluiten gebeurt bij de verzekeraar of bij Zorgkiezer, niet bij ons.
+
+  2 okt, derde ronde. Aanleiding: op de telefoon stond de eerste polis pas op
+  1954 pixels, oftewel ruim twee schermen filters voordat je een prijs zag.
+  Bij Pricewise is dat 260, bij Independer 380, bij Zorgwijzer 414. Vier
+  dingen veranderd:
+
+  A. Resultaat eerst. De hero is ingekort, de filters zitten achter een knop
+     en daarboven staat een regel met je keuze en een chipbalk die zijwaarts
+     schuift. De eerste polis staat nu binnen het eerste scherm.
+  B. Totaal per jaar. Geen enkele Nederlandse vergelijker rekent premie en
+     eigen risico bij elkaar op, terwijl dat de rekening is die je betaalt.
+     Met de schakelaar voor zorggebruik verandert de volgorde, en als de
+     goedkoopste polis daardoor niet meer de goedkoopste is, tekenen wij het
+     omslagpunt.
+  C. Vergelijken. Twee polissen naast elkaar, verschillen gekleurd.
+  D. Je huidige premie als ijkpunt. Vul je hem in, dan rekent elke kaart uit
+     wat je per jaar bespaart. Dat bedrag blijft op dit apparaat staan en
+     gaat niet naar ons.
+
+  Alle classes beginnen met zc-. De oude pagina-inhoud gebruikt zv-.
+
+  Premies per regel in de instellingen:
+    naam | verzekeraar | premie | eigenrisico | polis | kenmerken | partner | url
+{%- endcomment -%}
+
+{%- assign regels = section.settings.polissen | newline_to_br | split: '<br />' -%}
+
+<style>
+.zc{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#0b7d5c;--groen-l:#10b981;--groen-t:#F0FDF4;
+  --blauw:#1B3FA0;--nacht:#0F2E4A;--rood:#B42318;--oranje:#B45309;
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
+.zc *{box-sizing:border-box}
+.zc-wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.zc h2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:24px;letter-spacing:-.02em;font-weight:800;margin:0 0 6px;color:var(--ink)}
+.zc-lead{font-size:15px;color:var(--soft);margin:0 0 16px;line-height:1.55}
+.zc :focus-visible{outline:3px solid var(--groen-l);outline-offset:2px}
+.zc-blok{padding:34px 0 0}
+
+/* Hero: kort gehouden, want hieronder moet meteen een prijs staan. */
+.zc-hero{background:linear-gradient(135deg,#0F2E4A 0%,#153E63 60%,#1B4F7A 100%);color:#fff;padding:22px 0 20px}
+.zc-hero h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:clamp(24px,4vw,38px);font-weight:800;letter-spacing:-.03em;line-height:1.08;margin:0 0 8px;color:#fff}
+.zc-hero p{font-size:clamp(14px,1.6vw,16px);color:#C8D6E5;margin:0;max-width:640px;line-height:1.5}
+.zc-vertrouw{display:flex;gap:6px 18px;flex-wrap:wrap;margin:12px 0 0;padding:0;list-style:none;font-size:13px;color:#DCE7F2;font-weight:600}
+.zc-vertrouw li{display:flex;align-items:center;gap:6px}
+.zc-vertrouw svg{flex:0 0 auto}
+
+/* Regel met je keuze, blijft bovenaan hangen bij het scrollen. */
+.zc-samen{position:sticky;top:0;z-index:40;background:var(--vlak);border-bottom:1px solid var(--line)}
+.zc-samen .zc-wrap{display:flex;align-items:center;gap:10px;padding-top:9px;padding-bottom:9px}
+.zc-samen-t{font-size:13.5px;font-weight:600;color:var(--soft);line-height:1.3;min-width:0}
+.zc-samen-t b{color:var(--ink);font-weight:800}
+.zc-samen button{margin-left:auto;background:none;border:0;font-family:inherit;font-size:13.5px;font-weight:800;color:var(--groen);cursor:pointer;white-space:nowrap;padding:6px 2px}
+
+/* Chipbalk die zijwaarts schuift. */
+.zc-balk{display:flex;gap:7px;overflow-x:auto;padding:10px 16px;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  max-width:1080px;margin:0 auto;border-bottom:1px solid var(--line)}
+.zc-balk::-webkit-scrollbar{display:none}
+.zc-balk .zc-chip{flex:0 0 auto}
+.zc-chip{background:#fff;border:1.5px solid var(--line);border-radius:99px;padding:7px 13px;font-size:13.5px;font-weight:700;color:var(--ink);cursor:pointer;font-family:inherit;white-space:nowrap}
+.zc-chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.zc-chip.zc-filterknop{background:var(--groen-t);border-color:#A7DFC4;color:var(--groen)}
+.zc-chip.zc-filterknop b{background:var(--groen);color:#fff;border-radius:99px;padding:1px 7px;margin-left:5px;font-size:12px}
+
+/* Filterpaneel, dicht op de telefoon. */
+.zc-paneel{border:1px solid var(--line);border-radius:16px;background:var(--vlak);padding:12px 16px;margin:12px 0 0}
+.zc-paneel[hidden]{display:none}
+.zc-groep{margin:0 0 10px}
+.zc-groep:last-child{margin:0}
+.zc-label{display:block;font-size:12.5px;font-weight:700;color:var(--soft);margin:0 0 6px}
+.zc-chips{display:flex;flex-wrap:wrap;gap:6px}
+.zc-schuif{display:flex;align-items:center;gap:12px}
+.zc-schuif input{flex:1;accent-color:var(--groen-l)}
+.zc-schuif b{font-size:14.5px;white-space:nowrap}
+.zc-paneel-sluit{display:block;width:100%;margin:12px 0 0;border:0;border-radius:11px;background:var(--ink);color:#fff;
+  font-family:inherit;font-size:15px;font-weight:800;padding:12px;cursor:pointer}
+
+/* Telling plus uitleg over de volgorde. */
+.zc-telling{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:14px 0 8px}
+.zc-telling p{margin:0;font-size:14px;color:var(--soft)}
+.zc-telling b{color:var(--ink);font-size:16px}
+.zc-uitlegknop{margin-left:auto;background:none;border:0;font-family:inherit;font-size:13px;font-weight:800;color:var(--groen);cursor:pointer;text-decoration:underline;padding:4px}
+.zc-uitleg{background:var(--vlak);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:0 0 12px;font-size:13.5px;line-height:1.6;color:#334155}
+.zc-uitleg[hidden]{display:none}
+.zc-uitleg b{color:var(--ink)}
+.zc-wis{background:none;border:0;color:var(--blauw);font-size:13.5px;font-weight:700;cursor:pointer;padding:4px;font-family:inherit}
+
+/* Zorggebruik en het ijkpunt. */
+.zc-reken{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin:0 0 12px}
+.zc-reken-k{background:var(--vlak);border-bottom:1px solid var(--line);padding:9px 14px;font-size:12.5px;font-weight:800;color:var(--soft)}
+.zc-sw{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;padding:8px}
+.zc-sw button{border:0;background:none;font-family:inherit;font-size:12.5px;font-weight:700;color:var(--soft);padding:9px 4px;border-radius:9px;cursor:pointer;line-height:1.25}
+.zc-sw button[aria-pressed="true"]{background:var(--ink);color:#fff;font-weight:800}
+.zc-nu{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1.5px solid var(--line);border-radius:14px;padding:11px 14px;margin:0 0 12px}
+.zc-nu-t{flex:1 1 210px;min-width:0;font-size:13.5px;font-weight:600;color:var(--soft);line-height:1.35}
+.zc-nu-t b{display:block;color:var(--ink);font-weight:800;font-size:14.5px}
+.zc-nu-f{display:flex;gap:7px;flex:0 1 240px}
+.zc-nu-f input{flex:1;min-width:0;height:42px;border:1.5px solid var(--line);border-radius:10px;padding:0 11px;font-size:15px;font-family:inherit;color:var(--ink);background:#fff}
+.zc-nu-f button{height:42px;border:0;border-radius:10px;padding:0 15px;background:var(--groen);color:#fff;font-family:inherit;font-weight:800;font-size:14px;cursor:pointer;white-space:nowrap}
+.zc-nu.zc-aan{border-color:var(--ink);background:#fff}
+.zc-nu-wis{background:none;border:0;font-family:inherit;font-size:13px;font-weight:800;color:var(--groen);cursor:pointer;padding:6px}
+
+/* Grafiek met het omslagpunt. */
+.zc-grafiek{border:1.5px solid var(--line);border-radius:14px;padding:14px;margin:0 0 12px}
+.zc-grafiek[hidden]{display:none}
+.zc-grafiek h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.02em;margin:0;line-height:1.25;color:var(--ink)}
+.zc-grafiek p{font-size:13px;color:var(--soft);margin:4px 0 0;line-height:1.45}
+.zc-grafiek svg{display:block;width:100%;height:auto;margin:10px 0 0}
+.zc-leg{display:flex;gap:14px;flex-wrap:wrap;margin:7px 0 0;font-size:12px;font-weight:700;color:var(--soft)}
+.zc-leg span{display:flex;align-items:center;gap:5px}
+.zc-leg i{width:13px;height:3.5px;border-radius:2px;display:block}
+
+/* Resultaatkaart. */
+.zc-kaart{position:relative;border:1.5px solid var(--line);border-radius:14px;background:#fff;padding:12px 13px;margin:0 0 9px}
+.zc-kaart.zc-eerste{border-color:var(--groen-l);border-width:2px;background:var(--groen-t)}
+.zc-lint{position:absolute;top:-9px;left:12px;background:var(--groen);color:#fff;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;border-radius:5px;padding:3px 8px}
+.zc-lint.zc-donker{background:var(--ink)}
+.zc-hoofd{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:center}
+.zc-logo{width:38px;height:38px;border-radius:9px;border:1px solid var(--line);background:#fff;object-fit:contain;padding:4px}
+.zc-ini{width:38px;height:38px;border-radius:9px;background:#EEF2FB;color:var(--blauw);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
+.zc-naam{font-size:15px;font-weight:800;line-height:1.2;margin:0;color:var(--ink)}
+.zc-verz{font-size:12px;color:var(--soft);margin:2px 0 0}
+.zc-prijs{text-align:right;white-space:nowrap}
+.zc-prijs b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:25px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.zc-prijs sup{font-size:14px;top:-.5em;position:relative;letter-spacing:-.01em}
+.zc-prijs span{display:block;font-size:10.5px;font-weight:800;color:var(--soft);letter-spacing:.04em;margin-top:3px}
+.zc-vers{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;margin:10px 0 0}
+.zc-sp{height:7px;border-radius:4px;background:#EAF0F6;overflow:hidden}
+.zc-sp i{display:block;height:100%;border-radius:4px;background:var(--groen-l)}
+.zc-sp.zc-mid i{background:#F0B429}
+.zc-sp.zc-hoog i{background:var(--rood)}
+.zc-vb{font-size:12px;font-weight:800;white-space:nowrap;color:var(--soft)}
+.zc-vb.zc-g{color:var(--groen)}
+.zc-vb.zc-r{color:var(--rood)}
+.zc-bespaar{display:grid;grid-template-columns:auto minmax(0,1fr);gap:11px;align-items:center;background:#fff;border:1.5px solid #A7DFC4;border-radius:11px;padding:9px 11px;margin:10px 0 0}
+.zc-bespaar b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:25px;font-weight:800;letter-spacing:-.03em;color:var(--groen);line-height:1}
+.zc-bespaar span{font-size:12.5px;font-weight:700;color:var(--soft);line-height:1.3}
+.zc-bespaar.zc-duurder{border-color:#F3C7C2}
+.zc-bespaar.zc-duurder b{color:var(--rood)}
+.zc-feiten{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0 0}
+.zc-feit{background:var(--vlak);border-radius:6px;padding:4px 8px;font-size:11.5px;color:#334155}
+.zc-feit b{font-weight:800;color:var(--ink)}
+.zc-onder{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;margin:11px 0 0}
+.zc a.zc-knop,.zc a.zc-knop:visited{display:flex;align-items:center;justify-content:center;min-height:44px;
+  background:var(--groen-l);color:#fff !important;border-radius:11px;font-size:14.5px;font-weight:800;text-decoration:none !important;padding:0 12px;text-align:center}
+.zc a.zc-knop:hover{background:#0fa876}
+.zc-kies{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:var(--soft);cursor:pointer;white-space:nowrap;user-select:none}
+.zc-kies input{width:18px;height:18px;accent-color:var(--groen-l);margin:0;cursor:pointer}
+.zc-via{font-size:11px;color:var(--soft);margin:6px 0 0;text-align:center}
+.zc-meer{display:block;width:100%;background:#fff;border:1.5px solid #C9CFC9;border-radius:12px;padding:13px;font-family:inherit;font-size:15px;font-weight:700;color:var(--ink);cursor:pointer;margin:4px 0 0}
+
+/* Zwevende balk voor de vergelijking. */
+.zc-dok{position:fixed;left:0;right:0;bottom:0;z-index:2147483000;background:var(--ink);color:#fff;
+  box-shadow:0 -10px 24px -14px rgba(8,12,18,.6);transform:translateY(110%);transition:transform .18s ease}
+.zc-dok.zc-op{transform:none}
+.zc-dok-in{max-width:1080px;margin:0 auto;padding:11px 16px;display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:10px;align-items:center}
+.zc-dok-t{font-size:13px;font-weight:700;line-height:1.3;min-width:0}
+.zc-dok-t b{display:block;font-size:14.5px;font-weight:800}
+.zc-dok-leeg{background:none;border:0;color:#B9C6D6;font-family:inherit;font-size:13px;font-weight:700;cursor:pointer;padding:8px}
+.zc-dok-go{background:var(--groen-l);border:0;border-radius:10px;color:#fff;font-family:inherit;font-size:14px;font-weight:800;padding:11px 17px;cursor:pointer;white-space:nowrap}
+.zc-dok-go:disabled{opacity:.45;cursor:default}
+
+/* Vergelijking naast elkaar. */
+.zc-over{position:fixed;inset:0;z-index:70;background:rgba(8,14,22,.55);display:flex;align-items:flex-end;justify-content:center;padding:0}
+.zc-over[hidden]{display:none}
+.zc-over-in{background:#fff;width:100%;max-width:760px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:16px 16px 26px}
+.zc-over-k{display:flex;align-items:center;gap:12px;margin:0 0 12px}
+.zc-over-k h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:19px;font-weight:800;margin:0;letter-spacing:-.02em}
+.zc-over-x{margin-left:auto;background:var(--vlak);border:0;border-radius:9px;width:34px;height:34px;font-size:20px;line-height:1;color:var(--soft);cursor:pointer}
+.zc-vt{border:1.5px solid var(--line);border-radius:14px;overflow:hidden}
+.zc-vt-h,.zc-vr{display:grid;grid-template-columns:104px minmax(0,1fr) minmax(0,1fr)}
+.zc-vt-h>div{padding:11px 8px;text-align:center;background:var(--vlak)}
+.zc-vt-h>div+div{border-left:1px solid var(--line)}
+.zc-vt-h .zc-logo,.zc-vt-h .zc-ini{margin:0 auto 6px}
+.zc-vt-h b{display:block;font-size:12.5px;font-weight:800;line-height:1.2}
+.zc-vt-h i{display:block;font-style:normal;font-size:10.5px;font-weight:600;color:var(--soft);margin-top:2px}
+.zc-vt-h .zc-win{position:relative;background:var(--groen-t)}
+.zc-vt-h .zc-win:after{content:'';position:absolute;left:0;right:0;top:0;height:3px;background:var(--groen-l)}
+.zc-vr{border-top:1px solid var(--line);font-size:12.5px}
+.zc-vr>div{padding:9px 8px;text-align:center;font-weight:700;color:#334155}
+.zc-vr>div+div{border-left:1px solid var(--line)}
+.zc-vr .zc-lb{text-align:left;font-size:11px;font-weight:700;color:var(--soft);background:var(--vlak);line-height:1.25}
+.zc-vr .zc-g{color:var(--groen);font-weight:800}
+.zc-vr .zc-s{color:var(--rood)}
+.zc-vr.zc-zwaar>div{font-size:16px;font-weight:800}
+.zc-vr.zc-zwaar .zc-lb{font-size:11px}
+.zc-slot{margin:12px 0 0;background:var(--vlak);border-radius:12px;padding:12px 14px;font-size:13.5px;line-height:1.5;color:#334155}
+.zc-slot b{color:var(--ink)}
+
+.zc-leeg{background:var(--vlak);border-radius:14px;padding:22px 18px;text-align:center;font-size:15px;color:var(--soft)}
+.zc-alles{display:block;text-align:center;background:#fff;border:1.5px solid #C9CFC9;border-radius:12px;padding:13px 16px;font-size:15px;font-weight:700;color:var(--ink) !important;text-decoration:none !important;margin:12px 0 0}
+.zc-fijn{font-size:12.5px;color:var(--soft);line-height:1.55;margin:14px 0 0}
+
+/* Stappen en soorten polis */
+.zc-drie{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.zc-stap,.zc-soort{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.zc-nr{display:inline-flex;width:34px;height:34px;border-radius:50%;background:#E7F6EF;color:var(--groen);align-items:center;justify-content:center;font-weight:800;font-size:15px;margin:0 0 10px}
+.zc-stap b,.zc-soort b{display:block;font-size:16px;font-weight:800;margin:0 0 5px;color:var(--ink)}
+.zc-stap p,.zc-soort p{font-size:14px;line-height:1.55;color:var(--soft);margin:0}
+.zc-soort .zc-nr{border-radius:11px}
+.zc-soort a{display:inline-block;margin-top:10px;font-size:13.5px;font-weight:700;color:var(--blauw);text-decoration:none}
+
+/* Vragen */
+.zc-vraag{background:#fff;border:1px solid var(--line);border-radius:14px;margin:0 0 8px}
+.zc-vraag summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;gap:14px;align-items:center;padding:15px 16px;font-size:15.5px;font-weight:700;color:var(--ink)}
+.zc-vraag summary::-webkit-details-marker{display:none}
+.zc-vraag summary::after{content:'+';font-size:22px;font-weight:500;color:var(--soft);line-height:1}
+.zc-vraag[open] summary::after{content:'\2212'}
+.zc-vraag div{padding:0 16px 16px;font-size:14.5px;line-height:1.6;color:#334155}
+.zc-vraag div p{margin:0 0 8px}
+
+/* Aanmeldblok 2027 */
+.zc-ab{display:flex;align-items:center;gap:14px;flex-wrap:wrap;background:#E7F6EF;border:1px solid #BFE8D6;border-radius:16px;padding:14px 16px;margin:14px 0 0}
+.zc-ab-t{flex:1 1 280px;min-width:0}
+.zc-ab-t b{display:block;font-size:15.5px;font-weight:800;color:#064E3B}
+.zc-ab-t span{display:block;font-size:13.5px;color:#0b5d45;margin-top:2px}
+.zc-ab-f{display:flex;gap:8px;flex:1 1 300px;margin:0}
+.zc-ab-f input{flex:1;min-width:0;height:46px;border:1.5px solid #BFE8D6;border-radius:11px;padding:0 13px;font-size:15px;font-family:inherit;background:#fff;color:var(--ink)}
+.zc-ab-f button{height:46px;border:0;border-radius:11px;padding:0 18px;background:var(--groen);color:#fff;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit;white-space:nowrap}
+.zc-ab-uit{flex:1 1 100%;margin:0;font-size:13.5px;font-weight:600}
+
+@media(min-width:720px){
+  .zc-paneel{display:grid;grid-template-columns:1fr 1fr;gap:12px 22px}
+  .zc-groep{margin:0}
+  .zc-groep.zc-breed{grid-column:1/-1}
+  .zc-paneel-sluit{grid-column:1/-1;width:auto;justify-self:start;padding:11px 24px}
+  .zc-lijst{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+  .zc-lijst .zc-meer{grid-column:1/-1}
+}
+@media(min-width:1000px){
+  .zc-lijst{grid-template-columns:1fr 1fr 1fr}
+}
+@media(max-width:860px){
+  .zc-drie{grid-template-columns:1fr}
+}
+@media(max-width:420px){
+  .zc-hoofd{grid-template-columns:34px minmax(0,1fr) auto;gap:8px}
+  .zc-logo,.zc-ini{width:34px;height:34px}
+  .zc-prijs b{font-size:23px}
+}
+
+/* De oude pagina-inhoud onder deze sectie wordt door het script weggehaald. */
+#shopify-section-{{ section.id }} ~ .shopify-section .main-page-title{display:none}
+#shopify-section-{{ section.id }} ~ .shopify-section .zv-let{display:none}
+</style>
+
+<div class="zc" id="zc">
+  <div class="zc-hero">
+    <div class="zc-wrap">
+      <h1>{{ section.settings.hero_kop }}</h1>
+      <p>{{ section.settings.hero_sub }}</p>
+      <ul class="zc-vertrouw">
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg><span id="zc-v-aantal">Polissen van alle grote verzekeraars</span></li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Geen leeftijd of gegevens nodig</li>
+        <li><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6EE7B7" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>Premie en eigen risico bij elkaar opgeteld</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="zc-samen">
+    <div class="zc-wrap">
+      <div class="zc-samen-t" id="zc-samen-t">Alle polissen</div>
+      <button type="button" id="zc-wijzig" aria-expanded="false" aria-controls="zc-paneel">Wijzig</button>
+    </div>
+  </div>
+
+  <div class="zc-balk" id="zc-balk" role="group" aria-label="Snel filteren en sorteren"></div>
+
+  <div class="zc-wrap">
+    <div id="zc-lijstblok" style="padding-top:12px">
+
+      <div class="zc-paneel" id="zc-paneel" hidden>
+        <div class="zc-groep">
+          <span class="zc-label" id="zc-l-er">Eigen risico</span>
+          <div class="zc-chips" role="group" aria-labelledby="zc-l-er" data-filter="er">
+            <button type="button" class="zc-chip" aria-pressed="true" data-w="">Maakt niet uit</button>
+            <button type="button" class="zc-chip" aria-pressed="false" data-w="385">&euro;385</button>
+            <button type="button" class="zc-chip" aria-pressed="false" data-w="885">&euro;885</button>
+          </div>
+        </div>
+        <div class="zc-groep">
+          <span class="zc-label" id="zc-l-polis">Soort polis</span>
+          <div class="zc-chips" role="group" aria-labelledby="zc-l-polis" data-filter="polis">
+            <button type="button" class="zc-chip" aria-pressed="true" data-w="">Alle</button>
+            <button type="button" class="zc-chip" aria-pressed="false" data-w="natura">Natura</button>
+            <button type="button" class="zc-chip" aria-pressed="false" data-w="restitutie">Restitutie</button>
+            <button type="button" class="zc-chip" aria-pressed="false" data-w="combinatie">Combinatie</button>
+          </div>
+        </div>
+        <div class="zc-groep zc-breed">
+          <span class="zc-label" id="zc-l-prijs">Premie per maand, hoogstens</span>
+          <div class="zc-schuif">
+            <input id="zc-max" type="range" min="100" max="200" step="5" value="200" aria-labelledby="zc-l-prijs">
+            <b id="zc-maxlabel">geen maximum</b>
+          </div>
+        </div>
+        <div class="zc-groep zc-breed" id="zc-kenmerkgroep" hidden>
+          <span class="zc-label" id="zc-l-kenmerk">Kenmerken</span>
+          <div class="zc-chips" role="group" aria-labelledby="zc-l-kenmerk" data-filter="kenmerk" id="zc-kenmerken"></div>
+        </div>
+        <button type="button" class="zc-paneel-sluit" id="zc-paneel-sluit">Toon <span id="zc-paneel-n">0</span> polissen</button>
+      </div>
+
+      <div class="zc-reken">
+        <div class="zc-reken-k">Reken door met jouw zorggebruik</div>
+        <div class="zc-sw" id="zc-sw" role="group" aria-label="Zorggebruik">
+          <button type="button" aria-pressed="true" data-z="0">Geen zorg</button>
+          <button type="button" aria-pressed="false" data-z="385">Half eigen risico</button>
+          <button type="button" aria-pressed="false" data-z="885">Vol eigen risico</button>
+        </div>
+      </div>
+
+      <div class="zc-nu" id="zc-nu">
+        <div class="zc-nu-t" id="zc-nu-t"><b>Wat betaal jij nu?</b>Vul je huidige premie in, dan zie je per polis wat je bespaart.</div>
+        <form class="zc-nu-f" id="zc-nu-f" novalidate>
+          <input type="text" inputmode="decimal" id="zc-nu-veld" placeholder="bijv. 168,50" aria-label="Jouw huidige premie per maand">
+          <button type="submit">Reken uit</button>
+        </form>
+        <button type="button" class="zc-nu-wis" id="zc-nu-wis" hidden>Wissen</button>
+      </div>
+
+      <div class="zc-grafiek" id="zc-grafiek" hidden></div>
+
+      <div class="zc-telling">
+        <p><b id="zc-aantal">0</b> <span id="zc-aantalwoord">polissen</span>, <span id="zc-sortwoord">op premie</span></p>
+        <button type="button" class="zc-wis" id="zc-wis" hidden>Filters wissen</button>
+        <button type="button" class="zc-uitlegknop" id="zc-uitlegknop" aria-expanded="false" aria-controls="zc-uitleg">Hoe sorteren wij?</button>
+      </div>
+
+      <div class="zc-uitleg" id="zc-uitleg" hidden>
+        <p style="margin:0 0 8px"><b>De volgorde is altijd de prijs, van laag naar hoog.</b> Geen enkele verzekeraar kan een plek kopen en wij krijgen niet meer betaald voor een polis die hoger staat.</p>
+        <p style="margin:0 0 8px">Staat de schakelaar op <b>geen zorgkosten</b>, dan sorteren wij op de premie per maand. Zet je hem op half of vol eigen risico, dan sorteren wij op wat je dat jaar in totaal kwijt bent: twaalf maanden premie plus het eigen risico dat je dan opmaakt. Bij een hoog eigen risico is de laagste premie namelijk niet altijd de laagste rekening.</p>
+        <p style="margin:0">Klik je door en sluit je een verzekering af, dan ontvangen wij een vergoeding van de verzekeraar, van Zorgkiezer of van Poliswijzer. Jij betaalt daardoor niets extra.</p>
+      </div>
+
+      <div id="zc-lijst" class="zc-lijst" aria-live="polite"></div>
+
+      <a class="zc-alles" href="{{ section.settings.alles_url }}" rel="nofollow sponsored noopener" target="_blank">{{ section.settings.alles_tekst }}</a>
+      {%- comment -%} 6 okt: Poliswijzer erbij als tweede plek voor de volledige vergelijking. {%- endcomment -%}
+      {%- if section.settings.alles2_url != blank -%}
+      <a class="zc-alles" href="{{ section.settings.alles2_url }}" rel="nofollow sponsored noopener" target="_blank">{{ section.settings.alles2_tekst }}</a>
+      {%- endif -%}
+      <p class="zc-fijn">{{ section.settings.fijn }}</p>
+
+      {%- if section.settings.ab_aan -%}
+      <div class="zc-ab">
+        <div class="zc-ab-t"><b>{{ section.settings.ab_kop }}</b><span>{{ section.settings.ab_tekst }}</span></div>
+        <form class="zc-ab-f" id="zc-ab-f" novalidate>
+          <input type="email" id="zc-ab-mail" placeholder="jouw@email.nl" autocomplete="email" aria-label="E-mailadres" required>
+          <button type="submit" id="zc-ab-knop">{{ section.settings.ab_knop }}</button>
+        </form>
+        <p class="zc-ab-uit" id="zc-ab-uit" hidden></p>
+      </div>
+      {%- endif -%}
+    </div>
+
+    <div class="zc-blok">
+      <h2>In drie stappen overstappen</h2>
+      <p class="zc-lead">Je hoeft je oude verzekering niet zelf op te zeggen.</p>
+      <div class="zc-drie">
+        <div class="zc-stap"><span class="zc-nr">1</span><b>Vergelijk en kies</b><p>Bekijk de premies hierboven en kies een polis. Let op het soort polis en het eigen risico.</p></div>
+        <div class="zc-stap"><span class="zc-nr">2</span><b>Sluit af v&oacute;&oacute;r 1 januari</b><p>Je sluit af bij de verzekeraar zelf of via Zorgkiezer. Dat duurt een paar minuten.</p></div>
+        <div class="zc-stap"><span class="zc-nr">3</span><b>Jij hoeft niets op te zeggen</b><p>Je nieuwe verzekeraar zegt je oude verzekering voor je op. Zo ben je nooit onverzekerd.</p></div>
+      </div>
+    </div>
+
+    <div class="zc-blok">
+      <h2>Natura, restitutie of combinatie</h2>
+      <p class="zc-lead">De zorg in de basisverzekering is overal gelijk. Het soort polis bepaalt waar je zonder bijbetalen naartoe kunt.</p>
+      <div class="zc-drie">
+        <div class="zc-soort"><span class="zc-nr" style="background:#E6F1FB;color:#0C447C">N</span><b>Natura</b>
+          <p>Meestal de laagste premie. Ga je naar een zorgverlener zonder contract met je verzekeraar, dan krijg je soms niet alles vergoed.</p>
+          <a href="#zc-lijstblok" data-polis="natura">Toon naturapolissen &rarr;</a></div>
+        <div class="zc-soort"><span class="zc-nr" style="background:#FAEEDA;color:#633806">R</span><b>Restitutie</b>
+          <p>Je kiest zelf je zorgverlener, ook zonder contract. De premie is hoger.</p>
+          <a href="#zc-lijstblok" data-polis="restitutie">Toon restitutiepolissen &rarr;</a></div>
+        <div class="zc-soort"><span class="zc-nr" style="background:#EEEDFE;color:#3C3489">C</span><b>Combinatie</b>
+          <p>Een tussenvorm: voor de ene soort zorg vrije keuze, voor de andere alleen gecontracteerde zorg.</p>
+          <a href="#zc-lijstblok" data-polis="combinatie">Toon combinatiepolissen &rarr;</a></div>
+      </div>
+    </div>
+
+    <div class="zc-blok" style="padding-bottom:10px">
+      <h2>Veelgestelde vragen</h2>
+      <div id="zc-vragen">
+        {%- for i in (1..8) -%}
+          {%- assign vk = 'v' | append: i -%}
+          {%- assign ak = 'a' | append: i -%}
+          {%- if section.settings[vk] != blank -%}
+          <details class="zc-vraag"><summary>{{ section.settings[vk] }}</summary><div>{{ section.settings[ak] }}</div></details>
+          {%- endif -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  </div>
+
+  <div class="zc-dok" id="zc-dok" aria-live="polite">
+    <div class="zc-dok-in">
+      <div class="zc-dok-t" id="zc-dok-t"></div>
+      <button type="button" class="zc-dok-leeg" id="zc-dok-leeg">Wissen</button>
+      <button type="button" class="zc-dok-go" id="zc-dok-go" disabled>Vergelijk</button>
+    </div>
+  </div>
+
+  <div class="zc-over" id="zc-over" hidden role="dialog" aria-modal="true" aria-labelledby="zc-over-kop">
+    <div class="zc-over-in" id="zc-over-in"></div>
+  </div>
+</div>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- assign eerste = true -%}
+    {%- for i in (1..8) -%}
+      {%- assign vk = 'v' | append: i -%}
+      {%- assign ak = 'a' | append: i -%}
+      {%- if section.settings[vk] != blank -%}
+      {%- unless eerste -%},{%- endunless -%}
+      { "@type": "Question", "name": {{ section.settings[vk] | json }},
+        "acceptedAnswer": { "@type": "Answer", "text": {{ section.settings[ak] | strip_html | json }} } }
+      {%- assign eerste = false -%}
+      {%- endif -%}
+    {%- endfor -%}
+  ]
+}
+</script>
+
+<script>
+(function () {
+  var wortel = document.getElementById('zc');
+  if (!wortel) return;
+
+  var RUW = [
+    {%- for r in regels -%}
+      {%- assign d = r | strip | split: '|' -%}
+      {%- if d.size >= 8 -%}
+    { naam: {{ d[0] | strip | json }}, verz: {{ d[1] | strip | json }}, premie: Number({{ d[2] | strip | json }}),
+      er: Number({{ d[3] | strip | json }}), polis: {{ d[4] | strip | downcase | json }},
+      kenmerken: {{ d[5] | strip | json }}, partner: {{ d[6] | strip | json }}, url: {{ d[7] | strip | json }} },
+      {%- endif -%}
+    {%- endfor -%}
+  ];
+  RUW.forEach(function (p, i) { p.id = 'p' + i; });
+
+  var keuze = { er: '', polis: '', kenmerk: '', max: 0 };
+  var zorg = 0;          // aangenomen zorgkosten in het jaar
+  var nu = null;         // huidige premie per maand van de bezoeker
+  var gekozen = [];      // polissen die naast elkaar gaan
+  var allesTonen = false;
+  var EERST = 8;
+
+  function euro(v, cent) {
+    return '€' + Number(v).toLocaleString('nl-NL', { minimumFractionDigits: cent ? 2 : 0, maximumFractionDigits: cent ? 2 : 0 });
+  }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+  function merk(p) { return String(p.naam || '').split(' ')[0]; }
+  function hoofd(s) { s = String(s || ''); return s.charAt(0).toUpperCase() + s.slice(1); }
+  function lijstKenmerken(p) {
+    return String(p.kenmerken || '').split(';').map(function (x) { return x.trim(); }).filter(Boolean);
+  }
+  // Twaalf maanden premie plus het eigen risico dat bij dit zorggebruik
+  // opgaat. Dat is de rekening die je echt betaalt, en daarom sorteren wij
+  // hierop zodra de schakelaar niet op nul staat.
+  function jaar(p) { return p.premie * 12; }
+  function totaal(p) { return p.premie * 12 + Math.min(zorg, p.er); }
+  function waarde(p) { return zorg ? totaal(p) : jaar(p); }
+
+  (function () {
+    var v = {};
+    RUW.forEach(function (p) { v[String(p.verz).replace(/^label van /i, '')] = 1; });
+    var el = document.getElementById('zc-v-aantal');
+    if (el && RUW.length) el.textContent = RUW.length + ' polissen van ' + Object.keys(v).length + ' verzekeraars';
+  })();
+
+  var LOGO = [
+    ['vgzbewu', 'vgzbewuzt.nl'], ['vinkvink', 'vinkvink.nl'], ['univ', 'unive.nl'],
+    ['nationale-nederlanden', 'nn.nl'], ['fbto', 'fbto.nl'], ['a.s.r', 'asr.nl'], ['asr', 'asr.nl'],
+    ['zilveren kruis', 'zilverenkruis.nl'], ['menzis', 'menzis.nl'], ['cz', 'cz.nl'], ['dsw', 'dsw.nl'],
+    ['vgz', 'vgz.nl'], ['ohra', 'ohra.nl'], ['interpolis', 'interpolis.nl'], ['anderzorg', 'anderzorg.nl'],
+    ['ditzo', 'ditzo.nl'], ['zekur', 'zekur.nl'], ['stad holland', 'shzk.nl'], ['zorg en zekerheid', 'zorgenzekerheid.nl'],
+    ['salland', 'salland.nl'], ['de friesland', 'defriesland.nl'], ['iza', 'iza.nl'], ['onvz', 'onvz.nl']
+  ];
+  function logo(p, maat) {
+    var m = maat || 38;
+    var s = (p.naam + ' ' + p.verz).toLowerCase();
+    for (var i = 0; i < LOGO.length; i++) {
+      if (s.indexOf(LOGO[i][0]) > -1) {
+        return '<img class="zc-logo" alt="' + esc(merk(p)) + '" loading="lazy" width="' + m + '" height="' + m + '" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=128&url=https://' + LOGO[i][1] + '">';
+      }
+    }
+    return '<span class="zc-ini" aria-hidden="true">' + esc(merk(p).slice(0, 3).toUpperCase()) + '</span>';
+  }
+  function via(p) {
+    return p.partner === 'Zorgkiezer' ? 'via Zorgkiezer' : 'rechtstreeks bij ' + esc(p.partner);
+  }
+
+  var telling = {};
+  RUW.forEach(function (p) { lijstKenmerken(p).forEach(function (k) { telling[k] = (telling[k] || 0) + 1; }); });
+  var KENMERKEN = Object.keys(telling).filter(function (k) { return telling[k] > 1; }).sort();
+  (function () {
+    if (!KENMERKEN.length) return;
+    document.getElementById('zc-kenmerken').innerHTML = '<button type="button" class="zc-chip" aria-pressed="true" data-w="">Alle</button>' +
+      KENMERKEN.map(function (k) { return '<button type="button" class="zc-chip" aria-pressed="false" data-w="' + esc(k) + '">' + esc(k) + '</button>'; }).join('');
+    document.getElementById('zc-kenmerkgroep').hidden = false;
+  })();
+
+  // De chipbalk boven de lijst: dezelfde filters, maar dan de paar die mensen
+  // echt gebruiken, zijwaarts schuivend. De rest zit achter "Wijzig".
+  var SNEL = [{ f: 'er', w: '385', t: 'Eigen risico €385' }, { f: 'er', w: '885', t: 'Eigen risico €885' },
+              { f: 'polis', w: 'natura', t: 'Natura' }, { f: 'polis', w: 'combinatie', t: 'Combinatie' },
+              { f: 'polis', w: 'restitutie', t: 'Restitutie' }]
+    .filter(function (s) { return RUW.some(function (p) { return String(s.f === 'er' ? p.er : p.polis) === s.w; }); })
+    .concat(KENMERKEN.slice(0, 4).map(function (k) { return { f: 'kenmerk', w: k, t: hoofd(k) }; }));
+
+  function tekenBalk() {
+    var n = (keuze.er ? 1 : 0) + (keuze.polis ? 1 : 0) + (keuze.kenmerk ? 1 : 0) + (keuze.max ? 1 : 0);
+    document.getElementById('zc-balk').innerHTML =
+      '<button type="button" class="zc-chip zc-filterknop" id="zc-balk-filters">Filters' + (n ? '<b>' + n + '</b>' : '') + '</button>' +
+      SNEL.map(function (s, i) {
+        var aan = String(keuze[s.f] || '') === s.w;
+        return '<button type="button" class="zc-chip" data-snel="' + i + '" aria-pressed="' + (aan ? 'true' : 'false') + '">' + esc(s.t) + '</button>';
+      }).join('');
+  }
+
+  function passend() {
+    return RUW.filter(function (p) {
+      if (keuze.er && p.er !== Number(keuze.er)) return false;
+      if (keuze.polis && p.polis !== keuze.polis) return false;
+      if (keuze.max && p.premie > keuze.max) return false;
+      if (keuze.kenmerk && lijstKenmerken(p).indexOf(keuze.kenmerk) < 0) return false;
+      return true;
+    }).sort(function (a, b) { return waarde(a) - waarde(b) || a.premie - b.premie; });
+  }
+
+  function kaart(p, stand, basis, spreiding, laagstePremie) {
+    var lint = '';
+    if (stand === 0) lint = '<span class="zc-lint">' + (zorg ? 'Laagste totaal' : 'Laagste premie') + '</span>';
+    else if (p === laagstePremie) lint = '<span class="zc-lint zc-donker">Laagste premie</span>';
+
+    var groot = zorg
+      ? '<b>' + euro(Math.round(totaal(p))) + '</b><span>TOTAAL PER JAAR</span>'
+      : '<b>' + euro(Math.floor(p.premie)) + '<sup>,' + String(Math.round((p.premie % 1) * 100)).padStart(2, '0') + '</sup></b><span>PER MAAND</span>';
+
+    var midden;
+    if (nu) {
+      // Vergelijken met wat de bezoeker nu betaalt. Alleen op premie, want
+      // het eigen risico van zijn huidige polis weten wij niet.
+      var scheelt = Math.round(nu * 12 - jaar(p));
+      midden = '<div class="zc-bespaar' + (scheelt < 0 ? ' zc-duurder' : '') + '">' +
+        '<b>' + euro(Math.abs(scheelt)) + '</b>' +
+        '<span>per jaar ' + (scheelt < 0 ? 'duurder' : 'goedkoper') + ' aan premie<br>' +
+        (p.er > 385 ? 'maar met ' + euro(p.er) + ' eigen risico' : 'dan wat je nu betaalt') + '</span></div>';
+    } else {
+      var verschil = Math.round(waarde(p) - waarde(basis));
+      var deel = Math.max(4, Math.min(100, Math.round(verschil / spreiding * 100)));
+      var klasse = deel <= 12 ? '' : (deel <= 50 ? ' zc-mid' : ' zc-hoog');
+      midden = '<div class="zc-vers"><div class="zc-sp' + klasse + '"><i style="width:' + deel + '%"></i></div>' +
+        '<div class="zc-vb' + (verschil === 0 ? ' zc-g' : (deel > 50 ? ' zc-r' : '')) + '">' +
+        (verschil === 0 ? (zorg ? 'laagste totaal' : 'goedkoopste') : euro(verschil) + ' per jaar duurder') + '</div></div>';
+    }
+
+    var feiten = '<span class="zc-feit">Eigen risico <b>' + euro(p.er) + '</b></span>' +
+      '<span class="zc-feit"><b>' + esc(hoofd(p.polis)) + '</b></span>' +
+      '<span class="zc-feit">' + (zorg ? 'Premie <b>' + euro(Math.round(jaar(p))) + '</b> p/j' : 'Per jaar <b>' + euro(Math.round(jaar(p))) + '</b>') + '</span>' +
+      lijstKenmerken(p).slice(0, 2).map(function (k) { return '<span class="zc-feit">' + esc(k) + '</span>'; }).join('');
+
+    return '<div class="zc-kaart' + (stand === 0 ? ' zc-eerste' : '') + '">' + lint +
+      '<div class="zc-hoofd">' + logo(p) +
+      '<div style="min-width:0"><p class="zc-naam">' + esc(p.naam) + '</p><p class="zc-verz">' + esc(p.verz) + '</p></div>' +
+      '<div class="zc-prijs">' + groot + '</div></div>' +
+      midden +
+      '<div class="zc-feiten">' + feiten + '</div>' +
+      '<div class="zc-onder">' +
+      '<a class="zc-knop" href="' + esc(p.url) + '" target="_blank" rel="nofollow sponsored noopener">Bekijk ' + esc(merk(p)) + '</a>' +
+      '<label class="zc-kies"><input type="checkbox" data-kies="' + p.id + '"' + (gekozen.indexOf(p.id) > -1 ? ' checked' : '') + '>Vergelijk</label>' +
+      '</div><p class="zc-via">' + via(p) + '</p></div>';
+  }
+
+  // De grafiek verschijnt alleen als de volgorde door het zorggebruik
+  // omslaat. Dan is er iets uit te leggen; anders is het ruis.
+  function tekenGrafiek(lijst) {
+    var vak = document.getElementById('zc-grafiek');
+    vak.hidden = true;
+    if (!zorg || lijst.length < 2) return;
+    var goedkoopstePremie = lijst.slice().sort(function (a, b) { return a.premie - b.premie; })[0];
+    var q = lijst[0];
+    if (q === goedkoopstePremie) return;
+    var p = goedkoopstePremie;
+    var omslag = jaar(q) + q.er - jaar(p);
+    if (!(omslag > q.er && omslag < p.er)) return;
+
+    var xmax = Math.max(p.er, q.er) + 160;
+    var B = 334, H = 126, L = 4, R = 330, T = 14, O = 108;
+    function X(z) { return L + z / xmax * (R - L); }
+    var laag = Math.min(jaar(p), jaar(q)), hoog = Math.max(jaar(p) + Math.min(xmax, p.er), jaar(q) + Math.min(xmax, q.er));
+    function Y(v) { return O - (v - laag) / (hoog - laag || 1) * (O - T); }
+    function pad(x) {
+      var pts = [[0, jaar(x)], [Math.min(x.er, xmax), jaar(x) + Math.min(x.er, xmax)]];
+      if (x.er < xmax) pts.push([xmax, jaar(x) + x.er]);
+      return pts.map(function (a) { return X(a[0]).toFixed(1) + ',' + Y(a[1]).toFixed(1); }).join(' ');
+    }
+    var xo = X(omslag), yo = Y(jaar(q) + q.er);
+    vak.innerHTML =
+      '<h3>Vanaf ' + euro(Math.round(omslag)) + ' zorgkosten is de duurdere polis goedkoper</h3>' +
+      '<p>De laagste premie is niet altijd de laagste rekening. Gebruik je in een jaar meer dan ' + euro(Math.round(omslag)) +
+      ' aan zorg, dan ben je met het lagere eigen risico van ' + esc(merk(q)) + ' goedkoper uit dan met ' + esc(merk(p)) + '.</p>' +
+      '<svg viewBox="0 0 ' + B + ' ' + H + '" role="img" aria-label="Totale kosten per jaar afgezet tegen je zorgkosten">' +
+      '<line x1="4" y1="' + O + '" x2="330" y2="' + O + '" stroke="#E6EBF2" stroke-width="1.5"/>' +
+      '<line x1="' + xo.toFixed(1) + '" y1="' + T + '" x2="' + xo.toFixed(1) + '" y2="' + O + '" stroke="#0D1B2A" stroke-width="1.2" stroke-dasharray="3 3"/>' +
+      '<polyline points="' + pad(p) + '" fill="none" stroke="#B42318" stroke-width="2.6" stroke-linejoin="round"/>' +
+      '<polyline points="' + pad(q) + '" fill="none" stroke="#10b981" stroke-width="2.6" stroke-linejoin="round"/>' +
+      '<circle cx="' + xo.toFixed(1) + '" cy="' + yo.toFixed(1) + '" r="4.5" fill="#0D1B2A"/>' +
+      '<text x="' + Math.min(xo + 6, 210).toFixed(1) + '" y="' + (T - 2) + '" font-size="11" font-weight="800" fill="#0D1B2A">' + euro(Math.round(omslag)) + ' zorgkosten</text>' +
+      '<text x="4" y="122" font-size="10" font-weight="700" fill="#9AA6B4">€0 zorgkosten</text>' +
+      '<text x="330" y="122" text-anchor="end" font-size="10" font-weight="700" fill="#9AA6B4">' + euro(xmax) + '</text>' +
+      '</svg>' +
+      '<div class="zc-leg"><span><i style="background:#10b981"></i>' + esc(q.naam) + ', eigen risico ' + euro(q.er) + '</span>' +
+      '<span><i style="background:#B42318"></i>' + esc(p.naam) + ', ' + euro(p.er) + '</span></div>';
+    vak.hidden = false;
+  }
+
+  function tekenSamen(lijst) {
+    var d = [];
+    d.push(keuze.er ? 'Eigen risico <b>' + euro(keuze.er) + '</b>' : 'Alle eigen risico’s');
+    d.push(keuze.polis ? '<b>' + esc(hoofd(keuze.polis)) + '</b>' : 'alle polissoorten');
+    if (keuze.kenmerk) d.push('<b>' + esc(keuze.kenmerk) + '</b>');
+    d.push('<b>' + lijst.length + ' ' + (lijst.length === 1 ? 'polis' : 'polissen') + '</b>');
+    document.getElementById('zc-samen-t').innerHTML = d.join(' · ');
+    document.getElementById('zc-paneel-n').textContent = lijst.length;
+  }
+
+  function teken() {
+    var lijst = passend();
+    document.getElementById('zc-aantal').textContent = lijst.length;
+    document.getElementById('zc-aantalwoord').textContent = lijst.length === 1 ? 'polis' : 'polissen';
+    document.getElementById('zc-sortwoord').textContent = (zorg && !nu) ? 'op totaal per jaar' : 'op premie';
+    document.getElementById('zc-wis').hidden = !(keuze.er || keuze.polis || keuze.kenmerk || keuze.max);
+    tekenBalk();
+    tekenSamen(lijst);
+    tekenGrafiek(lijst);
+
+    var vak = document.getElementById('zc-lijst');
+    if (!lijst.length) {
+      vak.innerHTML = '<p class="zc-leeg">Geen polis met deze combinatie. Zet een filter uit, of bekijk het volledige aanbod hieronder.</p>';
+      return;
+    }
+    var basis = lijst[0];
+    var spreiding = (waarde(lijst[lijst.length - 1]) - waarde(basis)) || 1;
+    var laagstePremie = lijst.slice().sort(function (a, b) { return a.premie - b.premie; })[0];
+    var tonen = allesTonen ? lijst : lijst.slice(0, EERST);
+    vak.innerHTML = tonen.map(function (p, i) { return kaart(p, i, basis, spreiding, laagstePremie); }).join('') +
+      (lijst.length > tonen.length ? '<button type="button" class="zc-meer" id="zc-meer">Toon alle ' + lijst.length + ' polissen</button>' : '');
+    var meer = document.getElementById('zc-meer');
+    if (meer) meer.addEventListener('click', function () { allesTonen = true; teken(); });
+  }
+
+  // ---- Vergelijken ---------------------------------------------------------
+  function vindP(id) { for (var i = 0; i < RUW.length; i++) if (RUW[i].id === id) return RUW[i]; return null; }
+  // De cookiebalk hangt op de telefoon onderaan en ligt precies over deze
+  // balk heen. Zolang die er staat schuiven wij onze balk erboven.
+  function wijkVoorCookiebalk(dok) {
+    var ck = document.querySelector('#Avada-CookiesBar, #shopify-pc__banner, .cookie-banner');
+    var h = 0;
+    if (ck && ck.offsetParent !== null) {
+      var r = ck.getBoundingClientRect();
+      if (r.height && r.bottom > window.innerHeight - 8) h = Math.round(r.height);
+    }
+    dok.style.bottom = h ? h + 'px' : '';
+  }
+  function tekenDok() {
+    var dok = document.getElementById('zc-dok');
+    var go = document.getElementById('zc-dok-go');
+    wijkVoorCookiebalk(dok);
+    dok.classList.toggle('zc-op', gekozen.length > 0);
+    go.disabled = gekozen.length !== 2;
+    var namen = gekozen.map(function (id) { return merk(vindP(id)); }).join(' en ');
+    document.getElementById('zc-dok-t').innerHTML = gekozen.length === 2
+      ? '<b>' + esc(namen) + '</b>Klaar om naast elkaar te zetten'
+      : '<b>' + esc(namen) + '</b>Kies er nog &eacute;&eacute;n om te vergelijken';
+  }
+  function regel(label, a, b, beter, zwaar) {
+    // beter: 'laag' = het laagste bedrag wint, 'geen' = niet te wegen
+    var ka = '', kb = '';
+    if (beter === 'laag' && a.w !== b.w) { ka = a.w < b.w ? ' zc-g' : ' zc-s'; kb = b.w < a.w ? ' zc-g' : ' zc-s'; }
+    if (beter === 'hoog' && a.w !== b.w) { ka = a.w > b.w ? ' zc-g' : ' zc-s'; kb = b.w > a.w ? ' zc-g' : ' zc-s'; }
+    return '<div class="zc-vr' + (zwaar ? ' zc-zwaar' : '') + '"><div class="zc-lb">' + label + '</div>' +
+      '<div class="' + ka.trim() + '">' + a.t + '</div><div class="' + kb.trim() + '">' + b.t + '</div></div>';
+  }
+  function toonVergelijking() {
+    if (gekozen.length !== 2) return;
+    var a = vindP(gekozen[0]), b = vindP(gekozen[1]);
+    if (jaar(b) < jaar(a)) { var t = a; a = b; b = t; }
+    var ka = lijstKenmerken(a), kb = lijstKenmerken(b);
+    var alle = ka.concat(kb.filter(function (k) { return ka.indexOf(k) < 0; }));
+    var volA = Math.round(jaar(a) + a.er), volB = Math.round(jaar(b) + b.er);
+    var scheelt = Math.round(jaar(b) - jaar(a));
+    // a heeft de laagste premie. Wint a ook op het totaal, dan is er een
+    // winnaar en mag die groen. Draait het om zodra je zorg gebruikt, dan
+    // zetten wij geen van beide als winnaar neer en leggen wij het uit.
+    var winA = volA <= volB, winB = false;
+
+    var html = '<div class="zc-over-k"><h3 id="zc-over-kop">Naast elkaar</h3>' +
+      '<button type="button" class="zc-over-x" id="zc-over-x" aria-label="Sluiten">&times;</button></div>' +
+      // Let op de &nbsp;: het thema verbergt lege divs met div:empty, en dan
+      // schuift de hele kop een kolom op.
+      '<div class="zc-vt"><div class="zc-vt-h"><div>&nbsp;</div>' +
+      '<div' + (winA ? ' class="zc-win"' : '') + '>' + logo(a) + '<b>' + esc(a.naam) + '</b><i>' + esc(a.verz) + '</i></div>' +
+      '<div' + (winB ? ' class="zc-win"' : '') + '>' + logo(b) + '<b>' + esc(b.naam) + '</b><i>' + esc(b.verz) + '</i></div></div>' +
+      regel('Premie per maand', { w: a.premie, t: euro(a.premie, true) }, { w: b.premie, t: euro(b.premie, true) }, 'laag') +
+      regel('Premie per jaar', { w: jaar(a), t: euro(Math.round(jaar(a))) }, { w: jaar(b), t: euro(Math.round(jaar(b))) }, 'laag') +
+      regel('Eigen risico', { w: a.er, t: euro(a.er) }, { w: b.er, t: euro(b.er) }, 'laag') +
+      regel('Totaal per jaar<br><span style="font-weight:600">eigen risico vol op</span>', { w: volA, t: euro(volA) }, { w: volB, t: euro(volB) }, 'laag', true) +
+      regel('Soort polis', { w: a.polis, t: esc(hoofd(a.polis)) }, { w: b.polis, t: esc(hoofd(b.polis)) }, 'geen') +
+      alle.map(function (k) {
+        return regel(esc(hoofd(k)),
+          { w: ka.indexOf(k) > -1 ? 1 : 0, t: ka.indexOf(k) > -1 ? 'Ja' : '–' },
+          { w: kb.indexOf(k) > -1 ? 1 : 0, t: kb.indexOf(k) > -1 ? 'Ja' : '–' }, 'hoog');
+      }).join('') +
+      regel('Afsluiten', { w: 0, t: via(a).replace('via ', '') }, { w: 0, t: via(b).replace('via ', '') }, 'geen') +
+      '</div>' +
+      '<div class="zc-slot">' + (scheelt === 0
+        ? '<b>De premie is gelijk.</b> Het verschil zit in het soort polis en de kenmerken hierboven.'
+        : '<b>' + esc(a.naam) + ' is ' + euro(Math.abs(scheelt)) + ' per jaar goedkoper aan premie.</b> ' +
+          (winA
+            ? 'Ook als je eigen risico volledig opgaat blijft die goedkoper. '
+            : esc(b.naam) + ' heeft wel een lager eigen risico. Gebruik je zorg, dan draait het om: gaat je eigen risico volledig op, dan ben je bij ' + esc(b.naam) + ' juist ' + euro(volA - volB) + ' per jaar goedkoper uit. ') +
+          'De zorg in de basisverzekering is bij allebei hetzelfde; dat is bij wet geregeld. Het verschil zit in het soort polis, de vergoeding bij zorgverleners zonder contract en de kenmerken hierboven.') +
+      '</div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:12px">' +
+      '<a class="zc-knop" href="' + esc(a.url) + '" target="_blank" rel="nofollow sponsored noopener">Bekijk ' + esc(merk(a)) + '</a>' +
+      '<a class="zc-knop" href="' + esc(b.url) + '" target="_blank" rel="nofollow sponsored noopener">Bekijk ' + esc(merk(b)) + '</a></div>';
+
+    var over = document.getElementById('zc-over');
+    document.getElementById('zc-over-in').innerHTML = html;
+    over.hidden = false;
+    // De zwevende balk hoort niet over de vergelijking heen te liggen.
+    document.getElementById('zc-dok').classList.remove('zc-op');
+    document.body.style.overflow = 'hidden';
+    document.getElementById('zc-over-x').addEventListener('click', sluitVergelijking);
+  }
+  function sluitVergelijking() {
+    var over = document.getElementById('zc-over');
+    if (over.hidden) return;
+    over.hidden = true;
+    document.body.style.overflow = '';
+    tekenDok();
+  }
+  document.getElementById('zc-over').addEventListener('click', function (e) { if (e.target.id === 'zc-over') sluitVergelijking(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') sluitVergelijking(); });
+  document.getElementById('zc-dok-go').addEventListener('click', toonVergelijking);
+  document.getElementById('zc-dok-leeg').addEventListener('click', function () { gekozen = []; tekenDok(); teken(); });
+  document.getElementById('zc-lijst').addEventListener('change', function (e) {
+    var k = e.target.closest ? e.target.closest('input[data-kies]') : null;
+    if (!k) return;
+    var id = k.getAttribute('data-kies');
+    if (k.checked) {
+      if (gekozen.length >= 2) { gekozen.shift(); }
+      if (gekozen.indexOf(id) < 0) gekozen.push(id);
+    } else {
+      gekozen = gekozen.filter(function (x) { return x !== id; });
+    }
+    tekenDok();
+    teken();
+  });
+
+  // ---- Filters -------------------------------------------------------------
+  function zetChips() {
+    wortel.querySelectorAll('.zc-chips').forEach(function (groep) {
+      var f = groep.getAttribute('data-filter');
+      groep.querySelectorAll('.zc-chip').forEach(function (k) {
+        k.setAttribute('aria-pressed', (k.getAttribute('data-w') || '') === String(keuze[f] || '') ? 'true' : 'false');
+      });
+    });
+    var schuif = document.getElementById('zc-max');
+    schuif.value = keuze.max || 200;
+    document.getElementById('zc-maxlabel').textContent = keuze.max ? euro(keuze.max) : 'geen maximum';
+  }
+  function zet(nieuw, scroll) {
+    keuze = { er: nieuw.er || '', polis: nieuw.polis || '', kenmerk: nieuw.kenmerk || '', max: 0 };
+    allesTonen = false;
+    zetChips();
+    teken();
+    if (scroll) document.getElementById('zc-lijstblok').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+  function paneel(open) {
+    document.getElementById('zc-paneel').hidden = !open;
+    document.getElementById('zc-wijzig').setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  document.getElementById('zc-wijzig').addEventListener('click', function () {
+    paneel(document.getElementById('zc-paneel').hidden);
+  });
+  document.getElementById('zc-paneel-sluit').addEventListener('click', function () { paneel(false); });
+  document.getElementById('zc-balk').addEventListener('click', function (e) {
+    var knop = e.target.closest('.zc-chip');
+    if (!knop) return;
+    if (knop.id === 'zc-balk-filters') { paneel(document.getElementById('zc-paneel').hidden); return; }
+    var s = SNEL[Number(knop.getAttribute('data-snel'))];
+    if (!s) return;
+    keuze[s.f] = String(keuze[s.f] || '') === s.w ? '' : s.w;
+    allesTonen = false;
+    zetChips();
+    teken();
+  });
+  wortel.querySelectorAll('.zc-chips').forEach(function (groep) {
+    groep.addEventListener('click', function (e) {
+      var knop = e.target.closest('.zc-chip');
+      if (!knop) return;
+      keuze[groep.getAttribute('data-filter')] = knop.getAttribute('data-w') || '';
+      allesTonen = false;
+      zetChips();
+      teken();
+    });
+  });
+  var schuif = document.getElementById('zc-max');
+  schuif.addEventListener('input', function () {
+    var v = Number(schuif.value);
+    keuze.max = v >= 200 ? 0 : v;
+    document.getElementById('zc-maxlabel').textContent = keuze.max ? euro(keuze.max) : 'geen maximum';
+    teken();
+  });
+  document.getElementById('zc-wis').addEventListener('click', function () { zet({}, false); });
+  wortel.querySelectorAll('a[data-polis]').forEach(function (a) {
+    a.addEventListener('click', function (e) { e.preventDefault(); zet({ polis: a.getAttribute('data-polis') }, true); });
+  });
+  document.getElementById('zc-uitlegknop').addEventListener('click', function () {
+    var u = document.getElementById('zc-uitleg');
+    u.hidden = !u.hidden;
+    this.setAttribute('aria-expanded', u.hidden ? 'false' : 'true');
+  });
+
+  // ---- Zorggebruik ---------------------------------------------------------
+  document.getElementById('zc-sw').addEventListener('click', function (e) {
+    var knop = e.target.closest('button[data-z]');
+    if (!knop) return;
+    zorg = Number(knop.getAttribute('data-z'));
+    this.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', b === knop ? 'true' : 'false'); });
+    allesTonen = false;
+    teken();
+  });
+
+  // ---- Jouw huidige premie -------------------------------------------------
+  var SL = 'zc-nu-premie';
+  function zetNu(v) {
+    nu = v;
+    var vak = document.getElementById('zc-nu');
+    var tekst = document.getElementById('zc-nu-t');
+    document.getElementById('zc-nu-wis').hidden = !v;
+    if (v) {
+      vak.classList.add('zc-aan');
+      tekst.innerHTML = '<b>Je betaalt nu ' + euro(v, true) + ' per maand</b>Dat is ' + euro(Math.round(v * 12)) + ' per jaar. Elke polis hieronder laat zien wat je bespaart.';
+      document.getElementById('zc-nu-f').hidden = true;
+    } else {
+      vak.classList.remove('zc-aan');
+      tekst.innerHTML = '<b>Wat betaal jij nu?</b>Vul je huidige premie in, dan zie je per polis wat je bespaart.';
+      document.getElementById('zc-nu-f').hidden = false;
+      document.getElementById('zc-nu-veld').value = '';
+    }
+    allesTonen = false;
+    teken();
+  }
+  document.getElementById('zc-nu-f').addEventListener('submit', function (e) {
+    e.preventDefault();
+    var v = Number(String(document.getElementById('zc-nu-veld').value || '').replace(',', '.').replace(/[^0-9.]/g, ''));
+    if (!(v >= 50 && v <= 400)) { document.getElementById('zc-nu-veld').focus(); return; }
+    try { localStorage.setItem(SL, String(v)); } catch (err) {}
+    zetNu(v);
+  });
+  document.getElementById('zc-nu-wis').addEventListener('click', function () {
+    try { localStorage.removeItem(SL); } catch (err) {}
+    zetNu(null);
+  });
+  try {
+    var bewaard = Number(localStorage.getItem(SL));
+    if (bewaard >= 50 && bewaard <= 400) zetNu(bewaard);
+  } catch (err) {}
+
+  // ---- Aanmeldblok 2027 ----------------------------------------------------
+  var form = document.getElementById('zc-ab-f');
+  if (form) {
+    var veld = document.getElementById('zc-ab-mail');
+    var knop = document.getElementById('zc-ab-knop');
+    var uit = document.getElementById('zc-ab-uit');
+    var zeg = function (t, goed) { uit.textContent = t; uit.style.color = goed ? '#0b7d5c' : '#b42318'; uit.hidden = false; };
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var adres = (veld.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) { zeg('Vul een geldig e-mailadres in.', false); veld.focus(); return; }
+      knop.disabled = true; var oud = knop.textContent; knop.textContent = 'Bezig…';
+      fetch({{ section.settings.ab_api | json }}, { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: adres, lijst: {{ section.settings.ab_lijst | json }}, bron: 'zorgvergelijker' }) })
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          if (res && res.ok) { zeg('Gelukt. Je hoort van ons zodra de premies van 2027 bekend zijn.', true); veld.value = ''; }
+          else zeg('Er ging iets mis. Probeer het later nog eens.', false);
+        })
+        .catch(function () { zeg('Er ging iets mis. Probeer het later nog eens.', false); })
+        .then(function () { knop.disabled = false; knop.textContent = oud; });
+    });
+    veld.addEventListener('input', function () { uit.hidden = true; });
+  }
+
+  // ---- Oude pagina-inhoud opruimen ----------------------------------------
+  function ruimOp() {
+    var sectie = document.getElementById('shopify-section-{{ section.id }}');
+    if (!sectie) return;
+    var n = sectie.nextElementSibling;
+    var oud = n && n.querySelector('.rte .zv');
+    if (!oud) return;
+    var weg = false;
+    Array.prototype.slice.call(oud.children).forEach(function (el) {
+      var kop = el.tagName === 'H2' ? el.textContent.trim().toLowerCase() : '';
+      if (kop.indexOf('wat een basisverzekering nu kost') === 0) weg = true;
+      else if (kop.indexOf('waar het verschil') === 0) weg = false;
+      if (weg || el.classList.contains('zv-let')) el.parentNode.removeChild(el);
+    });
+    var h1 = n.querySelector('.main-page-title');
+    if (h1) h1.parentNode.removeChild(h1);
+    var p1 = oud.firstElementChild;
+    if (p1 && p1.tagName === 'P' && /vergelijk zorgverzekeringen op premie/i.test(p1.textContent)) p1.parentNode.removeChild(p1);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ruimOp); else ruimOp();
+
+  teken();
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Zorgvergelijker",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "hero_kop", "label": "Kop (h1)", "default": "Zorgverzekering vergelijken 2027" },
+    { "type": "textarea", "id": "hero_sub", "label": "Tekst onder de kop", "default": "Alle premies naast elkaar, gesorteerd op prijs. Nu nog die van 2026; de premies van 2027 komen uiterlijk 12 november." },
+
+    { "type": "header", "content": "Vergelijker" },
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Wat een basisverzekering nu kost" },
+    { "type": "text", "id": "sub", "label": "Subkop", "default": "Premies van 2026. Kies zelf op eigen risico, soort polis en prijs. Wij sorteren op premie en geven geen advies." },
+
+    { "type": "header", "content": "Aanmeldblok" },
+    { "type": "checkbox", "id": "ab_aan", "label": "Tonen", "default": true },
+    { "type": "text", "id": "ab_kop", "label": "Kop", "default": "De premies van 2027 komen uiterlijk 12 november" },
+    { "type": "text", "id": "ab_tekst", "label": "Tekst", "default": "Wij mailen je zodra ze er zijn, met de laagste premie van 2027. Hooguit drie berichten, afmelden kan altijd." },
+    { "type": "text", "id": "ab_knop", "label": "Knop", "default": "Seintje" },
+    { "type": "text", "id": "ab_lijst", "label": "Lijst", "default": "zorgpremies-2027" },
+    { "type": "text", "id": "ab_api", "label": "Aanmeld-API", "default": "https://mijn.deprijsvergelijker.com/api/mc/aanmelden" },
+
+    { "type": "header", "content": "Polissen" },
+    { "type": "textarea", "id": "polissen", "label": "Polissen",
+      "info": "Eén regel per polis: naam|verzekeraar|premie|eigen risico|polis|kenmerken|partner|url. Polis is natura, restitutie of combinatie. Kenmerken scheiden met een puntkomma.",
+      "default": "FBTO Basis|FBTO|148.75|385|natura|zelf modules kiezen|FBTO|https://www.fbto.nl/zorgverzekering" },
+    { "type": "text", "id": "alles_tekst", "label": "Knop onderaan", "default": "Alle 65 basisverzekeringen bij Zorgkiezer" },
+    { "type": "text", "id": "alles_url", "label": "Link onderaan", "default": "https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8601%26awinaffid%3D1528789%26clickref%3Dzorg-alles%26ued%3Dhttps%253A%252F%252Fwww.zorgkiezer.nl%252Fzorgverzekering%252Fvergelijken&cat=zorg&p=Zorgkiezer" },
+    { "type": "text", "id": "alles2_tekst", "label": "Tweede knop onderaan", "default": "Of vergelijk alle zorgverzekeringen bij Poliswijzer" },
+    { "type": "text", "id": "alles2_url", "label": "Link tweede knop", "default": "https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fawclick.php%3Fgid%3D503119%26mid%3D107738%26awinaffid%3D1528789%26linkid%3D3777735%26clickref%3Dzorg-poliswijzer&cat=zorg&p=Poliswijzer" },
+    { "type": "textarea", "id": "fijn", "label": "Kleine letters", "default": "Wij tonen een selectie die de bandbreedte laat zien, geen volledige vergelijking: er zijn ongeveer 65 basisverzekeringen. Wij vragen geen leeftijd, inkomen of gezondheidsgegevens en geven niets over jou door aan verzekeraars. Controleer het bedrag altijd bij de verzekeraar zelf voordat je afsluit. Klik je door en sluit je iets af, dan ontvangen wij een vergoeding. Jij betaalt hetzelfde." },
+
+    { "type": "header", "content": "Veelgestelde vragen" },
+    { "type": "text", "id": "v1", "label": "Vraag 1", "default": "Wanneer zijn de zorgpremies van 2027 bekend?" },
+    { "type": "richtext", "id": "a1", "label": "Antwoord 1", "default": "<p>Zorgverzekeraars moeten hun premies voor 2027 uiterlijk 12 november 2026 bekendmaken. Vaak gebeurt dat vlak voor middernacht. Tot die tijd vergelijk je de premies van 2026.</p>" },
+    { "type": "text", "id": "v2", "label": "Vraag 2", "default": "Tot wanneer kan ik overstappen?" },
+    { "type": "richtext", "id": "a2", "label": "Antwoord 2", "default": "<p>Sluit je nieuwe verzekering af vóór 1 januari. Je nieuwe verzekeraar zegt je oude verzekering dan voor je op. Heb je zelf al opgezegd vóór 1 januari, dan heb je tot 1 februari om een nieuwe af te sluiten; die gaat met terugwerkende kracht in per 1 januari.</p>" },
+    { "type": "text", "id": "v3", "label": "Vraag 3", "default": "Is de basisverzekering bij elke verzekeraar hetzelfde?" },
+    { "type": "richtext", "id": "a3", "label": "Antwoord 3", "default": "<p>Ja, wat er in de basisverzekering zit bepaalt de overheid. Het verschil zit in de premie, het soort polis (natura, restitutie of combinatie), de vergoeding bij zorgverleners zonder contract en de service.</p>" },
+    { "type": "text", "id": "v4", "label": "Vraag 4", "default": "Mag een verzekeraar mij weigeren?" },
+    { "type": "richtext", "id": "a4", "label": "Antwoord 4", "default": "<p>Voor de basisverzekering niet. Verzekeraars moeten iedereen accepteren, zonder gezondheidsverklaring. Voor een aanvullende verzekering mag dat wel.</p>" },
+    { "type": "text", "id": "v5", "label": "Vraag 5", "default": "Moet ik mijn kinderen apart verzekeren?" },
+    { "type": "richtext", "id": "a5", "label": "Antwoord 5", "default": "<p>Kinderen tot 18 jaar zijn gratis verzekerd voor de basisverzekering, via een van de ouders. Je moet ze wel aanmelden bij je verzekeraar.</p>" },
+    { "type": "text", "id": "v6", "label": "Vraag 6", "default": "Wat is het verplicht eigen risico in 2027?" },
+    { "type": "richtext", "id": "a6", "label": "Antwoord 6", "default": "<p>In 2026 is het verplicht eigen risico €385. In 2027 wordt het €400, en dat staat vast. Dat bedrag volgt een wettelijke indexatie met de geraamde zorguitgaven; daar stemt de Kamer niet apart over. De eerder aangekondigde sprong naar €455 was wel een politieke keuze, en die is uitgesteld naar 2028. Je kunt je eigen risico vrijwillig met maximaal €500 verhogen; dan betaal je minder premie, maar meer als je zorg nodig hebt. Huisarts, verloskundige zorg en zorg voor kinderen tellen niet mee. <a href=\"/blogs/advies/eigen-risico-2027-400-euro\">Meer over het eigen risico in 2027</a>.</p>" },
+    { "type": "text", "id": "v7", "label": "Vraag 7", "default": "Verdienen jullie aan mijn keuze?" },
+    { "type": "richtext", "id": "a7", "label": "Antwoord 7", "default": "<p>Klik je door en sluit je een verzekering af, dan krijgen wij een vergoeding van de verzekeraar of van Zorgkiezer. Jij betaalt daardoor niets meer. De volgorde op deze pagina is altijd de prijs, van laag naar hoog.</p>" },
+    { "type": "text", "id": "v8", "label": "Vraag 8" },
+    { "type": "richtext", "id": "a8", "label": "Antwoord 8" }
+  ],
+  "presets": [ { "name": "Zorgvergelijker" } ]
+}
+{% endschema %}

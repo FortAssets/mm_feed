@@ -1,0 +1,975 @@
+{%- liquid
+  assign s = section.settings
+  assign worker = s.worker_url | default: 'https://awin.business-347.workers.dev'
+  assign shopw = s.shop_url | default: 'https://shop.deprijsvergelijker.com'
+  assign mailw = s.mail_url | default: 'https://dpv-boodschappen.business-347.workers.dev'
+-%}
+{%- comment -%}
+  Homepage "kaartjes" (ontwerp varH, 6 okt). Eén sectie met alle blokken tussen
+  kop en voet: hero, feiten, categorieën, zorgverzekering 2027, per winkel
+  vergeleken, gaming, actueel en "zo werkt het".
+
+  De HTML hieronder is een beginstand met de prijzen van de dag waarop dit
+  bestand is gemaakt. Het script onderaan haalt daarna de prijzen van nu op en
+  zet ze erin. Lukt dat niet, dan blijft de beginstand staan en gaan de knoppen
+  naar de vergelijker of de productpagina in plaats van naar de aanbieder.
+
+  Alle opmaak staat achter .dhd. Het voorvoegsel html:not(#x) is er omdat de
+  huisstijllaag (assets/dpv-skin.css) anders haar eigen letter over de koppen
+  en knoppen legt.
+{%- endcomment -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+ "@context": "https://schema.org",
+ "@graph": [
+  {
+   "@type": "Organization",
+   "name": "DePrijsvergelijker",
+   "url": "{{ shop.url }}/",
+   "logo": "https:{{ 'pv-favicon.svg' | asset_url }}"
+  },
+  {
+   "@type": "WebSite",
+   "name": "DePrijsvergelijker",
+   "alternateName": "deprijsvergelijker.com",
+   "url": "{{ shop.url }}/"
+  }
+ ]
+}
+</script>
+<style>
+html:not(#x) .dhd{--bg:#FFFFFF; --wit:#FFFFFF; --inkt:#0D1B2A; --zacht:#4A5A70; --lijn:#D9DEE8; --groen:#3FAE7A; --geel:#F9C31F; --blauw:#2456D6; --mint:#CDEFE0; --lavendel:#E4DDFB; --lucht:#D6E8FF; --boter:#FFF0B3; --koraal:#FFD9D2; --perzik:#FFE1EC; --kop:"Bricolage Grotesque", "Instrument Sans", sans-serif; --body:"Instrument Sans", system-ui, sans-serif; --rand:1.5px solid var(--inkt); --rk:14px; --w:1200px;}
+html:not(#x) .dhd,html:not(#x) .dhd *,html:not(#x) .dhd *::before,html:not(#x) .dhd *::after{box-sizing:border-box}html:not(#x) .dhd *{margin:0;padding:0}
+html:not(#x) .dhd{background:var(--bg);color:var(--inkt);font-family:var(--body);font-size:16px;line-height:1.5;overflow-x:clip}
+html:not(#x) .dhd img{display:block;max-width:100%}
+html:not(#x) .dhd a{color:inherit;text-decoration:none}
+html:not(#x) .dhd button,html:not(#x) .dhd input{font:inherit;color:inherit}
+html:not(#x) .dhd h1,html:not(#x) .dhd h2,html:not(#x) .dhd h3,html:not(#x) .dhd .prijs{font-family:var(--kop);font-weight:800;letter-spacing:-0.04em;font-variation-settings:"opsz" 96}
+html:not(#x) .dhd h2{font-size:32px;line-height:1.05}
+html:not(#x) .dhd h3{font-size:20px;letter-spacing:-0.02em;line-height:1.2}
+html:not(#x) .dhd .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html:not(#x) .dhd .wrap{max-width:var(--w);margin:0 auto;padding:0 24px}
+html:not(#x) .dhd :focus-visible{outline:3px solid var(--blauw);outline-offset:3px}
+html:not(#x) .dhd .knop{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:10px;border:var(--rand);background:var(--geel);color:var(--inkt);font-weight:600;font-size:15px;line-height:1;box-shadow:3px 3px 0 var(--inkt);transition:transform .12s ease,box-shadow .12s ease;white-space:nowrap;cursor:pointer}
+html:not(#x) .dhd .knop:hover{transform:translate(3px,3px);box-shadow:0 0 0 var(--inkt)}
+html:not(#x) .dhd .knop.klein{min-height:40px;padding:0 14px;font-size:14px}
+html:not(#x) .dhd .knop-inkt{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border-radius:10px;border:var(--rand);background:var(--inkt);color:#fff;font-weight:600;font-size:15px;cursor:pointer}
+html:not(#x) .dhd .knop-inkt:hover{background:#1D3A6B}
+html:not(#x) .dhd .tl{color:var(--blauw);font-weight:600}
+html:not(#x) .dhd .tl:hover{text-decoration:underline}
+html:not(#x) .dhd .tl::after{content:" \203A"}
+html:not(#x) .dhd .kaartje{position:relative}
+html:not(#x) .dhd .kaartje .vlak,html:not(#x) .dhd .kaartje .label{clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,0 100%);border-radius:var(--rk) 0 var(--rk) var(--rk)}
+html:not(#x) .dhd .kaartje .vlak{position:absolute;inset:0;transform:translate(10px,10px);background:var(--vlak,var(--groen))}
+html:not(#x) .dhd .kaartje .label{position:relative;background:var(--wit);border:var(--rand)}
+html:not(#x) .dhd .kaartje .label::after{content:"";position:absolute;left:calc(100% - 22.75px);top:-0.75px;width:33px;height:2.2px;background:var(--inkt);transform-origin:0 0;transform:rotate(45deg)}
+html:not(#x) .dhd .hero{padding:56px 0 48px}
+html:not(#x) .dhd .hero .wrap{display:grid;grid-template-columns:minmax(0,1fr) 500px;grid-template-areas:"tekst cluster" "onder cluster";grid-template-rows:auto 1fr;gap:0 36px;align-items:start}
+html:not(#x) .dhd .hero-tekst{grid-area:tekst}
+html:not(#x) .dhd .hero-onder{grid-area:onder}
+html:not(#x) .dhd .cluster{grid-area:cluster}
+html:not(#x) .dhd .hero h1{font-size:57px;line-height:1;white-space:nowrap;margin-top:28px}
+html:not(#x) .dhd .hero .sub{font-size:19px;color:var(--zacht);margin-top:18px;max-width:34ch}
+html:not(#x) .dhd .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px;list-style:none}
+html:not(#x) .dhd .chips a{display:inline-flex;align-items:center;min-height:44px;padding:0 16px;border-radius:999px;border:var(--rand);background:var(--wit);font-weight:600;font-size:14px}
+html:not(#x) .dhd .chips a:hover{background:#EEF1F7}
+html:not(#x) .dhd .chips .actief a{background:var(--inkt);color:#fff}
+html:not(#x) .dhd .hero-onder{margin-top:40px;font-size:14px;color:var(--zacht);display:flex;flex-direction:column;gap:6px}
+html:not(#x) .dhd .hero-onder a{color:var(--inkt);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+html:not(#x) .dhd .cluster{position:relative;padding:62px 14px 0 4px}
+html:not(#x) .dhd .touw{position:absolute;left:22px;top:0;width:24px;height:88px;overflow:visible}
+html:not(#x) .dhd .hang{position:relative;z-index:2;transform-origin:30px 30px;transform:rotate(3deg)}
+html:not(#x) .dhd .groot .label{padding:28px 30px 30px 32px}
+html:not(#x) .dhd .groot .label .gat{position:absolute;left:22px;top:22px;width:16px;height:16px;border-radius:50%;background:var(--groen);border:var(--rand)}
+html:not(#x) .dhd .winnaar{display:flex;align-items:center;gap:10px;padding-left:22px;font-size:14px;color:var(--zacht);font-weight:500}
+html:not(#x) .dhd .nr{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;background:var(--groen);border:var(--rand);font-family:var(--kop);font-weight:800;font-size:14px;color:var(--inkt);letter-spacing:0}
+html:not(#x) .dhd .nr.open{background:var(--wit)}
+html:not(#x) .dhd .aanb{font-weight:700;color:var(--inkt)}
+html:not(#x) .dhd .groot .prijsrij{display:flex;align-items:baseline;gap:14px;margin-top:10px}
+html:not(#x) .dhd .groot .prijs{font-size:120px;line-height:.9;letter-spacing:-0.05em}
+html:not(#x) .dhd .groot .pm{font-size:18px;color:var(--zacht);font-weight:500}
+html:not(#x) .dhd .groot .bundel{margin-top:14px;font-size:17px;color:var(--inkt);font-weight:500}
+html:not(#x) .dhd .groot .knop{margin-top:22px}
+html:not(#x) .dhd .minis{position:relative;z-index:1;display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:-16px 0 0 26px;align-items:start}
+html:not(#x) .dhd .mini .label{padding:28px 18px 18px}
+html:not(#x) .dhd .mini:nth-child(1){transform:rotate(-1deg)}
+html:not(#x) .dhd .mini:nth-child(2){transform:rotate(1.2deg);margin-top:26px}
+html:not(#x) .dhd .mini .top{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--zacht)}
+html:not(#x) .dhd .mini .prijs{font-size:40px;line-height:1;margin-top:8px}
+html:not(#x) .dhd .mini .prijs small{font-family:var(--body);font-weight:500;font-size:14px;letter-spacing:0;color:var(--zacht);margin-left:4px}
+html:not(#x) .dhd .mini .bundel{font-size:13px;color:var(--zacht);margin-top:4px}
+html:not(#x) .dhd .mini .knop{margin-top:12px}
+@keyframes dhd-zwaai{0%{transform:rotate(-9deg)} 34%{transform:rotate(7deg)} 62%{transform:rotate(1.2deg)} 82%{transform:rotate(3.8deg)} 100%{transform:rotate(3deg)}}
+@keyframes dhd-schuif{from{transform:translateY(-70px);opacity:0} to{transform:translateY(0);opacity:1}}
+html:not(#x) .dhd .hang{animation:dhd-zwaai 1s cubic-bezier(.3,.6,.3,1) both}
+html:not(#x) .dhd .minis{animation:dhd-schuif .55s cubic-bezier(.2,.7,.2,1) .2s both}
+@media (prefers-reduced-motion:reduce){html:not(#x) .dhd .hang,html:not(#x) .dhd .minis{animation:none}}
+html:not(#x) .dhd section{padding:56px 0}
+html:not(#x) .dhd .kopregel{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+html:not(#x) .dhd .kopregel p{color:var(--zacht);font-size:16px}
+html:not(#x) .dhd .datum{font-size:14px;color:var(--zacht);margin-top:24px}
+html:not(#x) .dhd .vertrouwen{padding:0 0 48px}
+html:not(#x) .dhd .blogs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:30px;list-style:none}
+html:not(#x) .dhd .blogs a{display:block;background:#fff;border:var(--rand);border-radius:14px;overflow:hidden;box-shadow:10px 10px 0 0 #F9C31F;color:var(--inkt);text-decoration:none}
+html:not(#x) .dhd .blogs a:hover h3{text-decoration:underline}
+html:not(#x) .dhd .blogs img{display:block;aspect-ratio:16/9;width:100%;height:auto;object-fit:cover;border-bottom:var(--rand)}
+html:not(#x) .dhd .blogs .tekst{padding:14px 16px 18px}
+html:not(#x) .dhd .blogs .rubriek{font-size:13px;color:var(--zacht);font-weight:600}
+html:not(#x) .dhd .blogs h3{font-family:var(--kop,inherit);font-size:19px;line-height:1.2;margin-top:4px;letter-spacing:-.02em}
+html:not(#x) .dhd .blogs li:nth-child(2) a{box-shadow:10px 10px 0 0 #3FAE7A}
+html:not(#x) .dhd .blogs li:nth-child(3) a{box-shadow:10px 10px 0 0 #7C5CE6}
+html:not(#x) .dhd .feiten{display:flex;flex-wrap:wrap;gap:10px;list-style:none}
+html:not(#x) .dhd .feiten li{display:inline-flex;align-items:center;gap:8px;min-height:40px;padding:0 16px 0 12px;border-radius:999px;border:var(--rand);background:var(--wit);font-size:14px;font-weight:500}
+html:not(#x) .dhd .feiten svg{width:18px;height:18px;flex:none}
+html:not(#x) .dhd .logorij{margin:0 0 26px}
+html:not(#x) .dhd .lg-rij{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+html:not(#x) .dhd .logorij p{font-size:14px;color:var(--zacht);font-weight:600}
+html:not(#x) .dhd .logorij img{height:44px;width:44px;padding:6px;background:#fff;border:var(--rand);border-radius:12px;object-fit:contain}
+html:not(#x) .dhd .logorij .pil{height:32px;display:inline-flex;align-items:center;padding:0 12px;border:1px solid var(--lijn);border-radius:999px;font-size:13px;color:var(--zacht);font-weight:600}
+html:not(#x) .dhd .cats{display:grid;grid-template-columns:repeat(3,1fr);gap:28px 24px;list-style:none}
+html:not(#x) .dhd .cat .label{display:flex;align-items:center;gap:16px;padding:20px 22px;min-height:96px;height:100%;transition:transform .12s ease}
+html:not(#x) .dhd .cat .label:hover{transform:translate(2px,2px)}
+html:not(#x) .dhd .cat .ico{width:44px;height:44px;border-radius:12px;border:var(--rand);display:flex;align-items:center;justify-content:center;flex:none;background:var(--wit)}
+html:not(#x) .dhd .cat .ico svg{width:24px;height:24px}
+html:not(#x) .dhd .cat h3{font-size:20px}
+html:not(#x) .dhd .cat .vanaf{font-size:14px;color:var(--zacht);margin-top:2px}
+html:not(#x) .dhd .cat .vanaf b{color:var(--inkt);font-weight:700}
+html:not(#x) .dhd .cat .pijl{margin-left:auto;font-size:22px;color:var(--zacht)}
+html:not(#x) .dhd .ook{margin-top:30px;font-size:16px;color:var(--zacht)}
+html:not(#x) .dhd .ook a{margin-left:6px}
+html:not(#x) .dhd .prods{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px 24px;list-style:none}
+html:not(#x) .dhd .prod .label{padding:18px 18px 20px;display:flex;flex-direction:column;height:100%}
+html:not(#x) .dhd .prod .foto{background:#F1F3F8;border-radius:10px;height:170px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+html:not(#x) .dhd .prod .foto img{max-height:140px;max-width:82%;width:auto;object-fit:contain;transform:rotate(-3deg);mix-blend-mode:multiply}
+html:not(#x) .dhd .prod .foto.rechts img{transform:rotate(2.5deg)}
+html:not(#x) .dhd .prod h3{font-size:17px;margin-top:16px;line-height:1.25;letter-spacing:-0.02em}
+html:not(#x) .dhd .prod .prijsrij{display:flex;align-items:baseline;gap:10px;margin-top:10px;flex-wrap:wrap}
+html:not(#x) .dhd .prod .prijs{font-size:40px;line-height:1}
+html:not(#x) .dhd .prod .winkel{font-size:14px;color:var(--zacht)}
+html:not(#x) .dhd .prod .meta{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--zacht);flex-wrap:wrap}
+html:not(#x) .dhd .sticker{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;background:var(--groen);border:var(--rand);color:var(--inkt);font-weight:600;font-size:13px}
+html:not(#x) .dhd .prod .meta{margin-bottom:16px}
+html:not(#x) .dhd .prod .knop{margin-top:auto;align-self:flex-start}
+html:not(#x) .dhd .uitleg .wrap{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:48px}
+html:not(#x) .dhd .uitleg h2{max-width:14ch}
+html:not(#x) .dhd .uitleg .tekst{font-size:17px;color:var(--inkt);line-height:1.6}
+html:not(#x) .dhd .uitleg .tekst h3{margin-top:22px;margin-bottom:6px}
+html:not(#x) .dhd .uitleg .tekst h3:first-child{margin-top:0}
+html:not(#x) .dhd .uitleg .model{margin-top:28px;font-size:16px;line-height:1.55;padding:20px 24px;background:var(--wit);border:var(--rand);border-radius:var(--rk);font-weight:500}
+html:not(#x) .dhd .uitleg .model p{margin-bottom:10px}
+@media (max-width:900px){html:not(#x) .dhd .wrap{padding:0 16px}
+html:not(#x) .dhd h2{font-size:28px}
+html:not(#x) .dhd .hero{padding:24px 0 36px}
+html:not(#x) .dhd .hero .wrap{grid-template-columns:1fr;grid-template-areas:"tekst" "cluster" "onder";gap:0}
+html:not(#x) .dhd .hero h1{font-size:36px;margin-top:0;white-space:normal}
+html:not(#x) .dhd .hero .sub{font-size:16px;margin-top:10px;max-width:none}
+html:not(#x) .dhd .chips{margin-top:16px;gap:6px}
+html:not(#x) .dhd .chips a{min-height:40px;padding:0 13px;font-size:13px}
+html:not(#x) .dhd .cluster{padding:44px 24px 0 2px;margin-top:16px}
+html:not(#x) .dhd .touw{left:17px;height:72px}
+html:not(#x) .dhd .hang{transform:rotate(2deg);transform-origin:28px 28px}
+@keyframes dhd-zwaai{0%{transform:rotate(-7deg)}34%{transform:rotate(5.5deg)}62%{transform:rotate(.6deg)}82%{transform:rotate(2.7deg)}100%{transform:rotate(2deg)}}
+html:not(#x) .dhd .groot .label{padding:24px 20px 24px 22px}
+html:not(#x) .dhd .groot .label .gat{left:20px;top:20px;width:14px;height:14px}
+html:not(#x) .dhd .winnaar{padding-left:20px;font-size:13px}
+html:not(#x) .dhd .groot .prijsrij{gap:10px;margin-top:8px}
+html:not(#x) .dhd .groot .prijs{font-size:72px}
+html:not(#x) .dhd .groot .pm{font-size:15px}
+html:not(#x) .dhd .groot .bundel{font-size:15px;margin-top:10px}
+html:not(#x) .dhd .groot .knop{margin-top:18px;width:100%}
+html:not(#x) .dhd .minis{grid-template-columns:1fr;gap:14px;margin:6px 0 0 0}
+html:not(#x) .dhd .mini:nth-child(1),html:not(#x) .dhd .mini:nth-child(2){transform:none;margin-top:0}
+html:not(#x) .dhd .mini .label{display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"top knop" "prijs knop" "bundel knop";align-items:center;column-gap:12px;padding:14px 16px}
+html:not(#x) .dhd .mini .top{grid-area:top}
+html:not(#x) .dhd .mini .prijs{grid-area:prijs;font-size:32px;margin-top:4px}
+html:not(#x) .dhd .mini .bundel{grid-area:bundel;margin-top:2px}
+html:not(#x) .dhd .mini .knop{grid-area:knop;margin-top:0}
+html:not(#x) .dhd .hero-onder{margin-top:28px}
+html:not(#x) .dhd section{padding:40px 0}
+html:not(#x) .dhd .blogs{grid-template-columns:1fr;gap:26px;padding-right:10px}
+html:not(#x) .dhd .vertrouwen{padding:0 0 36px}
+html:not(#x) .dhd .feiten li{font-size:13px;min-height:38px;padding:4px 12px 4px 10px}
+html:not(#x) .dhd .logorij{margin:0 0 20px}
+html:not(#x) .dhd .lg-rij{gap:8px}
+html:not(#x) .dhd .logorij img{height:40px;width:40px;padding:5px}
+html:not(#x) .dhd .cats{grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 18px}
+html:not(#x) .dhd .cat .label{flex-direction:column;align-items:flex-start;gap:12px;padding:16px;min-height:0}
+html:not(#x) .dhd .cat .ico{width:38px;height:38px}
+html:not(#x) .dhd .cat h3{font-size:17px}
+html:not(#x) .dhd .cat .pijl{display:none}
+html:not(#x) .dhd .prods{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 18px}
+html:not(#x) .dhd .prod .label{padding:12px 12px 14px}
+html:not(#x) .dhd .prod .foto{height:120px}
+html:not(#x) .dhd .prod .foto img{max-height:98px}
+html:not(#x) .dhd .prod h3{font-size:15px;margin-top:12px}
+html:not(#x) .dhd .prod .prijs{font-size:30px}
+html:not(#x) .dhd .prod .prijsrij{gap:8px}
+html:not(#x) .dhd .prod .knop{width:100%;min-height:44px;padding:6px 8px;font-size:13px;white-space:normal;text-align:center;line-height:1.2}
+html:not(#x) .dhd .uitleg .wrap{grid-template-columns:1fr;gap:20px}
+html:not(#x) .dhd .uitleg .wrap>div:first-child{display:contents}
+html:not(#x) .dhd .uitleg h2{order:0}
+html:not(#x) .dhd .uitleg .tekst{order:1}
+html:not(#x) .dhd .uitleg .model{order:2;margin-top:4px}
+html:not(#x) .dhd .uitleg .tekst{font-size:16px}}
+@media (max-width:360px){html:not(#x) .dhd .hero h1{font-size:33px}
+html:not(#x) .dhd .groot .prijs{font-size:64px}}
+html:not(#x) .dhd .tl::after{content:"\00a0\203A"}
+html:not(#x) .dhd .lig .label{display:grid;grid-template-columns:72px minmax(0,1fr);grid-template-areas:"foto kopje" "foto onder";gap:8px 14px;align-items:center;padding:14px 16px;height:100%}
+html:not(#x) .dhd .lig .foto{grid-area:foto;align-self:start;width:72px;height:72px;background:#F1F3F8;border-radius:10px;display:flex;align-items:center;justify-content:center}
+html:not(#x) .dhd .lig .foto img{max-width:58px;max-height:58px;width:auto;object-fit:contain;mix-blend-mode:multiply}
+html:not(#x) .dhd .lig .kopje{grid-area:kopje}
+html:not(#x) .dhd .lig h3{font-size:16px;line-height:1.25}
+html:not(#x) .dhd .lig .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--zacht);margin-top:4px}
+html:not(#x) .dhd .lig .onder{grid-area:onder;display:flex;align-items:center;justify-content:space-between;gap:8px 10px;flex-wrap:wrap}
+html:not(#x) .dhd .lig .prijs{font-size:28px;line-height:1}
+html:not(#x) .dhd .sticker.kl{min-height:22px;padding:0 8px}
+html:not(#x) .dhd .g2{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:26px 34px;align-items:stretch}
+html:not(#x) .dhd .uit .label{padding:20px 22px 18px 20px;height:100%;display:flex;flex-direction:column}
+html:not(#x) .dhd .uit .boven{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:center;flex:1}
+html:not(#x) .dhd .uit .foto{background:#F1F3F8;border-radius:10px;height:100%;min-height:190px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+html:not(#x) .dhd .uit .foto img{max-width:84%;max-height:150px;width:auto;object-fit:contain;transform:rotate(-3deg);mix-blend-mode:multiply}
+html:not(#x) .dhd .uit h3{font-size:22px}
+html:not(#x) .dhd .uit .prijsrij{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:8px}
+html:not(#x) .dhd .uit .prijsrij .prijs{font-size:72px;line-height:.95;letter-spacing:-0.05em}
+html:not(#x) .dhd .uit .winkel{font-size:15px;color:var(--zacht)}
+html:not(#x) .dhd .uit .meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px;color:var(--zacht);margin-top:10px}
+html:not(#x) .dhd .wrijen{list-style:none;margin-top:18px}
+html:not(#x) .dhd .wrijen li{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--lijn);font-size:15px}
+html:not(#x) .dhd .wrijen li:last-child{padding-bottom:0}
+html:not(#x) .dhd .wrijen .w{font-weight:700}
+html:not(#x) .dhd .wrijen .waarom{color:var(--zacht);font-size:14px}
+html:not(#x) .dhd .wrijen .p{margin-left:auto;font-family:var(--kop);font-weight:800;font-size:22px;letter-spacing:-0.03em;margin-right:4px}
+html:not(#x) .dhd .wrijen .knop{margin-bottom:3px}
+html:not(#x) .dhd .wrijen .knop.klein{gap:0}
+html:not(#x) .dhd .wrijen .bij{white-space:pre}
+html:not(#x) .dhd .stapel{display:grid;grid-template-rows:repeat(3,minmax(0,1fr));gap:24px;list-style:none}
+html:not(#x) .dhd .raming{display:inline-flex;align-items:center;min-height:22px;padding:0 8px;border-radius:999px;border:var(--rand);background:var(--koraal);font-family:var(--body);font-weight:600;font-size:13px;letter-spacing:0;line-height:1;vertical-align:middle}
+html:not(#x) .dhd .zmail{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+html:not(#x) .dhd .zmail input{min-height:48px;width:300px;max-width:100%;padding:0 16px;border:var(--rand);border-radius:10px;background:var(--wit)}
+html:not(#x) .dhd .zmail input::placeholder{color:var(--zacht)}
+html:not(#x) .dhd .zmail small{display:block;width:100%;font-size:14px;color:var(--zacht)}
+html:not(#x) .dhd .zmail.breed input,html:not(#x) .dhd .zmail.breed button{width:100%}
+html:not(#x) .dhd .z2 .label{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr)}
+html:not(#x) .dhd .z2 .links{padding:32px 36px 30px}
+html:not(#x) .dhd .z2 .boven{font-size:14px;font-weight:600;color:var(--zacht);margin-bottom:6px}
+html:not(#x) .dhd .z2 h2{font-size:36px}
+html:not(#x) .dhd .z2 .zin{margin-top:12px;color:var(--zacht);font-size:16px}
+html:not(#x) .dhd .z2 .cijfers{list-style:none;margin-top:20px}
+html:not(#x) .dhd .z2 .cijfers li{display:grid;grid-template-columns:112px minmax(0,1fr);gap:16px;align-items:center;padding:10px 0;border-top:1px solid var(--lijn)}
+html:not(#x) .dhd .z2 .cijfers .prijs{font-size:34px;line-height:1;white-space:nowrap}
+html:not(#x) .dhd .z2 .cijfers .uitleg{font-size:15px;color:var(--zacht)}
+html:not(#x) .dhd .z2 .overstap{padding-top:12px;border-top:1px solid var(--lijn);font-size:15px;font-weight:600}
+html:not(#x) .dhd .z2 .rechts{background:var(--koraal);border-left:var(--rand);padding:36px 34px 30px;display:flex;flex-direction:column;justify-content:center;gap:22px}
+html:not(#x) .dhd .z2 .wanneer{display:flex;align-items:center;gap:18px}
+html:not(#x) .dhd .z2 .wanneer p{font-size:17px;line-height:1.35}
+html:not(#x) .dhd .z2 .wanneer p b{display:block;font-family:var(--kop);font-weight:800;font-size:22px;letter-spacing:-0.02em;line-height:1.15;margin-bottom:4px}
+html:not(#x) .dhd .blad{flex:none;width:112px;background:var(--wit);border:var(--rand);border-radius:12px;box-shadow:4px 4px 0 var(--inkt);overflow:hidden;text-align:center;padding-bottom:10px;transform:rotate(-3deg)}
+html:not(#x) .dhd .blad i{display:block;height:18px;background:#F0634A;border-bottom:var(--rand)}
+html:not(#x) .dhd .blad b{display:block;font-family:var(--kop);font-weight:800;font-size:64px;line-height:1;letter-spacing:-0.05em;margin-top:6px}
+html:not(#x) .dhd .blad span{display:block;font-family:var(--kop);font-weight:800;font-size:22px;line-height:1;letter-spacing:-0.02em}
+html:not(#x) .dhd .z2 .zmail small{color:var(--inkt)}
+html:not(#x) .dhd .lees{list-style:none;display:flex;flex-wrap:wrap;gap:6px 28px;margin-top:30px;font-size:15px}
+@media (max-width:900px){html:not(#x) .dhd .lig .label{padding:12px 12px 12px 12px;gap:8px 12px}
+html:not(#x) .dhd .lig h3{font-size:15px}
+html:not(#x) .dhd .lig .prijs{font-size:24px}
+html:not(#x) .dhd .lig .knop.klein{padding:0 12px}
+html:not(#x) .dhd .g2{grid-template-columns:1fr;gap:22px;padding-right:10px}
+html:not(#x) .dhd .uit .label{padding:12px 14px 14px 12px}
+html:not(#x) .dhd .uit .boven{grid-template-columns:128px minmax(0,1fr);gap:14px}
+html:not(#x) .dhd .uit .foto{min-height:112px}
+html:not(#x) .dhd .uit .foto img{max-height:84px;max-width:88%}
+html:not(#x) .dhd .uit h3{font-size:17px}
+html:not(#x) .dhd .uit .prijsrij{margin-top:4px;gap:6px}
+html:not(#x) .dhd .uit .prijsrij .prijs{font-size:44px}
+html:not(#x) .dhd .uit .winkel{font-size:14px}
+html:not(#x) .dhd .uit .meta{margin-top:6px}
+html:not(#x) .dhd .wrijen{margin-top:12px}
+html:not(#x) .dhd .wrijen li{gap:8px;padding:8px 0}
+html:not(#x) .dhd .wrijen li.eerste{flex-wrap:wrap;padding:10px 0 12px}
+html:not(#x) .dhd .wrijen li.eerste .knop{width:100%}
+html:not(#x) .dhd .wrijen .p{font-size:20px}
+html:not(#x) .dhd .wrijen .bij{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+html:not(#x) .dhd .wrijen .knop.klein{min-height:44px}
+html:not(#x) .dhd .stapel{gap:20px;grid-template-rows:none}
+html:not(#x) .dhd .zmail input,html:not(#x) .dhd .zmail button{width:100%}
+html:not(#x) .dhd .z2{margin-right:10px}
+html:not(#x) .dhd .z2 .label{grid-template-columns:1fr}
+html:not(#x) .dhd .z2 .links{padding:20px 18px 16px}
+html:not(#x) .dhd .z2 h2{font-size:27px;padding-right:14px}
+html:not(#x) .dhd .z2 .zin{font-size:15px;margin-top:8px}
+html:not(#x) .dhd .z2 .cijfers{margin-top:14px}
+html:not(#x) .dhd .z2 .cijfers li{grid-template-columns:88px minmax(0,1fr);gap:12px;padding:8px 0}
+html:not(#x) .dhd .z2 .cijfers .prijs{font-size:27px}
+html:not(#x) .dhd .z2 .cijfers .uitleg{font-size:14px}
+html:not(#x) .dhd .z2 .overstap{font-size:14px;padding-top:10px}
+html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:var(--rand);padding:18px 18px 18px;gap:14px}
+html:not(#x) .dhd .z2 .wanneer{gap:14px}
+html:not(#x) .dhd .z2 .wanneer p{font-size:15px}
+html:not(#x) .dhd .z2 .wanneer p b{font-size:19px}
+html:not(#x) .dhd .blad{width:76px;padding-bottom:7px}
+html:not(#x) .dhd .blad i{height:12px}
+html:not(#x) .dhd .blad b{font-size:40px;margin-top:4px}
+html:not(#x) .dhd .blad span{font-size:16px}
+html:not(#x) .dhd .lees{flex-direction:column;gap:0;margin-top:22px}
+html:not(#x) .dhd .lees a{display:block;padding:9px 0}}
+/* ---- wat het thema nodig heeft bovenop het ontwerp ---- */
+#shopify-section-dpv-zorg-home{display:none}
+html:not(#x) .dhd .dpvmb{display:none !important}
+html:not(#x) .dhd{position:relative;width:100%;text-align:left;-webkit-font-smoothing:antialiased}
+html:not(#x) .dhd [hidden]{display:none !important}
+html:not(#x) .dhd h1,html:not(#x) .dhd h2,html:not(#x) .dhd h3{color:var(--inkt);text-transform:none}
+html:not(#x) .dhd p,html:not(#x) .dhd li,html:not(#x) .dhd ul,html:not(#x) .dhd ol{max-width:none}
+html:not(#x) .dhd .cat .label>span:nth-child(2){display:block;min-width:0}
+html:not(#x) .dhd .cat .vanaf{display:block}
+html:not(#x) .dhd .winnaar{flex-wrap:wrap;row-gap:2px}
+html:not(#x) .dhd .groot .prijsrij{flex-wrap:wrap;row-gap:6px}
+html:not(#x) .dhd .groot .prijs.lang{font-size:92px}
+html:not(#x) .dhd .foto a.dpv-pp-a{display:flex;align-items:center;justify-content:center;width:100%;height:100%}
+html:not(#x) .dhd a.dpv-pp-a i{color:var(--blauw)}
+html:not(#x) .dhd .blogs img{background:#F1F3F8}
+html:not(#x) .dhd .alle{color:var(--inkt);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+html:not(#x) .dhd .zmail .ok{font-size:16px;line-height:1.45;font-weight:500;color:var(--inkt)}
+html:not(#x) .dhd .zmail .ok b{display:block;font-family:var(--kop);font-weight:800;font-size:22px;letter-spacing:-0.02em;line-height:1.15;margin-bottom:4px}
+html:not(#x) .dhd .zmail .fout{display:block;width:100%;font-size:14px;font-weight:600;color:#A32A16}
+html:not(#x) .dhd .zmail input{color:var(--inkt);font-size:16px;box-shadow:none}
+html:not(#x) .dhd .val{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+/* De huisstijllaag (dpv-skin) haalt bij een doorklikknop de rand en de schaduw weg; hier blijven ze. */
+html:not(#x):not(#y) body .dhd a.knop.knop.knop.knop[class],html:not(#x):not(#y) body .dhd a.knop.knop.knop.knop[class]:visited{background:var(--geel) !important;color:var(--inkt) !important;border:var(--rand) !important;box-shadow:3px 3px 0 var(--inkt) !important;-webkit-text-fill-color:var(--inkt) !important;font-family:var(--body) !important;font-weight:600 !important}
+html:not(#x):not(#y) body .dhd a.knop.knop.knop.knop[class]:hover{background:var(--geel) !important;border:var(--rand) !important;box-shadow:0 0 0 var(--inkt) !important;transform:translate(3px,3px)}
+html:not(#x):not(#y) body .dhd .knop-inkt{background:var(--inkt);color:#fff;border:var(--rand);font-family:var(--body);font-weight:600;border-radius:10px}
+html:not(#x):not(#y) body .dhd .knop-inkt[disabled]{opacity:.6;cursor:default}
+@media (max-width:900px){html:not(#x) .dhd .groot .prijs.lang{font-size:60px}}
+@media (max-width:360px){html:not(#x) .dhd .groot .prijs.lang{font-size:52px}}
+</style>
+
+<div class="dhd" id="dhd" data-worker="{{ worker }}" data-shop="{{ shopw }}" data-mail="{{ mailw }}">
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="dhd-h1">
+  <div class="wrap">
+    <div class="hero-tekst">
+      <h1 id="dhd-h1">{{ s.kop }}<span class="sr"> {{ s.kop_sr }}</span></h1>
+      <p class="sub">{{ s.sub }}</p>
+      <ul class="chips" aria-label="Kies een categorie">
+        <li class="actief"><a href="/pages/sim-only" data-tab="sim">Sim only</a></li>
+        <li><a href="/pages/telefoonabonnement" data-tab="telefoon">Telefoon</a></li>
+        <li><a href="/pages/internet-tv" data-tab="internet">Internet &amp; TV</a></li>
+        <li><a href="/pages/energie">Energie</a></li>
+        <li><a href="/pages/zorgverzekering">Zorg</a></li>
+        <li><a href="/pages/vergelijken">Producten</a></li>
+      </ul>
+    </div>
+
+    <div class="cluster" aria-live="polite">
+      <svg class="touw" viewBox="0 0 24 88" aria-hidden="true"><circle cx="12" cy="3" r="2.600" fill="#0D1B2A"/><path d="M12 5.5 C 12 30, 11 50, 12 82" fill="none" stroke="#0D1B2A" stroke-width="1.8" stroke-linecap="round"/></svg>
+      <article class="hang kaartje groot" data-h="1">
+        <div class="vlak" aria-hidden="true"></div>
+        <div class="label">
+          <span class="gat" aria-hidden="true"></span>
+          <p class="winnaar"><span class="nr">1</span><span class="aanb" data-f="aanb">Lebara</span><span data-f="wat">laagste maandprijs</span></p>
+          <p class="prijsrij"><span class="prijs" data-f="prijs">€3,30</span><span class="pm">per maand</span></p>
+          <p class="bundel" data-f="bundel">39 GB · 250 min · 24 maanden</p>
+          <a class="knop" data-f="knop" href="/pages/sim-only">Bekijk bij Lebara</a>
+        </div>
+      </article>
+      <div class="minis">
+        <article class="mini kaartje" style="--vlak:#CDEFE0" data-h="2">
+          <div class="vlak" aria-hidden="true"></div>
+          <div class="label">
+            <p class="top"><span class="nr open">2</span><span class="aanb" data-f="aanb">Youfone</span></p>
+            <p class="prijs"><span data-f="prijs">€3,50</span><small>p/m</small></p>
+            <p class="bundel" data-f="bundel">39 GB · 300 min · 24 mnd</p>
+            <a class="knop klein" data-f="knop" href="/pages/sim-only">Bekijk bij Youfone</a>
+          </div>
+        </article>
+        <article class="mini kaartje" style="--vlak:#CDEFE0" data-h="3">
+          <div class="vlak" aria-hidden="true"></div>
+          <div class="label">
+            <p class="top"><span class="nr open">3</span><span class="aanb" data-f="aanb">Simpel</span></p>
+            <p class="prijs"><span data-f="prijs">€4</span><small>p/m</small></p>
+            <p class="bundel" data-f="bundel">29 GB · Onbeperkt bellen · 24 mnd</p>
+            <a class="knop klein" data-f="knop" href="/pages/sim-only">Bekijk bij Simpel</a>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="hero-onder">
+      {%- assign logos = s.logos | split: ',' -%}
+      {%- if logos.size > 0 -%}
+      <div class="logorij">
+        <p>{{ s.logos_kop }}</p>
+        <div class="lg-rij">
+          {%- for m in logos -%}
+            {%- assign d = m | strip -%}
+            {%- if d != blank -%}
+              {%- assign nm = d | split: '.' | first | capitalize -%}
+              <img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://{{ d | escape }}" alt="{{ nm | escape }}" title="{{ nm | escape }}" loading="lazy" width="40" height="40" onerror="this.style.display='none'">
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+      {%- endif -%}
+      <a href="/pages/zo-vergelijken-wij#volgorde">Hoe bepalen wij de volgorde?</a>
+      <span data-meting="lang">Prijzen elke nacht gemeten</span>
+    </div>
+  </div>
+</section>
+
+<!-- FEITEN -->
+<section class="vertrouwen" aria-label="Over de vergelijking">
+  <div class="wrap">
+    <ul class="feiten">
+      {%- if s.feit1 != blank -%}<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M4 12h10M4 17h7"/></svg>{{ s.feit1 }}</li>{%- endif -%}
+      {%- if s.feit2 != blank -%}<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8.500"/><path d="M12 7.5V12l3 2"/></svg><span>{{ s.feit2 }}<span data-meting="kort"></span></span></li>{%- endif -%}
+      {%- if s.feit3 != blank -%}<li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l4.5 4.5L19 7"/></svg>{{ s.feit3 }}</li>{%- endif -%}
+    </ul>
+  </div>
+</section>
+
+<!-- CATEGORIEEN -->
+<section class="categorieen" aria-labelledby="dhd-cat">
+  <div class="wrap">
+    <div class="kopregel">
+      <h2 id="dhd-cat">{{ s.cat_kop }}</h2>
+      <p>{{ s.cat_sub }}</p>
+    </div>
+    <ul class="cats">
+      <li class="cat kaartje" style="--vlak:#CDEFE0"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/sim-only">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l4 4v14H7z"/><rect x="10" y="11" width="5" height="5" rx="1"/></svg></span>
+          <span><h3>Sim only</h3><span class="vanaf">vanaf <b><span data-van="sim">€3,30</span> p/m</b></span></span>
+          <span class="pijl" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li class="cat kaartje" style="--vlak:#E4DDFB"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/telefoonabonnement">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="7" y="3" width="10" height="18" rx="2"/><path d="M11 17.5h2"/></svg></span>
+          <span><h3>Telefoon met abonnement</h3><span class="vanaf">vanaf <b><span data-van="telefoon">€13</span> p/m</b></span></span>
+          <span class="pijl" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li class="cat kaartje" style="--vlak:#D6E8FF"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/internet-tv">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 16.5h.01M11 16.5h.01M12 13V4M8 7.5l4-3.5 4 3.5"/></svg></span>
+          <span><h3>Internet &amp; TV</h3><span class="vanaf">vanaf <b><span data-van="internet">€9,50</span> p/m</b></span></span>
+          <span class="pijl" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li class="cat kaartje" style="--vlak:#FFF0B3"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/energie">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/></svg></span>
+          <span><h3>Energie</h3><span class="vanaf">{%- if s.energie_vanaf != blank -%}vanaf <b>{{ s.energie_vanaf }}</b>{%- endif -%}</span></span>
+          <span class="pijl" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li class="cat kaartje" style="--vlak:#FFD9D2"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/zorgverzekering">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M12 9v6M9 12h6"/></svg></span>
+          <span><h3>Zorgverzekering</h3><span class="vanaf">{%- if s.zorg_vanaf != blank -%}vanaf <b>{{ s.zorg_vanaf }}</b>{%- endif -%}</span></span>
+          <span class="pijl" aria-hidden="true">›</span>
+        </a>
+      </li>
+      <li class="cat kaartje" style="--vlak:#0D1B2A"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/vergelijken">
+          <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11V4h7l10 10-7 7z"/><circle cx="7.500" cy="8.500" r="1.200"/></svg></span>
+          <span><h3>Producten</h3><span class="vanaf"><b>{{ s.producten_tekst }}</b></span></span>
+          <span class="pijl" aria-hidden="true">›</span>
+        </a>
+      </li>
+    </ul>
+    <p class="ook">Ook <a class="tl" href="/pages/gaming">gaming: consoles en games</a> en <a class="tl" href="/pages/boodschappen">boodschappen: aanbiedingen deze week</a></p>
+  </div>
+</section>
+
+<!-- ZORGVERZEKERING 2027 -->
+{%- if s.z_aan -%}
+<section class="zorg27" aria-labelledby="dhd-z2">
+  <div class="wrap">
+    <div class="z2 kaartje" style="--vlak:#F0634A"><div class="vlak" aria-hidden="true"></div>
+      <div class="label">
+        <div class="links">
+          <p class="boven">{{ s.z_boven }}</p>
+          <h2 id="dhd-z2">{{ s.z_kop }}</h2>
+          <p class="zin">{{ s.z_zin }} <a class="tl" href="{{ s.z_url }}">{{ s.z_link }}</a></p>
+          <ul class="cijfers">
+            <li><span class="prijs">{{ s.z_c1 }}</span><span class="uitleg">{{ s.z_c1_tekst }}</span></li>
+            <li><span class="prijs">{{ s.z_c2 }}</span><span class="uitleg"><span class="raming">raming</span> {{ s.z_c2_tekst }}</span></li>
+            <li><span class="prijs">{{ s.z_c3 }}</span><span class="uitleg">{{ s.z_c3_tekst }}</span></li>
+          </ul>
+          <p class="overstap">{{ s.z_overstap }}</p>
+        </div>
+        <div class="rechts">
+          <div class="wanneer">
+            <div class="blad" aria-hidden="true"><i></i><b>{{ s.z_dag }}</b><span>{{ s.z_maand }}</span></div>
+            <p><b>{{ s.z_vraag }}</b> {{ s.z_vraag_tekst }}</p>
+          </div>
+          <form class="zmail breed" id="dhd-zmail" action="{{ s.z_url }}" method="get" data-bron="zorgpremies-2027" novalidate>
+            <label class="sr" for="dhd-email">Je e-mailadres</label>
+            <input id="dhd-email" type="email" name="email" placeholder="je@voorbeeld.nl" autocomplete="email" required>
+            <label class="val" aria-hidden="true">Website<input type="text" name="website" tabindex="-1" autocomplete="off"></label>
+            <button class="knop-inkt" type="submit">{{ s.z_knop }}</button>
+            <span class="fout" role="alert" hidden></span>
+            <small>{{ s.z_belofte }}</small>
+          </form>
+        </div>
+      </div>
+    </div>
+    {%- assign lees = s.z_lees | newline_to_br | split: '<br />' -%}
+    {%- if s.z_lees != blank -%}
+    <ul class="lees" aria-label="Lees meer over de zorgverzekering van 2027">
+      {%- for r in lees -%}
+        {%- assign d = r | strip | split: '|' -%}
+        {%- if d.size > 1 -%}<li><a class="tl" href="{{ d[0] | strip }}">{{ d[1] | strip }}</a></li>{%- endif -%}
+      {%- endfor -%}
+    </ul>
+    {%- endif -%}
+  </div>
+</section>
+{%- endif -%}
+
+<!-- PRODUCTEN -->
+<section class="producten" aria-labelledby="dhd-prod">
+  <div class="wrap">
+    <div class="kopregel">
+      <h2 id="dhd-prod">{{ s.prod_kop }}</h2>
+      <p>{{ s.prod_sub }}</p>
+    </div>
+    <ul class="prods" data-blok="producten">
+      <li class="prod kaartje" style="--vlak:#CDEFE0" data-pp="e0195950639094" data-prod data-cat="telefoons" data-naam="Apple iPhone 17 Pro Max 256GB"><div class="vlak" aria-hidden="true"></div>
+        <div class="label">
+          <div class="foto" data-pp-foto><img src="https://cdn.webshopapp.com/shops/328120/files/486892730/image.jpg" alt="Apple iPhone 17 Pro Max" loading="lazy" width="140" height="140"></div>
+          <h3 data-pp-naam>Apple iPhone 17 Pro Max 256GB</h3>
+          <p class="prijsrij"><span class="prijs" data-f="prijs">€1.219</span><span class="winkel" data-f="winkel">bij Dutch-Plaza</span></p>
+          <p class="meta" data-f="meta"><span data-f="aantal">3 winkels</span><span class="sticker" data-f="scheelt">scheelt €120</span></p>
+          <a class="knop" data-f="knop" href="/pages/product/apple-iphone-17-pro-max-256gb-oranje">Bekijk bij Dutch-Plaza</a>
+        </div>
+      </li>
+      <li class="prod kaartje" style="--vlak:#E4DDFB" data-pp="e8806097827092" data-prod data-cat="telefoons" data-naam="Samsung Galaxy S26 Ultra 256GB"><div class="vlak" aria-hidden="true"></div>
+        <div class="label">
+          <div class="foto rechts" data-pp-foto><img src="https://cdn.webshopapp.com/shops/328120/files/496625527/image.jpg" alt="Samsung Galaxy S26 Ultra" loading="lazy" width="140" height="140"></div>
+          <h3 data-pp-naam>Samsung Galaxy S26 Ultra 256GB</h3>
+          <p class="prijsrij"><span class="prijs" data-f="prijs">€919</span><span class="winkel" data-f="winkel">bij Dutch-Plaza</span></p>
+          <p class="meta" data-f="meta"><span data-f="aantal">4 winkels</span></p>
+          <a class="knop" data-f="knop" href="/pages/product/samsung-galaxy-s26-ultra-256gb-paars-5g">Bekijk bij Dutch-Plaza</a>
+        </div>
+      </li>
+      <li class="prod kaartje" style="--vlak:#CDEFE0" data-pp="e4548736175242" data-prod data-cat="audio" data-naam="Sony WH-1000XM6"><div class="vlak" aria-hidden="true"></div>
+        <div class="label">
+          <div class="foto" data-pp-foto><img src="https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_171288187/fee_786_587.png" alt="Sony WH-1000XM6 hoofdtelefoon" loading="lazy" width="140" height="140"></div>
+          <h3 data-pp-naam>Sony WH-1000XM6</h3>
+          <p class="prijsrij"><span class="prijs" data-f="prijs">€359</span><span class="winkel" data-f="winkel">bij MediaMarkt</span></p>
+          <p class="meta" data-f="meta"><span data-f="aantal">2 winkels</span><span class="sticker" data-f="scheelt">scheelt €23</span></p>
+          <a class="knop" data-f="knop" href="/pages/product/sony-wh-1000xm6-over-ear-draadloze-hoofdtelefoon-met-noise-cancelling">Bekijk bij MediaMarkt</a>
+        </div>
+      </li>
+      <li class="prod kaartje" style="--vlak:#E4DDFB" data-pp="e5025155114841" data-prod data-cat="huishoudelijk" data-naam="Dyson V16 Piston Animal Submarine"><div class="vlak" aria-hidden="true"></div>
+        <div class="label">
+          <div class="foto rechts" data-pp-foto><img src="https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_162269707/fee_786_587.png" alt="Dyson V16 Piston Animal Submarine steelstofzuiger" loading="lazy" width="140" height="140"></div>
+          <h3 data-pp-naam>Dyson V16 Piston Animal Submarine</h3>
+          <p class="prijsrij"><span class="prijs" data-f="prijs">€764</span><span class="winkel" data-f="winkel">bij MediaMarkt</span></p>
+          <p class="meta" data-f="meta"><span data-f="aantal">2 winkels</span><span class="sticker" data-f="scheelt">scheelt €55</span></p>
+          <a class="knop" data-f="knop" href="/pages/product/dyson-v16-piston-animal-submarine-steelstofzuiger-accuduur-70-min-mat">Bekijk bij MediaMarkt</a>
+        </div>
+      </li>
+    </ul>
+    <p class="datum" data-gezien="producten">Prijzen elke nacht gemeten</p>
+  </div>
+</section>
+
+<!-- GAMING -->
+<section class="gaming" aria-labelledby="dhd-g2">
+  <div class="wrap">
+    <div class="kopregel">
+      <h2 id="dhd-g2">{{ s.gaming_kop }}</h2>
+      <p><a class="tl" href="/pages/gaming">Alles in gaming</a></p>
+    </div>
+    <div class="g2" data-blok="gaming">
+      <article class="uit kaartje" style="--vlak:#7C5CE6" data-pp="e0045496337414" data-prod data-uit data-cat="gaming" data-naam="Nintendo Switch 2 (2026)"><div class="vlak" aria-hidden="true"></div>
+        <div class="label">
+          <div class="boven">
+            <div class="foto" data-pp-foto><img src="https://coolblue.bynder.com/transform/95dbb87c-29a9-4bf8-8563-ddb1c3f1b521/959850?io=transform:fit,height:800,width:800&amp;format=png" alt="Nintendo Switch 2" loading="lazy" width="150" height="150"></div>
+            <div>
+              <h3 data-pp-naam>Nintendo Switch 2 (2026)</h3>
+              <p class="prijsrij"><span class="prijs" data-f="prijs">€473</span><span class="winkel" data-f="winkel">bij Coolblue</span></p>
+              <p class="meta" data-f="meta"><span data-f="aantal">3 winkels</span><span class="sticker" data-f="scheelt">scheelt €46,99</span></p>
+            </div>
+          </div>
+          <ol class="wrijen" aria-label="Prijs per winkel" data-f="rijen">
+            <li class="eerste"><span class="nr">1</span><span class="w">Coolblue</span><span class="waarom">laagste prijs</span><span class="p">€473</span><a class="knop" href="/pages/product/nintendo-switch-2-2026">Bekijk bij Coolblue</a></li>
+            <li><span class="nr open">2</span><span class="w">MediaMarkt</span><span class="p">€519,99</span><a class="knop klein" href="/pages/product/nintendo-switch-2-2026">Bekijk<span class="bij"> bij MediaMarkt</span></a></li>
+            <li><span class="nr open">3</span><span class="w">bol.com</span><span class="p">€519,99</span><a class="knop klein" href="/pages/product/nintendo-switch-2-2026">Bekijk<span class="bij"> bij bol.com</span></a></li>
+          </ol>
+        </div>
+      </article>
+      <ul class="stapel">
+      <li class="lig kaartje" style="--vlak:#E4DDFB" data-pp="e0045496312343" data-prod data-cat="gaming" data-naam="Mario Kart World (Switch 2)"><div class="vlak" aria-hidden="true"></div>
+        <div class="label">
+          <div class="foto" data-pp-foto><img src="https://coolblue.bynder.com/transform/7663f442-6aa6-4db0-99a8-ba89d1020edf/963346?io=transform:fit,height:800,width:800&amp;format=png" alt="Mario Kart World (Switch 2)" loading="lazy" width="58" height="58"></div>
+          <div class="kopje"><h3 data-pp-naam>Mario Kart World (Switch 2)</h3><p class="meta" data-f="meta"><span data-f="aantal">3 winkels</span><span class="sticker kl" data-f="scheelt">scheelt €5,99</span></p></div>
+          <div class="onder"><span class="prijs" data-f="prijs">€70</span><a class="knop klein" data-f="knop" href="/pages/product/mario-kart-world-nintendo-switch-2">Bekijk bij Coolblue</a></div>
+        </div>
+      </li>
+      <li class="lig kaartje" style="--vlak:#E4DDFB" data-pp="e0711719580782" data-prod data-cat="gaming" data-naam="PlayStation 5 Portal Remote Player"><div class="vlak" aria-hidden="true"></div>
+        <div class="label">
+          <div class="foto" data-pp-foto><img src="https://coolblue.bynder.com/transform/f17acb53-f1db-49de-8bf0-947ba60bc1cc/937226?io=transform:fit,height:800,width:800&amp;format=png" alt="PlayStation 5 Portal Remote Player" loading="lazy" width="58" height="58"></div>
+          <div class="kopje"><h3 data-pp-naam>PlayStation 5 Portal Remote Player</h3><p class="meta" data-f="meta"><span data-f="aantal">3 winkels</span><span class="sticker kl" data-f="scheelt">scheelt €13</span></p></div>
+          <div class="onder"><span class="prijs" data-f="prijs">€248</span><a class="knop klein" data-f="knop" href="/pages/product/playstation-5-portal-remote-player">Bekijk bij Coolblue</a></div>
+        </div>
+      </li>
+      <li class="lig kaartje" style="--vlak:#E4DDFB" data-pp="e0045496312787" data-prod data-cat="gaming" data-naam="Donkey Kong Bananza (Switch 2)"><div class="vlak" aria-hidden="true"></div>
+        <div class="label">
+          <div class="foto" data-pp-foto><img src="https://coolblue.bynder.com/transform/b355c6f4-e43e-47c3-b363-79f73642312e/963356?io=transform:fit,height:800,width:800&amp;format=png" alt="Donkey Kong Bananza (Switch 2)" loading="lazy" width="58" height="58"></div>
+          <div class="kopje"><h3 data-pp-naam>Donkey Kong Bananza (Switch 2)</h3><p class="meta" data-f="meta"><span data-f="aantal">3 winkels</span><span class="sticker kl" data-f="scheelt">scheelt €7,99</span></p></div>
+          <div class="onder"><span class="prijs" data-f="prijs">€60</span><a class="knop klein" data-f="knop" href="/pages/product/donkey-kong-bananza-nintendo-switch-2">Bekijk bij Coolblue</a></div>
+        </div>
+      </li>
+      </ul>
+    </div>
+    <p class="datum" data-gezien="gaming">Prijzen elke nacht gemeten</p>
+  </div>
+</section>
+
+<!-- ACTUEEL -->
+{%- assign arts = blogs[s.blog].articles -%}
+{%- if arts.size > 0 -%}
+<section class="actueel" aria-labelledby="dhd-act">
+  <div class="wrap">
+    <div class="kopregel">
+      <h2 id="dhd-act">{{ s.act_kop }}</h2>
+      <p><a class="alle" href="{{ blogs[s.blog].url }}">Alle artikelen</a></p>
+    </div>
+    <ul class="blogs">
+      {%- for article in arts limit: 3 -%}
+      <li><a href="{{ article.url }}">
+        {%- if article.image -%}
+          <img src="{{ article.image | image_url: width: 800 }}" alt="" width="800" height="450" loading="lazy">
+        {%- endif -%}
+        <div class="tekst">{%- if article.tags.size > 0 -%}<p class="rubriek">{{ article.tags | first | capitalize }}</p>{%- endif -%}<h3>{{ article.title }}</h3></div>
+      </a></li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+{%- endif -%}
+
+<!-- UITLEG -->
+<section class="uitleg" aria-labelledby="dhd-uitleg">
+  <div class="wrap">
+    <div>
+      <h2 id="dhd-uitleg">Zo werkt het, en zo verdienen wij</h2>
+      <div class="model">
+        <p>Vergelijken is gratis. Stap je over of koop je via onze site, dan ontvangen wij een vergoeding van de aanbieder of winkel. De volgorde is op prijs en staat los van die vergoeding.</p>
+        <a class="tl" href="/pages/zo-vergelijken-wij">Zo vergelijken wij: methode, bronnen en bijwerkfrequentie</a>
+      </div>
+    </div>
+    <div class="tekst">
+      <h3>Elke nacht meten</h3>
+      <p>Elke nacht halen wij de actuele prijzen op bij 14 telecomaanbieders en 9 winkels. Voor sim only, internet en tv kijken we naar de maandprijs over de looptijd. Bij telefoon met abonnement tellen we de eenmalige kosten mee, zodat je ziet wat het per maand echt kost. Bij producten vergelijken we dezelfde uitvoering bij bol, Coolblue, MediaMarkt en andere winkels. Het tijdstip van de laatste meting staat bij elk blok.</p>
+      <h3>Sorteren op prijs</h3>
+      <p>De goedkoopste aanbieding staat bovenaan, altijd. Nummer 1 is nummer 1 omdat de prijs het laagst is, niet omdat een aanbieder daarvoor betaalt. Hebben we een prijs die nacht niet kunnen meten, dan staat die aanbieder er die dag niet bij. We vullen niets in.</p>
+      <h3>Jij klikt door</h3>
+      <p>Bij de aanbieding die je bevalt klik je op "Bekijk bij". Je komt dan rechtstreeks op de site van de aanbieder of winkel. Bestellen of overstappen doe je daar, tegen de prijs die je bij ons zag.</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<script>
+(function () {
+  var wortel = document.getElementById('dhd');
+  if (!wortel || !window.fetch) return;
+  var WORKER = wortel.getAttribute('data-worker'), SHOP = wortel.getAttribute('data-shop'), MAIL = wortel.getAttribute('data-mail');
+  var MAANDEN = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+
+  function euro(v) {
+    var r = Math.round(v * 100) / 100;
+    var s = r % 1 === 0 ? String(r) : r.toFixed(2).replace('.', ',');
+    return '€' + s.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  }
+  // Zelfde meting als de kiezer die hier eerst stond (dpv-hero-kies): gebeurtenis "dhk_klik".
+  function meet(naam, extra) {
+    try {
+      var d = extra || {};
+      if (typeof window.gtag === 'function') window.gtag('event', naam, d);
+      else if (window.dataLayer && window.dataLayer.push) { d.event = naam; window.dataLayer.push(d); }
+    } catch (e) {}
+  }
+  function json(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); }); }
+  function mnd(k) { return parseInt(String(k.contract || '').replace(/\D/g, ''), 10) || 0; }
+  function duur(k, lang) { var m = mnd(k); return m ? m + (lang ? ' maanden' : ' mnd') : 'maandelijks opzegbaar'; }
+  function ga(k, cat) { return WORKER + '/api/go?u=' + encodeURIComponent(k.url) + '&cat=' + cat + '&p=' + encodeURIComponent(k.provider || ''); }
+  function q(el, f) { return el.querySelector('[data-f="' + f + '"]'); }
+  function zet(el, f, tekst) { var x = q(el, f); if (x) x.textContent = tekst; }
+  function doorklik(a, url, pos, naam, tab) {
+    a.href = url; a.target = '_blank'; a.rel = 'nofollow sponsored noopener';
+    a.setAttribute('data-pos', pos); a.setAttribute('data-naam', naam); a.setAttribute('data-tab', tab);
+  }
+  function delen(lijst) { return lijst.filter(Boolean).join(' · '); }
+
+  // ---- Hero: drie prijskaartjes per tabblad --------------------------------
+  // De rangschikking is die van dpv-hero-kies: sim only en internet op maandprijs
+  // (bij gelijke prijs de grootste bundel of hoogste snelheid), telefoon op de
+  // totale kosten per maand over de looptijd, dus met toestel en bijbetaling.
+  var TABS = {
+    sim: { pad: 'simonly', wat: 'laagste maandprijs', maak: function (j) {
+      return (j.cards || []).filter(function (k) { return parseFloat(k.price) > 0 && k.url && k.provider; }).map(function (k) {
+        var d = k.unlimited ? 'Onbeperkt data' : (k.dataGB ? k.dataGB + ' GB' : '');
+        return { naam: k.provider, knop: k.provider, rang: parseFloat(k.price), rang2: -(k.unlimited ? 9999 : k.dataGB || 0),
+          lang: delen([d, k.minutes, duur(k, true)]), kort: delen([d, k.minutes, duur(k, false)]), url: ga(k, 'simonly') };
+      });
+    } },
+    telefoon: { pad: 'telefoon', wat: 'laagste kosten per maand', maak: function (j) {
+      return (j.cards || []).filter(function (k) { return parseFloat(k.price) > 0 && k.url && k.device; }).map(function (k) {
+        var p = parseFloat(k.price), m = mnd(k) || 24, een = parseFloat(k.downPayment) || 0;
+        var totaal = parseFloat(k.totalPrice) || (p * m + een);
+        var d = k.unlimited ? 'onbeperkt data' : (k.dataGB ? k.dataGB + ' GB' : '');
+        return { naam: k.device, knop: k.provider, rang: totaal / m, rang2: 0,
+          lang: delen([k.provider, d, k.minutes, duur(k, true), 'toestel en abonnement samen']),
+          kort: delen([k.provider, d, duur(k, false)]), url: ga(k, 'telefoon') };
+      });
+    } },
+    internet: { pad: 'internet', wat: 'laagste maandprijs', maak: function (j) {
+      return (j.cards || []).filter(function (k) { return parseFloat(k.price) > 0 && k.url && k.provider; }).map(function (k) {
+        var soort = k.tv ? 'met tv' : 'alleen internet';
+        return { naam: k.provider, knop: k.provider, rang: parseFloat(k.price), rang2: -(k.speedMbit || 0),
+          lang: delen([k.speed, soort, duur(k, true)]), kort: delen([k.speed, soort, duur(k, false)]), url: ga(k, 'internet') };
+      });
+    } }
+  };
+  var geladen = {};
+  function laad(tab) {
+    if (!geladen[tab]) {
+      geladen[tab] = json(WORKER + '/api/cards/' + TABS[tab].pad + '?limit=60').then(function (j) {
+        var lijst = TABS[tab].maak(j).sort(function (a, b) { return a.rang - b.rang || a.rang2 - b.rang2; });
+        if (!lijst.length) throw new Error('leeg');
+        return { lijst: lijst, bij: j.updatedAt || '' };
+      });
+      geladen[tab].catch(function () { delete geladen[tab]; });
+    }
+    return geladen[tab];
+  }
+  var actief = 'sim';
+  function toon(tab, lijst) {
+    for (var n = 1; n <= 3; n++) {
+      var el = wortel.querySelector('[data-h="' + n + '"]'), x = lijst[n - 1];
+      if (!el) continue;
+      el.hidden = !x;
+      if (!x) continue;
+      var prijs = euro(x.rang), p = q(el, 'prijs');
+      zet(el, 'aanb', x.naam); zet(el, 'bundel', n === 1 ? x.lang : x.kort);
+      if (n === 1) { zet(el, 'wat', TABS[tab].wat); p.classList.toggle('lang', prijs.length > 5); }
+      p.textContent = prijs;
+      var a = q(el, 'knop');
+      a.textContent = 'Bekijk bij ' + x.knop;
+      doorklik(a, x.url, n, x.knop, tab);
+    }
+  }
+  function kies(tab) {
+    actief = tab;
+    var li = wortel.querySelectorAll('.chips li');
+    for (var i = 0; i < li.length; i++) {
+      var a = li[i].querySelector('a'), aan = a.getAttribute('data-tab') === tab;
+      li[i].classList.toggle('actief', aan);
+      if (a.hasAttribute('data-tab')) a.setAttribute('aria-pressed', aan ? 'true' : 'false');
+    }
+    return laad(tab).then(function (d) { if (actief === tab) toon(tab, d.lijst); return d; });
+  }
+  var chips = wortel.querySelectorAll('.chips a[data-tab]');
+  for (var c = 0; c < chips.length; c++) {
+    chips[c].setAttribute('role', 'button');
+    chips[c].addEventListener('click', function (e) {
+      var tab = this.getAttribute('data-tab'), link = this.href;
+      e.preventDefault();
+      meet('dhk_tab', { tab: tab });
+      // Lukt het ophalen niet, dan doet de knop wat hij zonder script ook doet: naar de vergelijker.
+      kies(tab).catch(function () { window.location.href = link; });
+    });
+  }
+
+  // ---- Datumregel en "vanaf"-prijzen ---------------------------------------
+  function meting(iso) {
+    var d = new Date(iso);
+    if (!iso || isNaN(d)) return;
+    var dag, tijd;
+    try {
+      var o = {}; new Intl.DateTimeFormat('nl-NL', { timeZone: 'Europe/Amsterdam', day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false })
+        .formatToParts(d).forEach(function (x) { o[x.type] = x.value; });
+      dag = parseInt(o.day, 10) + ' ' + MAANDEN[parseInt(o.month, 10) - 1]; tijd = o.hour + ':' + o.minute;
+      var el = wortel.querySelectorAll('[data-meting]');
+      for (var i = 0; i < el.length; i++) {
+        el[i].textContent = el[i].getAttribute('data-meting') === 'lang'
+          ? 'Prijzen gemeten op ' + dag + ' ' + o.year + ', ' + tijd
+          : ', laatste meting ' + dag + ' ' + tijd;
+      }
+    } catch (e) {}
+  }
+  function vanaf(tab, d) {
+    var el = wortel.querySelector('[data-van="' + tab + '"]');
+    if (el) el.textContent = euro(d.lijst[0].rang);
+  }
+  kies('sim').then(function (d) { vanaf('sim', d); meting(d.bij); }).catch(function () {});
+  laad('telefoon').then(function (d) { vanaf('telefoon', d); }).catch(function () {});
+  laad('internet').then(function (d) { vanaf('internet', d); }).catch(function () {});
+
+  // ---- Producten en gaming: prijs per winkel -------------------------------
+  function shopgo(id, cat, w) { return SHOP + '/api/shop/go?i=' + encodeURIComponent(id) + '&cat=' + encodeURIComponent(cat) + '&w=' + encodeURIComponent(w); }
+  function winkels(n) { return n === 1 ? '1 winkel' : n + ' winkels'; }
+  // "scheelt" alleen als het verschil onder 30% van de hoogste prijs blijft; daarboven is het
+  // meestal een andere uitvoering of een fout in de feed.
+  function scheelt(o) {
+    if (o.length < 2) return 0;
+    var v = o[o.length - 1].p - o[0].p;
+    return v > 0 && v < 0.3 * o[o.length - 1].p ? v : 0;
+  }
+  function span(klasse, tekst) { var s = document.createElement('span'); if (klasse) s.className = klasse; s.textContent = tekst; return s; }
+  var gezien = {};
+  function vulProduct(el) {
+    var id = el.getAttribute('data-pp'), cat = el.getAttribute('data-cat'), naam = el.getAttribute('data-naam') || '';
+    var blok = (el.closest('[data-blok]') || wortel).getAttribute('data-blok') || 'producten';
+    return json(SHOP + '/api/shop/product?i=' + encodeURIComponent(id) + '&cat=' + encodeURIComponent(cat)).then(function (j) {
+      var o = ((j.product || {}).o || []).filter(function (x) { return parseFloat(x.p) > 0 && x.w; })
+        .map(function (x) { return { w: x.w, p: parseFloat(x.p) }; }).sort(function (a, b) { return a.p - b.p; });
+      if (!o.length) return;
+      zet(el, 'prijs', euro(o[0].p)); zet(el, 'winkel', 'bij ' + o[0].w);
+      var m = q(el, 'meta');
+      if (m) {
+        m.textContent = '';
+        m.appendChild(span('', winkels(o.length)));
+        var v = scheelt(o);
+        if (v) m.appendChild(span(el.classList.contains('lig') ? 'sticker kl' : 'sticker', 'scheelt ' + euro(v)));
+      }
+      var a = q(el, 'knop');
+      if (a) { a.textContent = 'Bekijk bij ' + o[0].w; doorklik(a, shopgo(id, cat, o[0].w), 1, o[0].w, blok); a.setAttribute('data-product', naam); }
+      var rijen = q(el, 'rijen');
+      if (rijen) {
+        rijen.textContent = '';
+        o.slice(0, 3).forEach(function (x, n) {
+          var li = document.createElement('li'), k = document.createElement('a');
+          if (n === 0) li.className = 'eerste';
+          li.appendChild(span(n === 0 ? 'nr' : 'nr open', String(n + 1)));
+          li.appendChild(span('w', x.w));
+          if (n === 0) li.appendChild(span('waarom', 'laagste prijs'));
+          li.appendChild(span('p', euro(x.p)));
+          k.className = n === 0 ? 'knop' : 'knop klein';
+          if (n === 0) k.textContent = 'Bekijk bij ' + x.w;
+          else { k.textContent = 'Bekijk'; k.appendChild(span('bij', ' bij ' + x.w)); }
+          doorklik(k, shopgo(id, cat, x.w), n + 1, x.w, blok); k.setAttribute('data-product', naam);
+          li.appendChild(k); rijen.appendChild(li);
+        });
+      }
+      // Laatste dag waarop de winkels voor dit product zijn nagelopen.
+      var log = j.logboek || {}, laatst = '';
+      Object.keys(log).forEach(function (w) { (log[w] || []).forEach(function (r) { if (r.gezien && r.gezien > laatst) laatst = r.gezien; }); });
+      if (laatst && (!gezien[blok] || laatst > gezien[blok])) {
+        gezien[blok] = laatst;
+        var dm = /^(\d{4})-(\d{2})-(\d{2})/.exec(laatst), regel = wortel.querySelector('[data-gezien="' + blok + '"]');
+        if (dm && regel) regel.textContent = 'Prijzen gemeten op ' + parseInt(dm[3], 10) + ' ' + MAANDEN[parseInt(dm[2], 10) - 1] + ' ' + dm[1];
+      }
+    }).catch(function () {});
+  }
+  var prods = wortel.querySelectorAll('[data-prod]');
+  for (var i = 0; i < prods.length; i++) vulProduct(prods[i]);
+
+  // ---- Kliks meten ----------------------------------------------------------
+  wortel.addEventListener('click', function (e) {
+    var a = e.target.closest ? e.target.closest('a[data-pos]') : null;
+    if (a) meet('dhk_klik', { tab: a.getAttribute('data-tab'), keuze: a.getAttribute('data-product') || '', positie: a.getAttribute('data-pos'), aanbieder: a.getAttribute('data-naam') });
+  });
+
+  // ---- Zorg 2027: aanmelden -------------------------------------------------
+  var form = document.getElementById('dhd-zmail');
+  if (form) {
+    var veld = form.querySelector('input[type="email"]'), knop = form.querySelector('button'), fout = form.querySelector('.fout');
+    var zeg = function (t) { fout.textContent = t; fout.hidden = !t; };
+    veld.addEventListener('input', function () { zeg(''); });
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var adres = (veld.value || '').trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) { zeg('Vul een geldig e-mailadres in.'); veld.focus(); return; }
+      var val = form.querySelector('input[name="website"]'), oud = knop.textContent;
+      knop.disabled = true; knop.textContent = 'Bezig…';
+      fetch(MAIL + '/sm/api/aanmelden', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: adres, bron: form.getAttribute('data-bron'), website: val ? val.value : '', onderwerpen: ['zorg'] })
+      }).then(function (r) { return r.json(); }).then(function (res) {
+        if (res && res.ok) {
+          var al = res.status === 'al-actief', p = document.createElement('p'), b = document.createElement('b');
+          p.className = 'ok'; p.setAttribute('role', 'status');
+          b.textContent = al ? 'Je stond er al bij' : 'Kijk even in je mail';
+          p.appendChild(b);
+          p.appendChild(document.createTextNode(al ? 'Dit adres krijgt het seintje al. Je hoeft niets te doen.' : 'Wij hebben je een bericht gestuurd met één link erin. Klik erop en je krijgt het seintje.'));
+          form.textContent = ''; form.appendChild(p);
+          meet('dhd_aanmelding', { bron: 'zorgpremies-2027' });
+        } else {
+          zeg((res && res.fout) || 'Er ging iets mis. Probeer het later nog eens.');
+          knop.disabled = false; knop.textContent = oud;
+        }
+      }).catch(function () {
+        zeg('Er ging iets mis. Probeer het later nog eens.');
+        knop.disabled = false; knop.textContent = oud;
+      });
+    });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Homepage kaartjes",
+  "tag": "div",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "text", "id": "kop", "label": "Kop (H1)", "default": "Vandaag het goedkoopst." },
+    { "type": "text", "id": "kop_sr", "label": "Kop, onzichtbaar vervolg", "info": "Voor zoekmachines en schermlezers.", "default": "DePrijsvergelijker vergelijkt sim only, telefoon met abonnement, internet en tv, energie en zorgverzekering op prijs." },
+    { "type": "text", "id": "sub", "label": "Ondertitel", "default": "Sim only, telefoon, internet, energie en zorg. Elke nacht gemeten, elke ochtend hier." },
+    { "type": "text", "id": "logos_kop", "label": "Logo's: kopje", "default": "Wij vergelijken onder andere" },
+    { "type": "text", "id": "logos", "label": "Logo's: domeinen", "info": "Gescheiden door komma's. Leeg = geen rij.", "default": "kpn.com,odido.nl,vodafone.nl,simyo.nl,ben.nl,youfone.nl,ziggo.nl,bol.com,coolblue.nl,mediamarkt.nl" },
+    { "type": "header", "content": "Feiten" },
+    { "type": "text", "id": "feit1", "label": "Feit 1", "default": "14 telecomaanbieders en 9 winkels in de vergelijking" },
+    { "type": "text", "id": "feit2", "label": "Feit 2", "info": "Het tijdstip van de laatste meting komt er vanzelf achter.", "default": "Prijzen elke nacht gemeten" },
+    { "type": "text", "id": "feit3", "label": "Feit 3", "default": "Volgorde op prijs, aanbieders betalen niet voor een plek" },
+    { "type": "header", "content": "Categorieën" },
+    { "type": "text", "id": "cat_kop", "label": "Kop", "default": "Alles op prijs gesorteerd" },
+    { "type": "text", "id": "cat_sub", "label": "Regel ernaast", "default": "Kies een categorie, de goedkoopste staat bovenaan." },
+    { "type": "text", "id": "energie_vanaf", "label": "Energie vanaf", "info": "Sim only, telefoon en internet komen uit de meting van vandaag.", "default": "€260 p/m" },
+    { "type": "text", "id": "zorg_vanaf", "label": "Zorgverzekering vanaf", "default": "€122,89 p/m" },
+    { "type": "text", "id": "producten_tekst", "label": "Producten: regel", "default": "per winkel vergeleken" },
+    { "type": "header", "content": "Zorgverzekering 2027" },
+    { "type": "checkbox", "id": "z_aan", "label": "Blok tonen", "default": true },
+    { "type": "text", "id": "z_boven", "label": "Regel boven de kop", "default": "Zorgverzekering 2027" },
+    { "type": "text", "id": "z_kop", "label": "Kop", "default": "Zorgpremie 2027: wat je nu al weet" },
+    { "type": "text", "id": "z_zin", "label": "Goedkoopste nu", "default": "Goedkoopste nu: VGZbewuzt Basis, €122,89 per maand (premie 2026)." },
+    { "type": "text", "id": "z_link", "label": "Linktekst", "default": "Nu al vergelijken met de premies van 2026" },
+    { "type": "text", "id": "z_url", "label": "Link naar de vergelijker", "default": "/pages/zorgverzekering" },
+    { "type": "text", "id": "z_c1", "label": "Cijfer 1", "default": "€169" },
+    { "type": "text", "id": "z_c1_tekst", "label": "Cijfer 1: uitleg", "default": "verwachte premie per maand (raming Prinsjesdag)" },
+    { "type": "text", "id": "z_c2", "label": "Cijfer 2", "info": "Hier staat altijd het woord raming voor.", "default": "€400" },
+    { "type": "text", "id": "z_c2_tekst", "label": "Cijfer 2: uitleg", "default": "ongeveer, het verwachte eigen risico" },
+    { "type": "text", "id": "z_c3", "label": "Cijfer 3", "default": "12 nov" },
+    { "type": "text", "id": "z_c3_tekst", "label": "Cijfer 3: uitleg", "default": "uiterlijk dan zijn alle premies bekend" },
+    { "type": "text", "id": "z_overstap", "label": "Regel over overstappen", "default": "31 december: laatste dag om je oude polis op te zeggen." },
+    { "type": "text", "id": "z_dag", "label": "Kalenderblad: dag", "default": "12" },
+    { "type": "text", "id": "z_maand", "label": "Kalenderblad: maand", "default": "nov" },
+    { "type": "text", "id": "z_vraag", "label": "Aanmelden: vraag", "default": "Seintje op 12 november?" },
+    { "type": "text", "id": "z_vraag_tekst", "label": "Aanmelden: toelichting", "default": "Dan zijn alle premies bekend." },
+    { "type": "text", "id": "z_knop", "label": "Aanmelden: knop", "default": "Mail mij op 12 november" },
+    { "type": "text", "id": "z_belofte", "label": "Aanmelden: belofte", "default": "Wij mailen je één keer, zodra alle premies bekend zijn en je kunt vergelijken. Niet verplicht." },
+    { "type": "textarea", "id": "z_lees", "label": "Artikelen eronder", "info": "Een per regel: link|titel", "default": "/blogs/advies/zorgverzekering-2027|Zorgverzekering 2027: premies vanaf 12 november\n/blogs/advies/eigen-risico-2027-400-euro|Eigen risico 2027: wat je echt gaat betalen\n/blogs/advies/wanneer-overstappen-zorgverzekering|Wanneer kun je overstappen van zorgverzekering?" },
+    { "type": "header", "content": "Producten, gaming en actueel" },
+    { "type": "text", "id": "prod_kop", "label": "Producten: kop", "default": "Per winkel vergeleken" },
+    { "type": "text", "id": "prod_sub", "label": "Producten: regel ernaast", "default": "Dezelfde uitvoering, de laagste prijs van vandaag." },
+    { "type": "text", "id": "gaming_kop", "label": "Gaming: kop", "default": "Gaming, per winkel vergeleken" },
+    { "type": "text", "id": "act_kop", "label": "Actueel: kop", "default": "Actueel" },
+    { "type": "text", "id": "blog", "label": "Actueel: blog (handle)", "default": "advies" },
+    { "type": "header", "content": "Bronnen" },
+    { "type": "text", "id": "worker_url", "label": "Worker telecom", "default": "https://awin.business-347.workers.dev" },
+    { "type": "text", "id": "shop_url", "label": "Worker producten", "default": "https://shop.deprijsvergelijker.com" },
+    { "type": "text", "id": "mail_url", "label": "Worker aanmeldingen", "default": "https://dpv-boodschappen.business-347.workers.dev" }
+  ]
+}
+{% endschema %}

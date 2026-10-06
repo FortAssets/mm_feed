@@ -1,0 +1,179 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "dpv-hero-kies": {
+      "type": "dpv-hero-kies",
+      "settings": {}
+    },
+    "dpv-hero-prijzen": {
+      "type": "dpv-hero-prijzen",
+      "settings": {
+        "rijen": "simonly|Sim only|€3,00 p/m|€72 over 24 maanden|/pages/sim-only\ntelefoon|Telefoon|€8,00 p/m|€96 over 12 maanden|/pages/telefoonabonnement\ninternet|Internet|€9,50 p/m|€228 over 24 maanden|/pages/internet-tv\nenergie|Energie|€1.412 p/j|hele rekening, incl. belastingteruggave|/pages/energie\nzorg|Zorg|€122,89 p/m|let op: €885 eigen risico|/pages/zorgverzekering\nproducten|Producten|per winkel vergeleken|tv, laptop, audio, huishouden|/pages/vergelijken\ngaming|Gaming|consoles en games|consoles en games per winkel|/pages/gaming\nboodschappen|Boodschappen|aanbiedingen deze week|aanbiedingen van 12 winkels, per kilo|/pages/boodschappen",
+        "compact": true,
+        "compact_kop": "Alle vergelijkers"
+      }
+    },
+    "dpv-deals": {
+      "type": "dpv-home-deals",
+      "settings": {
+        "heading": "De scherpste van vandaag",
+        "subnote": "Per categorie de beste aanbieding van dit moment, met aanbieder en voorwaarden erbij. Wij sorteren op prijs; wat je kiest bepaal je zelf.",
+        "worker_url": "https://awin.business-347.workers.dev",
+        "peil": "Telecom automatisch bijgewerkt uit de feed. Energie- en zorgbedragen handmatig bijgehouden, gecontroleerd op 18 augustus 2026. Premies voor 2027 worden uiterlijk 12 november bekend.",
+        "seo_html": "<p>Vergelijk de goedkoopste <a href=\"/pages/sim-only\">sim only abonnementen</a> van KPN, Odido, Vodafone, <a href=\"/pages/providers-simyo\">Simyo</a> en <a href=\"/pages/providers-ben\">Ben</a>. Een sim only abonnement begint al rond 5 euro per maand voor een kleine databundel en loopt op tot onbeperkt internet. Je houdt je eigen telefoon en betaalt alleen voor data, bellen en sms. Bekijk ook de <a href=\"/pages/goedkoopste-sim-only-deze-maand\">goedkoopste sim only deze maand</a> of lees in onze gids <a href=\"/blogs/advies/hoeveel-gb-data-heb-je-nodig\">hoeveel GB data je echt nodig hebt</a>.</p><p>Vergelijk een <a href=\"/pages/telefoonabonnement\">telefoon met abonnement</a> van de nieuwste modellen zoals de iPhone 17, Samsung Galaxy S26 en OnePlus, in combinatie met een abonnement van KPN, Odido of Vodafone. Let bij een toestel op afbetaling altijd op de totaalprijs over de looptijd, niet alleen de maandprijs. Heb je al een goede telefoon? Dan ben je vaak voordeliger uit met <a href=\"/pages/sim-only\">sim only</a>. Twijfel je? Lees <a href=\"/blogs/advies/sim-only-of-abonnement-met-toestel\">sim only of een abonnement met toestel</a>. Wacht je op het nieuwste model, bekijk dan <a href=\"/pages/iphone-18\">alles over de iPhone 18</a>.</p><p>Vergelijk <a href=\"/pages/internet-tv\">internet en TV pakketten</a> van Ziggo, <a href=\"/pages/providers-kpn\">KPN</a>, <a href=\"/pages/providers-odido\">Odido</a>, <a href=\"/pages/providers-vodafone\">Vodafone</a> en DELTA. Kies tussen glasvezel, kabel of DSL en bepaal of je een alles-in-1 pakket met televisie wilt of internet-only. Voor een gemiddeld huishouden volstaat 100 tot 300 Mbit/s. Lees meer over <a href=\"/blogs/advies/glasvezel-kabel-of-dsl-internet-kiezen\">glasvezel, kabel of DSL kiezen</a>.</p><p>Nieuw: vergelijk ook <a href=\"/pages/energie\">energie</a>. Wij rekenen je hele rekening door, dus levering, energiebelasting, netbeheerkosten en de vermindering van €629 per jaar, en niet alleen het tarief per kWh. Zo zie je wat een contract je echt kost bij jouw verbruik.</p>"
+      }
+    },
+    "dpv-iphone18": {
+      "type": "dpv-blog-strip",
+      "settings": {
+        "blog_handle": "advies",
+        "eyebrow": "iPhone 18 Pro nu te koop · iPhone Duo vanaf 16 oktober",
+        "heading": "iPhone 18 Pro & iPhone Duo",
+        "subheading": "Wat de iPhone 18 Pro nu per aanbieder kost, en wanneer je de iPhone Duo kunt bestellen.",
+        "more_label": "Alles over de iPhone 18",
+        "image_fit": "cover",
+        "max_items": 6,
+        "tag_filter": "iphone18",
+        "aftel_datum": "2026-09-09",
+        "verberg_na": "2026-11-07",
+        "more_url": "/pages/iphone-18",
+        "blog_handle_2": "news",
+        "melding_aan": false,
+        "melding_hint": "jouw@email.nl",
+        "melding_knop": "Mail me",
+        "melding_fijn": "Eén bericht op de dag dat de pre-orders opengaan, met de prijzen per aanbieder. Afmelden kan altijd.",
+        "melding_lijst": "iphoneduo-alert",
+        "melding_bron": "preorder-strip",
+        "melding_tot": "2026-10-16",
+        "melding_na_tekst": "Bekijk waar je de iPhone Duo pre-ordert",
+        "melding_na_url": "/pages/iphone-duo-pre-order"
+      }
+    },
+    "dpv-waarom": {
+      "type": "dpv-home-waarom",
+      "settings": {
+        "kop": "Zo werkt het, en zo verdienen wij",
+        "s1_kop": "Tik je keuze aan",
+        "s1_tekst": "Geen formulier en geen account. Je ziet direct de laagste prijs en de alternatieven.",
+        "s2_kop": "Vergelijk de hele rekening",
+        "s2_tekst": "Maandprijs, looptijd en wat je in totaal betaalt, per aanbieder en per winkel.",
+        "s3_kop": "Ga naar de aanbieder",
+        "s3_tekst": "Sluit je daar af, dan krijgen wij een vergoeding. De volgorde blijft op prijs en jij betaalt niets extra."
+      }
+    },
+    "dpv-capture": {
+      "type": "dpv-email-capture",
+      "settings": {
+        "heading": "Mis geen scherpe deal",
+        "subtext": "Producten, abonnementen en energie: zakt er een prijs flink, dan hoor je het."
+      }
+    },
+    "dpv-drawer": {
+      "type": "dpv-save-drawer",
+      "settings": {}
+    },
+    "dpv-kennisbank": {
+      "type": "dpv-blog-mix",
+      "settings": {
+        "eyebrow": "Advies & kennisbank",
+        "kop": "Lees je in voordat je kiest",
+        "sub": "Per onderwerp de nieuwste artikelen: energie, zorg, telefoons en internet naast elkaar.",
+        "blogs": "advies,news",
+        "per_onderwerp": 2,
+        "tags": "Energie|energie|#0b7d5c\nZorg|zorg|#5b3b8c\nTelefoons|iphone18|#1B3FA0\nInternet|internet|#1B3FA0",
+        "meer_label": "Alle artikelen",
+        "meer_url": "/blogs/advies"
+      }
+    },
+    "dpv-gidsen": {
+      "type": "dpv-gidsen",
+      "settings": {
+        "kop": "Koopgidsen iPhone 18 Pro"
+      }
+    },
+    "dpv-app-knop": {
+      "type": "dpv-app-knop",
+      "settings": {
+        "onder": ""
+      }
+    },
+    "dpv-gaming-rij": {
+      "type": "dpv-shop-rij",
+      "settings": {
+        "api": "https://shop.deprijsvergelijker.com",
+        "label": "Populair",
+        "kop": "Gaming, per winkel vergeleken",
+        "sub": "Elke nacht opnieuw gemeten, zodat je ziet of een aanbieding echt een aanbieding is.",
+        "link_tekst": "Alles in gaming",
+        "link_url": "/pages/gaming",
+        "cat": "gaming",
+        "types": "",
+        "sort": "verschil",
+        "aantal": 10,
+        "alleen_multi": false,
+        "alleen_echt": false,
+        "alleen_deal": false,
+        "min": "",
+        "max": "",
+        "vlak": "geen",
+        "uitgelicht": "e0711719020837 e5026555439817 e0045496337414 e0045496312343 e5030935125535 e0711719580782 e0815820025252 e0196388866229 e0045496313067 e0889842651393"
+      }
+    },
+    "dpv-blackfriday-strip": {
+      "type": "dpv-blog-strip",
+      "settings": {
+        "blog_handle": "advies",
+        "blog_handle_2": "news",
+        "eyebrow": "Vrijdag 27 november",
+        "heading": "Black Friday 2026",
+        "subheading": "Wij meten vanaf nu elke nacht de prijs van ruim 60.000 producten. Op 27 november weten wij dus van elk product wat het de weken ervoor kostte, en dat is het enige harde bewijs dat een korting echt is.",
+        "tag_filter": "black friday",
+        "image_fit": "cover",
+        "max_items": 6,
+        "more_label": "Naar de Black Friday-pagina",
+        "more_url": "/pages/black-friday",
+        "verberg_na": "2026-12-01",
+        "melding_aan": false
+      }
+    },
+    "dpv-gaming-artikelen": {
+      "type": "dpv-blog-strip",
+      "settings": {
+        "blog_handle": "advies",
+        "blog_handle_2": "news",
+        "eyebrow": "Gaming",
+        "heading": "Wat het kost, en waar je het koopt",
+        "subheading": "Per game en per console uitgezocht wat de winkels vragen.",
+        "tag_filter": "gaming",
+        "image_fit": "cover",
+        "max_items": 3,
+        "more_label": "Alles in gaming",
+        "more_url": "/pages/gaming",
+        "melding_aan": false
+      }
+    }
+  },
+  "order": [
+    "dpv-hero-kies",
+    "dpv-hero-prijzen",
+    "dpv-deals",
+    "dpv-blackfriday-strip",
+    "dpv-gaming-rij",
+    "dpv-gaming-artikelen",
+    "dpv-iphone18",
+    "dpv-gidsen",
+    "dpv-kennisbank",
+    "dpv-waarom",
+    "dpv-app-knop",
+    "dpv-capture",
+    "dpv-drawer"
+  ]
+}

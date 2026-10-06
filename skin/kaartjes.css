@@ -129,3 +129,7 @@ html:not(#x):not(#y) .pa-blok{border:1px solid #E3E8F0 !important;box-shadow:non
 html:not(#x):not(#y) .dpvai-blok{background:#EAF6F0 !important;background-image:none !important;border:1px solid #CDEFE0 !important}
 html:not(#x):not(#y) .dpvai-blok .dpvai-veld{background:#fff !important;border:1px solid #BFE3D2 !important}
 html:not(#x):not(#y) .dpvai-blok .dpvai-hint button{border-color:#BFE3D2 !important}
+/* artikelen: het uitgelichte blok had een dikke rand; nu een groene rand in de kleur van de stip */
+html:not(#x):not(#y) .rte [style*="border:2px solid #059669"]{border:1.5px solid #3FAE7A !important}
+/* keuzelijst bovenaan de vergelijkingsartikelen is een veld */
+html:not(#x):not(#y) .vgk-sel{border:1px solid #CBD3DF !important;border-radius:10px !important}

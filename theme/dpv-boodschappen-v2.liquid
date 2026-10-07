@@ -1,62 +1,72 @@
 {%- comment -%}
-  BOODSCHAPPEN, VISUELE OPZET (concept A)
-  Eén raster met gelijke productkaarten, zoals een supermarktwebsite. Per kaart
-  de goedkoopste aanbieding groot, en daaronder uitklapbaar alle andere winkels
-  die hetzelfde merk deze week in de aanbieding hebben. Filteren gebeurt in één
-  balk bovenaan die meescrollt. Data komt uit dezelfde worker als de huidige
-  pagina (/sm/api/deals), er is dus geen aanpassing aan de worker nodig.
+  BOODSCHAPPEN, INDELING MET ZIJBALK (7 okt 2026)
+  Links de filters als lijst (winkel met de looptijd van de folder erbij,
+  wanneer, schap, actie), rechts het raster met productkaarten. Op een telefoon
+  zit de zijbalk achter de knop Filters. Op elke kaart staat bij de winkel van
+  wanneer tot wanneer de aanbieding geldt: de worker (vanaf 1.77) geeft per
+  aanbieding geldigVan en geldigTot mee, en per winkel de looptijd van de
+  folder. Met een oudere worker werkt de pagina ook; dan staat er alleen de
+  einddatum, voor zover bekend.
 {%- endcomment -%}
 <div class="bv" id="bv" data-api="{{ section.settings.api }}">
 
   <div class="bv-top">
     <div class="bv-tl">
-      <p class="bv-e">Boodschappen</p>
       <h1>{{ section.settings.titel }}</h1>
       {%- if section.settings.intro != blank -%}<p class="bv-sub">{{ section.settings.intro }}</p>{%- endif -%}
-      <p class="bv-wk" id="bv-wk">De aanbiedingen van deze week worden geladen…</p>
+      <p class="bv-wk" id="bv-wk">De aanbiedingen worden geladen…</p>
     </div>
-    <div class="bv-tr" id="bv-cijfers"></div>
+    <div class="bv-tr" id="bv-cijfers" hidden></div>
   </div>
 
-  <div class="bv-barhouder" id="bv-barhouder">
-    <div class="bv-bar" id="bv-bar">
-      <div class="bv-weken" id="bv-weken" hidden>
-        <button type="button" class="bv-wkt aan" data-w="deze">Deze week<small id="bv-wk1"></small></button>
-        <button type="button" class="bv-wkt" data-w="volgende">Volgende week<small id="bv-wk2"></small></button>
+  <form class="bv-zoek" id="bv-zoekform" role="search">
+    <label for="bv-q" class="bv-weg">Zoek een product</label>
+    <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M9 2a7 7 0 1 0 4.2 12.6l3.1 3.1 1.4-1.4-3.1-3.1A7 7 0 0 0 9 2Zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 9 4Z"/></svg>
+    <input id="bv-q" type="search" placeholder="Zoek een product of merk, bijvoorbeeld cola" autocomplete="off">
+    <button type="button" id="bv-wis" hidden aria-label="Zoekopdracht wissen">&times;</button>
+  </form>
+
+  <div class="bv-weken" id="bv-weken" hidden>
+    <button type="button" class="bv-wkt aan" data-w="deze">Deze week<small id="bv-wk1"></small></button>
+    <button type="button" class="bv-wkt" data-w="volgende">Volgende week<small id="bv-wk2"></small></button>
+  </div>
+
+  <div class="bv-twee" id="bv-twee">
+    <aside class="bv-zij" id="bv-zij" aria-label="Filters">
+      <div class="bv-zij-kop"><b>Filters</b><button type="button" id="bv-zij-sluit" aria-label="Filters sluiten">&times;</button></div>
+      <div class="bv-zij-in">
+        <div class="bv-zg"><h2>Winkel</h2><div class="bv-rijtjes" id="bv-cw"></div></div>
+        <div class="bv-zg"><h2>Wanneer</h2><div class="bv-rijtjes" id="bv-cwan"></div></div>
+        <div class="bv-zg"><h2>Schap</h2><div class="bv-rijtjes" id="bv-ccat"></div></div>
+        <div class="bv-zg"><h2>Actie</h2><div class="bv-rijtjes" id="bv-ca"></div></div>
+        <div class="bv-zg bv-zg-soort"><h2>Soort aanbieding</h2><div class="bv-rijtjes" id="bv-cs"></div></div>
+        <div class="bv-zg"><h2>Folder bekijken</h2><div class="bv-fkn" id="bv-cf"></div></div>
       </div>
-      <form class="bv-zoek" id="bv-zoekform" role="search">
-        <label for="bv-q" class="bv-weg">Zoek een product</label>
-        <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M9 2a7 7 0 1 0 4.2 12.6l3.1 3.1 1.4-1.4-3.1-3.1A7 7 0 0 0 9 2Zm0 2a5 5 0 1 1 0 10A5 5 0 0 1 9 4Z"/></svg>
-        <input id="bv-q" type="search" placeholder="Zoek op merk of product, bijvoorbeeld kwark of luiers" autocomplete="off">
-        <button type="button" id="bv-wis" hidden aria-label="Zoekopdracht wissen">&times;</button>
-      </form>
-      <div class="bv-rijen">
-        <div class="bv-rij"><span class="bv-rl">Winkel</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-cw"></div></div></div>
-        <div class="bv-rij"><span class="bv-rl">Actie</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-ca"></div></div></div>
-        <div class="bv-rij bv-soortrij"><span class="bv-rl">Soort</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-cs"></div></div></div>
-        <div class="bv-rij bv-folderrij"><span class="bv-rl">Folder</span><div class="bv-chipswrap"><div class="bv-chips" id="bv-cf"></div></div></div>
-      </div>
-      <div class="bv-onder">
+      <div class="bv-zij-voet"><button type="button" class="bv-zij-wis" id="bv-zij-wis">Wis filters</button><button type="button" class="bv-zij-toon" id="bv-zij-toon">Toon producten</button></div>
+    </aside>
+
+    <div class="bv-hoofd">
+      <div class="bv-balk" id="bv-bar">
+        <button type="button" class="bv-fknop" id="bv-fknop" aria-controls="bv-zij" aria-expanded="false">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14v2H3zm3 4h8v2H6zm2 4h4v2H8z"/></svg>Filters<span id="bv-fknop-n" hidden></span></button>
         <p class="bv-telling" id="bv-telling" aria-live="polite"></p>
-        <label class="bv-kies"><span>Schap</span><select id="bv-cc"></select></label>
-        <span class="bv-nuschap" id="bv-nuschap" aria-live="polite" hidden></span>
-        <label class="bv-kies"><span>Sorteer</span>
+        <label class="bv-kies"><span class="bv-weg">Sorteer</span>
           <select id="bv-sort">
-            <option value="schap">Per schap</option>
             <option value="korting">Hoogste korting</option>
-            <option value="winkels">Meeste winkels</option>
             <option value="eenheid">Laagste prijs per liter of kilo</option>
             <option value="prijs">Laagste prijs</option>
+            <option value="winkels">Meeste winkels</option>
+            <option value="schap">Per schap</option>
             <option value="naam">Naam A tot Z</option>
           </select>
         </label>
-        <button type="button" class="bv-reset" id="bv-reset" hidden>Filters wissen</button>
-        <button type="button" class="bv-naarfilters" id="bv-naarfilters">Filters</button>
       </div>
+      <div class="bv-actief" id="bv-actief" hidden></div>
+      <p class="bv-vooruit" id="bv-vooruit" hidden></p>
+      <div class="bv-grid" id="bv-grid"><p class="bv-leeg">Laden…</p></div>
+      <p class="bv-meerp"><button type="button" id="bv-meer" hidden></button></p>
     </div>
   </div>
-
-  <p class="bv-vooruit" id="bv-vooruit" hidden></p>
 
   <section class="bv-sec" id="bv-zoekextra" hidden>
     <h2 class="bv-h2">Ook gevonden in de folders</h2>
@@ -70,9 +80,6 @@
     <div class="bv-chipswrap"><div class="bv-chips" id="bv-dt" role="tablist"></div></div>
     <div class="bv-dgrid" id="bv-dl"></div>
   </section>
-
-  <div class="bv-grid" id="bv-grid"><p class="bv-leeg">Laden…</p></div>
-  <p class="bv-meerp"><button type="button" id="bv-meer" hidden></button></p>
 
   <section class="bv-sec" id="bv-alles" hidden>
     <h2 class="bv-h2">Alles uit de folder</h2>
@@ -372,13 +379,172 @@
   .bv-dgrid{gap:0}
   .bv-dn{white-space:normal}
 }
+
+/* ==== Indeling met zijbalk, nieuwe stijl (7 okt 2026) ====================
+   Alles hieronder gaat over de regels erboven heen. De oude regels blijven
+   staan voor de blokken onderaan de pagina (dagdeals, alles uit de folder). */
+.bv{max-width:1240px;font-family:'Instrument Sans',system-ui,sans-serif;color:#0D1B2A;padding-top:22px}
+.bv h1,.bv-h2,.bv-h3,.bv-prijs strong,.bv-actiep,.bv-schapkop,.bv-geenbeeld{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif}
+.bv-top{margin:0 0 14px;display:block}
+.bv h1{font-size:clamp(28px,4.2vw,38px);font-weight:800;letter-spacing:-.04em;line-height:1.05;margin:0 0 8px}
+.bv-sub{font-size:15.5px;color:#4A5A70;max-width:70ch;margin:0 0 6px}
+.bv-wk{font-size:13.5px;color:#4A5A70;font-weight:500}
+.bv-tr[hidden]{display:none}
+.bv-zoek{margin:0 0 20px}
+.bv-zoek svg{left:17px;fill:#4A5A70}
+html:not(#x):not(#y) .bv-zoek input{height:52px !important;min-height:52px !important;border:1px solid #CBD3DF !important;border-radius:12px !important;background:#fff !important;padding:0 44px 0 46px !important;font-size:16px !important;font-family:inherit !important;color:#0D1B2A !important;box-shadow:none !important}
+html:not(#x):not(#y) .bv-zoek input:focus{border-color:#0D1B2A !important;outline:2px solid #3FAE7A;outline-offset:1px}
+.bv-weken{max-width:420px;margin:0 0 16px}
+.bv-weken[hidden]{display:none}
+
+.bv-twee{display:grid;grid-template-columns:268px minmax(0,1fr);gap:30px;align-items:start}
+.bv-hoofd{min-width:0}
+
+/* Zijbalk */
+.bv-zij-kop,.bv-zij-voet{display:none}
+.bv-zg{margin:0 0 22px}
+.bv-zg h2{font-family:'Instrument Sans',system-ui,sans-serif;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#4A5A70;margin:0 0 8px}
+.bv-rijtjes{display:block}
+html:not(#x):not(#y) .bv-rijtjes button.bv-r{display:flex;align-items:center;gap:10px;width:100%;min-height:40px;padding:6px 4px;margin:0;border:0 !important;border-radius:8px !important;background:none !important;color:#0D1B2A !important;font:inherit;font-size:14.5px;font-weight:500;text-align:left;cursor:pointer;box-shadow:none !important;text-transform:none;letter-spacing:0}
+html:not(#x):not(#y) .bv-rijtjes button.bv-r:hover{background:#F1F3F8 !important}
+html:not(#x):not(#y) .bv-rijtjes button.bv-r.weg{display:none}
+.bv-vak{flex:0 0 20px;width:20px;height:20px;border:1.5px solid #CBD3DF;border-radius:5px;background:#fff;position:relative}
+.bv-r.aan .bv-vak{background:#0D1B2A;border-color:#0D1B2A}
+.bv-r.aan .bv-vak::after{content:'';position:absolute;left:6px;top:2px;width:5px;height:10px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.bv-lg{flex:0 0 22px;width:22px;height:22px;border-radius:5px;object-fit:contain;background:#fff;display:block}
+i.bv-lg{font-style:normal}
+.bv-rt{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.bv-rn{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bv-r.aan .bv-rn{font-weight:700}
+.bv-rs{font-size:12px;color:#4A5A70;font-weight:500;margin-top:2px}
+.bv-r small{flex:0 0 auto;font-size:12.5px;color:#4A5A70;font-weight:500;font-variant-numeric:tabular-nums}
+html:not(#x):not(#y) .bv-meerlink{display:inline-block;margin:6px 0 0 4px;padding:4px 0;border:0 !important;background:none !important;color:#2456D6 !important;font:inherit;font-size:13.5px;font-weight:700;cursor:pointer;box-shadow:none !important;text-transform:none;letter-spacing:0}
+.bv-fkn{display:flex;flex-wrap:wrap;gap:6px}
+html:not(#x):not(#y) .bv-fkn button{display:inline-flex;align-items:center;gap:6px;border:1px solid #CBD3DF !important;border-radius:99px !important;background:#fff !important;color:#0D1B2A !important;font:inherit;font-size:12.5px;font-weight:600;padding:5px 10px;cursor:pointer;box-shadow:none !important;text-transform:none;letter-spacing:0;min-height:0}
+html:not(#x):not(#y) .bv-fkn button:hover{border-color:#0D1B2A !important}
+.bv-fkn button i{width:8px;height:8px;border-radius:2px;flex:0 0 8px;font-style:normal}
+.bv-fkn button small{color:#4A5A70}
+
+/* Balk boven het raster */
+.bv-balk{display:flex;align-items:center;gap:12px;margin:0 0 12px;min-height:46px}
+.bv-telling{flex:1;min-width:0;margin:0;font-size:14.5px;font-weight:500;color:#4A5A70;display:block}
+.bv-telling b{color:#0D1B2A;font-weight:700}
+html:not(#x):not(#y) .bv-kies select{height:46px;border:1px solid #CBD3DF !important;border-radius:10px !important;background-color:#fff !important;color:#0D1B2A !important;font:inherit;font-size:14.5px;font-weight:600;padding:0 34px 0 14px;max-width:290px;width:auto;box-shadow:none !important}
+html:not(#x):not(#y) .bv-fknop{display:none;align-items:center;gap:8px;height:46px;padding:0 16px;border:0 !important;border-radius:10px !important;background:#0D1B2A !important;color:#fff !important;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer;box-shadow:none !important;text-transform:none;letter-spacing:0}
+.bv-fknop svg{width:16px;height:16px;fill:currentColor}
+.bv-fknop span{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;border-radius:99px;background:#3FAE7A;color:#0D1B2A;font-size:12px;font-weight:800;padding:0 5px}
+.bv-fknop span[hidden]{display:none}
+.bv-actief{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 14px}
+.bv-actief[hidden]{display:none}
+html:not(#x):not(#y) .bv-actief button{display:inline-flex;align-items:center;gap:6px;border:0 !important;border-radius:99px !important;background:#F1F3F8 !important;color:#0D1B2A !important;font:inherit;font-size:13px;font-weight:600;padding:6px 12px;cursor:pointer;box-shadow:none !important;text-transform:none;letter-spacing:0;min-height:0}
+html:not(#x):not(#y) .bv-actief button.alles{background:none !important;color:#2456D6 !important;padding-left:6px}
+
+/* Kaarten */
+.bv-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;align-items:stretch}
+.bv-k{border:1px solid #E3E8F0;border-radius:14px;padding:16px;background:#fff}
+.bv-k:hover{border-color:#CBD3DF}
+.bv-beeld{height:124px;margin:0 0 12px}
+.bv-beeld img{max-height:124px}
+.bv-geenbeeld{height:116px;background:#F1F3F8;color:#9AA7B8}
+.bv-cat{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#4A5A70;margin:0 0 3px}
+.bv-k h3{font-family:'Instrument Sans',system-ui,sans-serif;font-size:16px;font-weight:700;line-height:1.25;letter-spacing:-.01em;margin:0 0 3px;color:#0D1B2A}
+.bv-folder{flex:1;margin:0}
+.bv-oms{margin:0 0 12px;font-size:13px;line-height:1.35;color:#4A5A70;font-weight:400;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.7em}
+.bv-prijs{gap:8px;margin:0 0 3px;align-items:baseline}
+.bv-prijs strong{font-size:28px;font-weight:800;letter-spacing:-.04em;color:#0D1B2A}
+.bv-prijs strong small{font-family:'Instrument Sans',system-ui,sans-serif;font-size:12px;font-weight:600;letter-spacing:0;color:#4A5A70}
+.bv-prijs s{font-size:13.5px;color:#4A5A70;font-weight:500}
+.bv-prijs em{font-size:12px;color:#4A5A70;font-weight:500}
+.bv-pct{display:inline-block;background:#DDF3E8;color:#0D1B2A;border-radius:6px;padding:2px 7px;font-size:12px;font-weight:700;line-height:1.3;white-space:nowrap;align-self:center}
+.bv-actiep{font-size:22px;color:#0D1B2A;letter-spacing:-.03em;margin:0 0 3px}
+.bv-vw{background:#FFF4D1;color:#0D1B2A;font-weight:600;font-size:12px;border-radius:6px}
+.bv-pe{font-size:13px;font-weight:500;color:#4A5A70;margin:0 0 10px;min-height:1.3em}
+.bv-pe.leeg{color:#4A5A70;font-weight:500}
+.bv-eerder{font-size:12px;font-weight:500;color:#4A5A70;margin:-6px 0 10px}
+.bv-eerder.laag{color:#1F7A52;font-weight:700}
+.bv-tot{margin:0 0 8px}
+.bv-soort.dag{background:#FFF4D1;color:#0D1B2A;font-size:11.5px;font-weight:700}
+/* De winkel met de looptijd: het vaste blok onderaan elke kaart. */
+.bv-wb{display:flex;align-items:center;gap:10px;background:#F1F3F8;border-radius:10px;padding:9px 11px;margin:auto 0 0}
+.bv-wb .bv-lg{flex:0 0 26px;width:26px;height:26px;border-radius:6px}
+.bv-wbt{min-width:0;display:flex;flex-direction:column;line-height:1.25}
+.bv-wbt b{font-size:14.5px;font-weight:700;color:#0D1B2A}
+.bv-loop{font-size:13px;font-weight:700;color:#1F7A52}
+.bv-loop.straks{color:#8A5A00}
+.bv-loop.kort{color:#B4311B}
+.bv-k.bv-straks .bv-wb{background:#FFF4D1}
+.bv-ll{font-style:normal;font-weight:700;color:#1F7A52}
+.bv-ll.straks{color:#8A5A00}
+html:not(#x):not(#y) .bv a.bv-knop{display:block;margin:12px 0 0;padding:12px 10px;border:1.5px solid #0D1B2A !important;border-radius:10px !important;background:#F9C31F !important;color:#0D1B2A !important;font-size:14.5px;font-weight:700;text-align:center;text-decoration:none !important;box-shadow:3px 3px 0 #0D1B2A !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+html:not(#x):not(#y) .bv a.bv-knop:hover{transform:translate(1px,1px);box-shadow:2px 2px 0 #0D1B2A !important}
+html:not(#x):not(#y) .bv a.bv-knop.check{background:#fff !important}
+html:not(#x):not(#y) .bv a.bv-knop.bestel{background:#fff !important;box-shadow:none !important;margin-top:8px;border-width:1px !important;padding:10px}
+.bv-online{background:#fff;border:1px solid #E3E8F0;border-radius:10px;margin:12px 0 0}
+.bv-okop{color:#4A5A70;font-weight:700;letter-spacing:.08em}
+.bv-omgedraaid .bv-online{border:1px solid #0D1B2A}
+.bv-folder.bv-bijzaak{background:#fff;border:1px solid #E3E8F0}
+html:not(#x):not(#y) .bv-verg{margin:12px 0 0;padding:10px 0 0;border:0 !important;border-top:1px solid #E3E8F0 !important;border-radius:0 !important;background:none !important;color:#2456D6 !important;font-size:13.5px;font-weight:700;box-shadow:none !important;text-transform:none;letter-spacing:0;min-height:0}
+.bv-lm{font-size:12px;color:#4A5A70;font-weight:500}
+.bv-lm b{color:#0D1B2A;font-weight:700}
+.bv-schapkop{font-size:19px;letter-spacing:-.03em;margin:22px 0 0}
+html:not(#x):not(#y) .bv-meerp button{border:1.5px solid #0D1B2A !important;border-radius:10px !important;background:#fff !important;color:#0D1B2A !important;font-size:14.5px;font-weight:700;padding:12px 22px;box-shadow:3px 3px 0 #3FAE7A !important;text-transform:none;letter-spacing:0}
+.bv-niets{background:#F1F3F8;border:0}
+.bv-vooruit{background:#FFF4D1;border:0;color:#0D1B2A}
+html.bv-slot,html.bv-slot body{overflow:hidden}
+
+@media(max-width:1060px){
+  .bv-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bv-twee{grid-template-columns:244px minmax(0,1fr);gap:22px}
+}
+@media(max-width:820px){
+  .bv{padding:16px 14px 44px}
+  .bv-twee{display:block}
+  html:not(#x):not(#y) .bv-fknop{display:inline-flex}
+  .bv-telling{display:none}
+  .bv-balk{gap:8px}
+  .bv-kies{flex:1;min-width:0}
+  html:not(#x):not(#y) .bv-kies select{width:100%;max-width:none}
+  /* De zijbalk als blad over het hele scherm */
+  .bv-zij{display:none;position:fixed;inset:0;z-index:2147483000;background:#fff;flex-direction:column}
+  .bv-zij.open{display:flex}
+  .bv-zij-kop{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #E3E8F0;flex:0 0 auto}
+  .bv-zij-kop b{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.03em}
+  html:not(#x):not(#y) .bv-zij-kop button{width:42px;height:42px;border:1px solid #CBD3DF !important;border-radius:10px !important;background:#fff !important;color:#0D1B2A !important;font-size:24px;line-height:1;cursor:pointer;padding:0;box-shadow:none !important;min-height:0}
+  .bv-zij-in{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 8px}
+  .bv-zij-voet{display:flex;gap:10px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid #E3E8F0;flex:0 0 auto;background:#fff}
+  html:not(#x):not(#y) .bv-zij-wis{flex:0 0 auto;height:48px;padding:0 16px;border:1px solid #CBD3DF !important;border-radius:10px !important;background:#fff !important;color:#0D1B2A !important;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer;box-shadow:none !important;text-transform:none;letter-spacing:0}
+  html:not(#x):not(#y) .bv-zij-wis:disabled{opacity:.45}
+  html:not(#x):not(#y) .bv-zij-toon{flex:1;height:48px;border:1.5px solid #0D1B2A !important;border-radius:10px !important;background:#F9C31F !important;color:#0D1B2A !important;font:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:3px 3px 0 #0D1B2A !important;text-transform:none;letter-spacing:0}
+  html:not(#x):not(#y) .bv-rijtjes button.bv-r{min-height:46px;font-size:15.5px}
+}
+@media(max-width:620px){
+  .bv h1{font-size:28px}
+  .bv-sub{-webkit-line-clamp:2}
+  .bv-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .bv-k{padding:12px;border-radius:12px}
+  .bv-beeld{height:96px;margin:0 0 8px}
+  .bv-beeld img{max-height:96px}
+  .bv-geenbeeld{height:90px;font-size:14px}
+  .bv-k h3{font-size:14.5px}
+  .bv-oms{font-size:12px;margin:0 0 8px}
+  .bv-prijs strong{font-size:23px}
+  .bv-prijs{gap:5px}
+  .bv-wb{padding:7px 8px;gap:8px}
+  .bv-wb .bv-lg{flex:0 0 22px;width:22px;height:22px}
+  .bv-wbt b{font-size:13.5px}
+  .bv-loop{font-size:12px}
+  html:not(#x):not(#y) .bv a.bv-knop{font-size:13.5px;padding:11px 6px}
+}
+@media(max-width:360px){.bv-grid{grid-template-columns:1fr}}
+
 </style>
 
 <script>
 (function(){
   var root=document.getElementById('bv'); if(!root) return;
   var API=root.getAttribute('data-api')||'';
-  var D=null, alles=[], winkel='', actie='', dsoort='', categorie='', vraag='', sort='schap', getoond=24, STAP=24;
+  var D=null, alles=[], winkel='', actie='', dsoort='', categorie='', wanneer='', vraag='', sort='korting', getoond=24, STAP=24;
+  var VANDAAG='', periodeVan={};
   var welkeWeek='deze', cache={}, weekKeys={};
 
   function e(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
@@ -388,6 +554,38 @@
   function maandag(wk){var j=+String(wk).slice(0,4),w=+String(wk).split('-W')[1],d=new Date(Date.UTC(j,0,4)),dag=d.getUTCDay()||7;d.setUTCDate(d.getUTCDate()-dag+1+(w-1)*7);return d}
   function plusD(d,n){var x=new Date(d);x.setUTCDate(x.getUTCDate()+n);return x}
   function tot(s){if(!s)return '';var d=new Date(s+'T12:00:00');if(isNaN(d))return '';return 't/m '+DGN[d.getDay()]+' '+d.getDate()+' '+MND[d.getMonth()]}
+  /* Van wanneer tot wanneer, zo kort als het kan: "wo 7 t/m di 13 okt",
+     "alleen wo 7 okt", "vanaf vr 9 t/m zo 11 okt". Zonder begindatum (oude
+     worker) alleen "t/m di 13 okt". */
+  function datumVan(s){if(!s)return null;var d=new Date(String(s).slice(0,10)+'T12:00:00');return isNaN(d)?null:d}
+  function vandaagIso(){if(VANDAAG)return VANDAAG;var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+  function plusIso(s,n){var d=datumVan(s);d.setDate(d.getDate()+n);return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
+  function dagKort(d,metMaand){return DGN[d.getDay()]+' '+d.getDate()+(metMaand?' '+MND[d.getMonth()]:'')}
+  function looptijd(van,tm){
+    var a=datumVan(van), b=datumVan(tm);
+    if(!b)return '';
+    if(!a)return 't/m '+dagKort(b,true);
+    if(String(van).slice(0,10)===String(tm).slice(0,10))return 'alleen '+dagKort(b,true);
+    return dagKort(a,a.getMonth()!==b.getMonth())+' t/m '+dagKort(b,true)}
+  /* Hoe staat een aanbieding ervoor: loopt hij, moet hij nog beginnen, of is
+     het de laatste dag? */
+  function stand(d){
+    var v=vandaagIso(), van=String(d.geldigVan||'').slice(0,10), tm=String(d.geldigTot||'').slice(0,10);
+    if(d.loopt==='straks'||(van&&van>v))return 'straks';
+    if(tm&&tm===v)return 'vandaag';
+    if(tm&&tm===plusIso(v,1))return 'morgen';
+    return 'nu'}
+  function looptekst(d){
+    var st=stand(d), t=looptijd(d.geldigVan,d.geldigTot);
+    if(!t)return '';
+    if(st==='straks')return '<span class="bv-loop straks">vanaf '+e(t.replace(/^alleen /,''))+'</span>';
+    if(st==='vandaag')return '<span class="bv-loop kort">'+e(t)+' · laatste dag</span>';
+    if(st==='morgen')return '<span class="bv-loop kort">'+e(t)+' · nog t/m morgen</span>';
+    return '<span class="bv-loop">'+e(t)+'</span>'}
+  var DOMEIN={ah:'ah.nl',jumbo:'jumbo.com',plus:'plus.nl',dirk:'dirk.nl',lidl:'lidl.nl',aldi:'aldi.nl',hoogvliet:'hoogvliet.com',vomar:'vomar.nl',kruidvat:'kruidvat.nl',etos:'etos.nl',da:'da.nl',trekpleister:'trekpleister.nl',action:'action.com'};
+  function logo(w){var k=KLEUR[w]||['#334155','#fff'];
+    if(!DOMEIN[w])return '<i class="bv-lg" style="background:'+k[0]+'"></i>';
+    return '<img class="bv-lg" loading="lazy" width="22" height="22" alt="" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=128&url=https://www.'+DOMEIN[w]+'" onerror="this.style.visibility=\'hidden\'">'}
   var KLEUR={ah:['#00A0E2','#fff'],jumbo:['#FFC800','#1A1A1A'],plus:['#6AA521','#fff'],dirk:['#E30613','#fff'],lidl:['#0050AA','#FFF000'],aldi:['#00005F','#fff'],
     hoogvliet:['#009A44','#fff'],vomar:['#D1001C','#fff'],kruidvat:['#E3000F','#fff'],action:['#0B64B4','#fff'],etos:['#1A1A1A','#fff'],da:['#E6007E','#fff'],trekpleister:['#F18A00','#fff']};
   function wl(w,naam){var k=KLEUR[w]||['#334155','#fff'];return '<span class="bv-wl" style="background:'+k[0]+';color:'+k[1]+'">'+e(naam||w)+'</span>'}
@@ -418,6 +616,30 @@
     if(d.normaalprijs&&d.prijsPerStuk&&d.normaalprijs>d.prijsPerStuk)return Math.round((1-d.prijsPerStuk/d.normaalprijs)*100);
     return 0}
 
+  /* De beste aanbieding uit een rijtje: wat vandaag geldt gaat voor wat nog
+     moet beginnen, dan de laagste prijs per eenheid, anders de hoogste korting. */
+  function kies(ds){
+    var nu=ds.filter(function(x){return x.stand!=='straks'});
+    var uit=nu.length?nu:ds;
+    var metEenheid=uit.filter(function(x){return x.perEenheid});
+    var best=metEenheid.length?metEenheid.slice().sort(function(a,b){return a.perEenheid-b.perEenheid})[0]
+      :uit.slice().sort(function(a,b){return (b.k-a.k)||((a.prijsPerStuk||9e9)-(b.prijsPerStuk||9e9))})[0];
+    var rest=ds.filter(function(x){return x!==best}).sort(function(a,b){
+      var pa=a.perEenheid||(a.prijsPerStuk?1e3+a.prijsPerStuk:1e6), pb=b.perEenheid||(b.prijsPerStuk?1e3+b.prijsPerStuk:1e6);return pa-pb});
+    return {best:best,rest:rest}}
+  /* Past deze aanbieding bij de gekozen filters? Alle filters gelden voor
+     dezelfde aanbieding: wie PLUS en "geldt vandaag" kiest, wil een aanbieding
+     van PLUS die vandaag geldt, niet een product dat bij PLUS straks en bij een
+     andere winkel vandaag in de actie is. */
+  function pastBij(d){
+    if(winkel&&d.winkel!==winkel)return false;
+    if(actie&&d.asoort!==actie)return false;
+    if(dsoort&&d.dsoort!==dsoort)return false;
+    if(wanneer==='nu'&&d.stand==='straks')return false;
+    if(wanneer==='straks'&&d.stand!=='straks')return false;
+    if(wanneer==='kort'&&d.stand!=='vandaag'&&d.stand!=='morgen')return false;
+    return true}
+
   /* Eén regel per product, klaar om te filteren en te sorteren. */
   function bouw(d){
     return (d.producten||[]).filter(function(p){return p.deals&&p.deals.length}).map(function(p){
@@ -427,11 +649,8 @@
         q.dsoort=x.soort||(x.dag?(x.dag==='weekend'?'weekend':'dag'):(x.bron==='folder'?'weekfolder':(x.bron==='action'?'webshop':'website')));
         return q});
       /* Beste aanbieding: eerst op prijs per eenheid, anders op korting. */
-      var metEenheid=ds.filter(function(x){return x.perEenheid});
-      var best=metEenheid.length?metEenheid.slice().sort(function(a,b){return a.perEenheid-b.perEenheid})[0]
-        :ds.slice().sort(function(a,b){return (b.k-a.k)||((a.prijsPerStuk||9e9)-(b.prijsPerStuk||9e9))})[0];
-      var rest=ds.filter(function(x){return x!==best}).sort(function(a,b){
-        var pa=a.perEenheid||(a.prijsPerStuk?1e3+a.prijsPerStuk:1e6), pb=b.perEenheid||(b.prijsPerStuk?1e3+b.prijsPerStuk:1e6);return pa-pb});
+      ds.forEach(function(q){q.stand=stand(q)});
+      var kz=kies(ds), best=kz.best, rest=kz.rest;
       /* Sorteren op de korting van de aanbieding die we ook tonen, anders staat
          een kaart met -11% ineens tussen de kaarten met -60% omdat een andere
          winkel daar wel veel korting geeft maar per liter duurder is. */
@@ -447,13 +666,20 @@
     'Koffie en thee','Huishouden','Wasmiddel','Verzorging','Baby','Huisdier'];
 
   function gefilterd(){
-    return alles.filter(function(x){
-      if(categorie&&x.p.categorie!==categorie)return false;
-      if(winkel&&!x.ds.some(function(d){return d.winkel===winkel}))return false;
-      if(actie&&!x.ds.some(function(d){return d.asoort===actie}))return false;
-      if(dsoort&&!x.ds.some(function(d){return d.dsoort===dsoort}))return false;
-      if(vraag&&x.zoek.indexOf(vraag)<0)return false;
-      return true}).sort(function(a,b){
+    var smal=!!(winkel||actie||dsoort||wanneer);
+    return alles.map(function(x){
+      if(categorie&&x.p.categorie!==categorie)return null;
+      if(vraag&&x.zoek.indexOf(vraag)<0)return null;
+      if(!smal)return x;
+      var m=x.ds.filter(pastBij);
+      if(!m.length)return null;
+      /* De kaart laat de aanbieding zien waar je op filtert; de andere winkels
+         staan er nog onder. */
+      var kz=kies(m), y=Object.assign({},x);
+      y.best=kz.best; y.rest=x.ds.filter(function(q){return q!==kz.best}).sort(function(a,b){
+        var pa=a.perEenheid||(a.prijsPerStuk?1e3+a.prijsPerStuk:1e6), pb=b.perEenheid||(b.prijsPerStuk?1e3+b.prijsPerStuk:1e6);return pa-pb});
+      y.k=kz.best.k||0; y.pe=kz.best.perEenheid||null; y.pr=kz.best.prijsPerStuk||null;
+      return y}).filter(Boolean).sort(function(a,b){
         /* Per schap is de standaard. Daarvoor stond alles op korting door
            elkaar: zuivel, chips en wasmiddel afgewisseld, en dan is de lijst
            niet te lopen zoals je door een winkel loopt. Binnen een schap nog
@@ -481,8 +707,8 @@
     if(/^\s*\d\s*\+\s*\d\s*gratis/i.test(a))return '<p class="bv-vw">Prijs per stuk bij '+e(a)+'</p>';
     return ''}
   function prijsBlok(d,eh){
-    if(d.prijsPerStuk)return '<p class="bv-prijs"><strong>'+(d.groep?'vanaf ':'')+eu(d.prijsPerStuk)+'</strong>'+
-      (d.normaalprijs&&!d.groep&&d.normaalprijs>d.prijsPerStuk?'<s>'+eu(d.normaalprijs)+'</s>':'')+
+    if(d.prijsPerStuk)return '<p class="bv-prijs"><strong>'+(d.groep?'<small>vanaf</small> ':'')+eu(d.prijsPerStuk)+'</strong>'+
+      (d.normaalprijs&&!d.groep&&d.normaalprijs>d.prijsPerStuk?'<s>'+eu(d.normaalprijs)+'</s>':'')+pil(d)+
       (/voor|gratis|halve/i.test(d.actie||'')?'<em>per stuk</em>':'')+'</p>'+voorwaarde(d);
     return '<p class="bv-actiep">'+e(d.actie||'aanbieding')+'</p>'}
 
@@ -519,9 +745,15 @@
     return {tekst:tekst,kleur:v[1]}}
   function herkomst(d){
     var s=soortDeal(d), r='';
-    if(s)r+='<span class="bv-soort '+s.kleur+'">'+e(s.tekst)+'</span>';
-    if(d.geldigTot)r+='<span class="bv-tdatum">'+tot(d.geldigTot)+'</span>';
+    if(s&&(s.kleur==='dag'))r+='<span class="bv-soort '+s.kleur+'">'+e(s.tekst)+'</span>';
     return r?'<p class="bv-tot">'+r+'</p>':''}
+  /* De winkel met daaronder de looptijd: het vaste blok op elke kaart. */
+  function winkelBlok(d){
+    return '<div class="bv-wb">'+logo(d.winkel)+'<span class="bv-wbt"><b>'+e(d.winkelNaam)+'</b>'+looptekst(d)+'</span></div>'}
+  function pil(d){
+    if(d.asoort==='gratis'||d.asoort==='halve')return '<span class="bv-pct actie">'+e(d.actie)+'</span>';
+    if(d.k)return '<span class="bv-pct">-'+d.k+'%</span>';
+    return ''}
 
   /* Grootverpakkingen die je online kunt bestellen. Die staan niet in een
      folder, dus ze horen niet tussen de aanbiedingen maar als eigen regel
@@ -569,22 +801,21 @@
      onlineblok kan staan zonder dat de inhoud verandert. */
   function folderBlok(x,d,eh,klein){
     return '<div class="bv-folder'+(klein?' bv-bijzaak':'')+'">'+
-      '<p class="bv-okop">Deze week in de folder</p>'+
+      (klein?'<p class="bv-okop">In de folder</p>':'')+
+      (d.omschrijving?'<p class="bv-oms">'+e(d.omschrijving)+'</p>':'')+
       prijsBlok(d,eh)+
-      '<p class="bv-pe'+(d.perEenheid?'':' leeg')+'">'+(d.perEenheid?eu(d.perEenheid)+' per '+e(eh):(d.prijsPerStuk?'inhoud niet vermeld':'prijs checken in de winkel'))+'</p>'+
+      '<p class="bv-pe'+(d.perEenheid?'':' leeg')+'">'+(d.perEenheid?eu(d.perEenheid)+' per '+e(eh):(d.prijsPerStuk?'':'prijs staat niet in de folder'))+'</p>'+
       eerderRegel(x,d,eh)+
-      '<span class="bv-bij">'+wl(d.winkel,d.winkelNaam)+'<span class="bv-oms">'+e(d.omschrijving||d.actie||'')+'</span></span>'+
       herkomst(d)+
+      winkelBlok(d)+
       /* Bij een lange winkelnaam past "Bekijk bij Albert Heijn" niet op een
          smal scherm. De winkel staat er vlak boven al, dus dan volstaat dit. */
       '<a class="bv-knop'+(d.prijsPerStuk?'':' check')+'" href="'+e(d.url)+'" target="_blank" rel="sponsored nofollow noopener">'+
         (d.dsoort==='weekfolder'?'Bekijk in de folder'
-          :(d.prijsPerStuk?(String(d.winkelNaam||'').length>9?'Bekijk deal':'Bekijk bij '+e(d.winkelNaam)):'Prijs checken'))+'</a>'+
+          :(d.prijsPerStuk?(String(d.winkelNaam||'').length>9?'Bekijk aanbieding':'Bekijk bij '+e(d.winkelNaam)):'Bekijk de actie'))+' →</a>'+
       /* Bij een winkel waar wij partner zijn kan de bezoeker meteen bestellen.
-         De folderknop blijft staan, want daar ziet hij de actie zelf. Bij een
-         lange winkelnaam laten we die naam uit de knop, anders wordt hij op een
-         smal scherm afgekapt. */
-      (d.bestelUrl&&d.bestelUrl!==d.url?'<a class="bv-knop bestel" href="'+e(d.bestelUrl)+'" target="_blank" rel="sponsored nofollow noopener">Bestel nu online'+
+         De folderknop blijft staan, want daar ziet hij de actie zelf. */
+      (d.bestelUrl&&d.bestelUrl!==d.url?'<a class="bv-knop bestel" href="'+e(d.bestelUrl)+'" target="_blank" rel="sponsored nofollow noopener">Bestel online'+
         (String(d.winkelNaam||'').length>6?'':' bij '+e(d.winkelNaam))+' →</a>':'')+
       '</div>'}
 
@@ -619,7 +850,8 @@
        kop boven een folderaanbieding maakt de kaart alleen verwarrender. */
     var online=onlineBlok(x,eh,d);
     var omgedraaid=!!online&&!!ONLINE_EERST[p.categorie];
-    return '<article class="bv-k'+(omgedraaid?' bv-omgedraaid':'')+'" id="bvk-'+e(p.id)+'">'+badge+
+    if(!onlineBoven)badge='';
+    return '<article class="bv-k'+(omgedraaid?' bv-omgedraaid':'')+(d.stand==='straks'?' bv-straks':'')+'" id="bvk-'+e(p.id)+'">'+badge+
       '<div class="bv-beeld">'+(p.afbeelding
         ?'<img src="'+e(p.afbeelding)+'" alt="'+e(p.naam)+'" loading="lazy" data-merk="'+e(p.merk||p.naam)+'" onerror="bvGeenFoto(this)">'
         :'<div class="bv-geenbeeld">'+e(p.merk||p.naam)+'</div>')+'</div>'+
@@ -637,7 +869,7 @@
         wl(d.winkel,d.winkelNaam)+
         '<span class="bv-lp">'+(d.prijsPerStuk?(d.groep?'vanaf ':'')+eu(d.prijsPerStuk)+(d.normaalprijs&&!d.groep&&d.normaalprijs>d.prijsPerStuk?'<s>'+eu(d.normaalprijs)+'</s>':''):'→')+'</span>'+
         '<span class="bv-lm">'+e(d.actie||'')+(d.perEenheid?' · <b>'+eu(d.perEenheid)+' per '+e(eh)+'</b>':'')+
-        (soortDeal(d)?' · '+e(soortDeal(d).tekst).toLowerCase():'')+(d.geldigTot?' · '+tot(d.geldigTot):'')+
+        (looptijd(d.geldigVan,d.geldigTot)?' · <i class="bv-ll'+(d.stand==='straks'?' straks':'')+'">'+(d.stand==='straks'?'vanaf ':'')+e(looptijd(d.geldigVan,d.geldigTot).replace(/^alleen /,d.stand==='straks'?'':'alleen '))+'</i>':'')+
         (d.eerderPrijs!=null?' · <em>eerder '+eu(d.eerderPrijs)+'</em>':'')+'</span></a>'}).join('');
     if(x.elders.length){
       h+='<p class="bv-lkop">Normale prijs elders</p>'+x.elders.slice(0,6).map(function(y){
@@ -676,12 +908,34 @@
       m.hidden=r.length<=getoond;
       m.textContent='Toon '+Math.min(STAP*2,r.length-getoond)+' van de '+(r.length-getoond)+' overige producten';
       var w=0;r.forEach(function(x){w+=x.ds.length});
-      document.getElementById('bv-telling').innerHTML=r.length+(r.length===1?' product':' producten')+' <span>· '+w+(w===1?' aanbieding':' aanbiedingen')+'</span>';
+      document.getElementById('bv-telling').innerHTML='<b>'+r.length+'</b>'+(r.length===1?' product':' producten')+' in de aanbieding';
     }
-    document.getElementById('bv-reset').hidden=!(winkel||actie||dsoort||categorie||vraag);
-    plak();
-    schapVolgen();
+    var nf=(winkel?1:0)+(actie?1:0)+(dsoort?1:0)+(categorie?1:0)+(wanneer?1:0);
+    var fn=document.getElementById('bv-fknop-n'); fn.hidden=!nf; fn.textContent=nf;
+    document.getElementById('bv-zij-toon').textContent='Toon '+r.length+(r.length===1?' product':' producten');
+    document.getElementById('bv-zij-wis').disabled=!(nf||vraag);
+    tekenActief();
   }
+  /* De gekozen filters als losse knopjes boven het raster, elk met een kruisje. */
+  var WANNEERNAAM={nu:'Geldt vandaag',straks:'Begint binnenkort',kort:'Loopt vandaag of morgen af'};
+  function tekenActief(){
+    var el=document.getElementById('bv-actief'), h=[];
+    if(winkel){var wn=winkel;alles.some(function(x){return x.ds.some(function(d){if(d.winkel===winkel){wn=d.winkelNaam;return true}})});
+      h.push(['winkel',wn+(periodeVan[winkel]?' · '+periodeVan[winkel]:'')])}
+    if(wanneer)h.push(['wanneer',WANNEERNAAM[wanneer]]);
+    if(categorie)h.push(['categorie',categorie]);
+    if(actie)h.push(['actie',SOORTNAAM[actie]]);
+    if(dsoort)h.push(['dsoort',({weekfolder:'Weekfolder',dag:'Dagaanbiedingen',weekend:'Weekend',website:'Van de website',webshop:'Webshop'})[dsoort]||dsoort]);
+    el.hidden=!h.length;
+    el.innerHTML=h.map(function(x){return '<button type="button" data-f="'+x[0]+'">'+e(x[1])+' <span aria-hidden="true">&times;</span><span class="bv-weg"> filter wissen</span></button>'}).join('')+
+      (h.length>1?'<button type="button" class="alles" data-f="alles">Wis alles</button>':'');
+  }
+  document.getElementById('bv-actief').addEventListener('click',function(ev){
+    var b=ev.target.closest('button'); if(!b)return;
+    var f=b.getAttribute('data-f');
+    if(f==='winkel')winkel='';else if(f==='wanneer')wanneer='';else if(f==='categorie')categorie='';
+    else if(f==='actie')actie='';else if(f==='dsoort')dsoort='';else{winkel=actie=dsoort=categorie=wanneer=''}
+    getoond=STAP;tekenChips();teken()});
 
   /* Uitklappen van de vergelijking gebeurt via het raster, dan blijft het werken
      na opnieuw tekenen. */
@@ -700,40 +954,21 @@
      IntersectionObserver met een rootMargin die alles onder de balk wegsnijdt,
      dus de bovenste kop die nog zichtbaar is wint. Scroll-events zouden
      hetzelfde doen maar dan dertig keer per seconde. */
-  var schapWijzer=null, schapKijker=null;
-  function schapVolgen(){
-    if(schapKijker){schapKijker.disconnect();schapKijker=null}
-    var wijzer=document.getElementById('bv-nuschap');
-    if(!wijzer)return;
-    if(sort!=='schap'){wijzer.hidden=true;return}
-    var koppen=[].slice.call(document.querySelectorAll('.bv-schapkop'));
-    if(!koppen.length){wijzer.hidden=true;return}
-    wijzer.hidden=false;
-    wijzer.textContent=koppen[0].getAttribute('data-schap')||'';
-    if(!('IntersectionObserver' in window))return;
-    var bar=document.getElementById('bv-bar');
-    /* 6 okt: de vaste balk is nu alleen de schapregel; reken met die hoogte, niet met het hele filterblok */
-    var hoog=((typeof vaste!=='undefined'&&vaste&&vaste.length)?bovenrand():70)+72;
-    var inBeeld={};
-    schapKijker=new IntersectionObserver(function(rijen){
-      rijen.forEach(function(r){inBeeld[r.target.getAttribute('data-schap')]=r.isIntersecting});
-      /* de eerste kop die nog niet voorbij is, van boven naar beneden */
-      for(var i=0;i<koppen.length;i++){
-        var k=koppen[i];
-        if(k.getBoundingClientRect().top<=hoog+1){
-          wijzer.textContent=k.getAttribute('data-schap')||'';
-        }
-      }
-    },{rootMargin:(-hoog)+'px 0px 0px 0px',threshold:[0,1]});
-    koppen.forEach(function(k){schapKijker.observe(k)});
-  }
-
-  function chips(el,items,huidig,kies){
-    el.innerHTML=items.map(function(it){
-      return '<button type="button" data-v="'+e(it.v)+'"'+(it.v===huidig?' class="aan"':'')+'>'+(it.kleur?stip(it.kleur):'')+e(it.n)+(it.a?'<small>'+it.a+'</small>':'')+'</button>'}).join('');
+  /* Een filtergroep als lijst met vakjes. Er is steeds een keuze per groep;
+     nog een keer klikken zet hem weer uit. Lange lijsten klappen in na 'max'. */
+  function chips(el,items,huidig,kies,max){
+    items=items.filter(function(it){return it.v!==''});
+    var open=el.dataset.open==='1'||!max||items.length<=max+1||items.slice(max).some(function(it){return it.v===huidig});
+    el.innerHTML=items.map(function(it,i){
+      return '<button type="button" role="checkbox" aria-checked="'+(it.v===huidig?'true':'false')+'" data-v="'+e(it.v)+'" class="bv-r'+(it.v===huidig?' aan':'')+(!open&&i>=max?' weg':'')+'">'+
+        '<span class="bv-vak" aria-hidden="true"></span>'+(it.kleur?logo(it.kleur):'')+
+        '<span class="bv-rt"><span class="bv-rn">'+e(it.n)+'</span>'+(it.sub?'<span class="bv-rs">'+e(it.sub)+'</span>':'')+'</span>'+
+        (it.a?'<small>'+it.a+'</small>':'')+'</button>'}).join('')+
+      (max&&items.length>max+1?'<button type="button" class="bv-meerlink" data-meer="1">'+(open?'Minder tonen':'Alle '+items.length+' tonen')+'</button>':'');
     if(el.dataset.aan)return;
     el.dataset.aan='1';
     el.addEventListener('click',function(ev){var b=ev.target.closest('button');if(!b)return;
+      if(b.getAttribute('data-meer')){el.dataset.open=el.dataset.open==='1'?'0':'1';tekenChips();return}
       kies(b.getAttribute('data-v')===huidigVan(el)?'':b.getAttribute('data-v'));});
   }
   function huidigVan(el){var a=el.querySelector('button.aan');return a?a.getAttribute('data-v'):''}
@@ -747,8 +982,17 @@
       Object.keys(s).forEach(function(k){ac[k]=(ac[k]||0)+1});
       cc[x.p.categorie]=(cc[x.p.categorie]||0)+1});
     var wl2=[{v:'',n:'Alle winkels',a:0}].concat(Object.keys(wc).sort(function(a,b){return wc[b].a-wc[a].a})
-      .map(function(k){return {v:k,n:wc[k].n,a:wc[k].a,kleur:k}}));
-    chips(document.getElementById('bv-cw'),wl2,winkel,function(v){winkel=v;getoond=STAP;tekenChips();teken()});
+      .map(function(k){return {v:k,n:wc[k].n,a:wc[k].a,kleur:k,sub:periodeVan[k]||''}}));
+    chips(document.getElementById('bv-cw'),wl2,winkel,function(v){winkel=v;getoond=STAP;tekenChips();teken()},9);
+    /* Wanneer: wat vandaag geldt, wat nog moet beginnen, wat bijna afloopt. */
+    var tw={nu:0,straks:0,kort:0};
+    alles.forEach(function(x){var g={};x.ds.forEach(function(d){
+      if(d.stand==='straks')g.straks=1;else g.nu=1;
+      if(d.stand==='vandaag'||d.stand==='morgen')g.kort=1});
+      Object.keys(g).forEach(function(k){tw[k]++})});
+    var wan=[{v:'nu',n:WANNEERNAAM.nu,a:tw.nu},{v:'straks',n:WANNEERNAAM.straks,a:tw.straks},{v:'kort',n:WANNEERNAAM.kort,a:tw.kort}]
+      .filter(function(it){return it.a||it.v===wanneer});
+    chips(document.getElementById('bv-cwan'),wan,wanneer,function(v){wanneer=v;getoond=STAP;tekenChips();teken()});
     var VOLG=['gratis','korting','halve','meer','prijs'];
     var al2=[{v:'',n:'Alle acties',a:0}].concat(VOLG.filter(function(k){return ac[k]}).map(function(k){return {v:k,n:SOORTNAAM[k],a:ac[k]}}));
     chips(document.getElementById('bv-ca'),al2,actie,function(v){actie=v;getoond=STAP;tekenChips();teken()});
@@ -762,12 +1006,8 @@
     chips(document.getElementById('bv-cs'),sl,dsoort,function(v){dsoort=v;getoond=STAP;tekenChips();teken()});
     var SCHAP=['Frisdrank','Water','Sappen','Bier','Koffie en thee','Zuivel en kaas','Ontbijt','Broodbeleg en sauzen','Houdbaar','Chips en snoep','Diepvries','Groente en fruit','Vlees en vis','Huishouden','Verzorging','Baby','Huisdier'];
     var ks=Object.keys(cc).sort(function(a,b){var i=SCHAP.indexOf(a),j=SCHAP.indexOf(b);return (i<0?99:i)-(j<0?99:j)});
-    var sel=document.getElementById('bv-cc'), totaal=0;
-    ks.forEach(function(k){totaal+=cc[k]});
-    sel.innerHTML='<option value="">Alle schappen</option>'+
-      ks.map(function(k){return '<option value="'+e(k)+'"'+(k===categorie?' selected':'')+'>'+e(k)+' ('+cc[k]+')</option>'}).join('');
-    if(!sel.dataset.aan){sel.dataset.aan='1';
-      sel.addEventListener('change',function(){categorie=sel.value;getoond=STAP;tekenChips();teken()})}
+    chips(document.getElementById('bv-ccat'),ks.map(function(k){return {v:k,n:k,a:cc[k]}}),categorie,
+      function(v){categorie=v;getoond=STAP;tekenChips();teken()},7);
   }
 
   /* Weekfolder per winkel als knop in de filterbalk. Folders die op Publitas staan (en die van Dirk) mogen in een
@@ -778,7 +1018,7 @@
       return 'https://www.lidl.nl/l/folders/hah-wk'+(wk<10?'0':'')+wk+'-'+j+'/view/flyer/page/1'}catch(e){return 'https://www.lidl.nl/c/service-contact-folders/s10008124'}}
   (function(){
     var FOLDERS=[
-      ['ah','Albert Heijn','https://view.publitas.com/ah/',1],
+      ['ah','Albert Heijn','https://view.publitas.com/ah-nl/',1],
       ['jumbo','Jumbo','https://view.publitas.com/jumbo-supermarkten/',1],
       ['plus','PLUS','https://view.publitas.com/plus-folder-nl/',1],
       ['lidl','Lidl',lidlFolder(),0],
@@ -809,33 +1049,19 @@
       var f=FOLDERS[+b.getAttribute('data-i')];
       try{if(window.gtag)gtag('event','bv_folder',{winkel:f[0]})}catch(err){}
       if(f[3])open(f,b);else window.open(f[2],'_blank','noopener')});
-    var nf=document.getElementById('bv-naarfilters');
-    if(nf)nf.addEventListener('click',function(){var h=document.getElementById('bv-barhouder');if(!h)return;
-      var y=h.getBoundingClientRect().top+window.pageYOffset-140;window.scrollTo({top:Math.max(0,y),behavior:'smooth'})});
   })();
 
-  /* De filterbalk zet zich vast zodra hij de bovenkant raakt. Het thema laat
-     position:sticky niet toe, daarom meten we de vaste balken van het thema één
-     keer en schuiven we er zelf onderlangs. */
-  var raf=0, vaste=[], houder=document.getElementById('bv-barhouder'), bar=document.getElementById('bv-bar');
-  function meet(){vaste=[];Array.prototype.forEach.call(document.querySelectorAll('body *'),function(el){
-      if(el.closest&&el.closest('#bv'))return;var s=getComputedStyle(el);
-      if(s.position!=='fixed'&&s.position!=='sticky')return;
-      var r=el.getBoundingClientRect();
-      if(r.top<300&&r.height<260&&r.width>window.innerWidth*0.5)vaste.push(el)})}
-  function bovenrand(){var m=0;vaste.map(function(el){return el.getBoundingClientRect()})
-      .filter(function(r){return r.bottom>0&&r.height>0}).sort(function(a,b){return a.top-b.top})
-      .forEach(function(r){if(r.top<=m+5)m=Math.max(m,r.bottom)});return Math.round(m)}
-  function plak(){raf=0;if(!houder||!bar)return;
-    var hr=houder.getBoundingClientRect(), boven=bovenrand();
-    var grid=document.getElementById('bv-grid'), gr=grid.getBoundingClientRect();
-    var vast=(bar.classList.contains('bv-vast')?hr.bottom<boven+60:hr.bottom<boven+8)&&gr.bottom>boven+120;
-    if(vast){if(!bar.classList.contains('bv-vast'))houder.style.height=bar.offsetHeight+'px';bar.classList.add('bv-vast');
-      bar.style.top=boven+'px';bar.style.left=hr.left+'px';bar.style.width=hr.width+'px'}
-    else{houder.style.height='';bar.classList.remove('bv-vast');bar.style.top=bar.style.left=bar.style.width=''}}
-  window.addEventListener('scroll',function(){if(!raf)raf=requestAnimationFrame(plak)},{passive:true});
-  window.addEventListener('resize',function(){meet();plak()});
-  setTimeout(function(){meet();plak()},1200);
+  /* Filters op een telefoon: de zijbalk schuift als blad over de pagina. */
+  var houder=document.getElementById('bv-twee'), zij=document.getElementById('bv-zij'), fknop=document.getElementById('bv-fknop');
+  function zijOpen(aan){
+    zij.classList.toggle('open',aan);fknop.setAttribute('aria-expanded',aan?'true':'false');
+    document.documentElement.classList.toggle('bv-slot',aan);
+    if(aan){try{document.getElementById('bv-zij-sluit').focus()}catch(err){}}else{try{fknop.focus()}catch(err){}}}
+  fknop.addEventListener('click',function(){zijOpen(!zij.classList.contains('open'))});
+  document.getElementById('bv-zij-sluit').addEventListener('click',function(){zijOpen(false)});
+  document.getElementById('bv-zij-toon').addEventListener('click',function(){zijOpen(false);
+    try{document.getElementById('bv-bar').scrollIntoView({behavior:'smooth',block:'start'})}catch(err){}});
+  document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&zij.classList.contains('open'))zijOpen(false)});
 
   /* Zoeken doorzoekt ook de folders zelf, zodat je ook iets vindt dat niet bij
      een merk hoort dat wij per winkel volgen. Die treffers staan apart. */
@@ -868,9 +1094,8 @@
   document.getElementById('bv-zoekform').addEventListener('submit',function(ev){ev.preventDefault()});
   document.getElementById('bv-sort').addEventListener('change',function(){sort=this.value;getoond=STAP;teken()});
   document.getElementById('bv-meer').addEventListener('click',function(){getoond+=STAP*2;teken()});
-  document.getElementById('bv-reset').addEventListener('click',function(){
-    winkel=actie=dsoort=categorie=vraag='';q.value='';wis.hidden=true;getoond=STAP;tekenChips();teken();brederZoeken('');
-    window.scrollTo({top:houder.offsetTop-90,behavior:'smooth'})});
+  document.getElementById('bv-zij-wis').addEventListener('click',function(){
+    winkel=actie=dsoort=categorie=wanneer=vraag='';q.value='';wis.hidden=true;getoond=STAP;tekenChips();teken();brederZoeken('')});
 
   /* Dagdeals: acties die maar op één dag of alleen in het weekend gelden. */
   var DAGNAAM={ma:'maandag',di:'dinsdag',wo:'woensdag',do:'donderdag',vr:'vrijdag',za:'zaterdag',zo:'zondag',weekend:'weekend'};
@@ -1004,10 +1229,16 @@
   function weekErna(w){var m=/^(\d{4})-W(\d{1,2})$/.exec(String(w||''));if(!m)return null;
     var n=+m[2]+1;return m[1]+'-W'+(n<10?'0'+n:''+n)}
   function toonWeek(d){
-    D=d; alles=bouw(d);
-    var ma=maandag(d.week), zo=plusD(ma,6);
-    document.getElementById('bv-wk').textContent='Aanbiedingen van maandag '+ma.getUTCDate()+
-      (ma.getUTCMonth()!==zo.getUTCMonth()?' '+MNDLANG[ma.getUTCMonth()]:'')+' tot en met zondag '+zo.getUTCDate()+' '+MNDLANG[zo.getUTCMonth()];
+    D=d; VANDAAG=d.vandaag||''; periodeVan={};
+    (d.winkels||[]).forEach(function(w){periodeVan[w.winkel]=looptijd(w.van,w.tot)});
+    alles=bouw(d);
+    /* De week verschilt per winkel: de een wisselt op maandag, de ander op
+       woensdag. Daarom staat de looptijd bij de winkel en op elke kaart, en
+       hier alleen de datum van vandaag. */
+    var vd=datumVan(vandaagIso());
+    document.getElementById('bv-wk').textContent=d.winkels
+      ? 'Bijgewerkt voor '+['zondag','maandag','dinsdag','woensdag','donderdag','vrijdag','zaterdag'][vd.getDay()]+' '+vd.getDate()+' '+MNDLANG[vd.getMonth()]+'. Bij elke aanbieding staat van wanneer tot wanneer hij geldt.'
+      : 'Aanbiedingen van deze week. Bij elke aanbieding staat tot wanneer hij geldt, voor zover de winkel dat vermeldt.';
     var deals=0, wk={};
     alles.forEach(function(x){deals+=x.ds.length;x.ds.forEach(function(dd){wk[dd.winkel]=1})});
     document.getElementById('bv-cijfers').innerHTML=
@@ -1054,7 +1285,7 @@
     var b=ev.target.closest('button'); if(!b)return;
     var welke=b.getAttribute('data-w'); if(welke===welkeWeek)return;
     Array.prototype.forEach.call(this.children,function(x){x.classList.toggle('aan',x===b)});
-    winkel=actie=dsoort=categorie=''; getoond=STAP;
+    winkel=actie=dsoort=categorie=wanneer=''; getoond=STAP;
     laadWeek(welke);
   });
 
@@ -1082,7 +1313,7 @@
   "name": "Boodschappen raster",
   "settings": [
     { "type": "text", "id": "api", "label": "Adres van de boodschappenworker", "default": "https://dpv-boodschappen.business-347.workers.dev" },
-    { "type": "text", "id": "titel", "label": "Titel", "default": "Welk merk is deze week waar in de aanbieding?" },
+    { "type": "text", "id": "titel", "label": "Titel", "default": "Boodschappen vergelijken" },
     { "type": "textarea", "id": "intro", "label": "Intro onder de titel", "default": "A-merken en huismerken naast elkaar bij Albert Heijn, Jumbo, PLUS, Dirk, Lidl, Aldi, Vomar, Hoogvliet, Kruidvat, Etos, DA, Trekpleister en Action. Omgerekend naar de prijs per liter, kilo of stuk, zodat 1+1 gratis en 25 procent korting eerlijk te vergelijken zijn." }
   ]
 }

@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "bood2": {
+      "type": "dpv-boodschappen-v2",
+      "settings": {
+        "api": "https://dpv-boodschappen.business-347.workers.dev",
+        "titel": "Boodschappen vergelijken",
+        "intro": "Alle folderaanbiedingen naast elkaar. Bij elke aanbieding staat van wanneer tot wanneer hij geldt."
+      }
+    }
+  },
+  "order": ["bood2"]
+}

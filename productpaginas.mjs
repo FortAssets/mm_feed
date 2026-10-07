@@ -23,6 +23,7 @@
 
 import fs from 'node:fs'
 import crypto from 'node:crypto'
+import { mmSpecs } from './specs-mm.mjs'
 
 const SHOP = process.env.SHOPIFY_SHOP || 'a954c1.myshopify.com'
 // Twee manieren om binnen te komen. Een vast token (oude eigen app, begint met
@@ -225,6 +226,64 @@ async function bolSpecs (ean) {
   return { specs: uit }
 }
 
+// ---- velden uit de MediaMarkt-feed ---------------------------------------------
+// Dezelfde feeds als shop.mjs. Per EAN alle velden, samengevoegd over de feeds:
+// hetzelfde product heeft in de ene feed meer velden dan in de andere.
+const MM_FIDS = [23777, 258752, 23270, 23056, 50606, 50616, 50615, 50617, 50618, 50608, 50620, 50622, 50619, 50621]
+const MM_BANDEN = [[0, 10], [10, 25], [25, 50], [50, 100], [100, 200], [200, 400], [400, 800], [800, 1600], [1600, 0]]
+async function haalMmVelden () {
+  const token = process.env.MM_TOKEN
+  if (!token) return null
+  const uit = new Map()
+  let verzoeken = 0; let mislukt = 0
+  const vraag = async (fid, pagina, min, max) => {
+    let q = 'page=' + pagina + ';pageSize=100'
+    if (min > 0) q += ';minPrice=' + min
+    if (max > 0) q += ';maxPrice=' + max
+    for (let k = 0; k < 3; k++) {
+      try {
+        verzoeken++
+        const r = await fetch('https://api.tradedoubler.com/1.0/products.json;' + q + ';fid=' + fid + '?token=' + token,
+          { headers: { 'User-Agent': 'Mozilla/5.0 (feed-bot) Chrome/120', Accept: 'application/json' } })
+        if (r.status === 401 || r.status === 403) return null
+        if (r.ok) return (await r.json()).products || []
+      } catch (e) { /* opnieuw */ }
+      await wacht(2500 * (k + 1))
+    }
+    mislukt++
+    return []
+  }
+  const band = async (fid, min, max, diepte) => {
+    for (let p = 1; p <= 10; p++) {
+      const ps = await vraag(fid, p, min, max)
+      if (ps === null) return false
+      for (const q of ps) {
+        const ean = String((q.identifiers && q.identifiers.ean) || '').replace(/^0+/, '')
+        if (!/^\d{7,14}$/.test(ean)) continue
+        const f = uit.get(ean) || {}
+        for (const x of (q.fields || [])) if (x && x.name && x.value != null && x.value !== '') f[x.name] = x.value
+        uit.set(ean, f)
+      }
+      if (ps.length < 100) return true
+      // Tien volle pagina's: de band is te breed, dus splitsen op de meetkundige helft.
+      if (p === 10 && diepte < 4) {
+        const boven = max > 0 ? max : Math.max(min * 4, 6400)
+        const mid = Math.round(Math.sqrt(Math.max(min, 1) * boven))
+        if (mid > min && (max === 0 || mid < max)) { await band(fid, min, mid, diepte + 1); await band(fid, mid, max, diepte + 1) }
+      }
+      await wacht(150)
+    }
+    return true
+  }
+  for (const fid of MM_FIDS) {
+    for (const [min, max] of MM_BANDEN) {
+      if (await band(fid, min, max, 0) === false) { console.error('MediaMarkt-feed: toegang geweigerd, overgeslagen'); return uit.size ? uit : null }
+    }
+  }
+  console.log('MediaMarkt-feed: velden van ' + uit.size + ' producten (' + verzoeken + ' verzoeken' + (mislukt ? ', ' + mislukt + ' mislukt' : '') + ')')
+  return uit.size ? uit : null
+}
+
 // ---- specificaties van Icecat --------------------------------------------------
 // Open Icecat: gratis, Nederlandstalig, per EAN. Dekt de merken die Icecat
 // sponsoren (laptops vrijwel volledig, telefoons en audio deels). Met de
@@ -259,7 +318,7 @@ async function icecatSpecs (ean) {
     if (r2.length) g.push({ t: titel, r: r2 })
   }
   if (!g.length) return { geen: true }
-  return { specs: { bron: 'Icecat', g } }
+  return { specs: { g } }
 }
 
 // ---- hoofdlijn ----------------------------------------------------------------
@@ -326,41 +385,59 @@ if (!DROOG) {
 }
 
 // Specificaties: alleen pagina's die bestaan, een EAN hebben en nog geen specs.
+// Volgorde: de productfeed van MediaMarkt (alles in een keer binnen, geen
+// verzoek per product), daarna Icecat en als laatste bol.
 let specsGezet = 0
-// Eerst Icecat, en wat daar niet staat bij bol (als die sleutel er is).
 if (!DROOG && SPECS_MAX > 0) {
-  const metBol = await bolLogin()
-  let iceAan = true; let bolAan = metBol; const uitBron = { Icecat: 0, 'bol.com': 0 }
-  const kandidaten = items.filter(x => {
-    const s = stand[x.i]
-    return s && s.d && !s.s && x.e && !(s.x && (Date.parse(vandaag) - Date.parse(s.x)) / 864e5 < 30)
-  }).slice(0, SPECS_MAX)
+  const uitBron = { MediaMarkt: 0, Icecat: 0, 'bol.com': 0 }
+  const zonder = items.filter(x => { const s = stand[x.i]; return s && s.d && !s.s && x.e })
   let wachtrij = []
   const schrijf = async () => {
     if (!wachtrij.length) return
     const f = await upsert(wachtrij.map(w => ({ handle: w.s.h, actief: false, fields: [{ key: 'specs', value: JSON.stringify(w.specs) }] })))
     const mis = new Set(f.map(t => t.split(':')[0]))
-    for (const w of wachtrij) if (!mis.has(w.s.h)) { w.s.s = 1; specsGezet++ }
+    for (const w of wachtrij) if (!mis.has(w.s.h)) { w.s.s = 1; specsGezet++; uitBron[w.bron]++ }
     fouten.push(...f); wachtrij = []
   }
+
+  // 1. MediaMarkt
+  const mm = zonder.length ? await haalMmVelden() : null
+  if (mm) {
+    for (const x of zonder) {
+      const sp = mmSpecs(mm.get(String(x.e).replace(/^0+/, '')))
+      if (!sp) continue
+      wachtrij.push({ s: stand[x.i], specs: sp, bron: 'MediaMarkt' })
+      if (wachtrij.length >= 8) await schrijf()
+    }
+    await schrijf()
+  }
+
+  // 2. Icecat, 3. bol: een verzoek per product, dus begrensd per run.
+  const metBol = await bolLogin()
+  let iceAan = true; let bolAan = metBol
+  const kandidaten = zonder.filter(x => {
+    const s = stand[x.i]
+    return !s.s && !(s.x && (Date.parse(vandaag) - Date.parse(s.x)) / 864e5 < 30)
+  }).slice(0, SPECS_MAX)
   for (const x of kandidaten) {
     const s = stand[x.i]
     if (!iceAan && !bolAan) break
     let r = iceAan ? await icecatSpecs(x.e) : { geen: true }
+    let bron = 'Icecat'
     if (r.stop) { console.error('Icecat: toegang geweigerd, verder zonder Icecat'); iceAan = false; r = { geen: true } }
     if (r.rem) { await wacht(20000); continue }
     if (!r.specs && bolAan) {
-      r = await bolSpecs(x.e)
+      r = await bolSpecs(x.e); bron = 'bol.com'
       if (r.stop) { console.error('bol: toegang geweigerd, verder zonder bol'); bolAan = false; r = { fout: 'bol' } }
       if (r.rem) { await wacht(20000); continue }
     }
     // Alleen als elke bron die er hoort te zijn nee zei, een maand niet opnieuw proberen.
     if (r.geen && iceAan && (bolAan || !metBol)) s.x = vandaag
-    if (r.specs) { uitBron[r.specs.bron]++; wachtrij.push({ s, specs: r.specs }); if (wachtrij.length >= 8) await schrijf() }
+    if (r.specs) { wachtrij.push({ s, specs: r.specs, bron }); if (wachtrij.length >= 8) await schrijf() }
     await wacht(350)
   }
   await schrijf()
-  console.log('specificaties gezet: ' + specsGezet + ' van ' + kandidaten.length + ' geprobeerd (Icecat ' + uitBron.Icecat + ', bol ' + uitBron['bol.com'] + ')')
+  console.log('specificaties gezet: ' + specsGezet + ' (MediaMarkt ' + uitBron.MediaMarkt + ', Icecat ' + uitBron.Icecat + ', bol ' + uitBron['bol.com'] + ') | zonder specificaties waren er ' + zonder.length)
 }
 
 if (!DROOG) {

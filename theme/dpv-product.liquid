@@ -164,7 +164,7 @@
             </table>
           </details>
         {%- endfor -%}
-        {%- if specs.bron != blank -%}<p class="dpp-bron">Specificaties volgens {{ specs.bron | escape }}. Controleer bij de winkel of de uitvoering klopt voordat je bestelt.</p>{%- endif -%}
+        <p class="dpp-bron">{%- if specs.bron != blank -%}Specificaties volgens {{ specs.bron | escape }}. {% endif -%}Specificaties onder voorbehoud. Controleer bij de winkel of de uitvoering klopt voordat je bestelt.</p>
       </div>
     {%- endif -%}
 

@@ -384,23 +384,34 @@ if (!DROOG) {
   for (const { rij, s } of teDoen.slice(0, 5)) console.log('  ' + s.h + ' | ' + rij.f.prijs + ' | ' + rij.f.winkels + ' winkels')
 }
 
-// Specificaties: alleen pagina's die bestaan, een EAN hebben en nog geen specs.
-// Volgorde: de productfeed van MediaMarkt (alles in een keer binnen, geen
-// verzoek per product), daarna Icecat en als laatste bol.
+// Specificaties: de meest complete bron wint.
+//  1. De MediaMarkt-feed is in een keer binnen, dus die vult meteen elke pagina
+//     die nog niets heeft.
+//  2. Daarna gaat elk product een keer langs Icecat. Heeft Icecat meer regels
+//     dan wat er staat, dan vervangt dat de MediaMarkt-lijst.
+//  3. Staat er dan nog niets, dan bol.
+// In de stand: s = er staan specs, m = aantal regels uit de MediaMarkt-feed,
+// i = Icecat is geprobeerd, x = datum waarop geen enkele bron iets had.
+const telRijen = sp => sp.g.reduce((n, g) => n + g.r.length, 0)
 let specsGezet = 0
 if (!DROOG && SPECS_MAX > 0) {
   const uitBron = { MediaMarkt: 0, Icecat: 0, 'bol.com': 0 }
-  const zonder = items.filter(x => { const s = stand[x.i]; return s && s.d && !s.s && x.e })
+  const metEan = items.filter(x => { const s = stand[x.i]; return s && s.d && x.e })
   let wachtrij = []
   const schrijf = async () => {
     if (!wachtrij.length) return
     const f = await upsert(wachtrij.map(w => ({ handle: w.s.h, actief: false, fields: [{ key: 'specs', value: JSON.stringify(w.specs) }] })))
     const mis = new Set(f.map(t => t.split(':')[0]))
-    for (const w of wachtrij) if (!mis.has(w.s.h)) { w.s.s = 1; specsGezet++; uitBron[w.bron]++ }
+    for (const w of wachtrij) {
+      if (mis.has(w.s.h)) continue
+      w.s.s = 1; specsGezet++; uitBron[w.bron]++
+      if (w.bron === 'MediaMarkt') w.s.m = telRijen(w.specs); else delete w.s.m
+    }
     fouten.push(...f); wachtrij = []
   }
 
   // 1. MediaMarkt
+  const zonder = metEan.filter(x => !stand[x.i].s)
   const mm = zonder.length ? await haalMmVelden() : null
   if (mm) {
     for (const x of zonder) {
@@ -412,32 +423,38 @@ if (!DROOG && SPECS_MAX > 0) {
     await schrijf()
   }
 
-  // 2. Icecat, 3. bol: een verzoek per product, dus begrensd per run.
+  // 2. Icecat en 3. bol: een verzoek per product, dus begrensd per run.
+  // Pagina's zonder specs gaan voor op pagina's die al een MediaMarkt-lijst hebben.
   const metBol = await bolLogin()
   let iceAan = true; let bolAan = metBol
-  const kandidaten = zonder.filter(x => {
+  const kandidaten = metEan.filter(x => {
     const s = stand[x.i]
-    return !s.s && !(s.x && (Date.parse(vandaag) - Date.parse(s.x)) / 864e5 < 30)
-  }).slice(0, SPECS_MAX)
+    if (s.s) return !!s.m && !s.i
+    return !(s.x && (Date.parse(vandaag) - Date.parse(s.x)) / 864e5 < 30)
+  }).sort((a, b) => (stand[a.i].s || 0) - (stand[b.i].s || 0)).slice(0, SPECS_MAX)
   for (const x of kandidaten) {
     const s = stand[x.i]
-    if (!iceAan && !bolAan) break
+    if (!iceAan && !(bolAan && !s.s)) { if (!iceAan && !bolAan) break; continue }
     let r = iceAan ? await icecatSpecs(x.e) : { geen: true }
     let bron = 'Icecat'
-    if (r.stop) { console.error('Icecat: toegang geweigerd, verder zonder Icecat'); iceAan = false; r = { geen: true } }
+    if (r.stop) { console.error('Icecat: toegang geweigerd, verder zonder Icecat'); iceAan = false; r = { fout: 'icecat' } }
     if (r.rem) { await wacht(20000); continue }
-    if (!r.specs && bolAan) {
+    // Een antwoord van Icecat, ja of nee: niet nog eens vragen.
+    if (r.specs || r.geen) s.i = 1
+    // Icecat vervangt een bestaande lijst alleen als hij completer is.
+    if (r.specs && s.m && telRijen(r.specs) <= s.m) r = { al: true }
+    if (!r.specs && !s.s && bolAan) {
       r = await bolSpecs(x.e); bron = 'bol.com'
       if (r.stop) { console.error('bol: toegang geweigerd, verder zonder bol'); bolAan = false; r = { fout: 'bol' } }
       if (r.rem) { await wacht(20000); continue }
     }
-    // Alleen als elke bron die er hoort te zijn nee zei, een maand niet opnieuw proberen.
-    if (r.geen && iceAan && (bolAan || !metBol)) s.x = vandaag
+    // Geen enkele bron had iets: over een maand opnieuw proberen.
+    if (r.geen && !s.s) { s.x = vandaag; delete s.i }
     if (r.specs) { wachtrij.push({ s, specs: r.specs, bron }); if (wachtrij.length >= 8) await schrijf() }
     await wacht(350)
   }
   await schrijf()
-  console.log('specificaties gezet: ' + specsGezet + ' (MediaMarkt ' + uitBron.MediaMarkt + ', Icecat ' + uitBron.Icecat + ', bol ' + uitBron['bol.com'] + ') | zonder specificaties waren er ' + zonder.length)
+  console.log('specificaties gezet: ' + specsGezet + ' (MediaMarkt ' + uitBron.MediaMarkt + ', Icecat ' + uitBron.Icecat + ', bol ' + uitBron['bol.com'] + ') | langs Icecat deze run: ' + kandidaten.length)
 }
 
 if (!DROOG) {

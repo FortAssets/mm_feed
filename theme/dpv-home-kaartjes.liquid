@@ -524,7 +524,7 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
       </div>
       <div class="c-fout" hidden><p class="leeg">De prijzen laden nu niet.</p></div>
       <div class="c-voet">
-        <p class="regel"><b>Hoe is deze lijst bepaald?</b> <span data-f="voet"></span><span data-f="regel">De laagste maandprijs binnen jouw keuze, bij een gelijke prijs de grootste bundel. Aanbieders betalen niet voor een plek. Wij krijgen een vergoeding als je via ons afsluit; jij betaalt daardoor niets extra.</span></p>
+        <p class="regel"><b>Hoe is deze lijst bepaald?</b> <span data-f="voet"></span><span data-f="regel">De laagste maandprijs binnen jouw keuze, bij een gelijke prijs de grootste bundel. Aanbieders betalen niet voor een plek.</span></p>
         <a class="alle-l" data-f="alle" href="/pages/sim-only">Alle sim only vergelijken</a>
         {%- if s.seintje_url != blank -%}<p class="sein" data-f="sein">Zit je nog vast aan je contract? <a href="{{ s.seintje_url }}">Krijg een mail op de dag dat je kunt overstappen</a></p>{%- endif -%}
       </div>
@@ -896,7 +896,7 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
   var cluster = document.getElementById('dhd-paneel'), subs = document.getElementById('dhd-subs');
   var cA = cluster.querySelector('.c-aanbod'), cP = cluster.querySelector('.c-prod'), cF = cluster.querySelector('.c-fout'), cV = cluster.querySelector('.c-voet');
   var pLijst = q(cP, 'lijst'), pZoek = cP.querySelector('.zoek');
-  var VERGOEDING = ' Aanbieders betalen niet voor een plek. Wij krijgen een vergoeding als je via ons afsluit; jij betaalt daardoor niets extra.';
+  var VERGOEDING = ' Aanbieders betalen niet voor een plek.';
 
   /* Categorieën met een aanbod: nummer 1 groot, 2 en 3 klein.
      Elk item: naam, sub, kort, prijs, per, tags, onder, mini, let, url, knop, foto, aff. */
@@ -1158,7 +1158,7 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
       .filter(function (d) { return d.length >= 3 && d[0]; })
       .map(function (d, n) { return { id: 'g' + n, label: d[0].trim(), meer: d[1].trim(), bron: d[2].trim() }; });
   }
-  var WINKELREGEL = 'Per product staan de winkels op prijs, de laagste bovenaan. Winkels betalen niet voor een plek. Wij krijgen een vergoeding als je via ons koopt; jij betaalt daardoor niets extra.';
+  var WINKELREGEL = 'Per product staan de winkels op prijs, de laagste bovenaan. Winkels betalen niet voor een plek.';
   var PROD = {
     prod: {
       vraag: 'Wat zoek je?', zoek: true, chips: groepen(wortel.getAttribute('data-prod')),
@@ -1210,7 +1210,7 @@ html:not(#x) .dhd .pk-w{grid-column:1 / -1}}
         }));
       },
       alle: function () { return ['Alle aanbiedingen van deze week', '/pages/boodschappen']; },
-      regel: 'Per product staan de winkels op prijs per liter, kilo of stuk, de laagste bovenaan. De prijzen komen uit de folders en sites van de supermarkten. Bij een winkel waar je online kunt bestellen krijgen wij een vergoeding als je via ons bestelt.'
+      regel: 'Per product staan de winkels op prijs per liter, kilo of stuk, de laagste bovenaan. De prijzen komen uit de folders en sites van de supermarkten.'
     }
   };
 

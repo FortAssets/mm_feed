@@ -1,0 +1,94 @@
+{%- comment -%}
+  Energievergelijker op /pages/energie.
+
+  De rekenmachine draait in de dpv-energie worker; die halen we hier binnen in
+  een frame dat met de inhoud meegroeit. De tekst eromheen staat wel gewoon in
+  de pagina, want een zoekmachine leest geen frame - de vergelijker zelf hoeft
+  niet geindexeerd, de uitleg eromheen wel.
+{%- endcomment -%}
+
+<section class="den">
+  <div class="den-in">
+
+    {%- if section.settings.kop != blank -%}
+      <h1 class="den-kop">{{ section.settings.kop }}</h1>
+    {%- endif -%}
+    {%- if section.settings.intro != blank -%}
+      <div class="den-intro">{{ section.settings.intro }}</div>
+    {%- endif -%}
+
+    <div class="den-frame">
+      <iframe id="den-iframe"
+              src="{{ section.settings.worker_url }}/energie"
+              title="Energie vergelijken"
+              loading="lazy"
+              scrolling="no"
+              style="width:100%;border:0;display:block;background:transparent;height:{{ section.settings.hoogte }}px"></iframe>
+    </div>
+
+    {%- if section.settings.uitleg != blank -%}
+      <div class="den-uitleg">{{ section.settings.uitleg }}</div>
+    {%- endif -%}
+
+  </div>
+</section>
+
+<style>
+/* Stijl van de nieuwe site: inkt op wit, Bricolage voor koppen, fijne lijnen. */
+.den{padding:18px 0 34px;font-family:'Instrument Sans',system-ui,sans-serif;color:#0D1B2A}
+.den-in{max-width:900px;margin:0 auto;padding:0 16px}
+.den-kop,.den-uitleg h2,.den-uitleg h3{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-weight:800;color:#0D1B2A}
+.den-kop{font-size:clamp(29px,4.4vw,38px);letter-spacing:-.04em;line-height:1.05;margin:0 0 14px}
+.den-intro{font-size:16px;color:#4A5A70;max-width:62ch;margin:0 0 22px;line-height:1.6}
+.den-intro p{margin:0 0 12px}
+/* Geen kader en geen eigen achtergrond: de vergelijker staat in dezelfde
+   letters en kaartstijl als de pagina, dus een doos eromheen maakt er weer
+   een ingeplakt blok van. */
+.den-frame{border:0;background:transparent;border-radius:0;overflow:visible}
+.den-uitleg{margin-top:34px;padding-top:26px;border-top:1px solid #E3E8F0;font-size:15.5px;line-height:1.65;color:#0D1B2A}
+.den-uitleg h2{font-size:22px;letter-spacing:-.03em;line-height:1.15;margin:26px 0 8px}
+.den-uitleg h2:first-child{margin-top:0}
+.den-uitleg h3{font-size:17px;letter-spacing:-.02em;margin:22px 0 6px}
+.den-uitleg p{margin:0 0 13px;max-width:64ch;color:#4A5A70}
+.den-uitleg p strong{color:#0D1B2A}
+.den-uitleg ul{margin:0 0 13px;padding-left:20px}
+.den-uitleg li{margin-bottom:7px}
+.den-uitleg a{color:#2456D6;text-underline-offset:2px}
+</style>
+
+<script>
+(function () {
+  // Het frame groeit mee met zijn inhoud.
+  //
+  // Let op de valkuil die hier eerder zat: met min-height kon het frame wel
+  // groeien maar nooit krimpen. Was de vergelijker korter dan die ondergrens,
+  // dan bleef er een leeg vlak onder staan - precies wat eruitziet als een
+  // grijs kader. Daarom een gewone hoogte, die we bijstellen zodra de worker
+  // zijn echte hoogte doorgeeft.
+  var f = document.getElementById('den-iframe');
+  if (!f) return;
+  var toegestaan = {{ section.settings.worker_url | json }};
+  window.addEventListener('message', function (e) {
+    if (toegestaan.indexOf(e.origin) !== 0) return;
+    var h = e.data && e.data.denHoogte;
+    if (typeof h === 'number' && h > 200 && h < 20000) {
+      f.style.minHeight = '0';
+      f.style.height = h + 'px';
+    }
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Energievergelijker",
+  "settings": [
+    { "type": "text", "id": "worker_url", "label": "Worker URL", "default": "https://dpv-energie.business-347.workers.dev" },
+    { "type": "range", "id": "hoogte", "label": "Starthoogte (px)", "min": 400, "max": 3000, "step": 100, "default": 900 },
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Energie vergelijken" },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>Vergelijk energiecontracten op wat ze je echt kosten. Wij rekenen je hele rekening door: levering, energiebelasting, netbeheerkosten en de vermindering van 629 euro per jaar.</p>" },
+    { "type": "richtext", "id": "uitleg", "label": "Uitleg onder de vergelijker" }
+  ],
+  "presets": [ { "name": "Energievergelijker" } ]
+}
+{% endschema %}

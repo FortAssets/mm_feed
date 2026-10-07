@@ -140,6 +140,61 @@
   .pvx-mobfilter{display:block;width:100%;background:#1B3FA0;color:#fff;border:none;border-radius:10px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:14px;font-family:Inter,sans-serif}
 }
 @media(max-width:560px){.pvx-grid{grid-template-columns:1fr}.pvx-merkbar{grid-template-columns:repeat(auto-fill,minmax(80px,1fr))}}
+/* 7 okt: filterbalk variant B, zie de toelichting bij .pvx-fbar in de opmaak */
+.pvx-fbar{display:flex;gap:9px;align-items:center;justify-content:flex-end;margin-bottom:10px}
+.pvx-fknop{display:none;align-items:center;gap:8px;background:#0D1B2A;color:#fff;border:0;border-radius:12px;padding:0 16px;height:48px;font:700 15.5px 'Instrument Sans',system-ui,sans-serif;cursor:pointer;flex:none}
+.pvx-fknop i{font-style:normal;background:#F9C31F;color:#0D1B2A;border-radius:999px;min-width:21px;height:21px;display:inline-flex;align-items:center;justify-content:center;font-size:12.5px;padding:0 5px}
+.pvx-fknop i[hidden]{display:none}
+.pvx-snel{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.pvx-snel button{flex:none;border:1.5px solid #CBD3DF;background:#fff;border-radius:999px;padding:8px 13px;font:600 14px 'Instrument Sans',system-ui,sans-serif;color:#0D1B2A;white-space:nowrap;cursor:pointer;line-height:1.2}
+.pvx-snel button:hover{border-color:#0D1B2A}
+.pvx-snel button.on{background:#DDF3E8;border-color:#0D1B2A}
+.pvx-sluit,.pvx-side-voet,.pvx-waas,.pvx-mee{display:none}
+@media(max-width:860px){
+  .pvx-fbar{justify-content:flex-start}
+  .pvx-fknop{display:inline-flex}
+  .pvx-fbar .pvx-sortwrap{flex:1;min-width:0}
+  .pvx-fbar .pvx-sortwrap label{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  html:not(#x):not(#y) .pvx-fbar .pvx-sortwrap select{width:100%;height:48px;border-radius:12px !important;border:1.5px solid #CBD3DF !important;font-size:15.5px;font-weight:600;padding:0 36px 0 14px}
+  .pvx-snel{flex-wrap:nowrap;overflow-x:auto;margin-right:-16px;padding-right:16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .pvx-snel::-webkit-scrollbar{display:none}
+  html:not(#x):not(#y) .pvx-side{display:flex !important;flex-direction:column;position:fixed;left:0;right:0;bottom:0;top:64px;z-index:2147483000;margin:0;padding:0;border:0 !important;border-radius:22px 22px 0 0 !important;background:#fff;transform:translateY(105%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+  html:not(#x):not(#y) .pvx-side.open{transform:none;visibility:visible;transition:transform .22s ease}
+  .pvx-side:before{content:"";width:44px;height:5px;border-radius:9px;background:#CBD3DF;margin:9px auto 0;flex:none}
+  html:not(#x):not(#y) .pvx-side .pvx-side-top{padding:8px 18px 12px;border-bottom:1.5px solid #E3E8F0 !important;flex:none}
+  html:not(#x):not(#y) .pvx-side .pvx-side-top b{font:800 22px 'Bricolage Grotesque','Instrument Sans',sans-serif !important;letter-spacing:-.03em}
+  .pvx-side .pvx-side-top .pvx-reset{display:none}
+  .pvx-sluit{display:block;background:none;border:0;font-size:32px;line-height:1;color:#4A5A70;padding:0 2px;cursor:pointer}
+  .pvx-side-rol{flex:1;min-height:0;overflow-y:auto;padding:0 18px 10px;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+  .pvx-side-voet{display:flex;gap:10px;align-items:center;flex:none;padding:12px 18px calc(14px + env(safe-area-inset-bottom));border-top:1.5px solid #E3E8F0;background:#fff;box-shadow:0 -8px 18px rgba(13,27,42,.06)}
+  .pvx-wis{background:none;border:0;color:#2456D6;font:700 15px 'Instrument Sans',system-ui,sans-serif;padding:0 6px;cursor:pointer;white-space:nowrap}
+  .pvx-toon{flex:1;background:#F9C31F;border:2px solid #0D1B2A;border-radius:12px;box-shadow:3px 3px 0 #0D1B2A;padding:13px 8px;font:700 15.5px 'Instrument Sans',system-ui,sans-serif;color:#0D1B2A;margin-right:3px;cursor:pointer}
+  .pvx-waas.open{display:block;position:fixed;inset:0;background:rgba(13,27,42,.5);z-index:2147482999}
+  html.pvx-slot,html.pvx-slot body{overflow:hidden !important}
+  /* In het blad staat elke groep open en zijn de keuzes knoppen */
+  html:not(#x):not(#y) .pvx-side .pvx-acc:first-child{border-top:0 !important}
+  .pvx-side .pvx-acc-b{display:block !important;padding-bottom:13px}
+  html:not(#x):not(#y) .pvx-side .pvx-acc-h{pointer-events:none;padding:13px 0 9px;font-size:12.5px !important;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#4A5A70 !important}
+  .pvx-side .pvx-acc-h .chev{display:none}
+  .pvx-side .pvx-acc-h.pvx-kaal{display:none}
+  .pvx-side .pvx-acc-h.pvx-kaal + .pvx-acc-b{padding-top:13px}
+  html:not(#x):not(#y) .pvx-side .pvx-lbl{font-size:12.5px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#4A5A70;margin-bottom:9px}
+  .pvx-side .pvx-bk{display:flex;flex-wrap:wrap;gap:7px}
+  html:not(#x):not(#y) .pvx-side .pvx-bkbtn{border-radius:999px;padding:7px 12px;border:1.5px solid #CBD3DF !important;background:#fff}
+  html:not(#x):not(#y) .pvx-side .pvx-bkbtn b{font-size:14px;font-weight:600;color:#0D1B2A}
+  .pvx-side .pvx-bkbtn small{display:none}
+  html:not(#x):not(#y) .pvx-side .pvx-bkbtn.on{background:#DDF3E8 !important;border-color:#0D1B2A !important}
+  .pvx-side #pvx-prov-list,.pvx-side #pvx-via-list{display:flex;flex-wrap:wrap;gap:7px}
+  html:not(#x):not(#y) .pvx-side .pvx-pchip{width:auto;margin:0;border-radius:999px;padding:6px 12px 6px 7px;border:1.5px solid #CBD3DF !important;font-size:14px;color:#0D1B2A}
+  html:not(#x):not(#y) .pvx-side .pvx-pchip.on{background:#DDF3E8 !important;border-color:#0D1B2A !important}
+  .pvx-side .pvx-swall{border-radius:999px}
+  /* Scrol je door de lijst, dan loopt de filterknop mee */
+  .pvx-mee{position:fixed;z-index:2147482000;background:#fff;border-bottom:1.5px solid #E3E8F0;padding:8px 14px;align-items:center;gap:12px;box-shadow:0 6px 16px rgba(13,27,42,.08);box-sizing:border-box}
+  .pvx-mee:not([hidden]){display:flex}
+  .pvx-mee .pvx-fknop{height:42px}
+  .pvx-mee span#pvx-mee-ct{font:500 14.5px 'Instrument Sans',system-ui,sans-serif;color:#4A5A70}
+  .pvx-mee span#pvx-mee-ct b{color:#0D1B2A}
+}
 </style>
 
 <div id="vergelijker"></div>
@@ -176,11 +231,11 @@
     <input type="text" id="pvx-q" data-tph="searchPh" autocomplete="off">
   </div>
 
-  <button class="pvx-mobfilter" id="pvx-mobfilter" onclick="pvxToggleSide(this)"></button>
 
   <div class="pvx-layout">
     <div class="pvx-side" id="pvx-side">
-      <div class="pvx-side-top"><b data-t="filters"></b><button class="pvx-reset" onclick="pvxReset()" data-t="reset"></button></div>
+      <div class="pvx-side-top"><b data-t="filters"></b><button class="pvx-reset" onclick="pvxReset()" data-t="reset"></button><button type="button" class="pvx-sluit" id="pvx-sluit" aria-label="Filters sluiten" onclick="pvxBlad(0)">&times;</button></div>
+      <div class="pvx-side-rol">
 
       <div class="pvx-acc">
         <button class="pvx-acc-h" onclick="pvxTog('a-data',this)"><span data-t="{% if is_internet %}speed{% else %}incData{% endif %}"></span><span class="chev">&#9650;</span></button>
@@ -200,7 +255,7 @@
       {% endunless %}
 
       <div class="pvx-acc">
-        <button class="pvx-acc-h" onclick="pvxTog('a-prijs',this)"><span data-t="price"></span><span class="chev">&#9650;</span></button>
+        <button class="pvx-acc-h pvx-kaal" onclick="pvxTog('a-prijs',this)"><span data-t="price"></span><span class="chev">&#9650;</span></button>
         <div class="pvx-acc-b" id="a-prijs">
           <div class="pvx-lbl" data-t="totalMonthly"></div>
           <div class="pvx-bk" id="pvx-maandbk"></div>
@@ -227,7 +282,7 @@
       </div>
 
       <div class="pvx-acc">
-        <button class="pvx-acc-h" onclick="pvxTog('a-meer',this)"><span data-t="moreFilters"></span><span class="chev">&#9660;</span></button>
+        <button class="pvx-acc-h pvx-kaal" onclick="pvxTog('a-meer',this)"><span data-t="moreFilters"></span><span class="chev">&#9660;</span></button>
         <div class="pvx-acc-b" id="a-meer" style="display:none">
           <div class="pvx-lbl" data-t="contract"></div>
           <div class="pvx-bk" id="pvx-ctrbk"></div>
@@ -255,16 +310,32 @@
           <input type="hidden" id="f-net" value="">
         </div>
       </div>
+      </div>
+      <div class="pvx-side-voet"><button type="button" class="pvx-wis" onclick="pvxReset()" data-t="reset"></button><button type="button" class="pvx-toon" id="pvx-toon" onclick="pvxBlad(0,1)"></button></div>
     </div>
 
     <div class="pvx-results">
-      <div class="pvx-rhead"><span class="pvx-ct" id="pvx-ct"></span>
-        <div class="pvx-sortwrap"><label data-t="sortBy"></label><select id="pvx-sort" onchange="pvxSort(this.value)"></select></div>
+      {%- comment -%}
+        7 okt: filterbalk zoals op de boodschappenpagina. Filters en sorteren staan op
+        een regel, daaronder een rij met de meest gekozen filters die je met een tik
+        aan- en uitzet. Op de telefoon opent Filters als blad van onderaf, met onderaan
+        hoeveel aanbiedingen er overblijven.
+      {%- endcomment -%}
+      <div class="pvx-fbar" id="pvx-fbar">
+        <button type="button" class="pvx-fknop" id="pvx-fknop" aria-controls="pvx-side" aria-expanded="false" onclick="pvxBlad(1)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"/></svg><span data-t="filters"></span><i id="pvx-fn" hidden></i></button>
+        <div class="pvx-sortwrap"><label for="pvx-sort" data-t="sortBy"></label><select id="pvx-sort" onchange="pvxSort(this.value)"></select></div>
       </div>
+      <div class="pvx-snel" id="pvx-snel"></div>
+      <div class="pvx-rhead"><span class="pvx-ct" id="pvx-ct"></span></div>
       <div class="pvx-grid" id="pvx-grid"><div class="pvx-empty" data-t="loading"></div></div>
       <div class="pvx-more" id="pvx-more" style="display:none"><button onclick="pvxMore()" data-t="loadMore"></button></div>
       <p class="pvx-disc" data-t="disclaimer"></p>
     </div>
+  </div>
+  <div class="pvx-waas" id="pvx-waas" onclick="pvxBlad(0)"></div>
+  <div class="pvx-mee" id="pvx-mee" hidden>
+    <button type="button" class="pvx-fknop" aria-controls="pvx-side" onclick="pvxBlad(1)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M7 12h10M10 17h4"/></svg><span data-t="filters"></span><i id="pvx-fn2" hidden></i></button>
+    <span id="pvx-mee-ct"></span>
   </div>
 </div>
 </div>
@@ -672,6 +743,7 @@ function pvxRender(){
  var items=getFiltered();
  items.sort(function(a,b){/* 6 okt: gespreid betalen is de norm. Aanbiedingen waarbij je het hele toestel ineens betaalt staan bij de standaardsortering en bij sorteren op maandprijs onderaan. */if(SORT==='pop'||SORT==='price'){var ra=ineens(a),rb=ineens(b);if(ra!==rb)return ra-rb;}if(SORT==='pop'){var pa=popScore(a),pb=popScore(b);if(pa!==pb)return pb-pa;/* 17 sep: binnen hetzelfde toestel op TOTAALPRIJS sorteren, niet op maandbedrag. Een aanbieding van 1 euro per maand met 3.128 euro vooruit stond bovenaan als goedkoopste, terwijl dat juist de duurste van de lijst was. */var ta=getEenmalig(a)+a.price*(a.contractMonths||24),tb=getEenmalig(b)+b.price*(b.contractMonths||24);if(ta!==tb)return ta-tb;return a.price-b.price;}if(SORT==='price')return a.price-b.price;if(SORT==='devasc')return getDevMaand(a)-getDevMaand(b);if(SORT==='down')return getEenmalig(a)-getEenmalig(b);if(SORT==='data')return(b.dataGB||0)-(a.dataGB||0);return fix(a.name||'').localeCompare(fix(b.name||''));});
  GROUPS=groupItems(items);var total=GROUPS.length;
+ pvxBalk(total);
  var q=document.getElementById('pvx-q').value.trim();
  document.getElementById('pvx-ct').innerHTML='<b>'+total+'</b> '+T.results+(SEG==='zakelijk'?' '+T.resultsZak:'')+(q?' '+T.forQ+' &ldquo;'+q+'&rdquo;':'');
  var grid=document.getElementById('pvx-grid'),more=document.getElementById('pvx-more');
@@ -686,6 +758,70 @@ window.pvxSetFilters=function(o){
   if(o.maxMaand!=null){var mm=o.maxMaand;activeMaand=(mm<15?15:mm<25?25:mm<40?40:mm<60?60:9999);var sm=document.getElementById('s-maand');if(sm)sm.value=mm;}
   buildBuckets();SHOWN=PAGE;pvxRender();
 };
+
+/* 7 okt: filterbalk variant B. De rij snelkeuzes zet dezelfde filters als het blad, dus
+   de twee lopen altijd gelijk. Een tweede tik op een snelkeuze zet hem weer uit. */
+var SNEL=isInternet
+ ?[['tv','with',T.tvWith||'Met tv'],['tv','without',T.tvWithout||'Alleen internet'],['data','100-250','100–250 Mbit'],['data','1000-','1 Gbit+'],['maand',40,'€25–40']]
+ :isTelefoon
+ ?[['bij',0,'Zonder aanbetaling'],['merk','Apple','Apple'],['merk','Samsung','Samsung'],['merk','Google','Google'],['data','5-20','5 – 20 GB'],['stor','256GB','256 GB']]
+ :[['data','5-20','5 – 20 GB'],['data','20-50','20 – 50 GB'],['data','999-',T.dataUnlim||'Onbeperkt'],['ctr','0','Maandelijks opzegbaar'],['maand',15,'Onder €15']];
+function snelWaarde(s){switch(s){case 'tv':return activeTv;case 'data':return activeData;case 'maand':return activeMaand;case 'bij':return activeBij;case 'merk':return activeMerk;case 'ctr':return gv('f-ctr');case 'stor':return gv('f-stor');}return '';}
+function snelZet(s,w){var uit=snelWaarde(s)===w,e;
+ switch(s){
+  case 'tv':activeTv=uit?'':w;break;
+  case 'data':activeData=uit?'':w;break;
+  case 'maand':activeMaand=uit?9999:w;e=document.getElementById('s-maand');if(e)e.value=(activeMaand>=999?9999:activeMaand);break;
+  case 'bij':activeBij=uit?999999:w;e=document.getElementById('s-bij');if(e)e.value=activeBij;break;
+  case 'merk':activeMerk=uit?'':w;break;
+  case 'ctr':e=document.getElementById('f-ctr');if(e)e.value=uit?'':w;break;
+  case 'stor':e=document.getElementById('f-stor');if(e)e.value=uit?'':w;break;
+ }
+ buildMerk();buildBuckets();buildMoreFilters();SHOWN=PAGE;pvxRender();}
+function aantalFilters(){var n=0;if(activeMerk)n++;if(activeProv)n++;if(activeReseller)n++;if(activeData)n++;if(activeCalls)n++;if(activeTv)n++;if(activeMaand!==9999)n++;if(activeBij!==999999)n++;
+ ['f-ctr','f-stor','f-kleur','f-net','f-model'].forEach(function(id){if(gv(id))n++;});return n;}
+function pvxBalk(total){
+ var n=aantalFilters(),tt=(total||0).toLocaleString('nl-NL');
+ ['pvx-fn','pvx-fn2'].forEach(function(id){var e=document.getElementById(id);if(e){e.textContent=n;e.hidden=!n;}});
+ var toon=document.getElementById('pvx-toon');if(toon)toon.textContent='Toon '+tt+' '+T.results;
+ var mc=document.getElementById('pvx-mee-ct');if(mc)mc.innerHTML='<b>'+tt+'</b> '+T.results;
+ var rij=document.getElementById('pvx-snel');if(!rij)return;
+ if(!rij.firstChild){SNEL.forEach(function(o){var b=document.createElement('button');b.type='button';b.textContent=o[2];b.onclick=function(){snelZet(o[0],o[1]);};rij.appendChild(b);});}
+ SNEL.forEach(function(o,i){var b=rij.children[i];if(!b)return;var aan=snelWaarde(o[0])===o[1];b.className=aan?'on':'';b.setAttribute('aria-pressed',aan?'true':'false');});
+}
+var pvxZij=document.getElementById('pvx-side');
+window.pvxBlad=function(open,naarLijst){
+ var waas=document.getElementById('pvx-waas'),kn=document.getElementById('pvx-fknop');
+ pvxZij.classList.toggle('open',!!open);if(waas)waas.classList.toggle('open',!!open);
+ document.documentElement.classList.toggle('pvx-slot',!!open);
+ if(kn)kn.setAttribute('aria-expanded',open?'true':'false');
+ if(open){try{document.getElementById('pvx-sluit').focus({preventScroll:true});}catch(e){}}
+ else if(naarLijst){try{var fb=document.getElementById('pvx-fbar'),y=fb.getBoundingClientRect().top+window.pageYOffset-pvxBoven()-10;window.scrollTo({top:Math.max(0,y),behavior:'smooth'});}catch(e){}}
+ pvxPlak();
+};
+document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&pvxZij.classList.contains('open'))pvxBlad(0);});
+/* De vaste balken van het thema (kop, eventuele actiebalk) meten we, zodat de meelopende
+   filterknop er precies onder komt en niet eroverheen. */
+var pvxVast=[],pvxRaf=0;
+function pvxMeet(){pvxVast=[];Array.prototype.forEach.call(document.querySelectorAll('body *'),function(el){
+  if(el.closest&&el.closest('.pvx'))return;var cs=getComputedStyle(el);
+  if(cs.position!=='fixed'&&cs.position!=='sticky')return;var r=el.getBoundingClientRect();
+  if(r.top<300&&r.height<260&&r.width>window.innerWidth*0.5)pvxVast.push(el);});}
+function pvxBoven(){var m=0;pvxVast.map(function(el){return el.getBoundingClientRect();})
+  .filter(function(r){return r.bottom>0&&r.height>0;}).sort(function(a,b){return a.top-b.top;})
+  .forEach(function(r){if(r.top<=m+5)m=Math.max(m,r.bottom);});return Math.round(m);}
+function pvxPlak(){pvxRaf=0;var mee=document.getElementById('pvx-mee'),fb=document.getElementById('pvx-fbar'),gr=document.getElementById('pvx-grid');
+ if(!mee||!fb||!gr)return;
+ if(window.innerWidth>860||pvxZij.classList.contains('open')){mee.hidden=true;return;}
+ var boven=pvxBoven(),aan=fb.getBoundingClientRect().bottom<boven+2&&gr.getBoundingClientRect().bottom>boven+160;
+ if(!aan){mee.hidden=true;return;}
+ mee.hidden=false;mee.style.top=boven+'px';mee.style.left='0px';mee.style.width=window.innerWidth+'px';}
+function pvxPlakStraks(){if(!pvxRaf)pvxRaf=requestAnimationFrame(pvxPlak);}
+window.addEventListener('scroll',pvxPlakStraks,{passive:true});
+window.addEventListener('resize',function(){pvxMeet();pvxPlakStraks();});
+setTimeout(function(){pvxMeet();pvxPlak();},600);setTimeout(function(){pvxMeet();pvxPlak();},2500);
+/* Zoekveld en telling in gewone woorden. Het zoekveld vroeg op de internetpagina om een toestel. */
+if(T===TR.nl){T.results='aanbiedingen';if(isInternet)T.searchPh='Zoek een provider of pakket';else if(!isTelefoon)T.searchPh='Zoek een provider of bundel';}
 
 applyStatic();
 var si=document.getElementById('pvx-q'),st;si.addEventListener('input',function(){clearTimeout(st);st=setTimeout(function(){SHOWN=PAGE;pvxRender();},250);});

@@ -312,11 +312,11 @@ const BOL_CATS = [
   { id: '11764', naam: 'Koken & Tafelen', cat: 'keuken' },
   { id: '12442', naam: 'Persoonlijke verzorging', cat: 'verzorging' },
   { id: '7934', naam: 'Speelgoed', cat: 'speelgoed' },
-  { id: '13155', naam: 'Klussen', cat: 'klussen' },
-  { id: '14648', naam: 'Sport', cat: 'klussen' },
-  { id: '25897', naam: 'Kantoor & School', cat: 'kantoor' },
-  { id: '12974', naam: 'Tuin', cat: 'klussen' },
-  { id: '14035', naam: 'Wonen', cat: 'wonen' }
+  { id: '13155', naam: 'Klussen', cat: 'klussen' }
+  // 7 okt: de lijsten Sport, Kantoor & School, Tuin en Wonen zijn eruit. Daar
+  // kwam bijna alleen kleding, textiel, schriften en tuinspul uit, en in die
+  // categorieen lag geen enkel product bij een tweede winkel. Wat van de
+  // overige lijsten binnenkomt gaat door geenApparaat() verderop.
 ]
 const BOL_PAGINAS = Number(process.env.BOL_PAGINAS || 40)   // 50 producten per pagina
 
@@ -1436,10 +1436,36 @@ const BUITEN_RE = new RegExp('(?<![\\w-])(' + BUITEN_WOORDEN.join('|') + ')(?![\
 // (een robotstofzuiger voor tapijt, een pastamachine met droogrek).
 const BUITEN_NIET = /\b(lego|playmobil|barbie|digitale fotolijst|robotstofzuiger|stofzuiger|stoomreiniger|hogedrukreiniger|\w*machine|elektrische?|oplaadbaar|oplaadbare|accu|led|usb)\b/i
 
+// Daarbovenop, voor wat alleen bij bol, 2dekansje of Action ligt: buiten tech en
+// speelgoed blijft alleen staan wat een apparaat is. Shampoo, tandpasta,
+// balpennen, agenda's, pannen, scheenbeschermers en vliegengordijnen gaan eruit;
+// een fohn, een airfryer, een accuboormachine en een slimme deurbel blijven.
+// Bij Klussen houdt dat alleen elektrisch gereedschap over.
+//
+// Een apparaat herken ik aan de soort (stofzuiger, blender), aan stroom in de
+// naam (accu, 1200 W, usb) of aan een merk dat alleen apparaten maakt. Er wordt
+// alleen naar het begin van de naam gekeken: verkopers op bol plakken er een
+// rij zoekwoorden achter ("geschikt voor oven en magnetron").
+const APPARAAT_CATS = new Set(['wonen', 'klussen', 'huishoudelijk', 'keuken', 'verzorging', 'drogisterij', 'kantoor'])
+const BREDE_WINKEL = /^(bol\.com|2dekansje|action)/i
+const AP_STROOM = /(?<![\w-])(elektrische?|accu|accu-\w+|oplaadba(ar|re)|usb|usb-c|snoerloos|snoerloze|draadloze?|bluetooth|wifi|wi-fi|smart|slimme (stekker|lamp|deurbel|thermostaat|speaker|weegschaal)|digitale?|led|sensor|thermostaat|\d+ ?(w|watt|v|volt|mah|pa|bar)|\d+(?:[.,]\d+)? ?(kw|ah))(?![\w-])/i
+const AP_SOORT = /(?<![\w-])(\w*machine|\w*apparaat|\w*apparaten|robot\w*|\w*stofzuiger|kruimeldief|stoomreiniger|\w*strijkijzer|stoomgenerator|kledingstomer|steamer|airfryer|friteuse|\w*blender|\w*mixer|waterkoker|broodrooster|tosti-ijzer|contactgrill|gourmetset|magnetron|\w*oven|koelkast|vriezer|vrieskist|vaatwasser|wasdroger|droogkast|afzuigkap|kookplaat|\w*ventilator|airco|\w*kachel|heater|luchtreiniger|luchtbevochtiger|luchtontvochtiger|ontvochtiger|diffuser|haakse slijper|multislijper|rechte slijper|\w*zaag|\w*frees|multitool|hogedrukreiniger|bladblazer|\w*maaier|heggenschaar|grastrimmer|kettingzaag|compressor|multimeter|kruislijnlaser|afstandsmeter|\w*tandenborstel|opzetborstels?|monddouche|scheerapparaat|scheerkop\w*|tondeuse|\w*trimmer|epilator|f[oö]hn|haardroger|stijltang|krultang|warmteborstel|airstyler|ipl|massagepistool|massagegun|\w*weegschaal|bloeddrukmeter|thermometer|stekkerdoos|verlengsnoer|deurbel|rookmelder|koolmonoxidemelder|batterijen|batterij|oplader|rekenmachine|papiervernietiger|labelprinter|labelwriter|printer|soundbar|wekker|wekkerradio|radio|zaklamp|hoofdlamp|looplamp|bouwlamp|werklamp|schemerschakelaar|tijdschakelaar|dimmer|bewegingsmelder|laadpaal|omvormer|powerstation|zonnepaneel|zonnepanelen)(?![\w-])/i
+const AP_MERK = /^(bosch|makita|dewalt|einhell|k[aä]rcher|black ?\+ ?decker|ryobi|metabo|hikoki|festool|worx|milwaukee|philips|braun|oral-b|babyliss|remington|dyson|shark|rowenta|sage|de'?longhi|nespresso|krups|senseo|kitchenaid|ninja|princess|tristar|russell hobbs|severin|bestron|inventum|aeg|miele|siemens|samsung|lg|xiaomi|roborock|eufy|dreame|irobot|ecovacs|tineco|bissell|klikaanklikuit|calex|hombli|texas instruments|casio|hp|brother|dymo|panasonic|varta|duracell|energizer|ghd|foreo|beurer|medisana|omron|wahl|moser)\b/i
+
+function geenApparaat (p) {
+  if (!APPARAAT_CATS.has(p.c)) return false
+  if ((p.o || []).length !== 1) return false
+  if (!BREDE_WINKEL.test(p.o[0].w || '')) return false
+  const n = String(p.n || '').trim()
+  const kop = n.slice(0, 75)
+  return !(AP_SOORT.test(kop) || AP_STROOM.test(kop) || AP_MERK.test(n))
+}
+
 function buitenAanbod (p) {
   if (!BUITEN_CATS.has(p.c)) return false
   if ((p.o || []).length !== 1) return false
   if (/^(coolblue|mediamarkt)/i.test(p.o[0].w || '')) return false
+  if (geenApparaat(p)) return true
   const n = String(p.n || '')
   return BUITEN_RE.test(n) && !BUITEN_NIET.test(n)
 }
@@ -1685,7 +1711,7 @@ async function main () {
   console.log('Totaal bruikbaar:', rauw.length)
   const gekoppeld = koppel(rauw)
   const producten = gekoppeld.filter(p => !buitenAanbod(p))
-  if (producten.length < gekoppeld.length) console.log('Buiten het aanbod gehouden (kleding, textiel, decoratie, huisraad):', gekoppeld.length - producten.length)
+  if (producten.length < gekoppeld.length) console.log('Buiten het aanbod gehouden (geen apparaat, of kleding, textiel, decoratie, huisraad):', gekoppeld.length - producten.length)
   console.log('Na koppelen:', producten.length, 'producten,',
     producten.filter(p => p.o.length > 1).length, 'met meer dan een winkel')
   if (onmogelijkePrijzen) console.log('  ' + onmogelijkePrijzen + ' prijzen uit een vergelijking gehouden omdat ze onder een derde van de middelste prijs lagen')

@@ -3,6 +3,7 @@ name: Productpaginas
 # Een keer per dag, ruim na de ochtendrun van de shop feed (04:07 UTC), zodat
 # de prijzen van vandaag erin zitten. Maakt nieuwe productpagina's aan, werkt
 # prijzen en aanbod bij op de bestaande, en haalt specificaties uit de MediaMarkt-feed, bij Icecat en bij bol.
+# Producten bij een winkel krijgen een pagina als ze 40 euro of meer kosten en er specificaties van zijn.
 #
 # Nodig: de geheimen SHOPIFY_CLIENT_ID en SHOPIFY_CLIENT_SECRET van een app uit
 # het Dev Dashboard met de rechten read_metaobjects en write_metaobjects (of
@@ -19,6 +20,9 @@ on:
       specs_max:
         description: 'Hoogstens zoveel specificaties in deze run'
         default: '1500'
+      een_max:
+        description: 'Hoogstens zoveel nieuwe paginas voor producten bij een winkel'
+        default: '1500'
 
 permissions:
   contents: write
@@ -30,7 +34,7 @@ concurrency:
 jobs:
   paginas:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 170
     steps:
       - uses: actions/checkout@v4
 
@@ -50,6 +54,7 @@ jobs:
           ICECAT_CONTENT_TOKEN: ${{ secrets.ICECAT_CONTENT_TOKEN }}
           MAX_NIEUW: ${{ inputs.max_nieuw || '5000' }}
           SPECS_MAX: ${{ inputs.specs_max || '1500' }}
+          EEN_MAX: ${{ inputs.een_max || '1500' }}
         run: node productpaginas.mjs
 
       # De stand en de kaart gaan terug de repo in. De kaart leest het thema om
@@ -58,7 +63,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/productpaginas.json data/productpaginas-stand.json 2>/dev/null || true
+          git add data/productpaginas.json data/productpaginas-stand.json data/productpaginas-een.json 2>/dev/null || true
           if git diff --cached --quiet; then echo "niets gewijzigd"; exit 0; fi
           git commit -m "Productpaginas: stand en kaart bijgewerkt"
           for i in 1 2 3; do

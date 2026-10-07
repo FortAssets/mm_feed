@@ -1,7 +1,9 @@
 // Productpagina's in Shopify bijwerken (metaobject "productpagina").
 //
 // Voor elk product dat bij minstens twee winkels te koop is, bestaat een eigen
-// pagina op /pages/product/<handle>. Dit script maakt de pagina's aan, houdt de
+// pagina op /pages/product/<handle>. Een product bij een winkel krijgt er ook
+// een, als het 40 euro of meer kost en er specificaties van te vinden zijn
+// (zie "producten bij een winkel" onderaan). Dit script maakt de pagina's aan, houdt de
 // prijzen bij en vult de specificaties aan via de catalogus van bol.
 //
 // Bron van de producten: de eigen shop-API (shop.deprijsvergelijker.com), dus
@@ -16,6 +18,10 @@
 //   --droog              niets schrijven, alleen tellen wat er zou gebeuren
 //   MAX_NIEUW=500        hoogstens zoveel nieuwe pagina's per run (standaard 5000)
 //   SPECS_MAX=300        hoogstens zoveel specificaties per run (standaard 300)
+//   EEN_MAX=1500         hoogstens zoveel nieuwe pagina's voor producten bij een winkel
+//   EEN_ZOEK=2000        hoogstens zoveel daarvan opzoeken bij Icecat en bol
+//   EEN_VANAF=40         ondergrens in euro's voor een product bij een winkel
+//   --proef              het deel "bij een winkel" doorlopen zonder iets te schrijven
 //
 // De stand staat in data/productpaginas-stand.json: per product de handle, de
 // peildatum, een vingerafdruk van het aanbod en of de specificaties er zijn.
@@ -50,6 +56,12 @@ const VERSIE = '2026-01'
 const DROOG = process.argv.includes('--droog') || !TOKEN
 const MAX_NIEUW = Number(process.env.MAX_NIEUW || 5000)
 const SPECS_MAX = Number(process.env.SPECS_MAX || 300)
+const EEN_MAX = Number(process.env.EEN_MAX || 1500)
+const EEN_ZOEK = Number(process.env.EEN_ZOEK || 2000)
+const EEN_VANAF = Number(process.env.EEN_VANAF || 40)
+const PROEF = process.argv.includes('--proef')
+// Producten bij een winkel waar geen enkele bron specificaties van had, met de datum.
+const EEN_STAND = 'data/productpaginas-een.json'
 const VERS_DAGEN = 7                      // ongewijzigde pagina's krijgen na zoveel dagen een nieuwe peildatum
 const STAND = 'data/productpaginas-stand.json'
 // De kaart {id: handle} die het thema leest om kaarten aan hun pagina te koppelen.
@@ -86,16 +98,18 @@ async function haalJson (url, pogingen = 3) {
 async function haalProducten () {
   const index = await haalJson(API + 'index')
   const alle = new Map()
+  // Alles, niet alleen wat bij twee winkels ligt: een pagina blijft bestaan als
+  // een product naar een winkel zakt en moet dan nog steeds de prijs van vandaag
+  // krijgen, en producten bij een winkel kunnen zelf een pagina krijgen.
   for (const c of index.categorieen || []) {
-    if (!c.multi) continue
     for (let p = 1; ; p++) {
-      const d = await haalJson(API + 'lijst?cat=' + encodeURIComponent(c.slug) + '&multi=1&n=60&p=' + p)
-      for (const x of d.items || []) if ((x.o || []).length > 1) alle.set(x.i, { ...x, _cat: c.slug, _catnaam: c.naam })
+      const d = await haalJson(API + 'lijst?cat=' + encodeURIComponent(c.slug) + '&n=60&p=' + p)
+      for (const x of d.items || []) if ((x.o || []).length) alle.set(x.i, { ...x, _cat: c.slug, _catnaam: c.naam })
       if (p >= (d.paginas || 1)) break
-      await wacht(150)
+      await wacht(120)
     }
   }
-  return { gemaakt: index.gemaakt, items: [...alle.values()] }
+  return { gemaakt: index.gemaakt, alle: [...alle.values()] }
 }
 
 function maakRij (x) {
@@ -115,9 +129,11 @@ function maakRij (x) {
     winkels: String(o.length),
     aanbod: JSON.stringify(o.map(w => ({ w: w.w, p: w.p }))),
     peildatum: vandaag,
-    seo_titel: naam.slice(0, 200) + ': prijzen vergelijken',
-    seo_omschrijving: 'Vergelijk de prijs van ' + naam.slice(0, 150) + ' bij ' + o.length + ' winkels, vanaf ' + euro(o[0].p) +
-      '. Met prijsverloop per winkel en een eerlijk oordeel over de huidige prijs.'
+    seo_titel: naam.slice(0, 200) + (o.length > 1 ? ': prijzen vergelijken' : ': prijs en specificaties'),
+    seo_omschrijving: o.length > 1
+      ? 'Vergelijk de prijs van ' + naam.slice(0, 150) + ' bij ' + o.length + ' winkels, vanaf ' + euro(o[0].p) +
+        '. Met prijsverloop per winkel en een eerlijk oordeel over de huidige prijs.'
+      : naam.slice(0, 150) + ' voor ' + euro(o[0].p) + ' bij ' + o[0].w + '. Met alle specificaties, het prijsverloop en een eerlijk oordeel over de huidige prijs.'
   }
   return { id: x.i, naam, f, vinger: afdruk(f.aanbod + '|' + f.naam + '|' + f.afbeelding) }
 }
@@ -182,7 +198,11 @@ const GROEP_WEG = new Set(['Mogelijke vereisten instellen en gebruik', 'Introduc
 const SLEUTEL_WEG = /^(EAN|Mpn|Warranty .*|Weight|Length|Width|Height|Packaging|Package Content.*|Number Pieces In Package|Whats In The Box|Accessoires Included|Additional Guarantees|Aftersales Service\(s\)|Manufacturer Name|Language Instructions|Radiation Indication|Introduction Month)$/i
 
 let bolToken = null
+let bolGeprobeerd = false
 async function bolLogin () {
+  // Hoogstens een poging per run, ook als twee delen van het script erom vragen.
+  if (bolGeprobeerd) return !!bolToken
+  bolGeprobeerd = true
   const id = process.env.BOL_CLIENT_ID; const geheim = process.env.BOL_CLIENT_SECRET
   if (!id || !geheim) return false
   // Eén poging. bol blokkeert een adres na herhaald mislukte tokenverzoeken,
@@ -322,9 +342,10 @@ async function icecatSpecs (ean) {
 }
 
 // ---- hoofdlijn ----------------------------------------------------------------
-const { gemaakt, items } = await haalProducten()
-console.log('shop-API: ' + items.length + ' producten bij twee of meer winkels (feed van ' + gemaakt + ')')
-if (items.length < 300) { console.error('te weinig producten, er mist een feed; niets geschreven'); process.exit(1) }
+const { gemaakt, alle } = await haalProducten()
+const aantalMulti = alle.filter(x => x.o.length > 1).length
+console.log('shop-API: ' + alle.length + ' producten, waarvan ' + aantalMulti + ' bij twee of meer winkels (feed van ' + gemaakt + ')')
+if (aantalMulti < 300) { console.error('te weinig producten, er mist een feed; niets geschreven'); process.exit(1) }
 
 let stand = null
 try { stand = JSON.parse(fs.readFileSync(STAND, 'utf8')) } catch (e) { /* eerste keer */ }
@@ -338,6 +359,8 @@ if (!stand) {
   console.log('eerste run: ' + Object.keys(stand).length + ' bestaande pagina\'s gevonden' + (DROOG ? ' in de kaart' : ' in Shopify'))
 }
 
+// Bij te houden: alles bij twee of meer winkels, en wat bij een winkel ligt en al een pagina heeft.
+const items = alle.filter(x => x.o.length > 1 || (stand[x.i] && stand[x.i].h))
 const bezet = new Set(Object.values(stand).map(s => s.h))
 const teDoen = []
 let nieuw = 0; let gewijzigd = 0; let ververst = 0
@@ -393,6 +416,9 @@ if (!DROOG) {
 // In de stand: s = er staan specs, m = aantal regels uit de MediaMarkt-feed,
 // i = Icecat is geprobeerd, x = datum waarop geen enkele bron iets had.
 const telRijen = sp => sp.g.reduce((n, g) => n + g.r.length, 0)
+let mmGeladen; let mmVelden = null
+const mmLaad = async () => { if (!mmGeladen) { mmGeladen = true; mmVelden = await haalMmVelden() } return mmVelden }
+let iceDicht = false; let bolDicht = false
 let specsGezet = 0
 if (!DROOG && SPECS_MAX > 0) {
   const uitBron = { MediaMarkt: 0, Icecat: 0, 'bol.com': 0 }
@@ -412,7 +438,7 @@ if (!DROOG && SPECS_MAX > 0) {
 
   // 1. MediaMarkt
   const zonder = metEan.filter(x => !stand[x.i].s)
-  const mm = zonder.length ? await haalMmVelden() : null
+  const mm = zonder.length ? await mmLaad() : null
   if (mm) {
     for (const x of zonder) {
       const sp = mmSpecs(mm.get(String(x.e).replace(/^0+/, '')))
@@ -437,7 +463,7 @@ if (!DROOG && SPECS_MAX > 0) {
     if (!iceAan && !(bolAan && !s.s)) { if (!iceAan && !bolAan) break; continue }
     let r = iceAan ? await icecatSpecs(x.e) : { geen: true }
     let bron = 'Icecat'
-    if (r.stop) { console.error('Icecat: toegang geweigerd, verder zonder Icecat'); iceAan = false; r = { fout: 'icecat' } }
+    if (r.stop) { console.error('Icecat: toegang geweigerd, verder zonder Icecat'); iceAan = false; iceDicht = true; r = { fout: 'icecat' } }
     if (r.rem) { await wacht(20000); continue }
     // Een antwoord van Icecat, ja of nee: niet nog eens vragen.
     if (r.specs || r.geen) s.i = 1
@@ -445,7 +471,7 @@ if (!DROOG && SPECS_MAX > 0) {
     if (r.specs && s.m && telRijen(r.specs) <= s.m) r = { al: true }
     if (!r.specs && !s.s && bolAan) {
       r = await bolSpecs(x.e); bron = 'bol.com'
-      if (r.stop) { console.error('bol: toegang geweigerd, verder zonder bol'); bolAan = false; r = { fout: 'bol' } }
+      if (r.stop) { console.error('bol: toegang geweigerd, verder zonder bol'); bolAan = false; bolDicht = true; r = { fout: 'bol' } }
       if (r.rem) { await wacht(20000); continue }
     }
     // Geen enkele bron had iets: over een maand opnieuw proberen.
@@ -455,6 +481,85 @@ if (!DROOG && SPECS_MAX > 0) {
   }
   await schrijf()
   console.log('specificaties gezet: ' + specsGezet + ' (MediaMarkt ' + uitBron.MediaMarkt + ', Icecat ' + uitBron.Icecat + ', bol ' + uitBron['bol.com'] + ') | langs Icecat deze run: ' + kandidaten.length)
+}
+
+// ---- producten bij een winkel ---------------------------------------------------
+// Een pagina "prijzen vergelijken" met een winkel is alleen de moeite waard als
+// er meer op staat dan die ene prijs. Daarom krijgt zo'n product alleen een
+// pagina als er specificaties van zijn: uit de MediaMarkt-feed, van Icecat of
+// van bol. Verder: nieuw (geen tweedekans), met EAN, en EEN_VANAF euro of meer.
+// Producten uit de MediaMarkt-feed gaan voor, want daar zijn de specificaties
+// al binnen; daarna de duurste eerst. Had geen bron iets, dan staat dat een
+// maand in EEN_STAND en vragen we het niet elke dag opnieuw.
+let eenGemaakt = 0
+if (EEN_MAX > 0) {
+  let geen = {}
+  try { geen = JSON.parse(fs.readFileSync(EEN_STAND, 'utf8')) } catch (e) { /* eerste keer */ }
+  const recent = d => d && (Date.parse(vandaag) - Date.parse(d)) / 864e5 < 30
+  const kand = alle.filter(x => x.o.length === 1 && x.e && x.s !== 'r' && !/^2dekansje/i.test(x.o[0].w || '') &&
+    Number(x.p) >= EEN_VANAF && !stand[x.i] && !recent(geen[x.i]))
+  console.log('bij een winkel: ' + kand.length + ' kandidaten vanaf ' + euro(EEN_VANAF) + ' zonder pagina')
+  if (!DROOG || PROEF) {
+    const mm = PROEF ? null : await mmLaad()
+    const ean = x => String(x.e).replace(/^0+/, '')
+    const inMm = x => (mm && mm.has(ean(x)) ? 1 : 0)
+    kand.sort((a, b) => (inMm(b) - inMm(a)) || (b.p - a.p))
+    let iceAan = !iceDicht
+    let bolAan = !bolDicht && !PROEF && await bolLogin()
+    const uitBron = { MediaMarkt: 0, Icecat: 0, 'bol.com': 0 }
+    let gezocht = 0; let zonder = 0; let wachtrij = []
+    const schrijf = async () => {
+      if (!wachtrij.length) return
+      const f = PROEF ? [] : await upsert(wachtrij.map(w => ({
+        handle: w.h, actief: true,
+        fields: Object.entries(w.rij.f).filter(([, val]) => val !== '').map(([key, value]) => ({ key, value }))
+          .concat([{ key: 'specs', value: JSON.stringify(w.specs) }])
+      })))
+      const mis = new Set(f.map(t => t.split(':')[0]))
+      for (const w of wachtrij) {
+        if (mis.has(w.h)) { bezet.delete(w.h); continue }
+        const s = { h: w.h, d: vandaag, v: w.rij.vinger, s: 1 }
+        if (w.bron === 'MediaMarkt') s.m = telRijen(w.specs); else s.i = 1
+        stand[w.rij.id] = s
+        eenGemaakt++; uitBron[w.bron]++
+        if (PROEF) console.log('  proef: ' + w.h + ' | ' + w.rij.f.prijs + ' | ' + w.bron + ' | ' + telRijen(w.specs) + ' regels | ' + w.rij.f.seo_omschrijving.slice(0, 90))
+      }
+      fouten.push(...f); wachtrij = []
+    }
+    for (const x of kand) {
+      if (eenGemaakt + wachtrij.length >= EEN_MAX) break
+      let specs = mm ? mmSpecs(mm.get(ean(x))) : null
+      let bron = 'MediaMarkt'
+      if (!specs) {
+        if (gezocht >= EEN_ZOEK || (!iceAan && !bolAan)) { if (!inMm(x)) break; continue }
+        gezocht++
+        let r = iceAan ? await icecatSpecs(x.e) : { geen: true }
+        bron = 'Icecat'
+        if (r.stop) { console.error('Icecat: toegang geweigerd, verder zonder Icecat'); iceAan = false; r = { fout: 'icecat' } }
+        if (r.rem) { await wacht(20000); continue }
+        if (!r.specs && bolAan) {
+          r = await bolSpecs(x.e); bron = 'bol.com'
+          if (r.stop) { console.error('bol: toegang geweigerd, verder zonder bol'); bolAan = false; r = { fout: 'bol' } }
+          if (r.rem) { await wacht(20000); continue }
+        }
+        if (r.geen) { geen[x.i] = vandaag; zonder++ }
+        specs = r.specs || null
+        await wacht(350)
+      }
+      if (!specs) continue
+      const rij = maakRij(x)
+      let h = slug(rij.naam)
+      if (!h || bezet.has(h)) h = (h.slice(0, 55).replace(/-+$/, '') + '-' + String(x.e || x.i).replace(/\D/g, '')).slice(0, 70).replace(/^-+|-+$/g, '')
+      if (!h || bezet.has(h)) continue
+      bezet.add(h)
+      wachtrij.push({ h, rij, specs, bron })
+      if (wachtrij.length >= 8) await schrijf()
+    }
+    await schrijf()
+    console.log('bij een winkel: ' + eenGemaakt + ' pagina\'s gemaakt (MediaMarkt ' + uitBron.MediaMarkt + ', Icecat ' + uitBron.Icecat + ', bol ' + uitBron['bol.com'] +
+      ') | opgezocht: ' + gezocht + ', zonder specificaties: ' + zonder)
+    if (!PROEF) { fs.mkdirSync('data', { recursive: true }); fs.writeFileSync(EEN_STAND, JSON.stringify(geen)) }
+  }
 }
 
 if (!DROOG) {

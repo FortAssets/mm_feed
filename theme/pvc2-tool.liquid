@@ -158,7 +158,7 @@
   html:not(#x):not(#y) .pvx-fbar .pvx-sortwrap select{width:100%;height:48px;border-radius:12px !important;border:1.5px solid #CBD3DF !important;font-size:15.5px;font-weight:600;padding:0 36px 0 14px}
   .pvx-snel{flex-wrap:nowrap;overflow-x:auto;margin-right:-16px;padding-right:16px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
   .pvx-snel::-webkit-scrollbar{display:none}
-  html:not(#x):not(#y) .pvx-side{display:flex !important;flex-direction:column;position:fixed;left:0;right:0;bottom:0;top:64px;z-index:2147483000;margin:0;padding:0;border:0 !important;border-radius:22px 22px 0 0 !important;background:#fff;transform:translateY(105%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
+  html:not(#x):not(#y) .pvx-side{display:flex !important;flex-direction:column;position:fixed;left:0;right:0;bottom:0;top:64px;z-index:2147483000;margin:0 !important;padding:0 !important;border:0 !important;box-sizing:border-box;border-radius:22px 22px 0 0 !important;background:#fff;transform:translateY(105%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
   html:not(#x):not(#y) .pvx-side.open{transform:none;visibility:visible;transition:transform .22s ease}
   .pvx-side:before{content:"";width:44px;height:5px;border-radius:9px;background:#CBD3DF;margin:9px auto 0;flex:none}
   html:not(#x):not(#y) .pvx-side .pvx-side-top{padding:8px 18px 12px;border-bottom:1.5px solid #E3E8F0 !important;flex:none}
@@ -184,8 +184,10 @@
   html:not(#x):not(#y) .pvx-side .pvx-bkbtn b{font-size:14px;font-weight:600;color:#0D1B2A}
   .pvx-side .pvx-bkbtn small{display:none}
   html:not(#x):not(#y) .pvx-side .pvx-bkbtn.on{background:#DDF3E8 !important;border-color:#0D1B2A !important}
+  /* De eerste knop is steeds 'alles'; staat die aan, dan is er niets gekozen en blijft hij rustig grijs */
+  html:not(#x):not(#y) .pvx-side .pvx-bk:not(#pvx-toonbk) .pvx-bkbtn:first-child.on,html:not(#x):not(#y) .pvx-side .pvx-pchip:first-child.on,html:not(#x):not(#y) .pvx-side .pvx-swall.on{background:#F1F3F8 !important;border-color:#F1F3F8 !important}
   .pvx-side #pvx-prov-list,.pvx-side #pvx-via-list{display:flex;flex-wrap:wrap;gap:7px}
-  html:not(#x):not(#y) .pvx-side .pvx-pchip{width:auto;margin:0;border-radius:999px;padding:6px 12px 6px 7px;border:1.5px solid #CBD3DF !important;font-size:14px;color:#0D1B2A}
+  html:not(#x):not(#y) .pvx-side .pvx-pchip{width:auto;margin:0;border-radius:999px !important;padding:6px 12px 6px 7px;border:1.5px solid #CBD3DF !important;font-size:14px;color:#0D1B2A}
   html:not(#x):not(#y) .pvx-side .pvx-pchip.on{background:#DDF3E8 !important;border-color:#0D1B2A !important}
   .pvx-side .pvx-swall{border-radius:999px}
   /* Scrol je door de lijst, dan loopt de filterknop mee */
@@ -790,6 +792,15 @@ function pvxBalk(total){
  SNEL.forEach(function(o,i){var b=rij.children[i];if(!b)return;var aan=snelWaarde(o[0])===o[1];b.className=aan?'on':'';b.setAttribute('aria-pressed',aan?'true':'false');});
 }
 var pvxZij=document.getElementById('pvx-side');
+/* Het blad, de waas en de meelopende knop hangen op de telefoon aan de body. Binnen de
+   sectie zit een voorouder met een eigen stapelvlak, waardoor 'fixed' daar niet aan het
+   scherm vastzit maar aan die voorouder. Op een breed scherm staat de zijbalk gewoon op zijn plek. */
+var pvxPlek=document.createComment('pvx-side');pvxZij.parentNode.insertBefore(pvxPlek,pvxZij);
+function pvxHang(){var smal=window.innerWidth<=860;
+ if(smal&&pvxZij.parentNode!==document.body)document.body.appendChild(pvxZij);
+ if(!smal&&pvxZij.parentNode===document.body){pvxPlek.parentNode.insertBefore(pvxZij,pvxPlek.nextSibling);pvxZij.classList.remove('open');document.documentElement.classList.remove('pvx-slot');var w0=document.getElementById('pvx-waas');if(w0)w0.classList.remove('open');}}
+['pvx-waas','pvx-mee'].forEach(function(id){var e=document.getElementById(id);if(e)document.body.appendChild(e);});
+pvxHang();
 window.pvxBlad=function(open,naarLijst){
  var waas=document.getElementById('pvx-waas'),kn=document.getElementById('pvx-fknop');
  pvxZij.classList.toggle('open',!!open);if(waas)waas.classList.toggle('open',!!open);
@@ -804,7 +815,7 @@ document.addEventListener('keydown',function(ev){if(ev.key==='Escape'&&pvxZij.cl
    filterknop er precies onder komt en niet eroverheen. */
 var pvxVast=[],pvxRaf=0;
 function pvxMeet(){pvxVast=[];Array.prototype.forEach.call(document.querySelectorAll('body *'),function(el){
-  if(el.closest&&el.closest('.pvx'))return;var cs=getComputedStyle(el);
+  if(el.closest&&(el.closest('.pvx')||el.closest('#pvx-side')||el.closest('#pvx-mee')||el.closest('#pvx-waas')))return;var cs=getComputedStyle(el);
   if(cs.position!=='fixed'&&cs.position!=='sticky')return;var r=el.getBoundingClientRect();
   if(r.top<300&&r.height<260&&r.width>window.innerWidth*0.5)pvxVast.push(el);});}
 function pvxBoven(){var m=0;pvxVast.map(function(el){return el.getBoundingClientRect();})
@@ -818,7 +829,7 @@ function pvxPlak(){pvxRaf=0;var mee=document.getElementById('pvx-mee'),fb=docume
  mee.hidden=false;mee.style.top=boven+'px';mee.style.left='0px';mee.style.width=window.innerWidth+'px';}
 function pvxPlakStraks(){if(!pvxRaf)pvxRaf=requestAnimationFrame(pvxPlak);}
 window.addEventListener('scroll',pvxPlakStraks,{passive:true});
-window.addEventListener('resize',function(){pvxMeet();pvxPlakStraks();});
+window.addEventListener('resize',function(){pvxHang();pvxMeet();pvxPlakStraks();});
 setTimeout(function(){pvxMeet();pvxPlak();},600);setTimeout(function(){pvxMeet();pvxPlak();},2500);
 /* Zoekveld en telling in gewone woorden. Het zoekveld vroeg op de internetpagina om een toestel. */
 if(T===TR.nl){T.results='aanbiedingen';if(isInternet)T.searchPh='Zoek een provider of pakket';else if(!isTelefoon)T.searchPh='Zoek een provider of bundel';}

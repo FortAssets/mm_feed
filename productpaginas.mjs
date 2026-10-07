@@ -225,6 +225,43 @@ async function bolSpecs (ean) {
   return { specs: uit }
 }
 
+// ---- specificaties van Icecat --------------------------------------------------
+// Open Icecat: gratis, Nederlandstalig, per EAN. Dekt de merken die Icecat
+// sponsoren (laptops vrijwel volledig, telefoons en audio deels). Met de
+// tokens van het eigen account als ze er zijn, anders de open toegang.
+const ICE_GROEP_WEG = new Set(['Berichten', 'Logistieke gegevens', 'Overige specificaties', 'Technische details', 'Certificaten', 'Verpakkingsgegevens'])
+async function icecatSpecs (ean) {
+  const api = process.env.ICECAT_API_TOKEN; const inhoud = process.env.ICECAT_CONTENT_TOKEN
+  const metToken = !!(api && inhoud)
+  let r
+  try {
+    r = await fetch('https://live.icecat.biz/api?lang=nl&GTIN=' + encodeURIComponent(ean) + '&content=' + (metToken ? '' : '&shopname=openIcecat-live'),
+      { headers: metToken ? { 'api-token': api, 'content-token': inhoud } : {} })
+  } catch (e) { return { fout: 'net' } }
+  if (r.status === 429) return { rem: true }
+  if (r.status === 401) return { stop: true }
+  // 400, 403 en 404: onbekende EAN, of een merk buiten de open catalogus.
+  if (!r.ok) return { geen: true }
+  const d = ((await r.json().catch(() => ({}))) || {}).data || {}
+  const g = []
+  let rijen = 0
+  for (const groep of d.FeaturesGroups || []) {
+    const titel = (((groep.FeatureGroup || {}).Name || {}).Value || '').trim()
+    if (!titel || ICE_GROEP_WEG.has(titel) || g.length >= 12) continue
+    const r2 = []
+    for (const f of groep.Features || []) {
+      if (r2.length >= 6 || rijen >= 60) break
+      const naam = ((((f.Feature || {}).Name || {}).Value) || '').trim()
+      const waarde = String(f.PresentationValue == null ? '' : f.PresentationValue).trim()
+      if (!naam || !waarde || waarde.length > 160) continue
+      r2.push([naam, waarde]); rijen++
+    }
+    if (r2.length) g.push({ t: titel, r: r2 })
+  }
+  if (!g.length) return { geen: true }
+  return { specs: { bron: 'Icecat', g } }
+}
+
 // ---- hoofdlijn ----------------------------------------------------------------
 const { gemaakt, items } = await haalProducten()
 console.log('shop-API: ' + items.length + ' producten bij twee of meer winkels (feed van ' + gemaakt + ')')
@@ -290,7 +327,10 @@ if (!DROOG) {
 
 // Specificaties: alleen pagina's die bestaan, een EAN hebben en nog geen specs.
 let specsGezet = 0
-if (!DROOG && SPECS_MAX > 0 && await bolLogin()) {
+// Eerst Icecat, en wat daar niet staat bij bol (als die sleutel er is).
+if (!DROOG && SPECS_MAX > 0) {
+  const metBol = await bolLogin()
+  let iceAan = true; let bolAan = metBol; const uitBron = { Icecat: 0, 'bol.com': 0 }
   const kandidaten = items.filter(x => {
     const s = stand[x.i]
     return s && s.d && !s.s && x.e && !(s.x && (Date.parse(vandaag) - Date.parse(s.x)) / 864e5 < 30)
@@ -305,15 +345,22 @@ if (!DROOG && SPECS_MAX > 0 && await bolLogin()) {
   }
   for (const x of kandidaten) {
     const s = stand[x.i]
-    const r = await bolSpecs(x.e)
-    if (r.stop) { console.error('bol: toegang geweigerd, specificaties gestopt'); break }
+    if (!iceAan && !bolAan) break
+    let r = iceAan ? await icecatSpecs(x.e) : { geen: true }
+    if (r.stop) { console.error('Icecat: toegang geweigerd, verder zonder Icecat'); iceAan = false; r = { geen: true } }
     if (r.rem) { await wacht(20000); continue }
-    if (r.geen) s.x = vandaag
-    if (r.specs) { wachtrij.push({ s, specs: r.specs }); if (wachtrij.length >= 8) await schrijf() }
+    if (!r.specs && bolAan) {
+      r = await bolSpecs(x.e)
+      if (r.stop) { console.error('bol: toegang geweigerd, verder zonder bol'); bolAan = false; r = { fout: 'bol' } }
+      if (r.rem) { await wacht(20000); continue }
+    }
+    // Alleen als elke bron die er hoort te zijn nee zei, een maand niet opnieuw proberen.
+    if (r.geen && iceAan && (bolAan || !metBol)) s.x = vandaag
+    if (r.specs) { uitBron[r.specs.bron]++; wachtrij.push({ s, specs: r.specs }); if (wachtrij.length >= 8) await schrijf() }
     await wacht(350)
   }
   await schrijf()
-  console.log('specificaties gezet: ' + specsGezet + ' van ' + kandidaten.length + ' geprobeerd')
+  console.log('specificaties gezet: ' + specsGezet + ' van ' + kandidaten.length + ' geprobeerd (Icecat ' + uitBron.Icecat + ', bol ' + uitBron['bol.com'] + ')')
 }
 
 if (!DROOG) {

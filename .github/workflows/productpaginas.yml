@@ -2,7 +2,7 @@ name: Productpaginas
 
 # Een keer per dag, ruim na de ochtendrun van de shop feed (04:07 UTC), zodat
 # de prijzen van vandaag erin zitten. Maakt nieuwe productpagina's aan, werkt
-# prijzen en aanbod bij op de bestaande, en haalt specificaties op bij bol.
+# prijzen en aanbod bij op de bestaande, en haalt specificaties op bij Icecat en bol.
 #
 # Nodig: de geheimen SHOPIFY_CLIENT_ID en SHOPIFY_CLIENT_SECRET van een app uit
 # het Dev Dashboard met de rechten read_metaobjects en write_metaobjects (of
@@ -18,7 +18,7 @@ on:
         default: '5000'
       specs_max:
         description: 'Hoogstens zoveel specificaties in deze run'
-        default: '300'
+        default: '1500'
 
 permissions:
   contents: write
@@ -45,8 +45,10 @@ jobs:
           SHOPIFY_CLIENT_SECRET: ${{ secrets.SHOPIFY_CLIENT_SECRET }}
           BOL_CLIENT_ID: ${{ secrets.BOL_CLIENT_ID }}
           BOL_CLIENT_SECRET: ${{ secrets.BOL_CLIENT_SECRET }}
+          ICECAT_API_TOKEN: ${{ secrets.ICECAT_API_TOKEN }}
+          ICECAT_CONTENT_TOKEN: ${{ secrets.ICECAT_CONTENT_TOKEN }}
           MAX_NIEUW: ${{ inputs.max_nieuw || '5000' }}
-          SPECS_MAX: ${{ inputs.specs_max || '300' }}
+          SPECS_MAX: ${{ inputs.specs_max || '1500' }}
         run: node productpaginas.mjs
 
       # De stand en de kaart gaan terug de repo in. De kaart leest het thema om

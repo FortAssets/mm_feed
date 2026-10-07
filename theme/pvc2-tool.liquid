@@ -161,7 +161,7 @@
   html:not(#x):not(#y) .pvx-side{display:flex !important;flex-direction:column;position:fixed;left:0;right:0;bottom:0;top:auto;height:calc(100vh - 64px);height:calc(100dvh - 64px);max-height:none;align-self:auto !important;width:auto;z-index:2147483000;margin:0 !important;padding:0 !important;border:0 !important;box-sizing:border-box;border-radius:22px 22px 0 0 !important;background:#fff;transform:translateY(105%);visibility:hidden;transition:transform .22s ease,visibility 0s .22s}
   html:not(#x):not(#y) .pvx-side.open{transform:none;visibility:visible;transition:transform .22s ease}
   .pvx-side:before{content:"";width:44px;height:5px;border-radius:9px;background:#CBD3DF;margin:9px auto 0;flex:none}
-  html:not(#x):not(#y) .pvx-side .pvx-side-top{padding:8px 18px 12px;border-bottom:1.5px solid #E3E8F0 !important;flex:none}
+  html:not(#x):not(#y) .pvx-side .pvx-side-top{padding:8px 18px 12px !important;margin:0 !important;border-bottom:1.5px solid #E3E8F0 !important;flex:none}
   html:not(#x):not(#y) .pvx-side .pvx-side-top b{font:800 22px 'Bricolage Grotesque','Instrument Sans',sans-serif !important;letter-spacing:-.03em}
   .pvx-side .pvx-side-top .pvx-reset{display:none}
   .pvx-sluit{display:block;background:none;border:0;font-size:32px;line-height:1;color:#4A5A70;padding:0 2px;cursor:pointer}
@@ -747,7 +747,7 @@ function pvxRender(){
  GROUPS=groupItems(items);var total=GROUPS.length;
  pvxBalk(total);
  var q=document.getElementById('pvx-q').value.trim();
- document.getElementById('pvx-ct').innerHTML='<b>'+total+'</b> '+T.results+(SEG==='zakelijk'?' '+T.resultsZak:'')+(q?' '+T.forQ+' &ldquo;'+q+'&rdquo;':'');
+ document.getElementById('pvx-ct').innerHTML='<b>'+total.toLocaleString('nl-NL')+'</b> '+T.results+(SEG==='zakelijk'?' '+T.resultsZak:'')+(q?' '+T.forQ+' &ldquo;'+q+'&rdquo;':'');
  var grid=document.getElementById('pvx-grid'),more=document.getElementById('pvx-more');
  if(!total){grid.innerHTML='<div class="pvx-empty"><p style="font-size:2rem;margin:0 0 10px">'+(SEG==='zakelijk'?'&#128188;':'&#128270;')+'</p><p style="font-weight:700;margin:0">'+T.noResults+'</p>'+(SEG==='zakelijk'?'<p style="font-size:13px;margin-top:6px">'+T.noResultsZak+'</p>':'')+'<p style="font-size:13px;margin-top:6px"><button onclick="pvxReset()" style="color:#1B3FA0;font-weight:700;background:none;border:none;cursor:pointer;font-family:inherit;font-size:inherit">'+T.reset+'</button></p></div>';more.style.display='none';return;}
  var html='';for(var i=0;i<Math.min(SHOWN,total);i++)html+=card(i);grid.innerHTML=html;more.style.display=SHOWN<total?'block':'none';

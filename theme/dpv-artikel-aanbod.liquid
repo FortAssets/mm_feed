@@ -45,6 +45,8 @@
     assign onderwerp = 'winkel'
   elsif spoor contains 'rijbewijs' or spoor contains 'theorie-examen' or spoor contains 'theorie examen' or spoor contains 'rijles'
     assign onderwerp = 'rijbewijs'
+  elsif spoor contains 'autoverzekering' or spoor contains 'brandstof' or spoor contains 'benzine' or spoor contains 'diesel' or spoor contains 'tanken' or spoor contains 'accijns' or spoor contains 'autokosten' or spoor contains 'kosten-auto'
+    assign onderwerp = 'auto'
   elsif spoor contains 'zorg' or spoor contains 'eigen risico' or spoor contains 'eigen-risico' or spoor contains 'basisverzekering'
     assign onderwerp = 'zorg'
   elsif spoor contains 'energie' or spoor contains 'stroom' or spoor contains 'salderen' or spoor contains 'netbeheer' or spoor contains 'zonnepanel'
@@ -196,6 +198,20 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
       </form>
       <p class="dab-uit" id="dab-uit" role="status" hidden></p>
       <a class="dab-breed" href="/pages/zorgverzekering">Bekijk de premies van nu &rarr;</a>
+
+    {%- when 'auto' -%}
+      {%- comment -%} 7 okt: artikelen over brandstof en autokosten. Aan de pomp valt weinig te kiezen, aan de verzekering wel. Twee verzekeraars waar wij rechtstreeks partner van zijn (Awin), en de eigen vergelijker voor de rest. Geen premies hier: die hangen af van leeftijd, woonplaats en auto en staan op de vergelijker. {%- endcomment -%}
+      <h2 class="dab-kop">Aan de pomp valt weinig te kiezen, aan je autoverzekering wel</h2>
+      <p class="dab-sub">Voor dezelfde auto en dezelfde dekking loopt de premie per verzekeraar tientallen euro's per maand uiteen. Bekijk wat je bij jouw leeftijd en woonplaats ongeveer betaalt.</p>
+      <div class="dab-rij">
+        <div class="dab-kaart"><div class="dab-hoofd"><img class="dab-logo" alt="" width="40" height="40" loading="lazy" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://fbto.nl"><div><p class="dab-naam">FBTO autoverzekering</p><p class="dab-spec">WA, WA+ of allrisk, zelf samen te stellen</p></div></div>
+          <a class="dab-knop" href="https://go.deprijsvergelijker.com/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8354%26awinaffid%3D1528789%26clickref%3Dartikel-auto%26ued%3Dhttps%253A%252F%252Fwww.fbto.nl%252Fautoverzekering&amp;cat=artikel-auto&amp;p=FBTO&amp;bron={{ article.handle | url_encode }}" target="_blank" rel="sponsored nofollow noopener">Bereken bij FBTO</a></div>
+        <div class="dab-kaart"><div class="dab-hoofd"><img class="dab-logo" alt="" width="40" height="40" loading="lazy" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://asr.nl"><div><p class="dab-naam">a.s.r. autoverzekering</p><p class="dab-spec">Ik kies zelf: dekking en eigen risico zelf kiezen</p></div></div>
+          <a class="dab-knop" href="https://go.deprijsvergelijker.com/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8279%26awinaffid%3D1528789%26clickref%3Dartikel-auto%26ued%3Dhttps%253A%252F%252Fwww.asr.nl%252Fverzekeringen%252Fautoverzekering&amp;cat=artikel-auto&amp;p=a.s.r.&amp;bron={{ article.handle | url_encode }}" target="_blank" rel="sponsored nofollow noopener">Bereken bij a.s.r.</a></div>
+        <div class="dab-kaart"><div class="dab-hoofd"><div><p class="dab-naam">21 verzekeraars naast elkaar</p><p class="dab-spec">Rekenvoorbeelden per leeftijd, woonplaats en dekking. Geen kenteken nodig.</p></div></div>
+          <a class="dab-knop" href="/pages/autoverzekering">Vergelijk autoverzekeringen</a></div>
+      </div>
+      <p class="dab-sub" style="margin-top:10px;font-size:12.5px">Wij vergelijken en geven geen advies. Bij FBTO en a.s.r. krijgen wij een vergoeding als je daar afsluit.</p>
 
     {%- when 'energie' -%}
       <h2 class="dab-kop">Wat kost jouw energie per jaar?</h2>
@@ -395,6 +411,9 @@ a.ak-k,a.ak-k:visited,a.ak-k:hover{color:#fff !important;text-decoration:none !i
     } else if (ONDERWERP === 'zorg') {
       div.innerHTML = '<div class="dpv-inline-tx"><b>Premies 2027 op 12 november.</b> Wij mailen je zodra ze er zijn.</div>' +
         '<a class="dpv-inline-k" href="#aanbod">Seintje</a>';
+    } else if (ONDERWERP === 'auto') {
+      div.innerHTML = '<div class="dpv-inline-tx"><b>Ook op je autoverzekering besparen?</b> Bekijk wat je ongeveer betaalt, zonder kenteken.</div>' +
+        '<a class="dpv-inline-k" href="/pages/autoverzekering">Vergelijk</a>';
     } else if (ONDERWERP === 'rijbewijs') {
       var th = document.querySelector('#aanbod a.dab-knop-groot');
       div.innerHTML = '<div class="dpv-inline-tx"><b>Theorie online oefenen?</b> Oefenexamens bij Theorie.nl vanaf \u20ac19,99.<small>Advertentie</small></div>' +

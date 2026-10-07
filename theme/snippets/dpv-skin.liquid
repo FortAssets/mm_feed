@@ -21,6 +21,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+{%- comment -%} 7 okt: het woordmerk in Unbounded. Alleen de letters van de naam worden opgehaald, dat scheelt bijna het hele lettertypebestand. {%- endcomment -%}
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700&text=DePrijsvergelijker&display=swap" rel="stylesheet">
 {{ 'dpv-skin.css' | asset_url | stylesheet_tag }}
 <script>
 (function () {
@@ -113,12 +115,13 @@
 {%- endcomment -%}
 <style>
 html:not(#x):not(#y) .pvnav{background:#fff !important;border-bottom:1.5px solid #0D1B2A !important;font-family:'Instrument Sans',system-ui,sans-serif !important}
-html:not(#x):not(#y) .pvnav-woord{background:none !important;-webkit-text-fill-color:#0D1B2A !important;color:#0D1B2A !important;letter-spacing:-.03em}
+html:not(#x):not(#y) .pvnav-woord{background:none !important;-webkit-text-fill-color:#0D1B2A !important;color:#0D1B2A !important;font-family:'Unbounded','Bricolage Grotesque',sans-serif !important;font-weight:700 !important;font-size:18px !important;letter-spacing:-.045em !important}
+@media(max-width:520px){html:not(#x):not(#y) .pvnav-woord{font-size:15.5px !important}}
 html:not(#x):not(#y) .pvnav-woord .g{-webkit-text-fill-color:#3FAE7A !important;color:#3FAE7A !important}
 html:not(#x):not(#y) .pvnav-links a,html:not(#x):not(#y) .pvnav-mobile a{font-family:'Instrument Sans',system-ui,sans-serif !important}
 html:not(#x):not(#y) footer.pvf{background:#fff !important;background-image:none !important;border-top:1.5px solid #0D1B2A;color:#4A5A70 !important;font-family:'Instrument Sans',system-ui,sans-serif !important}
 html:not(#x):not(#y) footer.pvf .pvf-wrap,html:not(#x):not(#y) footer.pvf .pvf-grid,html:not(#x):not(#y) footer.pvf .pvf-brand p,html:not(#x):not(#y) footer.pvf .pvf-bottom,html:not(#x):not(#y) footer.pvf .pvf-bottom p,html:not(#x):not(#y) footer.pvf .pvf-trustpilot span{color:#4A5A70 !important}
-html:not(#x):not(#y) footer.pvf a.pvf-logo{-webkit-text-fill-color:#0D1B2A !important;color:#0D1B2A !important;letter-spacing:-.03em}
+html:not(#x):not(#y) footer.pvf a.pvf-logo{-webkit-text-fill-color:#0D1B2A !important;color:#0D1B2A !important;font-family:'Unbounded','Bricolage Grotesque',sans-serif !important;font-weight:700 !important;font-size:21px !important;letter-spacing:-.045em !important}
 html:not(#x):not(#y) footer.pvf a.pvf-logo .g{-webkit-text-fill-color:#3FAE7A !important;color:#3FAE7A !important}
 html:not(#x):not(#y) footer.pvf h5{color:#0D1B2A !important;font-family:'Instrument Sans',system-ui,sans-serif !important;font-size:15px;font-weight:700;letter-spacing:0;text-transform:none}
 html:not(#x):not(#y) footer.pvf .pvf-col a,html:not(#x):not(#y) footer.pvf .pvf-bottom-links a{color:#4A5A70 !important}

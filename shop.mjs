@@ -1396,6 +1396,54 @@ function leesHist (slugNaam) {
   return {}
 }
 
+// ------------------------------------------------------- buiten het aanbod
+//
+// De populaire lijsten van bol (Wonen, Sport, Huishouden) en de feeds van
+// 2dekansje en Action brengen ook dingen mee die niets met een prijsvergelijker
+// voor elektronica en apparaten te maken hebben: een trainingspak, een
+// dekbedovertrek, een wandspiegel, een droogrek. Die gaan eruit.
+//
+// Voorzichtig gehouden, want een woordenlijst vergist zich snel ("jack" is ook
+// een stekker, "pet" ook een stofzuiger voor huisdieren):
+//  - alleen in de categorieen waar deze spullen binnenkomen, niet in tech;
+//  - nooit een product van Coolblue of MediaMarkt, die voeren dit niet;
+//  - nooit een product dat bij twee of meer winkels ligt, want dat is een
+//    echte vergelijking.
+const BUITEN_CATS = new Set(['wonen', 'klussen', 'huishoudelijk', 'keuken', 'speelgoed', 'verzorging', 'drogisterij', 'kantoor'])
+const BUITEN_WOORDEN = [
+  // kleding en sport
+  'trainingspak', 'trainingsbroek', 'joggingbroek', 'sportbroek', 'broek', 't-shirt', 'tshirt', 'shirt', 'voetbalshirt', 'trui', 'sweater', 'hoodie',
+  'jas', 'regenjas', 'regenpak', 'poncho', 'jurk', 'blouse', 'overhemd', 'sokken', 'sokjes', 'kousen', 'panty', 'ondergoed', 'boxershort', 'boxershorts',
+  'onderbroek', 'onderbroeken', 'bh', 'legging', 'lederhose', 'dirndl', 'schoenen', 'sneakers', 'laarzen', 'slippers', 'sandalen', 'pantoffels', 'sloffen',
+  'veters', 'muts', 'sjaal', 'handschoenen', 'wanten', 'pyjama', 'badjas', 'zwembroek', 'badpak', 'tenue',
+  'scheenbeschermer', 'scheenbeschermers', 'kniebrace', 'enkelbrace', 'polsbrace', 'bandage', 'compressiekousen', 'compressiesokken',
+  // bed, bad en raam
+  'dekbedovertrek', 'dekbed', 'overtrek', 'hoeslaken', 'laken', 'lakens', 'kussensloop', 'hoofdkussen', 'sierkussen', 'handdoek', 'handdoeken',
+  'gastendoek', 'gastendoeken', 'theedoek', 'theedoeken', 'vaatdoek', 'vaatdoeken', 'washandjes', 'badmat', 'badlaken', 'molton', 'matrasbeschermer',
+  'gordijn', 'gordijnen', 'vitrage', 'vliegengordijn', 'tafelkleed', 'tafelzeil', 'placemat', 'placemats', 'plaid', 'sprei', 'vloerkleed', 'tapijt',
+  'deurmat', 'hemeltje',
+  // decoratie
+  'wanddecoratie', 'muurdecoratie', 'wandspiegel', 'spiegel', 'schilderij', 'schilderijen', 'poster', 'fotolijst', 'fotolijsten', 'vaas', 'vazen',
+  'kunstplant', 'kunstplanten', 'kunstbloemen', 'kaars', 'kaarsen', 'geurkaars', 'geurkaarsen', 'kandelaar', 'waxinelichtjes', 'kerstboom',
+  'kerstballen', 'slinger', 'ballonnen', 'behang', 'wandsticker', 'muursticker',
+  // huisraad zonder stekker
+  'droogrek', 'wasrek', 'wanddroogrek', 'droogmolen', 'kledinghanger', 'kledinghangers', 'kleerhanger', 'kleerhangers', 'kledingrek', 'wasmand',
+  'wasmandkast', 'waszak', 'strijkplank', 'schoenenrek', 'kapstok'
+]
+const BUITEN_RE = new RegExp('(?<![\\w-])(' + BUITEN_WOORDEN.join('|') + ')(?![\\w-])', 'i')
+// Lego en ander speelgoed noemt soms een jurk of een kerstboom; dat blijft speelgoed.
+// En wat een stekker, accu of motor heeft is een apparaat, ook als er "tapijt" of "droogrek" in de naam staat
+// (een robotstofzuiger voor tapijt, een pastamachine met droogrek).
+const BUITEN_NIET = /\b(lego|playmobil|barbie|digitale fotolijst|robotstofzuiger|stofzuiger|stoomreiniger|hogedrukreiniger|\w*machine|elektrische?|oplaadbaar|oplaadbare|accu|led|usb)\b/i
+
+function buitenAanbod (p) {
+  if (!BUITEN_CATS.has(p.c)) return false
+  if ((p.o || []).length !== 1) return false
+  if (/^(coolblue|mediamarkt)/i.test(p.o[0].w || '')) return false
+  const n = String(p.n || '')
+  return BUITEN_RE.test(n) && !BUITEN_NIET.test(n)
+}
+
 // Ondergrens waaronder we het logboek met rust laten. Loopt het ophalen van een
 // feed mis, dan komt de generator hier aan met een handvol producten en zou hij
 // het logboek overschrijven met bijna niets. Dat is onherstelbaar: de
@@ -1635,7 +1683,9 @@ async function main () {
   }
 
   console.log('Totaal bruikbaar:', rauw.length)
-  const producten = koppel(rauw)
+  const gekoppeld = koppel(rauw)
+  const producten = gekoppeld.filter(p => !buitenAanbod(p))
+  if (producten.length < gekoppeld.length) console.log('Buiten het aanbod gehouden (kleding, textiel, decoratie, huisraad):', gekoppeld.length - producten.length)
   console.log('Na koppelen:', producten.length, 'producten,',
     producten.filter(p => p.o.length > 1).length, 'met meer dan een winkel')
   if (onmogelijkePrijzen) console.log('  ' + onmogelijkePrijzen + ' prijzen uit een vergelijking gehouden omdat ze onder een derde van de middelste prijs lagen')

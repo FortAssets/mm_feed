@@ -112,6 +112,23 @@
 .dmn-pro .kn{background:#059669;color:#fff;text-align:center;font-size:12px;font-weight:700;padding:9px;border-radius:9px;margin-top:auto;text-decoration:none}
 .dmn-pro .kn:hover{background:#047857}
 
+/* 7 okt: beeld in de panelen. Logo's bij aanbieders en merken, en in het
+   blok rechts een rij logo's of de populairste toestellen. De plaatjes laden
+   pas als iemand het menu aanraakt, zodat een gewone paginalading niets extra
+   ophaalt. */
+html:not(#x) .dmn-p a.r.lg{flex-wrap:nowrap !important;justify-content:flex-start !important;gap:10px}
+.dmn-p a.r.lg .tx{flex:1 1 auto;min-width:0}
+.dmn-lg{width:26px;height:26px;border-radius:7px;border:1px solid #E3E8F0;background:#fff;object-fit:contain;padding:3px;flex:0 0 auto;box-sizing:border-box}
+.dmn-vis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:13px 0}
+.dmn-vis a{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:6px;border:1px solid #E3E8F0;border-radius:10px;padding:10px 5px 8px;text-decoration:none;color:#0D1B2A;font-size:11.5px;font-weight:600;text-align:center;background:#fff;line-height:1.25;transition:border-color .12s}
+.dmn-vis a:hover{border-color:#0D1B2A}
+.dmn-vis img{width:34px;height:34px;object-fit:contain;border-radius:7px}
+.dmn-vis.twee{grid-template-columns:1fr 1fr}
+.dmn-vis.tel a{padding:8px 5px}
+.dmn-vis.tel img{width:100%;height:86px;border-radius:0}
+.dmn-vis-k{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#4A5A70;margin:10px 0 -6px}
+.dmn-pro .kn{margin-top:auto}
+
 .dmn-vt{grid-column:1/-1;border-top:1px solid #e8edf5;margin-top:2px;padding-top:12px;display:flex;gap:18px;flex-wrap:wrap;font-size:12px}
 .dmn-vt a{color:#1B3FA0;text-decoration:none;font-weight:600}
 .dmn-vt a:hover{text-decoration:underline}
@@ -184,6 +201,36 @@
 })();
 </script>
 
+<script>
+(function(){
+  var gedaan = false;
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function laad(){
+    if (gedaan || window.innerWidth <= 1100) return; gedaan = true;
+    var im = document.querySelectorAll('img.dmn-lg[data-src],img.dmn-vi[data-src]');
+    for (var i = 0; i < im.length; i++) { im[i].src = im[i].getAttribute('data-src'); im[i].removeAttribute('data-src'); }
+    var vak = document.getElementById('dmn-tel');
+    if (!vak || !window.fetch) return;
+    fetch('https://go.deprijsvergelijker.com/api/cards/telefoon?limit=8').then(function(r){return r.json();}).then(function(d){
+      var gezien = {}, uit = [];
+      (d.cards || []).forEach(function(c){
+        var naam = String(c.device || '').replace(/^(Apple|Samsung|Google|OnePlus|Xiaomi|Motorola|OPPO|Oppo|Nothing|Fairphone)\s+/, '');
+        if (!naam || !c.image || gezien[naam] || uit.length >= 3) return;
+        gezien[naam] = 1;
+        uit.push('<a href="/pages/telefoonabonnement?q=' + encodeURIComponent(naam) + '&sorteer=price"><img src="' + esc(c.image) + '" alt="" loading="lazy" width="80" height="86">' + esc(naam) + '</a>');
+      });
+      if (uit.length === 3) { vak.innerHTML = uit.join(''); vak.hidden = false; }
+    }).catch(function(){});
+  }
+  function haak(){
+    var rij = document.querySelector('.pvnav-inner') || document.querySelector('.dmn');
+    if (!rij) return;
+    ['pointerenter','focusin','touchstart'].forEach(function(e){ rij.addEventListener(e, laad, { passive: true }); });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', haak); else haak();
+})();
+</script>
+
 <nav class="dmn" aria-label="Hoofdmenu">
   <div class="dmn-in">
 
@@ -203,11 +250,11 @@
         </div>
         <div>
           <h5>Per aanbieder</h5>
-          <a class="r" href="{{ p }}sim-only?netwerk=kpn&amp;sorteer=price">KPN<small>bundels op het KPN-netwerk</small><span class="pl">&rsaquo;</span></a>
-          <a class="r" href="{{ p }}sim-only?netwerk=odido&amp;sorteer=price">Odido<small>bundels op het Odido-netwerk</small><span class="pl">&rsaquo;</span></a>
-          <a class="r" href="{{ p }}sim-only?netwerk=vodafone&amp;sorteer=price">Vodafone<small>bundels op het Vodafone-netwerk</small><span class="pl">&rsaquo;</span></a>
-          <a class="r" href="{{ p }}providers-simyo">Simyo<span class="pl">&rsaquo;</span></a>
-          <a class="r" href="{{ p }}providers-ben">Ben<span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}sim-only?netwerk=kpn&amp;sorteer=price"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://kpn.com" alt="" width="26" height="26"><span class="tx">KPN<small>bundels op het KPN-netwerk</small></span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}sim-only?netwerk=odido&amp;sorteer=price"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://odido.nl" alt="" width="26" height="26"><span class="tx">Odido<small>bundels op het Odido-netwerk</small></span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}sim-only?netwerk=vodafone&amp;sorteer=price"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://vodafone.nl" alt="" width="26" height="26"><span class="tx">Vodafone<small>bundels op het Vodafone-netwerk</small></span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}providers-simyo"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://simyo.nl" alt="" width="26" height="26"><span class="tx">Simyo</span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}providers-ben"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://ben.nl" alt="" width="26" height="26"><span class="tx">Ben</span><span class="pl">&rsaquo;</span></a>
         </div>
         <div>
           <h5>Uitzoeken</h5>
@@ -219,7 +266,8 @@
         <div class="dmn-pro">
           <div class="lb">Direct vergelijken</div>
           <b>Alle sim only deals</b>
-          <span class="sp">1.060 abonnementen van alle aanbieders, elke ochtend bijgewerkt.</span>
+          <span class="sp">Alle aanbieders naast elkaar, elke ochtend bijgewerkt.</span>
+          <div class="dmn-vis"><a href="{{ p }}sim-only?netwerk=kpn&amp;sorteer=price"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://kpn.com" alt="" width="26" height="26">KPN</a><a href="{{ p }}sim-only?netwerk=odido&amp;sorteer=price"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://odido.nl" alt="" width="26" height="26">Odido</a><a href="{{ p }}sim-only?netwerk=vodafone&amp;sorteer=price"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://vodafone.nl" alt="" width="26" height="26">Vodafone</a><a href="{{ p }}providers-simyo"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://simyo.nl" alt="" width="26" height="26">Simyo</a><a href="{{ p }}providers-ben"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://ben.nl" alt="" width="26" height="26">Ben</a><a href="{{ p }}sim-only?q=Youfone&amp;sorteer=price"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://youfone.nl" alt="" width="26" height="26">Youfone</a></div>
           <a class="kn" href="{{ p }}sim-only">Bekijk de lijst &rarr;</a>
         </div>
         <div class="dmn-vt">
@@ -237,8 +285,8 @@
           <h5>Vergelijken</h5>
           <a class="r" href="{{ p }}telefoonabonnement">Alle telefoons met abonnement<span class="pl">&rsaquo;</span></a>
           <a class="r" href="{{ p }}telefoonabonnement?aanbetaling=0&amp;sorteer=price">Zonder aanbetaling<small>&euro;0 vooraf</small><span class="pl">&rsaquo;</span></a>
-          <a class="r" href="{{ p }}telefoonabonnement?q=iPhone&amp;sorteer=price">iPhone<span class="pl">&rsaquo;</span></a>
-          <a class="r" href="{{ p }}telefoonabonnement?q=Samsung&amp;sorteer=price">Samsung<span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}telefoonabonnement?q=iPhone&amp;sorteer=price"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://cdn.shopify.com/s/files/1/0777/5617/0568/files/apple.svg?v=1781513743" alt="" width="26" height="26"><span class="tx">iPhone</span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}telefoonabonnement?q=Samsung&amp;sorteer=price"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://cdn.shopify.com/s/files/1/0777/5617/0568/files/samsung.svg?v=1781513837" alt="" width="26" height="26"><span class="tx">Samsung</span><span class="pl">&rsaquo;</span></a>
           <a class="r" href="{{ p }}telefoonabonnement?max=35&amp;sorteer=price">Onder &euro;35 per maand<span class="pl">&rsaquo;</span></a>
           <a class="r" href="{{ p }}beste-telefoon-deals-deze-maand">Beste deals deze maand<span class="pl">&rsaquo;</span></a>
           <a class="r" href="{{ p }}telefoon-abonnement-met-gratis-toestel">Met gratis toestel<span class="pl">&rsaquo;</span></a>
@@ -260,15 +308,16 @@
           <a class="r" href="{{ n }}galaxy-z-fold-8-flip-8-met-abonnement">Vouwtelefoon met abonnement<span class="pl">&rsaquo;</span></a>
         </div>
         <div class="dmn-pro">
-          <div class="lb">Nieuw &amp; verwacht</div>
-          <b>Galaxy Z Fold 8 &amp; Flip 8</b>
-          <span class="sp">De nieuwe vouwtelefoons met abonnement, en waar je op moet letten.</span>
-          <a class="kn" href="{{ n }}galaxy-z-fold-8-flip-8-met-abonnement">Lees meer &rarr;</a>
+          <div class="lb">Populair nu</div>
+          <b>Meest gekozen toestellen</b>
+          <span class="sp">Met abonnement, bij alle aanbieders naast elkaar.</span>
+          <div class="dmn-vis tel" id="dmn-tel" hidden></div>
+          <a class="kn" href="{{ p }}telefoonabonnement">Vergelijk alle telefoons &rarr;</a>
         </div>
         <div class="dmn-vt">
-          <a href="{{ n }}iphone-18-serie-pro-pro-max-vouwbare-iphone-en-de-air-2-alle-geruchten">iPhone 18-serie &rsaquo;</a>
-          <a href="{{ n }}samsung-galaxy-s27-serie-eerste-geruchten-over-vier-nieuwe-vlaggenschepen">Galaxy S27-serie &rsaquo;</a>
-          <a href="{{ n }}nieuw-verwacht-tweede-helft-2026-samsung-unpacked-iphone-18-vouwbare-iphone">Wat komt er nog aan in 2026? &rsaquo;</a>
+          <a href="{{ p }}telefoonabonnement?q=iPhone%2018&amp;sorteer=price">iPhone 18 met abonnement &rsaquo;</a>
+          <a href="{{ p }}telefoonabonnement?q=Galaxy%20Z&amp;sorteer=price">Galaxy Z Fold 8 en Flip 8 &rsaquo;</a>
+          <a href="{{ n }}samsung-galaxy-s27-serie-eerste-geruchten-over-vier-nieuwe-vlaggenschepen">Verwacht: Galaxy S27-serie &rsaquo;</a>
         </div>
       </div>
     </div>
@@ -303,6 +352,7 @@
           <div class="lb">Direct vergelijken</div>
           <b>Internet &amp; TV</b>
           <span class="sp">Glasvezel, kabel en DSL van alle aanbieders naast elkaar.</span>
+          <div class="dmn-vis twee"><a href="{{ p }}internet-tv?q=Odido&amp;sorteer=price"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://odido.nl" alt="" width="26" height="26">Odido</a><a href="{{ p }}internet-tv?q=Ziggo&amp;sorteer=price"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://ziggo.nl" alt="" width="26" height="26">Ziggo</a><a href="{{ p }}internet-tv?q=KPN&amp;sorteer=price"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://kpn.com" alt="" width="26" height="26">KPN</a><a href="{{ p }}internet-tv?q=Youfone&amp;sorteer=price"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://youfone.nl" alt="" width="26" height="26">Youfone</a></div>
           <a class="kn" href="{{ p }}internet-tv">Bekijk de lijst &rarr;</a>
         </div>
         <div class="dmn-vt">
@@ -363,16 +413,24 @@
         <div>
           <h5>Vergelijken</h5>
           <a class="r" href="{{ p }}zorgverzekering">Zorgverzekering<small>basisverzekeringen naast elkaar</small><span class="pl">&rsaquo;</span></a>
-          <a class="r" href="{{ p }}autoverzekering">Autoverzekering<small>WA, WA+ en allrisk</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}autoverzekering">Autoverzekering<small>WA, WA+ en allrisk, 21 verzekeraars</small><span class="pl">&rsaquo;</span></a>
         </div>
         <div>
           <h5>Zorg 2027</h5>
           <a class="r" href="{{ p }}zorgverzekering">Seintje bij de nieuwe premies<small>uiterlijk 12 november bekend</small><span class="pl">&rsaquo;</span></a>
         </div>
+        <div>
+          <h5>Zorgverzekeraars</h5>
+          <a class="r lg" href="{{ p }}zorgverzekering"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://zilverenkruis.nl" alt="" width="26" height="26"><span class="tx">Zilveren Kruis</span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}zorgverzekering"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://cz.nl" alt="" width="26" height="26"><span class="tx">CZ</span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}zorgverzekering"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://vgz.nl" alt="" width="26" height="26"><span class="tx">VGZ</span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}zorgverzekering"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://menzis.nl" alt="" width="26" height="26"><span class="tx">Menzis</span><span class="pl">&rsaquo;</span></a>
+        </div>
         <div class="dmn-pro" style="grid-column:4">
           <div class="lb">Direct vergelijken</div>
           <b>Autoverzekering</b>
           <span class="sp">Kies je leeftijd en woonplaats en zie wat verzekeraars vragen.</span>
+          <div class="dmn-vis"><a href="{{ p }}autoverzekering"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://fbto.nl" alt="" width="26" height="26">FBTO</a><a href="{{ p }}autoverzekering"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://centraalbeheer.nl" alt="" width="26" height="26">Centraal Beheer</a><a href="{{ p }}autoverzekering"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://unive.nl" alt="" width="26" height="26">Univ&eacute;</a><a href="{{ p }}autoverzekering"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://asr.nl" alt="" width="26" height="26">a.s.r.</a><a href="{{ p }}autoverzekering"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://ohra.nl" alt="" width="26" height="26">OHRA</a><a href="{{ p }}autoverzekering"><img class="dmn-vi" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://allianzdirect.nl" alt="" width="26" height="26">Allianz Direct</a></div>
           <a class="kn" href="{{ p }}autoverzekering">Bekijk de lijst &rarr;</a>
         </div>
       </div>

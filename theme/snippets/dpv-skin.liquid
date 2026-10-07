@@ -131,7 +131,13 @@ html:not(#x):not(#y) footer.pvf .pvf-bottom{border-top:1px solid #D9DEE8}
 html:not(#x):not(#y) .pvs{background:#fff !important;font-family:'Instrument Sans',system-ui,sans-serif !important}
 html:not(#x):not(#y) .pvs-wrap{border-top:1px solid #D9DEE8 !important}
 html:not(#x):not(#y) .pvs-label{color:#4A5A70 !important}
-html:not(#x):not(#y) .pvs-links a{background:#fff !important;border:1.5px solid #0D1B2A !important;color:#0D1B2A !important}
+html:not(#x):not(#y) .pvs-links a{background:#0D1B2A !important;border:1.5px solid #0D1B2A !important;color:#fff !important}
+/* 7 okt: de iconen waren lichtgrijs op wit en leken daardoor uitgeschakeld. Nu in de kleur van het platform zelf. */
+html:not(#x):not(#y) .pvs-links a svg{fill:#fff !important}
+html:not(#x):not(#y) .pvs-links a[aria-label="Facebook"]{background:#1877F2 !important;border-color:#1877F2 !important}
+html:not(#x):not(#y) .pvs-links a[aria-label="Instagram"]{background:linear-gradient(45deg,#F9A825 0%,#E53935 45%,#C2185B 70%,#7B1FA2 100%) !important;border-color:transparent !important}
+html:not(#x):not(#y) .pvs-links a:hover{transform:translateY(-2px);box-shadow:3px 3px 0 #0D1B2A}
+html:not(#x):not(#y) .pvs-label{color:#0D1B2A !important;font-weight:700 !important}
 </style>
 
 {%- comment -%}

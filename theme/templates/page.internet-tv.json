@@ -8,41 +8,35 @@
     "pv-hero": {
       "type": "dpv-hero",
       "settings": {
-        "page_title": "Telefoon + abonnement",
-        "hero_title": "Telefoon met abonnement vergelijken",
+        "page_title": "Internet & TV",
+        "hero_title": "Internet en TV abonnementen vergelijken",
         "hero_sub": "",
-        "feed_endpoint": "/api/feed/telefoon"
+        "feed_endpoint": "/api/feed/internet"
       }
     },
-    "dpv-devices": {
-      "type": "dpv-device-cards",
+    "dpv-top": {
+      "type": "dpv-top-deals",
       "settings": {
-        "show_strip": false,
-        "strip_heading": "Populaire toestellen",
-        "strip_note": "De meest gekozen telefoons van dit moment",
-        "heading": "Populaire toestellen met abonnement",
-        "subnote": "Beste totaalprijs per toestel, onafhankelijk vergeleken",
-        "more_label": "Bekijk alle aanbiedingen",
+        "cat": "internet",
+        "heading": "Beste internetabonnementen nu",
+        "subnote": "Onafhankelijk vergeleken op prijs en snelheid",
         "worker_url": "https://awin.business-347.workers.dev",
-        "limit": 6
+        "limit": 5
       }
     },
     "pv-seo-slot": {
       "type": "pv-seo-slot",
       "settings": {
-        "feed_endpoint": "/api/feed/telefoon"
+        "feed_endpoint": "/api/feed/internet"
       }
     },
     "pv-compare": {
       "type": "pvc2-tool",
       "settings": {
         "worker_url": "https://awin.business-347.workers.dev",
-        "feed_endpoint": "/api/feed/telefoon"
+        "feed_endpoint": "/api/feed/internet",
+        "zakelijk_url": "/pages/zakelijk-internet"
       }
-    },
-    "dpv-mailhook": {
-      "type": "dpv-mail-hook",
-      "settings": {}
     },
     "dpv-zoekartikel": {
       "type": "dpv-zoek-artikel",
@@ -56,23 +50,25 @@
       "type": "dpv-blog-strip",
       "settings": {
         "blog_handle": "advies",
-        "eyebrow": "Advies & nieuws",
-        "heading": "Lees je in voordat je een toestel kiest",
-        "subheading": "Koopgidsen, nieuwe toestellen en waar je op let bij een telefoon met abonnement.",
-        "more_label": "Alle artikelen",
-        "image_fit": "contain",
+        "eyebrow": "Advies & Kennisbank",
+        "heading": "Slimmer kiezen voor internet & TV",
+        "subheading": "Glasvezel, kabel of DSL, welke snelheid je nodig hebt en wat onbeperkt internet kost.",
+        "more_label": "Alle adviesartikelen",
         "max_items": 3,
-        "tag_filter": "telefoon,telefoon met abonnement,smartphone,telefoons",
-        "tag_uitsluiten": "zakelijk",
-        "blog_handle_2": "news"
+        "tag_filter": "internet",
+        "tag_uitsluiten": "zakelijk"
       }
     },
     "dpv-capture": {
       "type": "dpv-email-capture",
       "settings": {
         "heading": "Mis geen scherp abonnement",
-        "subtext": "Ontvang de beste telefoonaanbiedingen af en toe in je inbox."
+        "subtext": "Ontvang de beste internetaanbiedingen af en toe in je inbox."
       }
+    },
+    "dpv-mailhook": {
+      "type": "dpv-mail-hook",
+      "settings": {}
     },
     "dpv-drawer": {
       "type": "dpv-save-drawer",
@@ -81,14 +77,14 @@
   },
   "order": [
     "pv-hero",
-    "dpv-devices",
+    "dpv-top",
     "pv-compare",
-    "dpv-mailhook",
     "dpv-zoekartikel",
     "dpv-skin",
     "pv-seo-slot",
     "dpv-blogstrip",
     "dpv-capture",
+    "dpv-mailhook",
     "dpv-drawer"
   ]
 }

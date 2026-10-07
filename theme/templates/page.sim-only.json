@@ -8,36 +8,34 @@
     "pv-hero": {
       "type": "dpv-hero",
       "settings": {
-        "page_title": "Telefoon + abonnement",
-        "hero_title": "Telefoon met abonnement vergelijken",
+        "page_title": "Sim only",
+        "hero_title": "Sim only abonnementen vergelijken",
         "hero_sub": "",
-        "feed_endpoint": "/api/feed/telefoon"
+        "feed_endpoint": "/api/feed/simonly"
       }
     },
-    "dpv-devices": {
-      "type": "dpv-device-cards",
+    "dpv-top": {
+      "type": "dpv-top-deals",
       "settings": {
-        "show_strip": false,
-        "strip_heading": "Populaire toestellen",
-        "strip_note": "De meest gekozen telefoons van dit moment",
-        "heading": "Populaire toestellen met abonnement",
-        "subnote": "Beste totaalprijs per toestel, onafhankelijk vergeleken",
-        "more_label": "Bekijk alle aanbiedingen",
+        "cat": "simonly",
+        "heading": "Beste sim only abonnementen nu",
+        "subnote": "Onafhankelijk vergeleken op prijs, data en netwerk",
         "worker_url": "https://awin.business-347.workers.dev",
-        "limit": 6
+        "limit": 5
       }
     },
     "pv-seo-slot": {
       "type": "pv-seo-slot",
       "settings": {
-        "feed_endpoint": "/api/feed/telefoon"
+        "feed_endpoint": "/api/feed/simonly"
       }
     },
     "pv-compare": {
       "type": "pvc2-tool",
       "settings": {
         "worker_url": "https://awin.business-347.workers.dev",
-        "feed_endpoint": "/api/feed/telefoon"
+        "feed_endpoint": "/api/feed/simonly",
+        "zakelijk_url": "/pages/zakelijk-sim-only"
       }
     },
     "dpv-mailhook": {
@@ -52,26 +50,28 @@
       "type": "dpv-compare-skin",
       "settings": {}
     },
+    "pv-zakelijk": {
+      "type": "pv-zakelijk-banner",
+      "settings": {}
+    },
     "dpv-blogstrip": {
       "type": "dpv-blog-strip",
       "settings": {
         "blog_handle": "advies",
-        "eyebrow": "Advies & nieuws",
-        "heading": "Lees je in voordat je een toestel kiest",
-        "subheading": "Koopgidsen, nieuwe toestellen en waar je op let bij een telefoon met abonnement.",
-        "more_label": "Alle artikelen",
-        "image_fit": "contain",
+        "eyebrow": "Advies & Kennisbank",
+        "heading": "Slimmer kiezen met sim only",
+        "subheading": "Lees je in over databundels, netwerken en besparen voordat je een abonnement kiest.",
+        "more_label": "Alle adviesartikelen",
         "max_items": 3,
-        "tag_filter": "telefoon,telefoon met abonnement,smartphone,telefoons",
-        "tag_uitsluiten": "zakelijk",
-        "blog_handle_2": "news"
+        "tag_filter": "sim only",
+        "tag_uitsluiten": "zakelijk"
       }
     },
     "dpv-capture": {
       "type": "dpv-email-capture",
       "settings": {
         "heading": "Mis geen scherp abonnement",
-        "subtext": "Ontvang de beste telefoonaanbiedingen af en toe in je inbox."
+        "subtext": "Ontvang de beste telecomaanbiedingen af en toe in je inbox."
       }
     },
     "dpv-drawer": {
@@ -81,11 +81,12 @@
   },
   "order": [
     "pv-hero",
-    "dpv-devices",
+    "dpv-top",
     "pv-compare",
     "dpv-mailhook",
     "dpv-zoekartikel",
     "dpv-skin",
+    "pv-zakelijk",
     "pv-seo-slot",
     "dpv-blogstrip",
     "dpv-capture",

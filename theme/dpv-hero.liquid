@@ -49,11 +49,11 @@
   <div class="dph-wrap">
     <div class="dph-bc"><a href="/">Home</a> / <span class="cur">{{ section.settings.page_title }}</span></div>
     <span class="dph-eyebrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4.5h7a2 2 0 0 1 2 2v13a1.6 1.6 0 0 0-1.6-1.6H4Z"/><path d="M20 4.5h-7a2 2 0 0 0-2 2v13a1.6 1.6 0 0 1 1.6-1.6H20Z"/></svg>{{ t_eyebrow }}</span>
-    <div class="dph-titlerow">
+    <div class="dph-titlerow"{% if section.settings.hero_sub == blank %} style="margin-bottom:18px"{% endif %}>
       <span class="dph-ico" aria-hidden="true">{{ dph_icon }}</span>
       <h1 class="dph-title">{{ section.settings.hero_title }}</h1>
     </div>
-    <p class="dph-sub">{{ section.settings.hero_sub }}</p>
+    {%- if section.settings.hero_sub != blank -%}<p class="dph-sub">{{ section.settings.hero_sub }}</p>{%- endif %}
 
     <div class="dph-smart" id="pvh-smart">
       {%- if khcat == 'tel' -%}

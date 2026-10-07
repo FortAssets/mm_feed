@@ -238,6 +238,53 @@
 .ds-fijn p{margin:0 0 7px}
 .ds-fijn p:last-child{margin:0}
 
+/* ---------------------------------------------------------------- zijbalk met filters (7 okt) */
+.ds{max-width:1240px}
+.ds-zij h4{font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;color:#4A5A70;font-weight:800;margin:0 0 6px}
+.ds-zg{margin:0 0 20px}
+.ds-zij .ds-chips{display:flex;flex-direction:column;gap:0;overflow:visible;margin:0;padding:0;border:0}
+html:not(#x):not(#y) .ds-zij .ds-chip{width:100%;height:auto;min-height:36px;padding:6px 0;border:0 !important;border-radius:6px;background:none !important;
+ color:#0D1B2A !important;font-size:14px;font-weight:500;justify-content:flex-start;gap:10px;white-space:normal;text-align:left;line-height:1.25}
+.ds-zij .ds-chip::before{content:"";flex:0 0 auto;width:18px;height:18px;border:1.5px solid #CBD3DF;border-radius:5px;background:#fff}
+.ds-zij .ds-chip:hover::before{border-color:#0D1B2A}
+.ds-zij .ds-chip[aria-pressed="true"]::before{border-color:#0D1B2A;background:#0D1B2A url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/13px no-repeat}
+.ds-zij .ds-chip b{font-weight:500}
+.ds-zij .ds-chip[aria-pressed="true"] b{font-weight:700}
+html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !important;font-size:12.5px;font-weight:500}
+.ds-zij .ds-chips:not(.open) .ds-chip:nth-child(n+8){display:none}
+.ds-zij-meer{border:0;background:none;padding:6px 0;font-family:inherit;font-size:13px;font-weight:700;color:#2456D6;cursor:pointer}
+.ds-zij-meer:hover{text-decoration:underline}
+.ds-zij .ds-prijsvak input{flex:1;width:auto;min-width:0;height:42px}
+.ds-zij-kop,.ds-zij-voet,.ds-fknop{display:none}
+.ds-fknop{align-items:center;gap:8px;height:42px;padding:0 15px;border-radius:10px;border:1.5px solid #0D1B2A;background:#0D1B2A;color:#fff;
+ font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.ds-fknop svg{width:16px;height:16px}
+.ds-fknop em{font-style:normal;background:#3FAE7A;color:#0D1B2A;border-radius:99px;font-size:11.5px;font-weight:800;padding:1px 7px}
+@media(min-width:900px){
+ .ds-twee{display:grid;grid-template-columns:228px minmax(0,1fr);gap:28px;align-items:start;margin-top:8px}
+ .ds-zij{position:sticky;top:12px;max-height:calc(100vh - 24px);overflow-y:auto;padding-right:6px;scrollbar-width:thin}
+ .ds-hoofd .ds-balk{margin-top:0}
+ .ds-hoofd .ds-raster,.ds-hoofd .ds-laden{grid-template-columns:repeat(3,1fr)}
+}
+@media(min-width:1180px){.ds-twee{grid-template-columns:240px minmax(0,1fr);gap:34px}}
+@media(max-width:899px){
+ .ds-fknop{display:inline-flex}
+ .ds-hoofd .ds-balk{flex-wrap:wrap;gap:8px}
+ .ds-hoofd .ds-telling{order:3;flex:0 0 100%}
+ .ds-zij{display:none;position:fixed;inset:0;z-index:100000;background:#fff;flex-direction:column}
+ .ds-zij.open{display:flex}
+ .ds-zij-kop{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid #E3E8F0;flex:0 0 auto}
+ .ds-zij-kop b{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.03em}
+ .ds-zij-kop button{width:40px;height:40px;border:1px solid #CBD3DF;border-radius:10px;background:#fff;font-size:22px;line-height:1;color:#0D1B2A;cursor:pointer;padding:0}
+ .ds-zij-in{flex:1 1 auto;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:16px 16px 8px}
+ html:not(#x):not(#y) .ds-zij .ds-chip{min-height:44px;font-size:15px}
+ .ds-zij .ds-chip::before{width:20px;height:20px}
+ .ds-zij-voet{display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-top:1px solid #E3E8F0;flex:0 0 auto;background:#fff}
+ .ds-zij-voet button{height:48px;border-radius:10px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer}
+ .ds-zij-wis{flex:0 0 auto;padding:0 16px;border:1.5px solid #CBD3DF;background:#fff;color:#0D1B2A}
+ .ds-zij-toon{flex:1;border:1.5px solid #0D1B2A;background:#0D1B2A;color:#fff}
+}
+
 /* ---------------------------------------------------------------- toetsenbord */
 .ds :focus-visible{outline:2px solid var(--pa);outline-offset:2px}
 .ds-vz{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
@@ -272,6 +319,18 @@
     <button class="ds-chip" type="button" data-cat="" aria-pressed="true"><b>Alles</b></button>
   </nav>
 
+  {%- comment -%}
+    7 okt: filters in een zijbalk (desktop) en achter een filterknop (mobiel).
+    De knoppen zelf zijn dezelfde als voorheen, met dezelfde id's en data-attributen,
+    zodat het script eronder niets anders hoeft te doen. Alleen de plek en de
+    vorm (een aanvinklijst) zijn anders.
+  {%- endcomment -%}
+  <div class="ds-twee">
+    <aside class="ds-zij" id="ds-zij" aria-label="Filters">
+      <div class="ds-zij-kop"><b>Filters</b><button type="button" id="ds-zij-sluit" aria-label="Filters sluiten">&times;</button></div>
+      <div class="ds-zij-in">
+        <div class="ds-zg">
+          <h4>Aanbieding</h4>
   <div class="ds-chips ds-chiprij2" id="ds-filters" aria-label="Filters">
     <button class="ds-chip groen" type="button" data-f="echt" aria-pressed="false">
       <b>Echt lager</b> <span class="n" data-n="echt"></span>
@@ -287,13 +346,19 @@
       <b>Refurbished</b> <span class="n" data-n="refurbished"></span>
     </button>
   </div>
-
-  <div class="ds-chips" id="ds-merken" aria-label="Merken" hidden></div>
-  <div class="ds-chips" id="ds-types" aria-label="Soorten" hidden></div>
-
-  <div class="ds-balk">
-    <span class="ds-telling" id="ds-telling" aria-live="polite">&nbsp;</span>
-    <div class="ds-rechts">
+        </div>
+        <div class="ds-zg" hidden>
+          <h4>Soort</h4>
+          <div class="ds-chips" id="ds-types" aria-label="Soorten" hidden></div>
+          <button type="button" class="ds-zij-meer" data-meer="Alle soorten" data-minder="Minder soorten" hidden>Alle soorten</button>
+        </div>
+        <div class="ds-zg" hidden>
+          <h4>Merk</h4>
+          <div class="ds-chips" id="ds-merken" aria-label="Merken" hidden></div>
+          <button type="button" class="ds-zij-meer" data-meer="Alle merken" data-minder="Minder merken" hidden>Alle merken</button>
+        </div>
+        <div class="ds-zg">
+          <h4>Prijs</h4>
       <div class="ds-prijsvak">
         <label class="ds-vz" for="ds-min">Minimumprijs</label>
         <input id="ds-min" type="number" min="0" step="1" placeholder="van">
@@ -301,6 +366,22 @@
         <label class="ds-vz" for="ds-max">Maximumprijs</label>
         <input id="ds-max" type="number" min="0" step="1" placeholder="tot">
       </div>
+        </div>
+      </div>
+      <div class="ds-zij-voet">
+        <button type="button" class="ds-zij-wis" id="ds-zij-wis">Wissen</button>
+        <button type="button" class="ds-zij-toon" id="ds-zij-toon">Toon resultaten</button>
+      </div>
+    </aside>
+
+    <div class="ds-hoofd">
+      <div class="ds-balk">
+        <button type="button" class="ds-fknop" id="ds-fknop" aria-controls="ds-zij" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          Filters <em id="ds-fknop-n" hidden></em>
+        </button>
+        <span class="ds-telling" id="ds-telling" aria-live="polite">&nbsp;</span>
+        <div class="ds-rechts">
       <label class="ds-vz" for="ds-sort">Sorteren</label>
       <select class="ds-sel" id="ds-sort">
         <option value="prijs">Prijs laag &rarr; hoog</option>
@@ -310,30 +391,33 @@
         <option value="winkels">Meeste winkels</option>
         <option value="naam">Naam</option>
       </select>
+        </div>
+      </div>
+
+      <div class="ds-laden" id="ds-laden">
+        <div class="ds-skel"><i></i><u></u><u></u></div>
+        <div class="ds-skel"><i></i><u></u><u></u></div>
+        <div class="ds-skel"><i></i><u></u><u></u></div>
+        <div class="ds-skel"><i></i><u></u><u></u></div>
+        <div class="ds-skel"><i></i><u></u><u></u></div>
+        <div class="ds-skel"><i></i><u></u><u></u></div>
+        <div class="ds-skel"><i></i><u></u><u></u></div>
+        <div class="ds-skel"><i></i><u></u><u></u></div>
+      </div>
+
+      <div class="ds-raster" id="ds-raster" hidden></div>
+
+      <div class="ds-leeg" id="ds-leeg" hidden>
+        <b>Niets gevonden</b>
+        <p>Er is geen product dat aan alle filters voldoet.</p>
+        <button type="button" id="ds-leeg-reset">Filters wissen</button>
+      </div>
+
+      <div class="ds-meer" id="ds-meer" hidden>
+        <button type="button" id="ds-meer-knop">Meer laden</button>
+      </div>
+
     </div>
-  </div>
-
-  <div class="ds-laden" id="ds-laden">
-    <div class="ds-skel"><i></i><u></u><u></u></div>
-    <div class="ds-skel"><i></i><u></u><u></u></div>
-    <div class="ds-skel"><i></i><u></u><u></u></div>
-    <div class="ds-skel"><i></i><u></u><u></u></div>
-    <div class="ds-skel"><i></i><u></u><u></u></div>
-    <div class="ds-skel"><i></i><u></u><u></u></div>
-    <div class="ds-skel"><i></i><u></u><u></u></div>
-    <div class="ds-skel"><i></i><u></u><u></u></div>
-  </div>
-
-  <div class="ds-raster" id="ds-raster" hidden></div>
-
-  <div class="ds-leeg" id="ds-leeg" hidden>
-    <b>Niets gevonden</b>
-    <p>Er is geen product dat aan alle filters voldoet.</p>
-    <button type="button" id="ds-leeg-reset">Filters wissen</button>
-  </div>
-
-  <div class="ds-meer" id="ds-meer" hidden>
-    <button type="button" id="ds-meer-knop">Meer laden</button>
   </div>
 
   {%- if section.settings.fijn != blank -%}
@@ -1107,12 +1191,60 @@
     vernieuw(false);
   });
 
-  document.getElementById('ds-leeg-reset').addEventListener('click', function () {
-    st.q = ''; st.merk = []; st.type = []; st.filters = {}; st.min = ''; st.max = '';
-    el.q.value = ''; el.min.value = ''; el.max.value = ''; el.wis.hidden = true;
+  function wisFilters(ookZoek) {
+    if (ookZoek) { st.q = ''; el.q.value = ''; el.wis.hidden = true; }
+    st.merk = []; st.type = []; st.filters = {}; st.min = ''; st.max = '';
+    el.min.value = ''; el.max.value = '';
     el.filters.querySelectorAll('[aria-pressed]').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
     vernieuw(true);
-  });
+  }
+  document.getElementById('ds-leeg-reset').addEventListener('click', function () { wisFilters(true); });
+
+  // ---------- zijbalk: filterknop op mobiel, telling, lange lijsten inklappen ----------
+  (function () {
+    var zij = document.getElementById('ds-zij'), knop = document.getElementById('ds-fknop'),
+      n = document.getElementById('ds-fknop-n'), toon = document.getElementById('ds-zij-toon');
+    if (!zij || !knop) return;
+    function open(aan) {
+      zij.classList.toggle('open', aan);
+      knop.setAttribute('aria-expanded', aan ? 'true' : 'false');
+      document.body.style.overflow = aan ? 'hidden' : '';
+      if (aan) { var s = document.getElementById('ds-zij-sluit'); if (s) s.focus(); } else knop.focus();
+    }
+    knop.addEventListener('click', function () { open(true); });
+    document.getElementById('ds-zij-sluit').addEventListener('click', function () { open(false); });
+    toon.addEventListener('click', function () { open(false); el.telling.scrollIntoView({ block: 'start' }); });
+    document.getElementById('ds-zij-wis').addEventListener('click', function () { wisFilters(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && zij.classList.contains('open')) open(false); });
+    window.addEventListener('resize', function () { if (window.innerWidth >= 900 && zij.classList.contains('open')) open(false); });
+    zij.addEventListener('click', function (e) {
+      var m = e.target.closest('.ds-zij-meer'); if (!m) return;
+      var lijst = m.previousElementSibling, uit = lijst.classList.toggle('open');
+      m.textContent = m.getAttribute(uit ? 'data-minder' : 'data-meer');
+    });
+    // Alleen schrijven als er iets verandert: de waarnemer hieronder ziet ook onze eigen wijzigingen.
+    function zetVerborgen(e, v) { if (e && e.hidden !== v) e.hidden = v; }
+    function zetTekst(e, t) { if (e && e.textContent !== t) e.textContent = t; }
+    function bij() {
+      // Kop en "alle"-knop alleen tonen als de lijst er is en lang genoeg is.
+      [].forEach.call(zij.querySelectorAll('.ds-zg'), function (g) {
+        var lijst = g.querySelector('#ds-types,#ds-merken'); if (!lijst) return;
+        zetVerborgen(g, lijst.hidden);
+        zetVerborgen(g.querySelector('.ds-zij-meer'), lijst.children.length <= 7);
+      });
+      var aan = zij.querySelectorAll('.ds-chip[aria-pressed="true"]').length + (el.min.value ? 1 : 0) + (el.max.value ? 1 : 0);
+      zetVerborgen(n, !aan); zetTekst(n, aan ? String(aan) : '');
+      var b = el.telling.querySelector('b');
+      zetTekst(toon, b ? 'Toon ' + b.textContent + ' producten' : 'Toon resultaten');
+    }
+    if (window.MutationObserver) {
+      var mo = new MutationObserver(bij);
+      mo.observe(zij, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-pressed', 'hidden'] });
+      mo.observe(el.telling, { childList: true, subtree: true, characterData: true });
+    }
+    el.min.addEventListener('input', bij); el.max.addEventListener('input', bij);
+    bij();
+  })();
 
   document.getElementById('ds-dok-vgl').addEventListener('click', function () {
     el.ovlKop.textContent = 'Vergelijken';

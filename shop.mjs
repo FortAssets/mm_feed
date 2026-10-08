@@ -333,6 +333,10 @@ async function bolLijst (catId, pagina) {
   return (d && d.results) || []
 }
 
+// Plek in de populaire lijst van bol, per bol-afdeling (1 = populairst). Telt mee
+// in de populariteit van een product, zie populariteit() verderop.
+const BOL_RANG = new Map()
+
 async function haalBolBreed () {
   if (!BOL_ID || !BOL_GEHEIM) return []
   const uit = []
@@ -349,6 +353,7 @@ async function haalBolBreed () {
         if (!ean || !/^\d{8,14}$/.test(ean) || !o || !(o.price > 0)) continue
         if (gezien.has(ean)) continue
         gezien.add(ean)
+        if (!BOL_RANG.has(ean)) BOL_RANG.set(ean, n + 1)
         uit.push({
           ean,
           naam: String(x.title || '').trim(),
@@ -1461,6 +1466,69 @@ function geenApparaat (p) {
   return !(AP_SOORT.test(kop) || AP_STROOM.test(kop) || AP_MERK.test(n))
 }
 
+// ---------------------------------------------------------------- populariteit
+//
+// Een score per product voor de sortering "Populair" en de lijst onder "Alles".
+// Er is geen verkoopcijfer, dus het is een optelsom van wat wel bekend is:
+//  - de soort: een console, tv of telefoon zoeken meer mensen dan een hoesje;
+//  - grote titels en modellen (GTA VI, PlayStation 5, Switch 2, iPhone);
+//  - de plek in de populaire lijst van bol;
+//  - bij hoeveel winkels hij ligt, en of Coolblue of MediaMarkt hem voert;
+//  - korting.
+// Refurbished, heel goedkope spullen en accessoires zakken.
+const POP_SOORT = [
+  [/^consoles$/, 60], [/^(televisies|smart-tv's|4k-tv's|mini-led-tv|led-tv's|samsung oled)$/, 50], [/^mobiele telefoons$/, 45],
+  [/^(playstation 5-games|pre-ordergames|nintendo switch 2-games)$/, 40], [/laptops qwerty$|^macbooks/, 35], [/^(friteuses|airfryers|ninja-airfryers)$/, 35],
+  [/^(tablets|oordopjes|hoofdtelefoons|robotstofzuigers|volautomatische espressomachines)$/, 30],
+  [/^(nintendo switch-games|xbox-games|games|smartwatches|soundbars|wasmachines|cup- en padmachines|lego)$/, 25],
+  [/^(stofzuigers|koelkasten|vaatwassers|wasdrogers|monitoren|e-readers|bluetooth speakers|systeemcamera's|drones|action camera's|elektrische tandenborstels|controllers|playstation 5-controllers)$/, 20],
+  [/^(beamers|scheerapparaten|fohns|health trackers|deurbellen|smart lampen|gaming headsets|desktops)$/, 15],
+  [/hoesjes|hoezen|screenprotector|lens protector|kabel|bandjes|opladers?$|lader$|toners|cartridges|houders?$|sleeves|tassen|accessoire|beugels|afstandsbediening|filters$|opzetborstels/, -30]
+]
+const POP_NAAM = [
+  [/grand theft auto vi\b|\bgta (vi|6)\b/i, 120],
+  [/playstation 5 (pro|slim|digital)|\bps5 (pro|slim)\b|nintendo switch 2\b|xbox series [xs]\b/i, 30],
+  [/iphone 1[789]\b|galaxy s2[67]\b|galaxy z (fold|flip)|pixel 1[012]\b|airpods|apple watch|\bipad\b|macbook/i, 25],
+  [/ea sports fc 2[67]|call of duty|battlefield 6|mario kart|pok[eé]mon|zelda|minecraft|ghost of y[oō]tei|assassin'?s creed|elden ring/i, 25],
+  [/\b(oled|qled)\b/i, 10]
+]
+const POP_ACCESSOIRE = /\b(hoes|hoesje|case|cover|screenprotector|beschermglas|tempered glass|kabel|adapter|oplader|houder|standaard|bandje|skin|sticker|thumb grips?)\b/i
+function populariteit (p) {
+  let r = 0
+  const t = String(p.t || '').toLowerCase()
+  const kop = String(p.n || '').slice(0, 90)
+  for (const [re, w] of POP_SOORT) if (re.test(t)) { r += w; break }
+  if (!t && POP_ACCESSOIRE.test(kop)) r -= 30
+  for (const [re, w] of POP_NAAM) if (re.test(kop)) { r += w; break }
+  const bol = p.e ? BOL_RANG.get(String(p.e)) : 0
+  if (bol) r += Math.max(0, 50 - Math.floor(bol / 10))
+  r += Math.min(48, 12 * Math.max(0, (p.o || []).length - 1))
+  if ((p.o || []).some(o => /^(coolblue|mediamarkt)/i.test(o.w || ''))) r += 10
+  if (p.v > p.p && p.p > 0) r += Math.min(15, Math.round(40 * (1 - p.p / p.v)))
+  if (p.s === 'r') r -= 30
+  if (p.p < 10) r -= 40; else if (p.p < 25) r -= 15
+  if ((p.o || []).length === 1 && /^2dekansje/i.test(p.o[0].w || '')) r -= 10
+  return Math.round(r)
+}
+
+// Zelfde toestel in tien kleuren en drie geheugens: alleen de eerste houdt zijn
+// score, de volgende zakken telkens 25 punten. Anders staat "Populair" vol met
+// dezelfde Galaxy.
+const KLEUREN = /\b(zwart|wit|white|black|blauw|blue|sky blue|zilver|silver|grijs|gray|grey|graphite|groen|green|rood|red|roze|pink|paars|purple|violet|cobalt|goud|gold|titanium|natural|navy|mint|lavender|lila|geel|yellow|oranje|orange|beige|creme|cream|brons|bronze|jetblack|obsidian|porcelain|hazel|koraalroze|deep blue|cosmic orange|space black|starlight|midnight)\b/gi
+function familie (p) {
+  return String(p.n || '').toLowerCase().replace(/\([^)]*\)/g, ' ').replace(/\b\d+\s?(gb|tb)\b/g, ' ').replace(KLEUREN, ' ')
+    .replace(/\b(5g|4g|wifi|wi-fi|dual sim|los toestel|nieuw)\b/g, ' ').replace(/[^a-z0-9+ ]/g, ' ').split(/\s+/).filter(Boolean).slice(0, 5).join(' ')
+}
+function spreidFamilies (lijst) {
+  const gezien = new Map()
+  for (const p of lijst.slice().sort((a, b) => b.r - a.r || a.p - b.p)) {
+    const f = p.c + '|' + familie(p)
+    const k = gezien.get(f) || 0
+    if (k) p.r -= 25 * k
+    gezien.set(f, k + 1)
+  }
+}
+
 // Een paar soorten die er bij elke winkel uit gaan, ook bij Coolblue en MediaMarkt
 // en ook als ze bij meer winkels liggen: fietshelmen, flosdraad, olie in een
 // flesje, harken en etiketten. Wat stroom heeft blijft (een elektrische hark).
@@ -1725,6 +1793,8 @@ async function main () {
   console.log('Totaal bruikbaar:', rauw.length)
   const gekoppeld = koppel(rauw)
   const producten = gekoppeld.filter(p => !buitenAanbod(p))
+  for (const p of producten) p.r = populariteit(p)
+  spreidFamilies(producten)
   if (producten.length < gekoppeld.length) console.log('Buiten het aanbod gehouden (geen apparaat, of kleding, textiel, decoratie, huisraad):', gekoppeld.length - producten.length)
   console.log('Na koppelen:', producten.length, 'producten,',
     producten.filter(p => p.o.length > 1).length, 'met meer dan een winkel')
@@ -1800,6 +1870,46 @@ async function main () {
       types: top(types, 40)
     })
     for (const [w, n] of Object.entries(winkels)) index.winkels[w] = (index.winkels[w] || 0) + n
+  }
+
+  // "Alles": de populairste producten over alle categorieen, zodat de pagina daar
+  // kan openen met wat de meeste mensen zoeken (consoles, tv's, nieuwe games).
+  // Niet alle 38.000: dat bestand zou de worker bij elke koude start te zwaar
+  // vallen. Per categorie maximaal 900, zodat het niet een lijst vol hoesjes wordt.
+  {
+    // Om en om uit de categorieen, met meer beurten voor wat het meest gezocht wordt,
+    // zodat de eerste pagina een mix is van games, consoles, tv's, telefoons en meer.
+    const BEURTEN = { gaming: 3, telefoons: 2, 'tv-beeld': 2, laptops: 1, audio: 1, keuken: 1, huishoudelijk: 1, speelgoed: 1, foto: 0.5, verzorging: 0.5, 'slim-huis': 0.5, randapparatuur: 0.5, klussen: 0.25 }
+    const rij = {}
+    for (const p of producten) if (p.r > 0 && BEURTEN[p.c]) (rij[p.c] = rij[p.c] || []).push(p)
+    for (const k of Object.keys(rij)) rij[k] = rij[k].sort((a, b) => b.r - a.r || a.p - b.p).slice(0, 900)
+    const alles = []; const tegoed = {}
+    while (alles.length < 4000 && Object.values(rij).some(l => l.length)) {
+      for (const [k, w] of Object.entries(BEURTEN)) {
+        if (!rij[k] || !rij[k].length) continue
+        tegoed[k] = (tegoed[k] || 0) + w
+        while (tegoed[k] >= 1 && rij[k].length && alles.length < 4000) { alles.push(rij[k].shift()); tegoed[k] -= 1 }
+      }
+    }
+    // In dit bestand is r de plek in deze volgorde, zodat "Populair" de mix laat staan.
+    for (let i = 0; i < alles.length; i++) alles[i] = { ...alles[i], r: alles.length - i }
+    if (alles.length) {
+      const merken = {}; const winkels = {}; const types = {}
+      for (const p of alles) {
+        if (p.b) merken[p.b] = (merken[p.b] || 0) + 1
+        if (p.t) types[p.t] = (types[p.t] || 0) + 1
+        for (const o of p.o) winkels[o.w] = (winkels[o.w] || 0) + 1
+      }
+      const top = (obj, n) => Object.entries(obj).sort((a, b) => b[1] - a[1]).slice(0, n)
+      schrijf(UIT + '/c-alles.json', { slug: 'alles', naam: 'Populair', gemaakt: index.gemaakt, aantal: alles.length, p: alles }, true)
+      index.categorieen.push({
+        slug: 'alles', naam: 'Populair', kop: false, alles: true, aantal: alles.length,
+        vanaf: Math.min(...alles.map(p => p.p)), tot: Math.max(...alles.map(p => p.p)),
+        korting: alles.filter(p => p.v > p.p).length, multi: alles.filter(p => p.o.length > 1).length,
+        merken: top(merken, 30), winkels: top(winkels, 12), types: top(types, 40)
+      })
+      console.log('Alles (populair): ' + alles.length + ' producten, bovenaan: ' + alles.slice(0, 5).map(p => p.n.slice(0, 40)).join(' | '))
+    }
   }
 
   // Zichtbaar maken wat er van winkels zonder samenwerking komt. Niet om het

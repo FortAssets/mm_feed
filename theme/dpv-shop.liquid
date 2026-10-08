@@ -389,6 +389,7 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
         <div class="ds-rechts">
       <label class="ds-vz" for="ds-sort">Sorteren</label>
       <select class="ds-sel" id="ds-sort">
+        <option value="populair">Populair</option>
         <option value="prijs">Prijs laag &rarr; hoog</option>
         <option value="prijs-af">Prijs hoog &rarr; laag</option>
         <option value="korting">Hoogste korting</option>
@@ -493,11 +494,12 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     filters: {},
     min: '',
     max: '',
-    sort: 'prijs',
+    sort: 'populair',
     pagina: 1,
     perPagina: 24
   };
   var index = null;
+  var heeftAlles = false;
   var items = [];
   var gekozen = [];          // product-id's voor de vergelijking
   var gekozenData = {};
@@ -559,7 +561,7 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     Object.keys(st.filters).forEach(function (k) { if (st.filters[k]) p.set(k, '1'); });
     if (st.min !== '') p.set('min', st.min);
     if (st.max !== '') p.set('max', st.max);
-    if (st.sort !== 'prijs') p.set('sort', st.sort);
+    if (st.sort !== 'populair') p.set('sort', st.sort);
     var s = p.toString();
     var nieuw = location.pathname + (s ? '?' + s : '');
     try {
@@ -580,7 +582,7 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     });
     st.min = p.get('min') || '';
     st.max = p.get('max') || '';
-    st.sort = p.get('sort') || 'prijs';
+    st.sort = p.get('sort') || 'populair';
     st.pagina = 1;
   }
 
@@ -588,7 +590,12 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
   function haalIndex() {
     return fetch(API + '/api/shop/index')
       .then(function (r) { return r.json(); })
-      .then(function (d) { index = d; return d; });
+      .then(function (d) {
+        // "alles" is de lijst met populaire producten achter de chip Alles; geen eigen chip.
+        heeftAlles = !!(d && d.categorieen || []).some(function (c) { return c.slug === 'alles'; });
+        if (d && d.categorieen) d.categorieen = d.categorieen.filter(function (c) { return c.slug !== 'alles'; });
+        index = d; return d;
+      });
   }
 
   function tekenCats() {
@@ -617,7 +624,7 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
   // ---------------------------------------------------------------- lijst
   function vraag() {
     var p = new URLSearchParams();
-    p.set('cat', st.cat || 'gaming');
+    p.set('cat', st.cat || (heeftAlles ? 'alles' : 'gaming'));
     if (st.q) p.set('q', st.q);
     if (st.merk.length) p.set('merk', st.merk.join(','));
     if (st.type.length) p.set('type', st.type.join(','));
@@ -818,8 +825,8 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     el.raster.hidden = false;
     el.raster.innerHTML = items.map(kaart).join('');
 
-    var naam = d.naam || '';
-    el.telling.innerHTML = '<b>' + d.aantal + '</b> ' + (d.aantal === 1 ? 'product' : 'producten') +
+    var naam = st.cat ? (d.naam || '') : '';
+    el.telling.innerHTML = '<b>' + d.aantal + '</b> ' + (d.aantal === 1 ? 'product' : (st.cat ? 'producten' : 'populaire producten uit alle categorie\u00ebn')) +
       (naam ? ' in ' + esc(naam.toLowerCase()) : '') +
       (d.facetten && d.facetten.multi ? ' &middot; ' + d.facetten.multi + ' bij meer dan een winkel' : '');
 
@@ -1294,7 +1301,10 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
   });
 
   haalIndex().then(function () {
-    if (!st.cat && !st.q) st.cat = '{{ section.settings.start_cat | default: "gaming" }}';
+    if (!st.cat && !st.q) {
+      var sc = '{{ section.settings.start_cat | default: "alles" }}';
+      if (sc && sc !== 'alles') st.cat = sc;
+    }
     tekenCats();
     return laad(false);
   }).catch(function () {
@@ -1380,6 +1390,10 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
       "label": "Categorie bij openen",
       "options": [
         {
+          "value": "alles",
+          "label": "Alles, populair eerst"
+        },
+        {
           "value": "gaming",
           "label": "Gaming"
         },
@@ -1420,13 +1434,13 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
           "label": "Randapparatuur"
         }
       ],
-      "default": "gaming"
+      "default": "alles"
     },
     {
       "type": "richtext",
       "id": "fijn",
       "label": "Kleine letters",
-      "default": "<p>Wij halen prijzen op uit de productfeeds van onze partners en werken ze elke nacht bij. Een prijs kan daartussen veranderen; controleer het bedrag altijd in de winkel zelf voordat je iets koopt. De volgorde is standaard de prijs, van laag naar hoog.</p><p>Bij elke prijs houden wij bij wanneer hij veranderde. Staat er \"laagste tot nu\", dan is dat de laagste prijs die wij zelf gemeten hebben, niet de laagste prijs die ooit bestond. Zegt een winkel dat iets was afgeprijsd van een bedrag dat wij nooit gezien hebben, dan vermelden wij dat.</p><p>Klik je door en koop je iets, dan ontvangen wij een vergoeding van de winkel. Jij betaalt daardoor niets meer.</p>"
+      "default": "<p>Wij halen prijzen op uit de productfeeds van onze partners en werken ze elke nacht bij. Een prijs kan daartussen veranderen; controleer het bedrag altijd in de winkel zelf voordat je iets koopt. Standaard staan de populairste producten bovenaan: wat bij meerdere winkels ligt, hoog staat in de populaire lijsten van bol, en nieuwe titels en modellen. Sorteren op prijs kan altijd.</p><p>Bij elke prijs houden wij bij wanneer hij veranderde. Staat er \"laagste tot nu\", dan is dat de laagste prijs die wij zelf gemeten hebben, niet de laagste prijs die ooit bestond. Zegt een winkel dat iets was afgeprijsd van een bedrag dat wij nooit gezien hebben, dan vermelden wij dat.</p><p>Klik je door en koop je iets, dan ontvangen wij een vergoeding van de winkel. Jij betaalt daardoor niets meer.</p>"
     }
   ],
   "presets": [

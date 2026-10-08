@@ -326,6 +326,9 @@
       if (band.length >= 4) items = band;
     }
     items.sort(function (a, b) { return (kaart[b.i] ? 1 : 0) - (kaart[a.i] ? 1 : 0) || (b.r || 0) - (a.r || 0); });
+    // Een model maar een keer, niet vier kleuren van dezelfde koptelefoon.
+    var gehad = {};
+    items = items.filter(function (x) { var k = String(x.n || '').toLowerCase().split(/\s+/).slice(0, 3).join(' '); if (gehad[k]) return false; gehad[k] = 1; return true; });
     items = items.slice(0, 8);
     if (!items.length) return;
     document.getElementById('dpp-meer').innerHTML = items.map(function (x) {

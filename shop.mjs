@@ -1461,7 +1461,21 @@ function geenApparaat (p) {
   return !(AP_SOORT.test(kop) || AP_STROOM.test(kop) || AP_MERK.test(n))
 }
 
+// Een paar soorten die er bij elke winkel uit gaan, ook bij Coolblue en MediaMarkt
+// en ook als ze bij meer winkels liggen: fietshelmen, flosdraad, olie in een
+// flesje, harken en etiketten. Wat stroom heeft blijft (een elektrische hark).
+const ALTIJD_TYPE = /^(fiets ?helmen|helmen|labels|etiketten)$/i
+const ALTIJD_NAAM = /(?<![\w-])((fiets|ebike|e-bike|veiligheids|skate|ski|kinder|baby|bouw|motor)?-?helm(en)?|flosdraad|floss|tandzijde|(tuin|blad|bladeren|gras|gazon|hand|multi|verticuteer|vericuteer|grind|hooi)?-?hark(en|je)?|etiket|etiketten|labeltape|labelrol|labels)(?![\w-])|(?<![\w-])\w*olie(?![\w-])\s*[-–,]?\s*\d+(?:[.,]\d+)?\s?ml\b|(?<![\w-])(tondeuse|onderhouds|smeer|naaimachine)\s?-?olie(?![\w-])/i
+const ALTIJD_NIET = /(?<![\w-])(elektrische?|accu|oplaadba(ar|re)|labelprinter|labelmaker|\d+ ?(w|watt|v|volt))(?![\w-])/i
+function altijdBuiten (p) {
+  if (!APPARAAT_CATS.has(p.c)) return false
+  if (ALTIJD_TYPE.test(String(p.t || '').trim())) return true
+  const kop = String(p.n || '').slice(0, 75)
+  return ALTIJD_NAAM.test(kop) && !ALTIJD_NIET.test(kop)
+}
+
 function buitenAanbod (p) {
+  if (altijdBuiten(p)) return true
   if (!BUITEN_CATS.has(p.c)) return false
   if ((p.o || []).length !== 1) return false
   if (/^(coolblue|mediamarkt)/i.test(p.o[0].w || '')) return false

@@ -120,7 +120,7 @@
         {%- if specs.score -%}<p class="dpp-score"><span aria-hidden="true">★</span> {{ specs.score | round: 1 | replace: '.', ',' }} van 5 bij bol.com{% if specs.g.size > 0 %} · <a href="#specificaties">Specificaties</a>{% endif %}</p>{%- endif -%}
         <div class="dpp-var" id="dpp-var" hidden><span>Andere uitvoeringen</span><div id="dpp-var-lijst"></div></div>
         <p class="dpp-van" id="dpp-van">
-          {%- if prijs_tekst != blank -%}<b>{{ prijs_tekst }}</b>laagste prijs{% if m.winkels.value > 1 %} bij {{ m.winkels.value }} winkels{% endif %}{%- endif -%}
+          {%- if prijs_tekst != blank -%}<b>{{ prijs_tekst }}</b>{% if m.winkels.value > 1 %}laagste prijs bij {{ m.winkels.value }} winkels{% else %}prijs van vannacht{% endif %}{%- endif -%}
         </p>
 
         <div class="dpp-kaart">
@@ -171,8 +171,13 @@
     <div class="dpp-blok">
       <h2>{{ naam | escape }} kopen: waar let je op?</h2>
       {%- if m.tekst.value != blank -%}{{ m.tekst.value | escape | newline_to_br | prepend: '<p>' | append: '</p>' }}{%- endif -%}
-      <p>Wij zetten de prijs van {{ naam | escape }} bij {% if m.winkels.value > 1 %}{{ m.winkels.value }} winkels{% else %}de winkel{% endif %} naast elkaar en meten die elke nacht opnieuw. Kijk bij het vergelijken ook naar verzendkosten en levertijd: die staan bij elke winkel vermeld zodra de actuele prijzen geladen zijn.</p>
+      {%- if m.winkels.value > 1 -%}
+      <p>Wij zetten de prijs van {{ naam | escape }} bij {{ m.winkels.value }} winkels naast elkaar en meten die elke nacht opnieuw. Kijk bij het vergelijken ook naar verzendkosten en levertijd: die staan bij elke winkel vermeld zodra de actuele prijzen geladen zijn.</p>
       <p>Via de knoppen ga je naar de winkel. Koop je daar iets, dan krijgen wij soms een vergoeding. Dat verandert de prijs niet en ook niet de volgorde: de laagste prijs staat altijd bovenaan.</p>
+      {%- else -%}
+      <p>Wij meten de prijs van {{ naam | escape }} elke nacht opnieuw en houden bij hoe hij verloopt. Op dit moment vinden wij hem bij een winkel; komt hij bij een tweede winkel in de feed, dan staan de prijzen hier vanzelf naast elkaar. Let bij het bestellen ook op verzendkosten en levertijd.</p>
+      <p>Via de knop ga je naar de winkel. Koop je daar iets, dan krijgen wij soms een vergoeding. Dat verandert de prijs niet.</p>
+      {%- endif -%}
       {%- if m.ean.value != blank -%}<p style="font-size:12.5px;color:#4A5A70">EAN {{ m.ean.value | escape }}</p>{%- endif -%}
     </div>
 
@@ -210,6 +215,7 @@
   var W = document.getElementById('dpp'); if (!W) return;
   var API = W.getAttribute('data-api'), ID = W.getAttribute('data-id'), CAT = W.getAttribute('data-cat');
   var SOORT = W.getAttribute('data-soort'), HANDLE = W.getAttribute('data-handle');
+  var PRIJS = Number({{ m.prijs.value | default: 0 | json }}) || 0;
   var KAART = 'https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/productpaginas.json';
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function eur(n) { n = Number(n) || 0; return '€' + n.toLocaleString('nl-NL', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }); }
@@ -238,7 +244,10 @@
   function oordeel(o, beste) {
     if (!o || o.metingen < 2) return '<p>Wij volgen deze prijs sinds kort. Zodra er meer metingen zijn, staat hier of de huidige prijs laag is vergeleken met eerder.</p>';
     var h = '';
-    if (o.isLaagsteOoit) h += '<p><span class="dpp-ja">Dit is de laagste prijs</span> die wij voor dit product hebben gemeten, in ' + o.metingen + ' metingen sinds ' + dag(o.eersteMeting) + '.</p>';
+    // Scheelt het minder dan een procent (of valt het op hele euro's samen), dan noemen we het geen duurdere prijs.
+    var bijna = !o.isLaagsteOoit && o.laagsteOoit > 0 && (eur(o.laagsteOoit) === eur(beste.p) || beste.p - o.laagsteOoit <= Math.max(0.5, beste.p * 0.01));
+    if (o.isLaagsteOoit || (bijna && eur(o.laagsteOoit) === eur(beste.p))) h += '<p><span class="dpp-ja">Dit is de laagste prijs</span> die wij voor dit product hebben gemeten, in ' + o.metingen + ' metingen sinds ' + dag(o.eersteMeting) + '.</p>';
+    else if (bijna) h += '<p><span class="dpp-ja">Bijna de laagste prijs</span> die wij hebben gemeten: op ' + dag(o.laagsteOp) + ' was hij ' + eur(o.laagsteOoit) + ', nu ' + eur(beste.p) + '.</p>';
     else h += '<p>Wij hebben dit product goedkoper gezien: <b>' + eur(o.laagsteOoit) + '</b> op ' + dag(o.laagsteOp) + '. Nu staat hij op ' + eur(beste.p) + '.</p>';
     if (beste.v > 0) {
       if (o.vanPrijsGemeten === true) h += '<p>De winkel noemt ' + eur(beste.v) + ' als eerdere prijs, en <span class="dpp-ja">die hebben wij ook gemeten</span>.</p>';
@@ -268,7 +277,7 @@
       });
       document.getElementById('dpp-winkels').innerHTML = h;
       var n = pr.o.length;
-      document.getElementById('dpp-van').innerHTML = '<b>' + eur(pr.o[0].p) + '</b>laagste prijs' + (n > 1 ? ' bij ' + n + ' winkels' : '');
+      document.getElementById('dpp-van').innerHTML = '<b>' + eur(pr.o[0].p) + '</b>' + (n > 1 ? 'laagste prijs bij ' + n + ' winkels' : 'bij ' + esc(pr.o[0].w));
       document.getElementById('dpp-peil').textContent = 'Prijzen van vannacht gemeten. De prijs bij de winkel is leidend.';
       document.getElementById('dpp-oordeel').innerHTML = oordeel(d.oordeel, pr.o[0]);
       var g = graf((d.logboek || {})[pr.o[0].w] || []);
@@ -304,12 +313,19 @@
 
   // Vergelijkbare producten: eerst met een eigen pagina, de rest naar de vergelijker.
   Promise.all([
-    fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + (SOORT ? '&type=' + encodeURIComponent(SOORT) : '') + '&limit=24').then(function (r) { return r.json(); }),
+    // Zelfde soort, de populairste eerst; lukt dat niet, dan de hele categorie.
+    fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + (SOORT ? '&type=' + encodeURIComponent(SOORT) : '') + '&n=60&sort=populair').then(function (r) { return r.json(); })
+      .then(function (d) { return (d && d.items && d.items.length > 4) || !SOORT ? d : fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + '&n=60&sort=populair').then(function (r) { return r.json(); }); }),
     fetch(KAART).then(function (r) { return r.json(); }).catch(function () { return {}; })
   ]).then(function (uit) {
     var items = (uit[0] && uit[0].items) || [], kaart = uit[1] || {};
     items = items.filter(function (x) { return x.i !== ID && x.im; });
-    items.sort(function (a, b) { return (kaart[b.i] ? 1 : 0) - (kaart[a.i] ? 1 : 0); });
+    // In een vergelijkbare prijsklasse: geen kabels van twee euro onder een koptelefoon van tweehonderd.
+    if (PRIJS > 0) {
+      var band = items.filter(function (x) { return x.p >= PRIJS * 0.4 && x.p <= PRIJS * 2.5; });
+      if (band.length >= 4) items = band;
+    }
+    items.sort(function (a, b) { return (kaart[b.i] ? 1 : 0) - (kaart[a.i] ? 1 : 0) || (b.r || 0) - (a.r || 0); });
     items = items.slice(0, 8);
     if (!items.length) return;
     document.getElementById('dpp-meer').innerHTML = items.map(function (x) {

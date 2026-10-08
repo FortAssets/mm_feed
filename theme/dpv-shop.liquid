@@ -825,8 +825,9 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     el.raster.hidden = false;
     el.raster.innerHTML = items.map(kaart).join('');
 
-    var naam = st.cat ? (d.naam || '') : '';
-    el.telling.innerHTML = '<b>' + d.aantal + '</b> ' + (d.aantal === 1 ? 'product' : (st.cat ? 'producten' : 'populaire producten uit alle categorie\u00ebn')) +
+    var mix = !st.cat && heeftAlles;
+    var naam = mix ? '' : (d.naam || '');
+    el.telling.innerHTML = '<b>' + d.aantal + '</b> ' + (d.aantal === 1 ? 'product' : (mix ? 'populaire producten uit alle categorie\u00ebn' : 'producten')) +
       (naam ? ' in ' + esc(naam.toLowerCase()) : '') +
       (d.facetten && d.facetten.multi ? ' &middot; ' + d.facetten.multi + ' bij meer dan een winkel' : '');
 

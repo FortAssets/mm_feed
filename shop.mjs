@@ -137,6 +137,19 @@ const MM_FEEDS = [
   { fid: 50621, naam: 'Wearables', cat: 'telefoons' }
 ]
 
+// 9 okt: Nedgame via TradeTracker. Alleen de feed met nieuwe producten; de
+// algemene feed bevat ook 12.000 tweedehands artikelen, en een gebruikte game
+// hoort niet als laagste prijs naast nieuwe exemplaren. In de URL staat alleen
+// het site-ID (aid), geen sleutel. r=feed komt als referentie mee bij elke klik.
+const NEDGAME_FEED = process.env.NEDGAME_FEED ||
+  'https://pf.tradetracker.net/?aid=512670&encoding=utf-8&type=csv&fid=1607599&filter_html=1&filter_nl=1&r=feed' +
+  '&categoryType=2&additionalType=2&csvDelimiter=%3B&csvEnclosure=%22&filter_extended=1'
+// Platforms van nu. Een product van Nedgame dat nog bij geen andere winkel ligt,
+// nemen we alleen op als het voor een van deze platforms is. Oudere platforms
+// (PS4, PS3, Xbox One, 3DS, Wii) en merchandise komen alleen mee als een andere
+// winkel hetzelfde EAN heeft; anders wordt Gaming een rommelzolder.
+const NEDGAME_HUIDIG = { 'PlayStation 5': 'PS5', 'Nintendo Switch 2': 'Nintendo Switch 2', 'Nintendo Switch': 'Nintendo Switch', 'Xbox Series X': 'Xbox Series X', 'PC Gaming': 'PC' }
+
 const MM_LOGO = 'https://hst.tradedoubler.com/file/262336/MM-logo.png'
 
 // --------------------------------------------------------------------- bol
@@ -897,7 +910,7 @@ function naamSleutel (naam) {
   return kern.slice(0, 64)
 }
 
-function parseCsvText (text) {
+function parseCsvText (text, sep = ',') {
   const rows = []
   let field = ''; let row = []; let inQ = false
   for (let i = 0; i < text.length; i++) {
@@ -906,7 +919,7 @@ function parseCsvText (text) {
       if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++ } else inQ = false } else field += c
     } else {
       if (c === '"') inQ = true
-      else if (c === ',') { row.push(field); field = '' } else if (c === '\n') { row.push(field); rows.push(row); row = []; field = '' } else if (c === '\r') { /* skip */ } else field += c
+      else if (c === sep) { row.push(field); field = '' } else if (c === '\n') { row.push(field); rows.push(row); row = []; field = '' } else if (c === '\r') { /* skip */ } else field += c
     }
   }
   if (field.length || row.length) { row.push(field); rows.push(row) }
@@ -1156,6 +1169,86 @@ function uitMm (q, feed) {
     staat: 'nieuw',
     kleur: (f.color || f.colour || '').trim(),
     verzend: num(aanbod.shippingCost)
+  }
+}
+
+async function haalNedgame () {
+  try {
+    let text
+    if (process.env.LOKAAL_NEDGAME) text = fs.readFileSync(process.env.LOKAAL_NEDGAME, 'utf8')
+    else {
+      const r = await fetch(NEDGAME_FEED, { headers: { 'User-Agent': 'dpv-feed-bot/1.0' } })
+      if (!r.ok) throw new Error('HTTP ' + r.status)
+      text = await r.text()
+    }
+    const rows = parseCsvText(text, ';')
+    const hdr = rows[0] || []
+    const uit = []
+    for (let i = 1; i < rows.length; i++) {
+      if (rows[i].length < hdr.length - 2) continue
+      const o = {}
+      for (let j = 0; j < hdr.length; j++) o[hdr[j]] = (rows[i][j] || '').trim()
+      uit.push(o)
+    }
+    console.log('Nedgame:', uit.length, 'regels')
+    return uit
+  } catch (e) {
+    // Valt Nedgame weg, dan gaat de rest gewoon door. Liever een winkel minder
+    // dan geen nieuwe prijzen voor de hele site.
+    console.log('Nedgame niet opgehaald (' + e.message + '), verder zonder')
+    return []
+  }
+}
+
+// basis: een product van een andere winkel met hetzelfde EAN, of undefined.
+function uitNedgame (r, basis) {
+  const prijs = num(r.price)
+  if (!(prijs > 0)) return null
+  let naam = (r.name || '').trim()
+  if (!naam) return null
+  if (r.condition && !/^nieuw$/i.test(r.condition)) return null
+  // UPC-codes (12 of 11 cijfers) staan bij de andere winkels als EAN-13 met
+  // voorloopnullen. Zonder aanvullen vielen 21 koppelingen weg.
+  let ean = /^\d{8,14}$/.test(r.EAN || '') ? r.EAN : ''
+  if (ean.length === 11 || ean.length === 12) ean = ean.padStart(13, '0')
+  const pad = String(r.categoryPath || '')
+  const [top, sub = ''] = pad.split(' > ').map(s => s.trim())
+  const platform = NEDGAME_HUIDIG[top]
+  let cat
+  if (basis) cat = basis.cat
+  else {
+    if (!platform) return null
+    if (/digitaal/i.test(sub)) return null          // downloadcodes: niet naast een doos zetten
+    cat = 'gaming'
+  }
+  if (!GELDIG.has(cat)) return null
+  let type = ''
+  if (/^games/i.test(sub)) type = 'games'
+  else if (/spelcomputers/i.test(sub)) type = 'consoles'
+  else if (/pre-?paid/i.test(sub)) type = 'waardekaarten'
+  else if (/controller/i.test(sub)) type = 'controllers'
+  // Nedgame zet het platform niet in de naam van een game ("Just Dance 2022").
+  // Zonder platform is niet te zien welke versie het is, en zoeken op "PS5"
+  // vindt hem niet. Dus erachter zetten, zoals de andere winkels doen.
+  if (type === 'games' && platform && !/\b(ps5|ps4|playstation|switch|xbox|pc)\b/i.test(naam)) naam += ' - ' + platform
+  let van = num(r.fromPrice)
+  if (!(van > prijs * 1.01)) van = 0
+  return {
+    bron: 'nedgame',
+    naam: basis ? basis.naam : naam,
+    merk: (r.brand || r.platform_brand || '').trim(),
+    prijs,
+    van,
+    winkel: 'Nedgame',
+    url: (r.productURL || '').trim(),
+    afb: (r.imageURL || '').trim(),
+    ean,
+    type: basis ? basis.type : type,
+    cat,
+    voorraad: 1,
+    staat: 'nieuw',
+    kleur: '',
+    verzend: num(r.deliveryCosts)
   }
 }
 
@@ -1666,6 +1759,24 @@ async function main () {
     throw new Error('Maar ' + mmAantal + ' bruikbare producten van MediaMarkt (ondergrens ' +
       MM_ONDERGRENS + '). Staat er HTTP 403 of 401 hierboven, dan is MM_TOKEN verlopen of ' +
       'gedraaid. Zonder MediaMarkt valt er niets te vergelijken, dus hier stoppen.')
+  }
+
+  // Nedgame, voor bol: zo neemt bol de EAN's van Nedgame mee in zijn ronde, en
+  // krijgt een game die alleen Nedgame had er een bol-prijs naast.
+  {
+    const ng = await haalNedgame()
+    const perEan = new Map()
+    for (const it of rauw) if (it.ean && it.staat !== 'refurbished' && !perEan.has(it.ean)) perEan.set(it.ean, it)
+    let bij = 0; let nieuw = 0
+    for (const r of ng) {
+      const e = /^\d{11,12}$/.test(r.EAN || '') ? r.EAN.padStart(13, '0') : r.EAN
+      const basis = e ? perEan.get(e) : undefined
+      const it = uitNedgame(r, basis)
+      if (!it) continue
+      rauw.push(it)
+      if (basis) bij++; else nieuw++
+    }
+    console.log('Nedgame: ' + bij + ' bij bestaande producten, ' + nieuw + ' nieuwe producten')
   }
 
   // bol breed: per categorie ophalen, vijftig tegelijk, met prijs erbij. Dit

@@ -1,0 +1,136 @@
+{% comment %}PV SEO Snippet v6{% endcomment %}
+<meta name="google-site-verification" content="EiiQtZ7ylmq-nIydhJCriagdDEtprHLCAxrlRnSgsvQ">
+{%- assign page_url = canonical_url | default: shop.url -%}
+{%- assign site_name = 'De Prijsvergelijker' -%}
+{%- comment -%}
+  9 okt: "van alle grote Nederlandse aanbieders" en "100% onafhankelijk" weggehaald.
+  Op Zo vergelijken wij staat juist dat niet elke aanbieder erin staat, en een
+  omschrijving moet kloppen met wat de site zegt.
+{%- endcomment -%}
+{%- assign default_desc = 'Vergelijk sim only, telefoon, internet, energie, zorg en producten. Prijzen elke nacht gemeten en gesorteerd op prijs. Gratis en zonder account.' -%}
+{%- comment -%}
+  13 sep: het standaardbeeld wees naar een bestand in Shopify Files dat er niet
+  meer is; die URL gaf een 404. Elk artikel zonder eigen omslag werd dus overal
+  gedeeld zonder beeld, ook in WhatsApp en Facebook. Nu staat het beeld als
+  themabestand (assets/og-default.jpg), zodat het meeverhuist met het thema en
+  niet stuk kan door een opruimactie in Files.
+{%- endcomment -%}
+{%- assign og_image = 'og-default.jpg' | asset_url | prepend: 'https:' -%}
+{%- comment -%}
+  Op een artikel de eigen omslag gebruiken in plaats van het standaardbeeld.
+  Zonder dit zag elk gedeeld artikel er in WhatsApp identiek uit, ook al
+  heeft elk artikel inmiddels een eigen omslag. Hetzelfde voor og:type:
+  dat stond op 'website', waardoor LinkedIn geen datum of auteur toonde.
+{%- endcomment -%}
+{%- assign og_type = 'website' -%}
+{%- if article -%}
+  {%- assign og_type = 'article' -%}
+  {%- if article.image -%}
+    {%- assign og_image = article.image | image_url: width: 1200 | prepend: 'https:' -%}
+  {%- endif -%}
+{%- endif -%}
+{%- assign org_logo = 'https://www.deprijsvergelijker.com/cdn/shop/files/pv-logo.png' -%}
+{%- assign is_provider = false -%}
+{%- if template == 'index' -%}
+  {%- comment -%}
+    17 sep: zorg stond niet in de titel en de omschrijving, terwijl we inmiddels
+    een vergelijker met twintig polissen en ruim twintig artikelen hebben. In
+    Google zag je daardoor "Abonnementen & Energie", en wie op zorg zocht kreeg
+    geen enkel signaal dat wij dat ook doen. Zorg staat nu voorop, want dat is
+    het onderwerp waar tot januari het meeste in te halen valt.
+
+    21 sep: titel ingekort naar 57 tekens en begint nu met "Prijsvergelijker".
+    Google toont zo'n 55 tot 60 tekens; de oude titel (73) werd afgekapt, en voor
+    "prijsvergelijker nederland" koos Google de Over ons-pagina in plaats van de
+    homepage, omdat het woord hier alleen als naam achteraan stond. De naam
+    toont Google apart boven het resultaat. De omschrijving was 176 tekens en
+    werd hieronder op 160 afgekapt tot "Gratis en 1..."; nu 149.
+
+    9 okt: de site vergelijkt nu ook bijna 40.000 producten. "Producten" staat in
+    de titel in plaats van "internet" (internet heeft een eigen pagina en staat
+    wel in de omschrijving). Het begin "Prijsvergelijker voor sim only" blijft
+    hetzelfde, zodat de woorden waarop de homepage al gevonden wordt blijven staan.
+    De oude omschrijving zei "van alle grote aanbieders" en "doorgerekend op wat
+    je per jaar betaalt"; dat klopte niet voor alles (sim only is per maand).
+  {%- endcomment -%}
+  {%- assign seo_title = 'Prijsvergelijker voor sim only, energie, zorg en producten' -%}
+  {%- assign seo_desc = 'Vergelijk sim only, telefoons, internet, energie, zorg en bijna 40.000 producten. Elke nacht gemeten, gesorteerd op prijs. Gratis en zonder account.' -%}
+{%- elsif template contains 'page' -%}
+  {%- comment -%}
+    21 sep: titels van de hoofdpagina's ingekort tot maximaal 60 tekens en
+    zonder lange strepen. Google toont er zo'n 55 tot 60; de oude titels waren
+    75 tot 88 tekens en werden afgekapt. De naam "De Prijsvergelijker" toont
+    Google apart boven het resultaat, dus die hoeft er niet meer achter.
+  {%- endcomment -%}
+  {%- case page.handle -%}
+    {%- when 'telefoonabonnement' -%}
+      {%- assign seo_title = 'Telefoon met abonnement vergelijken 2026: iPhone en Samsung' -%}
+      {%- assign seo_desc = 'Vergelijk de nieuwste iPhone 17, Samsung Galaxy S26 en andere toestellen met het beste abonnement. KPN, Odido, Vodafone. 100% onafhankelijk en gratis.' -%}
+    {%- when 'sim-only' -%}
+      {%- assign seo_title = 'Sim only vergelijken 2026: de goedkoopste vanaf €5 per maand' -%}
+      {%- assign seo_desc = 'Vergelijk sim only abonnementen van alle providers. Goedkoop onbeperkt internet, bellen en sms-en. Al vanaf €5 per maand. Maandelijks opzegbaar of 2 jaar vast.' -%}
+    {%- when 'internet-tv' -%}
+      {%- assign seo_title = 'Internet en tv vergelijken 2026: glasvezel, kabel en DSL' -%}
+      {%- assign seo_desc = 'Vergelijk internet en TV pakketten van Ziggo, KPN, DELTA en meer. Glasvezel, kabel of DSL, met of zonder televisie. Vind altijd de beste prijs.' -%}
+    {%- when 'energie' -%}
+      {%- assign seo_title = 'Energie vergelijken 2026: stroom en gas op jouw verbruik' -%}
+      {%- assign seo_desc = 'Vergelijk energiecontracten op je hele jaarrekening: levering, energiebelasting, netbeheerkosten en de vermindering. Zo zie je wat stroom en gas echt kosten.' -%}
+    {%- when 'dagelijkse-deals' -%}
+      {%- assign seo_title = 'Telecomdeals van vandaag: de beste aanbiedingen' -%}
+      {%- assign seo_desc = 'Bekijk de beste telecom deals van vandaag. Internet, telefoon en sim only aanbiedingen van Nederlandse providers. Dagelijks bijgewerkt.' -%}
+    {%- when 'toestellen' -%}
+      {%- assign seo_title = 'Smartphones vergelijken 2026: nieuw en refurbished' -%}
+      {%- assign seo_desc = 'Vergelijk smartphones op prijs bij alle aanbieders. iPhone, Samsung Galaxy, Google Pixel en meer, nieuw of refurbished. Altijd de scherpste prijs, 100% onafhankelijk.' -%}
+    {%- when 'zakelijke-abonnementen' -%}
+      {%- assign seo_title = 'Zakelijk telefoonabonnement en internet vergelijken' -%}
+      {%- assign seo_desc = 'Vergelijk zakelijke telefoon-, sim only- en internetabonnementen van KPN, Odido, Vodafone en meer. Scherpe tarieven, btw-vrij vergelijken en gratis zakelijk advies.' -%}
+    {%- when 'providers' -%}
+      {%- assign is_provider = true -%}
+      {%- assign seo_title = page.metafields.global.title_tag | default: 'Providerinformatie | KPN, Odido, Vodafone, Ben & Simyo | De Prijsvergelijker' -%}
+      {%- assign seo_desc = page.metafields.global.description_tag | default: 'Vergelijk de Nederlandse telecomproviders: KPN, Odido, Vodafone, Ben en Simyo. Lees per aanbieder over het netwerk, de voordelen en de actuele abonnementen.' -%}
+    {%- when 'providers-kpn', 'providers-odido', 'providers-vodafone', 'providers-ben', 'providers-simyo' -%}
+      {%- assign is_provider = true -%}
+      {%- assign seo_title = page.metafields.global.title_tag | default: page.title | append: ' | De Prijsvergelijker' -%}
+      {%- assign seo_desc = page.metafields.global.description_tag | default: page.content | strip_html | truncate: 155 -%}
+    {%- else -%}
+      {%- assign seo_title = page.metafields.global.title_tag | default: page.title | append: ' | De Prijsvergelijker' -%}
+      {%- assign seo_desc = page.metafields.global.description_tag | default: page.content | strip_html | truncate: 155 | default: default_desc -%}
+  {%- endcase -%}
+{%- else -%}
+  {%- assign seo_title = page_title | default: site_name -%}
+  {%- assign seo_desc = page_description | default: default_desc -%}
+{%- endif -%}
+<title>{{ seo_title }}</title>
+<meta name="description" content="{{ seo_desc | truncate: 160 | escape }}">
+<link rel="canonical" href="{{ page_url }}">
+<link rel="alternate" hreflang="nl-NL" href="{{ page_url }}">
+<link rel="alternate" hreflang="x-default" href="{{ page_url }}">
+<meta property="og:type" content="{{ og_type }}">
+{%- if article -%}
+<meta property="article:published_time" content="{{ article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}">
+<meta property="article:modified_time" content="{{ article.updated_at | default: article.published_at | date: '%Y-%m-%dT%H:%M:%S%z' }}">
+<meta property="article:author" content="{{ article.author | escape }}">
+{%- if article.tags.size > 0 -%}{%- for t in article.tags -%}
+<meta property="article:tag" content="{{ t | escape }}">
+{%- endfor -%}{%- endif -%}
+{%- endif -%}
+<meta property="og:site_name" content="{{ site_name }}">
+<meta property="og:title" content="{{ seo_title | escape }}">
+<meta property="og:description" content="{{ seo_desc | truncate: 200 | escape }}">
+<meta property="og:url" content="{{ page_url }}">
+<meta property="og:locale" content="nl_NL">
+<meta property="og:image" content="{{ og_image }}">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ seo_title | escape }}">
+<meta name="twitter:description" content="{{ seo_desc | truncate: 160 | escape }}">
+<meta name="twitter:image" content="{{ og_image }}">
+<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"De Prijsvergelijker","url":"https://www.deprijsvergelijker.com","logo":{{ org_logo | json }},"description":{{ default_desc | json }},"areaServed":{"@type":"Country","name":"Netherlands"},"contactPoint":{"@type":"ContactPoint","contactType":"customer service","availableLanguage":"Dutch","url":"https://www.deprijsvergelijker.com/pages/contact-1"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"De Prijsvergelijker","url":"https://www.deprijsvergelijker.com","inLanguage":"nl-NL","publisher":{"@type":"Organization","name":"De Prijsvergelijker","logo":{"@type":"ImageObject","url":{{ org_logo | json }}}},"potentialAction":{"@type":"SearchAction","target":{"@type":"EntryPoint","urlTemplate":"https://www.deprijsvergelijker.com/pages/telefoonabonnement?q={search_term_string}"},"query-input":"required name=search_term_string"}}</script>
+{%- if is_provider and page.handle != 'providers' -%}
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.deprijsvergelijker.com"},{"@type":"ListItem","position":2,"name":"Providers","item":"https://www.deprijsvergelijker.com/pages/providers"},{"@type":"ListItem","position":3,"name":{{ page.title | json }},"item":{{ page_url | json }}}]}</script>
+{%- elsif template != 'index' -%}{%- assign bc_name = seo_title | split: ' |' | first | split: ' (' | first -%}<script type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Home","item":"https://www.deprijsvergelijker.com"},{"@type":"ListItem","position":2,"name":{{ bc_name | json }},"item":{{ page_url | json }}}]}</script>{%- endif -%}
+{%- comment -%} dateModified freshness signal op categoriepagina's {%- endcomment -%}
+{%- if template contains 'page' -%}{%- assign pv_cat_handles = 'telefoonabonnement,sim-only,internet-tv,energie,dagelijkse-deals,toestellen,combideals-en-acties,zakelijke-abonnementen,goedkoopste-sim-only-deze-maand,beste-telefoon-deals-deze-maand,goedkoopste-internet-deze-maand' | split: ',' -%}{%- if pv_cat_handles contains page.handle -%}<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","name":{{ seo_title | json }},"url":{{ page_url | json }},"inLanguage":"nl-NL","dateModified":"{{ 'now' | date: '%Y-%m-%d' }}","isPartOf":{"@type":"WebSite","name":"De Prijsvergelijker","url":"https://www.deprijsvergelijker.com"}}</script>{%- endif -%}{%- endif -%}

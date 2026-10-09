@@ -144,6 +144,12 @@ const MM_FEEDS = [
 const NEDGAME_FEED = process.env.NEDGAME_FEED ||
   'https://pf.tradetracker.net/?aid=512670&encoding=utf-8&type=csv&fid=1607599&filter_html=1&filter_nl=1&r=feed' +
   '&categoryType=2&additionalType=2&csvDelimiter=%3B&csvEnclosure=%22&filter_extended=1'
+// De sales-feed: alleen artikelen met korting, elk uur ververst. Bijna alles
+// staat ook in de feed hierboven, maar op 9 okt hadden 152 artikelen hier al
+// een nieuwere prijs. Daarom wint de prijs uit deze feed als hij er is.
+const NEDGAME_SALES = process.env.NEDGAME_SALES ||
+  'https://pf.tradetracker.net/?aid=512670&encoding=utf-8&type=csv&fid=1367384&filter_html=1&filter_nl=1&r=feed' +
+  '&categoryType=2&additionalType=2&csvDelimiter=%3B&csvEnclosure=%22&filter_extended=1'
 // Platforms van nu. Een product van Nedgame dat nog bij geen andere winkel ligt,
 // nemen we alleen op als het voor een van deze platforms is. Oudere platforms
 // (PS4, PS3, Xbox One, 3DS, Wii) en merchandise komen alleen mee als een andere
@@ -1172,25 +1178,48 @@ function uitMm (q, feed) {
   }
 }
 
+async function leesTtFeed (url, lokaal) {
+  let text
+  if (lokaal) text = fs.readFileSync(lokaal, 'utf8')
+  else {
+    const r = await fetch(url, { headers: { 'User-Agent': 'dpv-feed-bot/1.0' } })
+    if (!r.ok) throw new Error('HTTP ' + r.status)
+    text = await r.text()
+  }
+  const rows = parseCsvText(text, ';')
+  const hdr = rows[0] || []
+  const uit = []
+  for (let i = 1; i < rows.length; i++) {
+    if (rows[i].length < hdr.length - 2) continue
+    const o = {}
+    for (let j = 0; j < hdr.length; j++) o[hdr[j]] = (rows[i][j] || '').trim()
+    uit.push(o)
+  }
+  return uit
+}
+
 async function haalNedgame () {
   try {
-    let text
-    if (process.env.LOKAAL_NEDGAME) text = fs.readFileSync(process.env.LOKAAL_NEDGAME, 'utf8')
-    else {
-      const r = await fetch(NEDGAME_FEED, { headers: { 'User-Agent': 'dpv-feed-bot/1.0' } })
-      if (!r.ok) throw new Error('HTTP ' + r.status)
-      text = await r.text()
-    }
-    const rows = parseCsvText(text, ';')
-    const hdr = rows[0] || []
-    const uit = []
-    for (let i = 1; i < rows.length; i++) {
-      if (rows[i].length < hdr.length - 2) continue
-      const o = {}
-      for (let j = 0; j < hdr.length; j++) o[hdr[j]] = (rows[i][j] || '').trim()
-      uit.push(o)
-    }
+    const uit = await leesTtFeed(NEDGAME_FEED, process.env.LOKAAL_NEDGAME)
     console.log('Nedgame:', uit.length, 'regels')
+    let sales = []
+    try { sales = await leesTtFeed(NEDGAME_SALES, process.env.LOKAAL_NEDGAME_SALES) } catch (e) {
+      console.log('Nedgame sales-feed niet opgehaald (' + e.message + ')')
+    }
+    if (sales.length) {
+      // Op EAN: het 'product ID' is per feed anders.
+      const perEan = new Map()
+      for (const s of sales) if (s.EAN) perEan.set(s.EAN, s)
+      let anders = 0
+      for (const o of uit) {
+        const s = o.EAN ? perEan.get(o.EAN) : undefined
+        if (!s) continue
+        if (s.price && s.price !== o.price) anders++
+        if (num(s.price) > 0) o.price = s.price
+        if (s.fromPrice) o.fromPrice = s.fromPrice
+      }
+      console.log('Nedgame sales:', sales.length, 'regels,', anders, 'met een nieuwere prijs')
+    }
     return uit
   } catch (e) {
     // Valt Nedgame weg, dan gaat de rest gewoon door. Liever een winkel minder

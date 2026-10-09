@@ -594,7 +594,9 @@ html:not(#x):not(#y) .bv-tabs button.aan small{color:#9FB0C4}
   var VANDAAG='', periodeVan={};
   var welkeWeek='deze', cache={}, weekKeys={};
 
-  function e(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  /* 9 okt: sommige bronnen (Lidl) leveren al gecodeerde tekens aan, zoals LAY&#39;S. Eerst terugzetten, dan pas coderen. */
+  function e(s){return String(s==null?'':s).replace(/&#0*39;|&#x0*27;|&apos;/gi,"'").replace(/&quot;/g,'"').replace(/&amp;/g,'&')
+    .replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
   function eu(n){return n==null?'':'€'+Number(n).toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2})}
   var DGN=['zo','ma','di','wo','do','vr','za'], MND=['jan','feb','mrt','apr','mei','jun','jul','aug','sep','okt','nov','dec'];
   var MNDLANG=['januari','februari','maart','april','mei','juni','juli','augustus','september','oktober','november','december'];

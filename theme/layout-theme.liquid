@@ -23,14 +23,17 @@
     {%- comment -%} 22 sep: tweede Impact-verificatie, voor de aanmelding bij Yesim (Genesis Group AG) {%- endcomment -%}
     <meta name='impact-site-verification' value='da90b137-72d0-4c4a-b3cb-ac448beda448'>
     <link rel="preconnect" href="https://cdn.shopify.com" crossorigin>
-    {%- comment -%} Favicon — merk-eigen SVG, met PNG-fallback uit theme settings indien geupload {%- endcomment -%}
+    {%- comment -%}
+      Favicon: het prijskaartje-logo. 9 okt: PNG-versies erbij (48, 96 en 192 px,
+      veelvouden van 48 zoals Google vraagt) naast de SVG, en een apple-touch-icon
+      van 180 px met witte achtergrond. iPhones kunnen geen SVG als
+      apple-touch-icon gebruiken, dus daar stond tot nu toe geen icoon.
+    {%- endcomment -%}
     <link rel="icon" type="image/svg+xml" href="{{ 'pv-favicon.svg' | asset_url }}">
-    {%- if settings.favicon != blank -%}
-      <link rel="icon" type="image/png" href="{{ settings.favicon | img_url: '32x32' }}">
-      <link rel="apple-touch-icon" href="{{ settings.favicon | img_url: '180x180' }}">
-    {%- else -%}
-      <link rel="apple-touch-icon" href="{{ 'pv-favicon.svg' | asset_url }}">
-    {%- endif -%}
+    <link rel="icon" type="image/png" sizes="48x48" href="{{ 'pv-favicon-48.png' | asset_url }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ 'pv-favicon-96.png' | asset_url }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ 'pv-favicon-192.png' | asset_url }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ 'pv-apple-touch.png' | asset_url }}">
     {%- unless settings.type_header_font.system? and settings.type_body_font.system? -%}
       <link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin>
     {%- endunless -%}

@@ -150,6 +150,14 @@ const NEDGAME_FEED = process.env.NEDGAME_FEED ||
 const NEDGAME_SALES = process.env.NEDGAME_SALES ||
   'https://pf.tradetracker.net/?aid=512670&encoding=utf-8&type=csv&fid=1367384&filter_html=1&filter_nl=1&r=feed' +
   '&categoryType=2&additionalType=2&csvDelimiter=%3B&csvEnclosure=%22&filter_extended=1'
+// Tweedehands bij Nedgame (12.000 artikelen, vooral oudere platforms). Alleen
+// voor de platforms van nu en alleen als er een nieuw exemplaar met hetzelfde
+// EAN in de vergelijker staat. Het komt dan als aparte kaart met het label
+// Tweedehands, net zoals refurbished bij de andere winkels, en nooit als
+// laagste prijs naast nieuwe exemplaren.
+const NEDGAME_TWEEDEHANDS = process.env.NEDGAME_TWEEDEHANDS ||
+  'https://pf.tradetracker.net/?aid=512670&encoding=utf-8&type=csv&fid=891177&filter_html=1&filter_nl=1&r=feed' +
+  '&categoryType=2&additionalType=2&csvDelimiter=%3B&csvEnclosure=%22&filter_extended=1'
 // Platforms van nu. Een product van Nedgame dat nog bij geen andere winkel ligt,
 // nemen we alleen op als het voor een van deze platforms is. Oudere platforms
 // (PS4, PS3, Xbox One, 3DS, Wii) en merchandise komen alleen mee als een andere
@@ -1440,6 +1448,9 @@ function koppel (items) {
       im: metAfb.afb,
       e: beste.ean,
       s: beste.staat === 'refurbished' ? 'r' : 'n',
+      // Tweedehands (Nedgame) in plaats van refurbished: dan zet de site er
+      // "Tweedehands" bij en niet "Refurbished".
+      g: beste.gebruikt ? 1 : undefined,
       // Het ASIN bij Amazon, als wij dat weten. Een tweedekansexemplaar krijgt
       // er geen: dat is bij Amazon een ander product.
       az: (beste.ean && beste.staat !== 'refurbished' && amazonEan.get(beste.ean)) || undefined,
@@ -1806,6 +1817,29 @@ async function main () {
       if (basis) bij++; else nieuw++
     }
     console.log('Nedgame: ' + bij + ' bij bestaande producten, ' + nieuw + ' nieuwe producten')
+
+    let th = []
+    try { th = await leesTtFeed(NEDGAME_TWEEDEHANDS, process.env.LOKAAL_NEDGAME_TWEEDEHANDS) } catch (e) {
+      console.log('Nedgame tweedehands niet opgehaald (' + e.message + ')')
+    }
+    for (const it of rauw) if (it.ean && it.staat !== 'refurbished' && !perEan.has(it.ean)) perEan.set(it.ean, it)
+    let gebruikt = 0
+    for (const r of th) {
+      const top = String(r.categoryPath || '').split(' > ')[0].trim()
+      if (!NEDGAME_HUIDIG[top]) continue
+      const e = /^\d{11,12}$/.test(r.EAN || '') ? r.EAN.padStart(13, '0') : r.EAN
+      const basis = e ? perEan.get(e) : undefined
+      if (!basis) continue
+      const it = uitNedgame(Object.assign({}, r, { condition: 'Nieuw', fromPrice: '' }), basis)
+      if (!it) continue
+      // Duurder dan nieuw is geen aanbieding; dat komt bij oude voorraad voor.
+      if (it.prijs >= basis.prijs) continue
+      it.staat = 'refurbished'
+      it.gebruikt = 1
+      rauw.push(it)
+      gebruikt++
+    }
+    console.log('Nedgame tweedehands: ' + th.length + ' regels, ' + gebruikt + ' naast een nieuw exemplaar')
   }
 
   // bol breed: per categorie ophalen, vijftig tegelijk, met prijs erbij. Dit

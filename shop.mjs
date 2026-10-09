@@ -1436,7 +1436,13 @@ function koppel (items) {
 
     uit.push({
       i: k,
-      n: beste.naam.slice(0, 120),
+      // 9 okt: een gebruikt of refurbished exemplaar moet je aan de naam zien.
+      // Alleen de winkelpagina zette er een label bij; op de homepage, in de
+      // productrijen, bij zoeken en op de productpagina stond niets. Dus in de
+      // naam zelf, tenzij die het al zegt.
+      n: (beste.staat === 'refurbished' && !/refurb|tweedehands|gebruikt|second.?chance|tweede.?kans/i.test(beste.naam)
+        ? beste.naam.slice(0, 104) + (beste.gebruikt ? ' (tweedehands)' : ' (refurbished)')
+        : beste.naam.slice(0, 120)),
       b: (metMerk.merk || '').slice(0, 30),
       c: beste.cat,
       t: nettSoort(metType.type, beste.cat, ''),

@@ -1272,13 +1272,46 @@ html:not(#x):not(#y) .bv-tabs button.aan small{color:#9FB0C4}
     var at=document.getElementById('bv-at'), al=document.getElementById('bv-al'),
         af=document.getElementById('bv-af'), am=document.getElementById('bv-ameer');
     var huidig='', aantal=30, opslag={};
+    /* 9 okt: dezelfde schoonmaak als in de folderlezer (dpv-scrapers/folders/schoon.py),
+       voor regels die al in de database stonden of uit een andere bron komen.
+       Kleine lettertjes eraf; koppen en kreten zonder product ("vanaf", "Vaste
+       lage prijs", "tot 56% korting", "DAGDEAL oktober") eruit. */
+    var MND='(?:januari|februari|maart|april|juni|juli|augustus|sept|september|okt|oktober|november|december)',
+        DGN='(?:maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)';
+    var RUIS=[/actieprij\S*\s+(?:per\s+)?(?:kilo|liter)\b/gi,/actieprij\S*(?:\s+kan\S*)?(?:\s+vari\S*)?(?:\s+(?:per\s+)?produ\S*)?/gi,
+      /\bkan\s+vari\S*(?:\s+(?:per\s+)?produ\S*)?/gi,/\bde adviesprijs is[^.]*\.?/gi,/\b(?:door\s+(?:de\s+)?leverancier\s+)?aanbevolen\s+verkoopprij\S*/gi,
+      /\badviesprij\S*(?:\s+\d+[.,]\d{2})?/gi,/(?:\bproduct\s+)?g?ezondheidspr\S*[;,]?(?:\s+le\S*)?/gi,
+      /\b(?:m?edisch\s+)?(?:genees|hulp)middel(?:en)?\b[,;]?(?:\s+lees(?:\s+(?:de|kopen))?(?:\s+(?:verpakking|bijsluiter))?|\s+verpakking)?/gi,
+      /\blees\s+(?:de\s+|kopen\s+)?(?:verpakking|bijsluiter)\b/gi,/\*+/g];
+    var KRETEN={'vaste lage prijs':1,'trending':1,'vers voordeel':1,'voordeelstuk':1,'topkwaliteit':1,'beauty':1,'luxe geuren':1,'mentale energie':1,
+      'goed opneembaar':1,'elders':1,'producten':1,'blikken':1,'bakken':1,'dozen':1,'flessen':1,'zegels':1,'vanaf zegels':1,'adviesprijs':1,
+      'maxi pack':1,'xl-schaal':1,'albert heijn':1,'top herengeuren':1,'meer glans':1,'nieuw':1,'actie':1,'prijsvoorbeeld':1,'klik hier':1,'kans op':1};
+    function letters(x){return x.replace(/[^A-Za-z\u00c0-\u024f]/g,'').length}
+    function schoonTitel(t){
+      var s=String(t||''); if(!s)return null;
+      RUIS.forEach(function(r){s=s.replace(r,' ')});
+      s=s.replace(/^\s*prijsvoorbeeld:?\s*/i,'').replace(/[.,]?\s*(?:\btot\s+)?prijsvoorbeeld:?\s*/gi,', bijv. ');
+      s=s.replace(/([A-Za-z])\d+[.,]\d{2}\b/g,'$1 ').replace(/(^|[^\d.,])\d+[.,]\d{2}(?![\d.,])/g,'$1 ');
+      s=s.replace(/\s+/g,' ').replace(/^[\s,;:\-+\/]+|[\s,;:\-+\/]+$/g,'');
+      s=s.replace(new RegExp('^(?:(?:vanaf|tot|nu|per|elke|v\\.a\\.|'+MND+'|'+DGN+')\\b\\.?\\s*)+','i'),'');
+      s=s.replace(new RegExp('\\s+(?:'+MND+'|'+DGN+')$','i'),'').replace(/^[\s,;:\-+\/]+|[\s,;:\-+\/]+$/g,'');
+      s=s.replace(/\s*,\s*bijv\.\s*$/,'');
+      if(letters(s)<4||KRETEN[s.toLowerCase()])return null;
+      if(letters(s.replace(/\b(tot|vanaf|korting|gratis|halve|prijs|extra|op|de|2e|e)\b|\d+\s*%?|\+/gi,''))<3)return null;
+      if(/^(bij aankoop|geldig|wordt verrekend|op = op|zie )|kassakorting/i.test(s))return null;
+      var w=s.split(' ').filter(function(x){return letters(x)>=3});
+      if(w.length&&w.every(function(x){return x.toUpperCase()===x}))return null;
+      if(s.split(' ').length<=2&&/^[a-z\u00e0-\u00ff]/.test(s)&&s.indexOf('.')<0)return null;
+      if(!/[A-Z\u00c0-\u00de]/.test(s)&&s.indexOf('.')<0)return null;
+      if(s.length>110)s=s.slice(0,110).replace(/\s+\S*$/,'').replace(/[\s,;:\-]+$/,'');
+      return s}
     function nette(a,p){a=String(a||'').trim();
       if(!a)return '';
       if(/^(voor|prijs|actieprijs|van)\b/i.test(a))return '';
       if(p&&a.replace(',','.').indexOf(String(p))>-1)return '';
       return a.charAt(0).toUpperCase()+a.slice(1)}
     function toon(d){
-      var r=d.aanbiedingen||[];
+      var r=(d.aanbiedingen||[]).map(function(x){var t=schoonTitel(x.titel);if(!t)return null;var y={};for(var k in x)y[k]=x[k];y.titel=t;return y}).filter(Boolean);
       af.innerHTML=d.folder?'<a href="'+e(d.folder)+'" target="_blank" rel="nofollow noopener">Bekijk de hele folder bij '+e(d.naam)+' \u2192</a>':'';
       al.innerHTML=r.slice(0,aantal).map(function(x){
         var act=nette(x.actie,x.prijs);

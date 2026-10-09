@@ -1,213 +1,226 @@
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+{%- comment -%}
+  Footer, 9 okt. Nieuwe opbouw in de huisstijl van de homepage: donker vlak,
+  merkblok met Prijsje, snelknoppen op mobiel, vijf kolommen op desktop en
+  inklapbare blokken op mobiel (gewone <details>, werkt zonder script).
+
+  Bewust anders dan de vorige versie:
+  - Eigen klassenamen (dpf-...). De oude footerpatches in dpv-deal-tools
+    (inklappen, emoji-badges, disclaimer weghalen) grijpen op .pvf-col en
+    .pvf-badge en doen hier dus niets meer. De klasse pvf staat nog op de
+    footer zelf, omdat dpv-deal-tools het SEO-blok van de homepage vlak voor
+    .pvf zet.
+  - Geen klantscore meer (de 9,2 met vijf sterren had geen bron die je kunt
+    aanwijzen; een beoordeling zonder bron mag niet als echte score staan).
+  - "Veilig & betrouwbaar" vervangen door iets wat we kunnen waarmaken.
+  - Facebook en Instagram staan nu in de footer; de losse balk van
+    dpv-social wordt verborgen, maar de sameAs-structuurdata daarvan blijft.
+  - Alle bestaande links zijn gebleven (interne links voor Google), alleen
+    anders gegroepeerd. Zorgverzekering stond twee keer in de lijst.
+  - De site heeft alleen Nederlands, dus de vertalingen zijn eruit.
+{%- endcomment -%}
+{%- assign fb = section.settings.facebook -%}
+{%- assign ig = section.settings.instagram -%}
 <style>
-.pvf{background:linear-gradient(160deg,#1e3a8a 0%,#172b63 60%,#13234f 100%);color:#b8c4e0;padding:58px 0 0;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
-.pvf-wrap{max-width:1180px;margin:0 auto;padding:0 28px}
-.pvf-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr 1fr 1fr 1fr;gap:26px;margin-bottom:44px}
-.pvf-grid>*{min-width:0}
-.pvf-logo{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-weight:800;font-size:26px;text-decoration:none;letter-spacing:-.01em;display:inline-block;margin-bottom:14px;line-height:1;background:linear-gradient(135deg,#fff,#bfd2ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:#fff}
-.pvf-logo .g{-webkit-background-clip:initial;background-clip:initial;-webkit-text-fill-color:#10b981;color:#10b981}
-.pvf-brand p{font-size:14px;line-height:1.65;color:#9fb0d4;max-width:262px;margin-bottom:20px}
-.pvf-badges{display:flex;gap:10px;flex-wrap:wrap}
-.pvf-badge{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:8px 14px;font-size:12px;font-weight:600;color:#cdd7ee;display:flex;align-items:center;gap:6px}
-.pvf-col h5{font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:800;color:#fff;margin-bottom:16px;letter-spacing:.04em;text-transform:uppercase}
-.pvf-col ul{list-style:none;display:flex;flex-direction:column;gap:9px;margin:0;padding:0}
-.pvf-col ul a{font-size:13px;color:#9fb0d4;text-decoration:none;transition:color .15s;overflow-wrap:break-word;word-break:break-word}
-.pvf-col ul a:hover{color:#fff}
-.pvf-col ul a:focus-visible{outline:2px solid #10b981;outline-offset:3px;border-radius:3px}
-.pvf-col ul a.pvf-uit{color:#cdd7ee;font-weight:700}
-.pvf-bottom{border-top:1px solid rgba(255,255,255,.12);padding:20px 0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
-.pvf-bottom p{font-size:12px;color:#8295bb}
-.pvf-bottom-links{display:flex;gap:20px;flex-wrap:wrap}
-.pvf-bottom-links a{font-size:12px;color:#8295bb;text-decoration:none}
-.pvf-bottom-links a:hover{color:#cdd7ee}
-.pvf-trustpilot{display:inline-flex;align-items:center;gap:8px;width:fit-content;max-width:100%;box-sizing:border-box;flex-wrap:wrap;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:10px 14px;margin-top:20px}
-.pvf-trustpilot .stars{color:#10b981;font-size:15px;letter-spacing:.5px;white-space:nowrap}
-.pvf-trustpilot span{font-size:12px;color:#9fb0d4}
-.pvf-trustpilot strong{color:#fff;font-size:14px}
-@media(max-width:1024px){.pvf-grid{grid-template-columns:1fr 1fr 1fr;gap:30px 24px}.pvf-brand{grid-column:1/-1}.pvf-brand p{max-width:520px}}
-@media(max-width:640px){.pvf{padding:44px 0 0}.pvf-wrap{padding:0 20px}.pvf-grid{grid-template-columns:1fr 1fr;gap:28px 20px}.pvf-brand{grid-column:1/-1}.pvf-bottom{flex-direction:column;text-align:center;align-items:center}}
-@media(max-width:380px){.pvf-grid{grid-template-columns:1fr}}
+html:not(#x):not(#y):not(#z) footer.dpf{background:#0D1B2A !important;background-image:none !important;border-top:0 !important;color:#C9D3E0 !important;font-family:'Instrument Sans',system-ui,sans-serif !important;padding:0 !important;margin:0}
+footer.dpf *{box-sizing:border-box}
+footer.dpf .dpf-w{max-width:1180px;margin:0 auto;padding:0 28px}
+footer.dpf a{color:inherit;text-decoration:none}
+footer.dpf a:focus-visible,footer.dpf summary:focus-visible{outline:2px solid #3FAE7A;outline-offset:3px;border-radius:4px}
+/* bovenste rij: merk en volg ons */
+footer.dpf .dpf-top{display:grid;grid-template-columns:1fr auto;gap:28px;align-items:start;padding:48px 0 34px;border-bottom:1px solid rgba(255,255,255,.12)}
+footer.dpf .dpf-merk{display:flex;align-items:center;gap:10px;font-family:'Unbounded','Bricolage Grotesque',sans-serif;font-weight:700;font-size:21px;letter-spacing:-.045em;color:#fff !important;-webkit-text-fill-color:#fff}
+footer.dpf .dpf-merk i{font-style:normal;color:#3FAE7A;-webkit-text-fill-color:#3FAE7A}
+footer.dpf .dpf-merk svg{flex:none;width:52px;height:auto}
+footer.dpf .dpf-tag{font-size:15px;line-height:1.55;color:#C9D3E0;max-width:560px;margin:12px 0 14px}
+footer.dpf .dpf-zeg{display:flex;flex-wrap:wrap;gap:8px;margin:0;padding:0;list-style:none}
+footer.dpf .dpf-zeg li{border:1.5px solid rgba(255,255,255,.28);border-radius:99px;padding:6px 12px;font-size:13px;color:#fff;font-weight:600}
+footer.dpf .dpf-zeg b{color:#3FAE7A;margin-right:4px}
+footer.dpf .dpf-geld{font-size:13.5px;line-height:1.5;color:#A9B6C8;max-width:560px;margin:14px 0 0}
+footer.dpf .dpf-geld a{color:#fff;text-decoration:underline;text-underline-offset:2px}
+footer.dpf .dpf-volg{text-align:right}
+footer.dpf .dpf-volg span{display:block;font-weight:700;color:#fff;font-size:14px;margin-bottom:10px}
+footer.dpf .dpf-soc{display:flex;gap:10px;justify-content:flex-end}
+footer.dpf .dpf-soc a{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;border:1.5px solid rgba(255,255,255,.2);transition:transform .15s}
+footer.dpf .dpf-soc a:hover{transform:translateY(-2px)}
+footer.dpf .dpf-soc a[aria-label="Facebook"]{background:#1877F2;border-color:#1877F2}
+footer.dpf .dpf-soc a[aria-label="Instagram"]{background:linear-gradient(45deg,#F9A825 0%,#E53935 45%,#C2185B 70%,#7B1FA2 100%);border-color:transparent}
+footer.dpf .dpf-soc svg{width:20px;height:20px;fill:#fff}
+/* snelknoppen, alleen mobiel */
+footer.dpf .dpf-snel{display:none}
+/* kolommen */
+footer.dpf .dpf-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:28px;padding:34px 0 38px}
+footer.dpf details{min-width:0}
+footer.dpf summary{list-style:none;cursor:default;font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;letter-spacing:-.02em;color:#fff;margin-bottom:12px;pointer-events:none}
+footer.dpf summary::-webkit-details-marker{display:none}
+footer.dpf .dpf-k ul{list-style:none;margin:0;padding:0}
+footer.dpf .dpf-k li a{display:block;padding:5px 0;font-size:14px;line-height:1.35;color:#C9D3E0}
+footer.dpf .dpf-k li a:hover{color:#3FAE7A}
+footer.dpf .dpf-k li a.dpf-uit{color:#fff;font-weight:700}
+footer.dpf .dpf-k .dpf-sub{margin-top:18px}
+/* onderbalk */
+footer.dpf .dpf-onder{border-top:1px solid rgba(255,255,255,.12);padding:18px 0 22px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px 20px;font-size:13px;color:#93A3B8}
+footer.dpf .dpf-onder nav{display:flex;flex-wrap:wrap;gap:6px 18px}
+footer.dpf .dpf-onder a{color:#93A3B8}
+footer.dpf .dpf-onder a:hover{color:#fff}
+/* de losse social-balk van dpv-social staat nu in de footer zelf */
+html:not(#x):not(#y) .pvs{display:none !important}
+@media(max-width:900px){
+  footer.dpf .dpf-w{padding:0 16px}
+  footer.dpf .dpf-top{grid-template-columns:1fr;padding:34px 0 24px;gap:20px}
+  footer.dpf .dpf-volg{text-align:left;display:flex;align-items:center;gap:14px}
+  footer.dpf .dpf-volg span{margin:0}
+  footer.dpf .dpf-snel{display:flex;flex-wrap:wrap;gap:8px;padding:20px 0 6px}
+  footer.dpf .dpf-snel a{background:#F9C31F;color:#0D1B2A !important;font-weight:700;font-size:14px;border:2px solid #0D1B2A;box-shadow:3px 3px 0 #000;border-radius:12px;padding:10px 14px}
+  footer.dpf .dpf-grid{grid-template-columns:1fr;gap:0;padding:12px 0 18px}
+  footer.dpf details{border-bottom:1px solid rgba(255,255,255,.12)}
+  footer.dpf summary{pointer-events:auto;cursor:pointer;margin:0;padding:16px 0;display:flex;justify-content:space-between;align-items:center}
+  footer.dpf summary::after{content:"+";font-family:'Instrument Sans',sans-serif;font-weight:500;font-size:24px;line-height:1;color:#F9C31F}
+  footer.dpf details[open] summary::after{content:"\2212"}
+  footer.dpf .dpf-k ul{padding-bottom:12px}
+  footer.dpf .dpf-k li a{padding:9px 0;font-size:15px}
+  footer.dpf .dpf-onder{flex-direction:column;align-items:flex-start;padding-bottom:96px}
+}
 </style>
 
-{%- assign pvloc = request.locale.iso_code | slice: 0, 2 | downcase -%}
-{%- assign pvsupported = 'nl,en,tr,pl,uk' | split: ',' -%}
-{%- unless pvsupported contains pvloc -%}{%- assign pvloc = 'nl' -%}{%- endunless -%}
-{%- case pvloc -%}
-{%- when 'en' -%}
-  {%- assign f_tag = 'Independent comparison for phone, SIM only, internet and energy. We help you find the best deal: honest, fast and free.' -%}
-  {%- assign f_b1 = '100% independent' -%}{%- assign f_b2 = 'Safe &amp; reliable' -%}{%- assign f_b3 = 'Free switching service' -%}
-  {%- assign f_c1 = 'Compare' -%}{%- assign f_l1 = 'Internet &amp; TV' -%}{%- assign f_l2 = 'Phone + plan' -%}{%- assign f_l4c = 'Best phone deals this month' -%}{%- assign f_l3 = 'SIM only' -%}{%- assign f_l4 = 'Daily deals' -%}{%- assign f_zp = 'TV channels &amp; packages' -%}
-  {%- assign f_ap = 'All prices today' -%}{%- assign f_zv = 'Health insurance' -%}
-  {%- assign f_en = 'Energy (electricity &amp; gas)' -%}{%- assign f_c2 = 'SIM only guide' -%}{%- assign f_l5 = 'What is SIM only?' -%}{%- assign f_l6 = 'Cheapest SIM only' -%}{%- assign f_l6b = 'Cheapest SIM only this month' -%}{%- assign f_l7 = '5G SIM only' -%}{%- assign f_l8 = 'How to switch?' -%}{%- assign f_buit = 'Calling abroad' -%}{%- assign f_vak = 'Internet on holiday & eSIM' -%}{%- assign f_prov = 'All providers' -%}
-  {%- assign f_c4 = 'Advice &amp; knowledge' -%}{%- assign f_a0 = 'All articles' -%}{%- assign f_a1 = 'SIM only or phone + plan?' -%}{%- assign f_a2 = 'How much data do you need?' -%}{%- assign f_a3 = 'Fibre, cable or DSL?' -%}
-  {%- assign f_c5 = 'Providers' -%}{%- assign f_c6 = 'New &amp; expected' -%}{%- assign f_n0 = 'All news' -%}
-  {%- assign f_c3 = 'About us' -%}{%- assign f_l9 = 'About De Prijsvergelijker' -%}{%- assign f_l10 = 'Frequently asked questions' -%}{%- assign f_l11 = 'Contact' -%}{%- assign f_l12 = 'Privacy statement' -%}{%- assign f_l13 = 'Disclaimer' -%}
-  {%- assign f_score = 'Customer score' -%}{%- assign f_rights = 'All rights reserved' -%}
-  {%- assign f_priv = 'Privacy' -%}{%- assign f_terms = 'Terms' -%}{%- assign f_smap = 'Sitemap' -%}
-{%- when 'tr' -%}
-  {%- assign f_tag = 'Telefon, sadece SIM, internet ve enerji için bağımsız karşılaştırma. En iyi fırsatı bulmanıza yardımcı oluruz: dürüst, hızlı ve ücretsiz.' -%}
-  {%- assign f_b1 = '100% bağımsız' -%}{%- assign f_b2 = 'Güvenli ve güvenilir' -%}{%- assign f_b3 = 'Ücretsiz geçiş hizmeti' -%}
-  {%- assign f_c1 = 'Karşılaştır' -%}{%- assign f_l1 = 'İnternet ve TV' -%}{%- assign f_l2 = 'Telefon + abonelik' -%}{%- assign f_l4c = 'Bu ayın en iyi telefon fırsatları' -%}{%- assign f_l3 = 'Sadece SIM' -%}{%- assign f_l4 = 'Günlük fırsatlar' -%}{%- assign f_zp = 'TV kanalları ve paketleri' -%}
-  {%- assign f_ap = 'Bugünkü tüm fiyatlar' -%}{%- assign f_zv = 'Sağlık sigortası' -%}
-  {%- assign f_en = 'Enerji (elektrik ve gaz)' -%}{%- assign f_c2 = 'Sadece SIM rehberi' -%}{%- assign f_l5 = 'Sadece SIM nedir?' -%}{%- assign f_l6 = 'En ucuz sadece SIM' -%}{%- assign f_l6b = 'Bu ayın en ucuz sadece SIM' -%}{%- assign f_l7 = '5G sadece SIM' -%}{%- assign f_l8 = 'Nasıl geçilir?' -%}{%- assign f_buit = 'Yurt dışında arama' -%}{%- assign f_vak = 'Tatilde internet & eSIM' -%}{%- assign f_prov = 'Tüm sağlayıcılar' -%}
-  {%- assign f_c4 = 'Tavsiye ve bilgi' -%}{%- assign f_a0 = 'Tüm makaleler' -%}{%- assign f_a1 = 'Sadece SIM mi, telefonlu mu?' -%}{%- assign f_a2 = 'Ne kadar internet gerekir?' -%}{%- assign f_a3 = 'Fiber, kablo mu DSL mi?' -%}
-  {%- assign f_c5 = 'Sağlayıcılar' -%}{%- assign f_c6 = 'Yeni ve beklenen' -%}{%- assign f_n0 = 'Tüm haberler' -%}
-  {%- assign f_c3 = 'Hakkımızda' -%}{%- assign f_l9 = 'De Prijsvergelijker hakkında' -%}{%- assign f_l10 = 'Sıkça sorulan sorular' -%}{%- assign f_l11 = 'İletişim' -%}{%- assign f_l12 = 'Gizlilik beyanı' -%}{%- assign f_l13 = 'Sorumluluk reddi' -%}
-  {%- assign f_score = 'Müşteri puanı' -%}{%- assign f_rights = 'Tüm hakları saklıdır' -%}
-  {%- assign f_priv = 'Gizlilik' -%}{%- assign f_terms = 'Koşullar' -%}{%- assign f_smap = 'Site haritası' -%}
-{%- when 'pl' -%}
-  {%- assign f_tag = 'Niezależne porównanie telefonów, SIM only, Internetu i energii. Pomagamy znaleźć najlepszą ofertę: uczciwie, szybko i za darmo.' -%}
-  {%- assign f_b1 = '100% niezależny' -%}{%- assign f_b2 = 'Bezpieczny i niezawodny' -%}{%- assign f_b3 = 'Bezpłatna usługa zmiany' -%}
-  {%- assign f_c1 = 'Porównaj' -%}{%- assign f_l1 = 'Internet i TV' -%}{%- assign f_l2 = 'Telefon + abonament' -%}{%- assign f_l4c = 'Najlepsze oferty telefonów w tym miesiącu' -%}{%- assign f_l3 = 'SIM only' -%}{%- assign f_l4 = 'Codzienne oferty' -%}{%- assign f_zp = 'Kanały TV i pakiety' -%}
-  {%- assign f_ap = 'Wszystkie ceny dzisiaj' -%}{%- assign f_zv = 'Ubezpieczenie zdrowotne' -%}
-  {%- assign f_en = 'Energia (prąd i gaz)' -%}{%- assign f_c2 = 'Przewodnik SIM only' -%}{%- assign f_l5 = 'Co to jest SIM only?' -%}{%- assign f_l6 = 'Najtańszy SIM only' -%}{%- assign f_l6b = 'Najtańszy SIM only w tym miesiącu' -%}{%- assign f_l7 = '5G SIM only' -%}{%- assign f_l8 = 'Jak zmienić?' -%}{%- assign f_buit = 'Dzwonienie za granicą' -%}{%- assign f_vak = 'Internet na wakacjach i eSIM' -%}{%- assign f_prov = 'Wszyscy operatorzy' -%}
-  {%- assign f_c4 = 'Porady i wiedza' -%}{%- assign f_a0 = 'Wszystkie artykuły' -%}{%- assign f_a1 = 'SIM only czy z telefonem?' -%}{%- assign f_a2 = 'Ile danych potrzebujesz?' -%}{%- assign f_a3 = 'Światłowód, kabel czy DSL?' -%}
-  {%- assign f_c5 = 'Operatorzy' -%}{%- assign f_c6 = 'Nowe i oczekiwane' -%}{%- assign f_n0 = 'Wszystkie nowości' -%}
-  {%- assign f_c3 = 'O nas' -%}{%- assign f_l9 = 'O De Prijsvergelijker' -%}{%- assign f_l10 = 'Często zadawane pytania' -%}{%- assign f_l11 = 'Kontakt' -%}{%- assign f_l12 = 'Oświadczenie o prywatności' -%}{%- assign f_l13 = 'Zastrzeżenie' -%}
-  {%- assign f_score = 'Ocena klientów' -%}{%- assign f_rights = 'Wszelkie prawa zastrzeżone' -%}
-  {%- assign f_priv = 'Prywatność' -%}{%- assign f_terms = 'Warunki' -%}{%- assign f_smap = 'Mapa strony' -%}
-{%- when 'uk' -%}
-  {%- assign f_tag = 'Незалежне порівняння телефонів, SIM only, Інтернету та енергії. Ми допоможемо знайти найкращу пропозицію: чесно, швидко та безкоштовно.' -%}
-  {%- assign f_b1 = '100% незалежний' -%}{%- assign f_b2 = 'Безпечно та надійно' -%}{%- assign f_b3 = 'Безкоштовний перехід' -%}
-  {%- assign f_c1 = 'Порівняти' -%}{%- assign f_l1 = 'Інтернет та TV' -%}{%- assign f_l2 = 'Телефон + контракт' -%}{%- assign f_l4c = 'Найкращі пропозиції телефонів цього місяця' -%}{%- assign f_l3 = 'Тільки SIM' -%}{%- assign f_l4 = 'Щоденні пропозиції' -%}{%- assign f_zp = 'ТВ-канали та пакети' -%}
-  {%- assign f_ap = 'Усі ціни сьогодні' -%}{%- assign f_zv = 'Медичне страхування' -%}
-  {%- assign f_en = 'Енергія (світло та газ)' -%}{%- assign f_c2 = 'Посібник SIM only' -%}{%- assign f_l5 = 'Що таке тільки SIM?' -%}{%- assign f_l6 = 'Найдешевший тільки SIM' -%}{%- assign f_l6b = 'Найдешевший тільки SIM цього місяця' -%}{%- assign f_l7 = '5G тільки SIM' -%}{%- assign f_l8 = 'Як перейти?' -%}{%- assign f_buit = 'Дзвінки за кордоном' -%}{%- assign f_vak = 'Інтернет у відпустці та eSIM' -%}{%- assign f_prov = 'Усі оператори' -%}
-  {%- assign f_c4 = 'Поради та знання' -%}{%- assign f_a0 = 'Усі статті' -%}{%- assign f_a1 = 'Тільки SIM чи з телефоном?' -%}{%- assign f_a2 = 'Скільки даних потрібно?' -%}{%- assign f_a3 = 'Оптоволокно, кабель чи DSL?' -%}
-  {%- assign f_c5 = 'Оператори' -%}{%- assign f_c6 = 'Нове та очікуване' -%}{%- assign f_n0 = 'Усі новини' -%}
-  {%- assign f_c3 = 'Про нас' -%}{%- assign f_l9 = 'Про De Prijsvergelijker' -%}{%- assign f_l10 = 'Часті запитання' -%}{%- assign f_l11 = 'Контакт' -%}{%- assign f_l12 = 'Заява про конфіденційність' -%}{%- assign f_l13 = 'Відмова від відповідальності' -%}
-  {%- assign f_score = 'Оцінка клієнтів' -%}{%- assign f_rights = 'Усі права захищені' -%}
-  {%- assign f_priv = 'Конфіденційність' -%}{%- assign f_terms = 'Умови' -%}{%- assign f_smap = 'Карта сайту' -%}
-{%- else -%}
-  {%- assign f_tag = 'Onafhankelijk vergelijken voor telefoon, sim only, internet en energie. Wij helpen jou de beste deal te vinden: eerlijk, snel en gratis.' -%}
-  {%- assign f_b1 = '100% onafhankelijk' -%}{%- assign f_b2 = 'Veilig &amp; betrouwbaar' -%}{%- comment -%} 22 sep: was 'Gratis overstapservice'. Die service bieden de aanbieders, niet wij; de claim klopte dus niet. {%- endcomment -%}{%- assign f_b3 = 'Gratis te gebruiken' -%}
-  {%- assign f_c1 = 'Vergelijken' -%}{%- assign f_l1 = 'Internet &amp; TV' -%}{%- assign f_l2 = 'Telefoon + abonnement' -%}{%- assign f_l4c = 'Beste telefoondeals deze maand' -%}{%- assign f_l3 = 'Sim only' -%}{%- assign f_l4 = 'Dagelijkse deals' -%}{%- assign f_zp = 'Tv-zenders &amp; pakketten' -%}
-  {%- assign f_ap = 'Alle prijzen van vandaag' -%}{%- assign f_zv = 'Zorgverzekering' -%}
-  {%- assign f_en = 'Energie (stroom &amp; gas)' -%}{%- assign f_c2 = 'Sim only gids' -%}{%- assign f_l5 = 'Wat is sim only?' -%}{%- assign f_l6 = 'Goedkoopste sim only' -%}{%- assign f_l6b = 'Goedkoopste sim only deze maand' -%}{%- assign f_l7 = '5G sim only' -%}{%- assign f_l8 = 'Hoe overstappen?' -%}{%- assign f_buit = 'Bellen in het buitenland' -%}{%- assign f_vak = 'Internet op vakantie & eSIM' -%}{%- assign f_prov = 'Alle providers' -%}
-  {%- assign f_c4 = 'Advies &amp; kennisbank' -%}{%- assign f_a0 = 'Alle artikelen' -%}{%- assign f_a1 = 'Sim only of toestel erbij?' -%}{%- assign f_a2 = 'Hoeveel data heb je nodig?' -%}{%- assign f_a3 = 'Glasvezel, kabel of DSL?' -%}
-  {%- assign f_c5 = 'Providers' -%}{%- assign f_c6 = 'Nieuw &amp; verwacht' -%}{%- assign f_n0 = 'Al het nieuws' -%}
-  {%- assign f_c3 = 'Over ons' -%}{%- assign f_l9 = 'Over De Prijsvergelijker' -%}{%- assign f_l10 = 'Veelgestelde vragen' -%}{%- assign f_l11 = 'Contact' -%}{%- assign f_l12 = 'Privacyverklaring' -%}{%- assign f_l13 = 'Disclaimer' -%}
-  {%- assign f_score = 'Klantscore' -%}{%- assign f_rights = 'Alle rechten voorbehouden' -%}
-  {%- assign f_priv = 'Privacy' -%}{%- assign f_terms = 'Voorwaarden' -%}{%- assign f_smap = 'Sitemap' -%}
-{%- endcase -%}
-
-<footer class="pvf" role="contentinfo" aria-label="{{ f_c3 | strip_html }}">
-  <div class="pvf-wrap">
-    <div class="pvf-grid">
-      <div class="pvf-brand">
-        <a href="/" class="pvf-logo" aria-label="De Prijsvergelijker home">De<span class="g">Prijs</span>vergelijker</a>
-        <p>{{ f_tag }}</p>
-        <div class="pvf-badges">
-          <div class="pvf-badge">&#9989; {{ f_b1 }}</div>
-          <div class="pvf-badge">&#128274; {{ f_b2 }}</div>
-          <div class="pvf-badge">&#9889; {{ f_b3 }}</div>
+<footer class="pvf dpf" role="contentinfo" aria-label="Footer">
+  <div class="dpf-w">
+    <div class="dpf-top">
+      <div>
+        <a href="/" class="dpf-merk" aria-label="DePrijsvergelijker, naar de homepage"><svg aria-hidden="true" focusable="false" viewBox="-24 -14 284 280" width="52" xmlns="http://www.w3.org/2000/svg"><path d="M96 212 L92 246" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M132 212 L136 246" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><ellipse cx="84" cy="250" rx="17" ry="8" fill="#fff"/><ellipse cx="144" cy="250" rx="17" ry="8" fill="#0D1B2A"/><path d="M114 15 L180 69 V180 a33 33 0 0 1 -33 33 H81 a33 33 0 0 1 -33 -33 V69 Z" transform="translate(14 12)" fill="#3FAE7A" opacity=".9"/><path d="M114 15 L180 69 V180 a33 33 0 0 1 -33 33 H81 a33 33 0 0 1 -33 -33 V69 Z" fill="#fff" stroke="#fff" stroke-width="7" stroke-linejoin="round"/><path d="M50 140 Q32 156 30 178" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M178 128 Q206 108 204 74" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/><path d="M114 57 C108 30 132 22 126 -2" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round"/><circle cx="114" cy="57" r="10" fill="#fff" stroke="#0D1B2A" stroke-width="5"/><ellipse cx="98" cy="118" rx="11" ry="13" fill="#fff" stroke="#0D1B2A" stroke-width="5"/><circle cx="101" cy="121" r="5" fill="#0D1B2A"/><ellipse cx="132" cy="118" rx="11" ry="13" fill="#fff" stroke="#0D1B2A" stroke-width="5"/><circle cx="135" cy="121" r="5" fill="#0D1B2A"/><path d="M84 96 q10 -7 20 -2 M124 94 q10 -5 20 2" stroke="#0D1B2A" stroke-width="5" fill="none" stroke-linecap="round"/><ellipse cx="82" cy="146" rx="9" ry="5" fill="#F7A8B8" opacity="0.7"/><ellipse cx="146" cy="146" rx="9" ry="5" fill="#F7A8B8" opacity="0.7"/><path d="M92 146 Q114 168 136 146" fill="none" stroke="#0D1B2A" stroke-width="6" stroke-linecap="round"/><circle cx="204" cy="66" r="11" fill="#fff" stroke="#0D1B2A" stroke-width="6"/><path d="M226 56 q8 10 2 22 M234 46 q12 16 4 34" stroke="#0D1B2A" stroke-width="4" fill="none" stroke-linecap="round" opacity=".4"/></svg><span>De<i>Prijs</i>vergelijker</span></a>
+        <p class="dpf-tag">Onafhankelijk vergelijken voor telefoon, sim only, internet, energie, zorg en bijna 40.000 producten. Elke nacht gemeten, elke ochtend hier.</p>
+        <ul class="dpf-zeg">
+          <li><b>&#10003;</b>Gratis te gebruiken</li>
+          <li><b>&#10003;</b>Zonder account</li>
+          <li><b>&#10003;</b>Elke nacht gemeten</li>
+        </ul>
+        <p class="dpf-geld">Klik je door en sluit je af, dan krijgen wij soms een vergoeding van de aanbieder. De volgorde op onze site staat daar los van. <a href="/pages/over-ons">Zo vergelijken wij</a></p>
+      </div>
+      {%- if fb != blank or ig != blank -%}
+      <div class="dpf-volg">
+        <span>Volg ons</span>
+        <div class="dpf-soc">
+          {%- if fb != blank -%}<a href="{{ fb }}" target="_blank" rel="noopener me" aria-label="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5.02 3.66 9.18 8.44 9.94v-7.03H7.9v-2.91h2.54V9.85c0-2.52 1.49-3.91 3.77-3.91 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.78-1.63 1.57v1.89h2.78l-.45 2.91h-2.33V22c4.78-.76 8.44-4.92 8.44-9.94z"/></svg></a>{%- endif -%}
+          {%- if ig != blank -%}<a href="{{ ig }}" target="_blank" rel="noopener me" aria-label="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41-.56-.22-.96-.48-1.38-.9-.42-.42-.68-.82-.9-1.38-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.31-1.46.72-2.13 1.38C1.35 2.68.94 3.35.63 4.14.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.07 2.13 1.38.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56.79-.31 1.46-.72 2.13-1.38.66-.67 1.07-1.34 1.38-2.13.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91-.31-.79-.72-1.46-1.38-2.13C21.32 1.35 20.65.94 19.86.63 19.1.33 18.22.13 16.95.07 15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 100 12.32A6.16 6.16 0 0012 5.84zm0 10.16a4 4 0 110-8 4 4 0 010 8zm7.85-10.41a1.44 1.44 0 11-2.88 0 1.44 1.44 0 012.88 0z"/></svg></a>{%- endif -%}
         </div>
       </div>
-      <nav class="pvf-col" aria-label="{{ f_c1 | strip_html }}">
-        <h5>{{ f_c1 }}</h5>
+      {%- endif -%}
+    </div>
+
+    <nav class="dpf-snel" aria-label="Snel naar">
+      <a href="/pages/sim-only">Sim only</a>
+      <a href="/pages/telefoonabonnement">Telefoon</a>
+      <a href="/pages/energie">Energie</a>
+      <a href="/pages/zorgverzekering">Zorg</a>
+      <a href="/pages/vergelijken">Producten</a>
+    </nav>
+
+    <div class="dpf-grid">
+      <details class="dpf-k" open>
+        <summary>Vergelijken</summary>
         <ul>
-          <li><a class="pvf-uit" href="/pages/alle-prijzen">{{ f_ap }}</a></li>
-          <li><a href="/pages/telefoonabonnement">{{ f_l2 }}</a></li>
-          <li><a href="/pages/beste-telefoon-deals-deze-maand">{{ f_l4c }}</a></li>
-          <li><a href="/pages/sim-only">{{ f_l3 }}</a></li>
-          <li><a href="/pages/internet-tv">{{ f_l1 }}</a></li>
-          <li><a href="/pages/energie">{{ f_en }}</a></li>
-          <li><a href="/pages/zorgverzekering">{{ f_zv }}</a></li>
-          <li><a href="/pages/zenderpakketten">{{ f_zp }}</a></li>
-          <li><a href="/pages/bellen-internet-buitenland">{{ f_buit }}</a></li>
-          <li><a href="/pages/internet-op-vakantie">{{ f_vak }}</a></li>
-          <li><a href="/pages/dagelijkse-deals">{{ f_l4 }}</a></li>
+          <li><a class="dpf-uit" href="/pages/alle-prijzen">Alle prijzen van vandaag</a></li>
+          <li><a href="/pages/sim-only">Sim only</a></li>
+          <li><a href="/pages/telefoonabonnement">Telefoon + abonnement</a></li>
+          <li><a href="/pages/internet-tv">Internet &amp; TV</a></li>
+          <li><a href="/pages/energie">Energie (stroom &amp; gas)</a></li>
+          <li><a href="/pages/zorgverzekering">Zorgverzekering</a></li>
           <li><a href="/pages/vergelijken">Productvergelijker</a></li>
           <li><a href="/pages/gaming">Gaming</a></li>
-          <li><a href="/pages/black-friday">Black Friday 2026</a></li>
+          <li><a href="/pages/zenderpakketten">Tv-zenders &amp; pakketten</a></li>
           <li><a href="/pages/mijn-contracten">Mijn contracten</a></li>
           <li><a href="/pages/studenten">Voor studenten</a></li>
         </ul>
-      </nav>
-      <nav class="pvf-col" aria-label="{{ f_c2 | strip_html }}">
-        <h5>{{ f_c2 }}</h5>
+      </details>
+      <details class="dpf-k" open>
+        <summary>Deals &amp; sim only</summary>
         <ul>
-          <li><a href="/pages/wat-is-sim-only">{{ f_l5 }}</a></li>
-          <li><a href="/pages/goedkoopste-sim-only">{{ f_l6 }}</a></li>
-          <li><a href="/pages/goedkoopste-sim-only-deze-maand">{{ f_l6b }}</a></li>
-          <li><a href="/pages/5g-sim-only">{{ f_l7 }}</a></li>
-          <li><a href="/pages/hoe-overstappen">{{ f_l8 }}</a></li>
+          <li><a href="/pages/beste-telefoon-deals-deze-maand">Beste telefoondeals deze maand</a></li>
+          <li><a href="/pages/goedkoopste-sim-only-deze-maand">Goedkoopste sim only deze maand</a></li>
+          <li><a href="/pages/goedkoopste-sim-only">Goedkoopste sim only</a></li>
+          <li><a href="/pages/5g-sim-only">5G sim only</a></li>
+          <li><a href="/pages/wat-is-sim-only">Wat is sim only?</a></li>
+          <li><a href="/pages/dagelijkse-deals">Dagelijkse deals</a></li>
+          <li><a href="/pages/black-friday">Black Friday 2026</a></li>
+          <li><a href="/pages/iphone-18-pre-order">iPhone 18 Pro pre-order</a></li>
+          <li><a href="/pages/bellen-internet-buitenland">Bellen in het buitenland</a></li>
+          <li><a href="/pages/internet-op-vakantie">Internet op vakantie &amp; eSIM</a></li>
         </ul>
-      </nav>
-      <nav class="pvf-col" aria-label="{{ f_c5 | strip_html }}">
-        <h5>{{ f_c5 }}</h5>
+      </details>
+      <details class="dpf-k" open>
+        <summary>Advies</summary>
         <ul>
-          <li><a href="/pages/providers-kpn">KPN</a></li>
-          <li><a href="/pages/providers-odido">Odido</a></li>
-          <li><a href="/pages/providers-vodafone">Vodafone</a></li>
-          <li><a href="/pages/providers-ben">Ben</a></li>
-          <li><a href="/pages/providers-simyo">Simyo</a></li>
-          <li><a href="/pages/providers">{{ f_prov }}</a></li>
-        </ul>
-      </nav>
-      <nav class="pvf-col" aria-label="{{ f_c4 | strip_html }}">
-        <h5>{{ f_c4 }}</h5>
-        <ul>
-          <li><a href="/blogs/advies">{{ f_a0 }}</a></li>
-          <li><a href="/blogs/advies/sim-only-of-abonnement-met-toestel">{{ f_a1 }}</a></li>
-          <li><a href="/blogs/advies/hoeveel-gb-data-heb-je-nodig">{{ f_a2 }}</a></li>
-          <li><a href="/blogs/advies/glasvezel-kabel-of-dsl-internet-kiezen">{{ f_a3 }}</a></li>
+          <li><a class="dpf-uit" href="/blogs/advies">Alle artikelen</a></li>
+          <li><a href="/pages/hoe-overstappen">Hoe overstappen?</a></li>
+          <li><a href="/blogs/advies/sim-only-of-abonnement-met-toestel">Sim only of toestel erbij?</a></li>
+          <li><a href="/blogs/advies/hoeveel-gb-data-heb-je-nodig">Hoeveel data heb je nodig?</a></li>
+          <li><a href="/blogs/advies/glasvezel-kabel-of-dsl-internet-kiezen">Glasvezel, kabel of DSL?</a></li>
           <li><a href="/blogs/advies/energierekening-opbouw-2026">Je energierekening uitgelegd</a></li>
           <li><a href="/blogs/advies/netbeheerkosten-2026">Netbeheerkosten 2026</a></li>
-          <li><a href="/blogs/advies/eigen-risico-2027-400-euro">Eigen risico 2027</a></li>
-          <li><a href="/blogs/advies/einde-salderen-2027-energiecontract">Einde salderen in 2027</a></li>
           <li><a href="/blogs/advies/vast-variabel-of-dynamisch-energiecontract">Vast, variabel of dynamisch</a></li>
+          <li><a href="/blogs/advies/einde-salderen-2027-energiecontract">Einde salderen in 2027</a></li>
+          <li><a href="/blogs/advies/eigen-risico-2027-400-euro">Eigen risico 2027</a></li>
           <li><a href="/blogs/advies/android-vs-ios-in-2026-welk-besturingssysteem-past-bij-jou">Android vs iOS</a></li>
           <li><a href="/blogs/advies/samsung-vs-oneplus-vs-oppo-welke-android-topper-past-bij-jou">Samsung vs OnePlus vs OPPO</a></li>
         </ul>
-      </nav>
-      <nav class="pvf-col" aria-label="{{ f_c6 | strip_html }}">
-        <h5>{{ f_c6 }}</h5>
+      </details>
+      <details class="dpf-k" open>
+        <summary>Nieuw &amp; specs</summary>
         <ul>
-          <li><a href="/pages/iphone-18-pre-order">iPhone 18 Pro pre-order</a></li>
-          <li><a href="/blogs/advies?onderwerp=telefoon">{{ f_n0 }}</a></li>
+          <li><a href="/blogs/advies?onderwerp=telefoon">Al het nieuws</a></li>
           <li><a href="/blogs/advies/nieuw-verwacht-tweede-helft-2026-samsung-unpacked-iphone-18-vouwbare-iphone">Wat komt er nog aan in 2026?</a></li>
-          <li><a href="/blogs/advies/samsung-galaxy-z-fold-8-en-z-flip-8-dit-weten-we-vlak-voor-unpacked">Galaxy Z Fold 8 &amp; Flip 8</a></li>
           <li><a href="/blogs/advies/iphone-18-serie-pro-pro-max-vouwbare-iphone-en-de-air-2-alle-geruchten">iPhone 18-serie</a></li>
           <li><a href="/blogs/advies/samsung-galaxy-s27-serie-eerste-geruchten-over-vier-nieuwe-vlaggenschepen">Galaxy S27-serie</a></li>
-        </ul>
-        <h5 style="margin-top:18px">Specs vergelijken</h5>
-        <ul>
-          <li><a href="/blogs/vergelijk">Alle vergelijkingen</a></li>
+          <li><a href="/blogs/advies/samsung-galaxy-z-fold-8-en-z-flip-8-dit-weten-we-vlak-voor-unpacked">Galaxy Z Fold 8 &amp; Flip 8</a></li>
+          <li><a class="dpf-uit" href="/blogs/vergelijk">Alle specs vergelijken</a></li>
           <li><a href="/blogs/vergelijk/iphone-17-vs-galaxy-s26">iPhone 17 vs Galaxy S26</a></li>
           <li><a href="/blogs/vergelijk/iphone-17-vs-iphone-17-pro">iPhone 17 vs 17 Pro</a></li>
           <li><a href="/blogs/vergelijk/iphone-17-pro-vs-iphone-18-pro">iPhone 17 Pro vs 18 Pro</a></li>
           <li><a href="/blogs/vergelijk/galaxy-s26-vs-galaxy-s26-ultra">Galaxy S26 vs S26 Ultra</a></li>
           <li><a href="/blogs/vergelijk/iphone-17-pro-max-vs-galaxy-s26-ultra">17 Pro Max vs S26 Ultra</a></li>
         </ul>
-      </nav>
-      <nav class="pvf-col" aria-label="{{ f_c3 | strip_html }}">
-        <h5>{{ f_c3 }}</h5>
+      </details>
+      <details class="dpf-k" open>
+        <summary>Providers &amp; over ons</summary>
         <ul>
-          <li><a href="/pages/over-ons">{{ f_l9 }}</a></li>
-          <li><a href="/pages/veelgestelde-vragen">{{ f_l10 }}</a></li>
-          <li><a href="/pages/contact-1">{{ f_l11 }}</a></li>
-          <li><a href="/pages/privacyverklaring-de-prijsvergelijker">{{ f_l12 }}</a></li>
-          <li><a href="/pages/privacy-mijn-contracten">Privacy Mijn contracten</a></li>
-          <li><a href="/pages/disclaimer">{{ f_l13 }}</a></li>
+          <li><a href="/pages/providers-kpn">KPN</a></li>
+          <li><a href="/pages/providers-odido">Odido</a></li>
+          <li><a href="/pages/providers-vodafone">Vodafone</a></li>
+          <li><a href="/pages/providers-ben">Ben</a></li>
+          <li><a href="/pages/providers-simyo">Simyo</a></li>
+          <li><a class="dpf-uit" href="/pages/providers">Alle providers</a></li>
         </ul>
-        <div class="pvf-trustpilot">
-          <div class="stars" aria-hidden="true">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <div><strong>9.2</strong><br><span>{{ f_score }}</span></div>
-        </div>
-      </nav>
+        <ul class="dpf-sub">
+          <li><a href="/pages/over-ons">Over DePrijsvergelijker</a></li>
+          <li><a href="/pages/veelgestelde-vragen">Veelgestelde vragen</a></li>
+          <li><a href="/pages/contact-1">Contact</a></li>
+          <li><a href="/pages/privacy-mijn-contracten">Privacy Mijn contracten</a></li>
+        </ul>
+      </details>
     </div>
-    <div class="pvf-bottom">
-      <p>&copy; {{ 'now' | date: '%Y' }} DePrijsvergelijker.com. {{ f_rights }}</p>
-      <div class="pvf-bottom-links">
-        <a href="/pages/sitemap">{{ f_smap }}</a>
-        <a href="/pages/privacyverklaring-de-prijsvergelijker">{{ f_priv }}</a>
-        <a href="/pages/algemene-voorwaarden">{{ f_terms }}</a>
-        <a href="/pages/disclaimer">{{ f_l13 }}</a>
-      </div>
+
+    <div class="dpf-onder">
+      <span>&copy; {{ 'now' | date: '%Y' }} DePrijsvergelijker.com. Alle rechten voorbehouden.</span>
+      <nav aria-label="Juridisch">
+        <a href="/pages/sitemap">Sitemap</a>
+        <a href="/pages/privacyverklaring-de-prijsvergelijker">Privacy</a>
+        <a href="/pages/algemene-voorwaarden">Voorwaarden</a>
+        <a href="/pages/disclaimer">Disclaimer</a>
+      </nav>
     </div>
   </div>
 </footer>
+<script>
+/* Op mobiel beginnen de blokken dicht, op desktop staan ze open als kolommen. */
+(function () {
+  var mq = window.matchMedia('(max-width: 900px)');
+  function zet() {
+    var d = document.querySelectorAll('footer.dpf details');
+    for (var i = 0; i < d.length; i++) { if (mq.matches) d[i].removeAttribute('open'); else d[i].setAttribute('open', ''); }
+  }
+  zet();
+  if (mq.addEventListener) mq.addEventListener('change', zet); else if (mq.addListener) mq.addListener(zet);
+})();
+</script>
 
 <script type="application/ld+json">
 {
@@ -228,4 +241,13 @@
   "url": "{{ shop.url }}"
 }
 </script>
-{% schema %}{"name":"PV Footer","settings":[],"presets":[{"name":"PV Footer"}]}{% endschema %}
+{% schema %}
+{
+  "name": "PV Footer",
+  "settings": [
+    { "type": "text", "id": "facebook", "label": "Facebook", "default": "https://www.facebook.com/1282076448313773" },
+    { "type": "text", "id": "instagram", "label": "Instagram", "default": "https://www.instagram.com/de.prijsvergelijker/" }
+  ],
+  "presets": [{ "name": "PV Footer" }]
+}
+{% endschema %}

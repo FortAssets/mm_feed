@@ -93,6 +93,7 @@
   </div>
 </div>
 
+{% render 'dpv-mailcheck' %}
 <script>
 (function () {
   if (window.dpvBf) return;
@@ -155,11 +156,21 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) {
       elUit.className = 'dpvbf-uit fout'; elUit.textContent = 'Vul een geldig e-mailadres in.'; elMail.focus(); return;
     }
+    // 9 okt: tikfout in het domein? Eerst vragen; een tweede keer hetzelfde
+    // adres laten we door, dan oordeelt de worker.
+    var voorstel = window.dpvMail ? window.dpvMail.tip(adres) : '';
+    if (voorstel && elStuur.getAttribute('data-tip') !== adres) {
+      elStuur.setAttribute('data-tip', adres);
+      elUit.className = 'dpvbf-uit fout'; window.dpvMail.toon(elUit, 'Bedoel je ' + voorstel + '?', voorstel, elMail);
+      return;
+    }
     var p = huidig;
     elStuur.disabled = true; elStuur.textContent = 'Bezig…';
     stuur(p, adres, function (d) {
       if (!d.ok) {
-        elUit.className = 'dpvbf-uit fout'; elUit.textContent = d.fout || 'Er ging iets mis. Probeer het later nog eens.';
+        elUit.className = 'dpvbf-uit fout';
+        if (window.dpvMail) window.dpvMail.toon(elUit, d.fout || 'Er ging iets mis. Probeer het later nog eens.', d.suggestie, elMail);
+        else elUit.textContent = d.fout || 'Er ging iets mis. Probeer het later nog eens.';
         elStuur.disabled = false; elStuur.textContent = 'Zet het seintje aan'; return;
       }
       zet('dpvBfMail', adres); onthoud(p.id); zetAan(p.id);
@@ -167,7 +178,7 @@
       // 6 okt: de worker zet het seintje sinds v1.76 direct aan, zonder bevestigingsmail.
       elUit.textContent = d.status === 'bevestig'
         ? 'Bijna klaar: wij hebben je een mail gestuurd. Klik daarin op de link om te bevestigen.'
-        : 'Staat aan. Je hoort van ons op 27 november.';
+        : 'Staat aan. Bevestiging gestuurd naar ' + adres + '. Je hoort van ons op 27 november.';
       elStuur.textContent = 'Gelukt';
     });
   }
@@ -200,7 +211,14 @@
       b.disabled = true;
       stuur(p, adres, function (d) {
         if (d.ok) { onthoud(p.id); zetAan(p.id); }
-        else { b.disabled = false; open(p); elUit.className = 'dpvbf-uit fout'; elUit.textContent = d.fout || 'Er ging iets mis.'; }
+        else {
+          // Bewaard adres klopt niet (meestal een tikfout van de vorige keer):
+          // vergeten, zodat het venster het niet opnieuw invult.
+          if (d.suggestie || /afgeleverd|kwam niet aan/i.test(d.fout || '')) zet('dpvBfMail', '');
+          b.disabled = false; open(p); elUit.className = 'dpvbf-uit fout';
+          if (window.dpvMail) window.dpvMail.toon(elUit, d.fout || 'Er ging iets mis.', d.suggestie, elMail);
+          else elUit.textContent = d.fout || 'Er ging iets mis.';
+        }
       });
       return;
     }

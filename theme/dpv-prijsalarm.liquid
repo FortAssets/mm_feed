@@ -185,6 +185,7 @@
 }
 </style>
 
+{% render 'dpv-mailcheck' %}
 <script>
 (function () {
   var wortel = document.getElementById('pa-{{ section.id }}');
@@ -304,6 +305,15 @@
       e.preventDefault();
       var adres = (veld.value || '').trim();
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) { zeg(melding, 'Vul een geldig e-mailadres in.', false); veld.focus(); return; }
+      // 9 okt: tikfout in het domein (.con, gmial.com)? Eerst vragen. Wie
+      // hetzelfde adres nog eens verstuurt, laten we door; de worker kijkt dan
+      // zelf of het domein mail aanneemt.
+      var voorstel = window.dpvMail ? window.dpvMail.tip(adres) : '';
+      if (voorstel && form.getAttribute('data-tip') !== adres) {
+        form.setAttribute('data-tip', adres);
+        zeg(melding, '', false); window.dpvMail.toon(melding, 'Bedoel je ' + voorstel + '?', voorstel, veld);
+        return;
+      }
       var val = form.querySelector('input[name="website"]');
       knop.disabled = true; var oud = knop.textContent; knop.textContent = 'Bezig…';
       fetch(API + '/sm/api/aanmelden', {
@@ -313,15 +323,18 @@
         if (res && res.ok) {
           if (res.status === 'al-actief') {
             deel('gelukt-kop').textContent = 'Je stond er al bij';
-            deel('gelukt-tekst').textContent = 'Dit adres ontvangt de wekelijkse mail al. Je hoeft niets te doen.';
+            deel('gelukt-tekst').textContent = 'Dit adres ontvangt onze mail al. We hebben je onderwerpen bijgewerkt en een bevestiging gestuurd naar ' + adres + '.';
           } else if (res.status !== 'bevestig') {
             // 6 okt: de worker meldt sinds v1.76 direct aan, zonder bevestigingsmail.
             deel('gelukt-kop').textContent = 'Je bent aangemeld';
-            deel('gelukt-tekst').textContent = 'Je staat op de lijst. Je krijgt een mail met wat je gaat ontvangen; afmelden kan altijd met een klik.';
+            deel('gelukt-tekst').textContent = 'We hebben een bevestiging gestuurd naar ' + adres + '. Niets binnen binnen een paar minuten? Kijk even in je spam. Afmelden kan altijd met een klik.';
           }
           toon('gelukt');
         } else {
-          zeg(melding, (res && res.fout) || 'Er ging iets mis. Probeer het later nog eens.', false);
+          zeg(melding, '', false);
+          if (window.dpvMail) window.dpvMail.toon(melding, (res && res.fout) || 'Er ging iets mis. Probeer het later nog eens.', res && res.suggestie, veld);
+          else zeg(melding, (res && res.fout) || 'Er ging iets mis. Probeer het later nog eens.', false);
+          veld.focus();
         }
       }).catch(function () {
         zeg(melding, 'Er ging iets mis. Probeer het later nog eens.', false);

@@ -1,0 +1,206 @@
+{%- comment -%}
+  Twee dingen die het standaard artikelsjabloon niet doet.
+
+  1. NewsArticle-schema met dateModified. Het thema zet er Article op zonder
+     dateModified, en dat is precies het signaal waar de verversingssurfaces
+     van Google op draaien: zonder gewijzigd-datum is elk artikel voor altijd
+     zo oud als de dag dat je het publiceerde.
+
+  2. Een conversieblok onderaan. Een lezer die tot het einde komt is warm, en
+     kreeg tot nu toe alleen de footer. Nu krijgt hij de keuze tussen nu
+     vergelijken en een seintje op de dag dat het ertoe doet.
+
+  De aanmeldknop praat met /api/mc/aanmelden op mijn.deprijsvergelijker.com,
+  dezelfde route als de strip op de homepage.
+
+  9 okt: de vergelijkknop had geen link (het veld "Knop 1 link" was leeg), dus
+  hij laadde dezelfde pagina opnieuw. Nu kiest de knop zelf het toestel:
+  - een vergelijkingsartikel (tag "A|slug|Naam") gaat naar de vergelijker met
+    het eerste model ingevuld: /pages/telefoonabonnement?q=iPhone 17 Pro;
+  - anders op merk uit de titel (iPhone, Galaxy, Pixel);
+  - anders de link uit de instellingen, of de vergelijker zonder filter.
+  De vergelijker leest ?q zelf en vult het zoekveld; getest met iPhone 17 Pro,
+  iPhone 17e, Galaxy S26 FE en Pixel 10.
+{%- endcomment -%}
+
+{%- if article -%}
+{%- assign gewijzigd = article.updated_at | default: article.published_at -%}
+{%- assign afb = article.image | image_url: width: 1200 -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "headline": {{ article.title | strip_html | truncate: 110 | json }},
+  "description": {{ article.excerpt_or_content | strip_html | truncate: 200 | json }},
+  "datePublished": {{ article.published_at | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
+  "dateModified": {{ gewijzigd | date: "%Y-%m-%dT%H:%M:%S%z" | json }},
+  {%- if afb %}"image": [{{ afb | prepend: "https:" | json }}],{% endif %}
+  "inLanguage": "nl-NL",
+  "author": {
+    "@type": "Person",
+    "name": {{ section.settings.auteur | json }},
+    "url": {{ section.settings.auteur_url | json }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "De Prijsvergelijker",
+    "url": "https://www.deprijsvergelijker.com"
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": {{ shop.url | append: article.url | json }}
+  }
+}
+</script>
+
+{%- if section.settings.blok_aan -%}
+{%- liquid
+  assign toestel = ''
+  for t in article.tags
+    assign d = t | split: '|'
+    if d.size > 2 and d[0] == 'A'
+      assign toestel = d[2]
+      break
+    endif
+  endfor
+  if toestel == ''
+    assign titel = article.title | downcase
+    if titel contains 'iphone'
+      assign toestel = 'iPhone'
+    elsif titel contains 'galaxy' or titel contains 'samsung'
+      assign toestel = 'Samsung Galaxy'
+    elsif titel contains 'pixel'
+      assign toestel = 'Pixel'
+    endif
+  endif
+  if toestel != ''
+    assign cta_link = toestel | url_encode | replace: '+', '%20' | prepend: '/pages/telefoonabonnement?q=' | append: '&sorteer=price'
+    assign cta_tekst = 'Vergelijk ' | append: toestel | append: ' met abonnement'
+  else
+    assign cta_link = section.settings.cta_url | default: '/pages/telefoonabonnement'
+    assign cta_tekst = section.settings.cta
+  endif
+-%}
+<div class="dan">
+  <div class="dan-in">
+    <p class="dan-eyebrow">{{ section.settings.eyebrow }}</p>
+    <h2 class="dan-kop">{{ section.settings.kop }}</h2>
+    <p class="dan-sub">{{ section.settings.sub }}</p>
+
+    <div class="dan-rij">
+      <a class="dan-knop pri" href="{{ cta_link }}">{{ cta_tekst }}</a>
+      <button type="button" class="dan-knop" id="dan-open">{{ section.settings.tweede }}</button>
+    </div>
+
+    <div class="dan-mail" id="dan-mail" hidden>
+      <div class="dan-mailrij">
+        <input type="email" id="dan-adres" placeholder="jouw@email.nl" autocomplete="email" inputmode="email" aria-label="E-mailadres">
+        <button type="button" class="dan-knop pri" id="dan-stuur">Zet me op de lijst</button>
+      </div>
+      <p class="dan-fijn" id="dan-uit">{{ section.settings.fijn }}</p>
+    </div>
+
+    <p class="dan-disc">{{ section.settings.disclaimer }}</p>
+  </div>
+</div>
+
+<style>
+.dan{max-width:760px;margin:34px auto 8px;padding:0 20px;font-family:'Plus Jakarta Sans',system-ui,sans-serif}
+.dan-in{background:linear-gradient(160deg,#1D3A6B,#0D1B2A);color:#fff;border-radius:18px;padding:24px 24px 20px}
+.dan-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#7FD2AC;margin:0 0 7px}
+.dan-kop{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.03em;line-height:1.15;margin:0 0 7px;color:#fff}
+.dan-sub{font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.78);margin:0 0 18px;max-width:56ch}
+.dan-rij{display:flex;gap:9px;flex-wrap:wrap}
+.dan-knop{display:inline-flex;align-items:center;justify-content:center;font:inherit;font-size:14px;font-weight:700;
+  border-radius:11px;padding:12px 18px;cursor:pointer;text-decoration:none;
+  background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.2);color:#fff}
+.dan-knop:hover{background:rgba(255,255,255,.16)}
+.dan-knop.pri{background:#00B67A;border-color:#00B67A;color:#08231a}
+.dan-knop.pri:hover{background:#12C98B}
+.dan-mail{margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,.15)}
+.dan-mailrij{display:flex;gap:8px;flex-wrap:wrap}
+.dan-mailrij input{flex:1;min-width:190px;padding:12px 13px;border-radius:11px;border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.08);color:#fff;font:inherit;font-size:16px}
+.dan-mailrij input::placeholder{color:rgba(255,255,255,.45)}
+.dan-mailrij input:focus{outline:2px solid #00B67A;outline-offset:1px}
+.dan-fijn{font-size:12.5px;color:rgba(255,255,255,.6);margin:9px 0 0;line-height:1.5}
+.dan-disc{font-size:11.5px;color:rgba(255,255,255,.45);margin:16px 0 0;line-height:1.5}
+@media(max-width:520px){.dan-knop{width:100%}.dan-in{padding:20px}}
+</style>
+
+{% render 'dpv-mailcheck' %}
+<script>
+(function(){
+  var open=document.getElementById('dan-open');
+  var vak=document.getElementById('dan-mail');
+  var veld=document.getElementById('dan-adres');
+  var knop=document.getElementById('dan-stuur');
+  var uit=document.getElementById('dan-uit');
+  if(!open||!vak||!knop)return;
+
+  open.addEventListener('click',function(){
+    vak.hidden=!vak.hidden;
+    if(!vak.hidden)veld.focus();
+  });
+
+  function zeg(t,goed){
+    uit.textContent=t;
+    uit.style.color=goed?'#7FD2AC':'#FFB4A8';
+  }
+
+  function stuur(){
+    var adres=(veld.value||'').trim();
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)){zeg('Vul een geldig e-mailadres in.',false);veld.focus();return;}
+    // 9 okt: tikfout in het domein (.con, gmial.com)? Eerst vragen.
+    var voorstel=window.dpvMail?window.dpvMail.tip(adres):'';
+    if(voorstel&&knop.getAttribute('data-tip')!==adres){
+      knop.setAttribute('data-tip',adres);
+      uit.style.color='#FFB4A8';window.dpvMail.toon(uit,'Bedoel je '+voorstel+'?',voorstel,veld);return;
+    }
+    knop.disabled=true;var oud=knop.textContent;knop.textContent='Bezig…';
+    fetch('https://mijn.deprijsvergelijker.com/api/mc/aanmelden',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:adres,lijst:{{ section.settings.lijst | json }},bron:'artikel'})
+    }).then(function(r){return r.json();}).then(function(res){
+      if(res&&res.ok){zeg('Gelukt. We hebben een bevestiging gestuurd naar '+adres+'.',true);veld.value='';}
+      else{zeg((res&&res.fout)||'Er ging iets mis. Controleer je adres of probeer het later nog eens.',false);}
+    }).catch(function(){zeg('Er ging iets mis. Probeer het later nog eens.',false);})
+    .then(function(){knop.disabled=false;knop.textContent=oud;});
+  }
+
+  knop.addEventListener('click',stuur);
+  veld.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();stuur();}});
+})();
+</script>
+{%- endif -%}
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Artikel nieuws + CTA",
+  "settings": [
+    { "type": "paragraph", "content": "Zet NewsArticle-schema met een gewijzigd-datum op elk artikel, en toont onderaan een blok met een vergelijkknop en een aanmeldveld. De vergelijkknop kiest zelf het toestel uit het artikel; de link hieronder geldt alleen voor artikelen zonder toestel." },
+    { "type": "header", "content": "Auteur" },
+    { "type": "text", "id": "auteur", "label": "Naam", "default": "Anwish Harpal" },
+    { "type": "text", "id": "auteur_url", "label": "Auteurspagina", "default": "https://www.deprijsvergelijker.com/pages/over-ons" },
+    { "type": "header", "content": "Blok onderaan" },
+    { "type": "checkbox", "id": "blok_aan", "label": "Blok tonen", "default": true },
+    { "type": "text", "id": "eyebrow", "label": "Bovenregel", "default": "Voordat je bestelt" },
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Wat kost dit toestel bij jouw aanbieder?" },
+    { "type": "textarea", "id": "sub", "label": "Subtekst", "default": "Wij rekenen elke aanbieding om naar wat het je gemiddeld per maand kost over de hele looptijd, inclusief aanbetaling en aflopende korting. Dat is zelden de prijs die groot op de poster staat." },
+    { "type": "text", "id": "cta", "label": "Knop 1 (zonder toestel in het artikel)", "default": "Vergelijk telefoonabonnementen" },
+    { "type": "url", "id": "cta_url", "label": "Knop 1 link (zonder toestel in het artikel)" },
+    { "type": "text", "id": "tweede", "label": "Knop 2", "default": "Seintje als de pre-orders opengaan" },
+    { "type": "select", "id": "lijst", "label": "Aanmeldlijst", "default": "iphone18-alert",
+      "options": [
+        { "value": "iphone18-alert", "label": "iPhone 18-alert" },
+        { "value": "dagdeals", "label": "Dagdeals" },
+        { "value": "nieuwsbrief", "label": "Nieuwsbrief" },
+        { "value": "zorgpremies-2027", "label": "Zorgpremies 2027" }
+      ] },
+    { "type": "textarea", "id": "fijn", "label": "Kleine tekst", "default": "Eén bericht op de dag dat de pre-orders opengaan, met de prijzen per aanbieder. Afmelden kan altijd." },
+    { "type": "textarea", "id": "disclaimer", "label": "Disclaimer", "default": "Sluit je via onze links iets af, dan ontvangen wij een vergoeding van de aanbieder. Jij betaalt hetzelfde en het verandert niets aan onze volgorde: die is altijd op prijs." }
+  ],
+  "presets": [ { "name": "Artikel nieuws + CTA" } ]
+}
+{% endschema %}

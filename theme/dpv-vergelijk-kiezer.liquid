@@ -99,31 +99,55 @@
     var selA = document.getElementById('vgk-a'), selB = document.getElementById('vgk-b');
     var tabs = document.getElementById('vgk-tabs'), uit = document.getElementById('vgk-uit');
 
+    // 9 okt: Model 2 toont alleen modellen waar Model 1 echt een artikel mee
+    // heeft. Eerst stonden in beide lijsten alle modellen, en de meeste
+    // combinaties bestaan niet: dan gebeurde er niets behalve een regel tekst
+    // onder de lijsten, en dat leek kapot. Nu leidt elke keuze naar een artikel.
+    function partners(a) {
+      var m = modellen[cat], uit = {};
+      Object.keys(paren).forEach(function (k) {
+        var d = k.split('|');
+        if (d[0] === a && d[1] !== a && m[d[1]]) uit[d[1]] = m[d[1]];
+      });
+      return Object.keys(uit).sort(function (x, y) { return uit[x].localeCompare(uit[y], 'nl', { numeric: true }); });
+    }
+    function opties(lijst, kies) {
+      var m = modellen[cat];
+      return lijst.map(function (s) { return '<option value="' + esc(s) + '"' + (s === kies ? ' selected' : '') + '>' + esc(m[s]) + '</option>'; }).join('');
+    }
     function vul(huidigA, huidigB) {
-      var m = modellen[cat], sl = Object.keys(m).sort(function (x, y) { return m[x].localeCompare(m[y], 'nl', { numeric: true }); });
-      function opties(kies) { return sl.map(function (s) { return '<option value="' + esc(s) + '"' + (s === kies ? ' selected' : '') + '>' + esc(m[s]) + '</option>'; }).join(''); }
-      selA.innerHTML = opties(huidigA || sl[0]); selB.innerHTML = opties(huidigB || sl[1] || sl[0]);
+      var m = modellen[cat];
+      var sl = Object.keys(m).filter(function (s) { return partners(s).length; })
+        .sort(function (x, y) { return m[x].localeCompare(m[y], 'nl', { numeric: true }); });
+      if (!sl.length) return;
+      var a = sl.indexOf(huidigA) > -1 ? huidigA : sl[0];
+      selA.innerHTML = opties(sl, a);
+      vulB(huidigB);
+    }
+    function vulB(huidigB) {
+      var p = partners(selA.value);
+      var b = p.indexOf(huidigB) > -1 ? huidigB : p[0];
+      selB.innerHTML = opties(p, b);
     }
     function tekenTabs() {
       if (catLijst.length < 2) { tabs.hidden = true; return; }
       tabs.innerHTML = catLijst.map(function (c) { return '<button type="button" role="tab" data-c="' + esc(c) + '" aria-selected="' + (c === cat) + '">' + esc(cats[c]) + '</button>'; }).join('');
     }
     function gekozen() {
-      var a = selA.value, b = selB.value;
-      if (a === b) { uit.textContent = 'Kies twee verschillende modellen.'; return; }
-      var h = paren[a + '|' + b];
-      if (h) { if (location.pathname.split('/').pop() !== h) location.href = '/blogs/vergelijk/' + h; else uit.textContent = ''; return; }
-      // Geen artikel voor deze combinatie: laat zien wat er wel is.
-      var m = modellen[cat], opties = (perModel[a] || []).concat(perModel[b] || []), gezien = {};
-      var links = opties.filter(function (o) { if (gezien[o[1]]) return false; gezien[o[1]] = 1; return true; }).slice(0, 6)
-        .map(function (o) { return '<a href="/blogs/vergelijk/' + esc(o[1]) + '">' + esc(o[2]) + ' vs ' + esc(o[0]) + '</a>'; });
-      uit.innerHTML = 'De ' + esc(m[a]) + ' en de ' + esc(m[b]) + ' hebben wij nog niet naast elkaar gezet. Wel: ' + links.join(' · ') + '.';
+      var h = paren[selA.value + '|' + selB.value];
+      if (!h) return;
+      if (location.pathname.split('/').pop() === h) { uit.textContent = ''; return; }
+      uit.textContent = 'Even laden\u2026';
+      location.href = '/blogs/vergelijk/' + h;
     }
     tabs.addEventListener('click', function (e) {
       var b = e.target.closest('button[data-c]'); if (!b) return;
       cat = b.getAttribute('data-c'); tekenTabs(); vul(); gekozen();
     });
-    selA.addEventListener('change', gekozen); selB.addEventListener('change', gekozen);
+    // Model 1 gewisseld: Model 2 opnieuw vullen. Staat het huidige Model 2 er
+    // nog in, dan blijft het staan, anders het eerste dat wel kan.
+    selA.addEventListener('change', function () { vulB(selB.value); gekozen(); });
+    selB.addEventListener('change', gekozen);
     tekenTabs(); vul(vg && vg.getAttribute('data-sa'), vg && vg.getAttribute('data-sb'));
     doos.hidden = false;
   })();

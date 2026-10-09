@@ -1,0 +1,53 @@
+{%- comment -%}
+  Tikfouten in een e-mailadres opvangen voordat het formulier verstuurt.
+
+  9 okt: iemand meldde zich aan als naam@fortassets.con, kreeg "Je bent
+  aangemeld" te zien, en de bevestiging ketste af. De worker weigert zo'n adres
+  nu zelf (domein bestaat niet), maar hier zie je het al voor het versturen,
+  met een knop die het verbeterde adres invult.
+
+  Gebruik: {% render 'dpv-mailcheck' %} en dan in het script
+    var tip = window.dpvMail.tip(adres)        // '' of het verbeterde adres
+    window.dpvMail.toon(el, tekst, tip, veld)  // melding met knop "Gebruik ..."
+{%- endcomment -%}
+<script>
+(function () {
+  if (window.dpvMail) return;
+  var DOMEIN = {
+    'gmial.com': 'gmail.com', 'gmai.com': 'gmail.com', 'gamil.com': 'gmail.com', 'gmail.co': 'gmail.com',
+    'gnail.com': 'gmail.com', 'gmaill.com': 'gmail.com', 'gmal.com': 'gmail.com',
+    'hotmial.com': 'hotmail.com', 'hotmal.com': 'hotmail.com', 'hotmai.com': 'hotmail.com', 'hotmail.co': 'hotmail.com',
+    'hotmil.com': 'hotmail.com', 'hotnail.com': 'hotmail.com', 'hotmaill.com': 'hotmail.com',
+    'outlok.com': 'outlook.com', 'outloo.com': 'outlook.com', 'outlook.co': 'outlook.com', 'outllook.com': 'outlook.com',
+    'iclod.com': 'icloud.com', 'icloud.co': 'icloud.com', 'icoud.com': 'icloud.com'
+  };
+  // Extensies die niet bestaan en bijna altijd .com of .nl bedoelen.
+  var EXT = { con: 'com', cmo: 'com', ocm: 'com', vom: 'com', xom: 'com', comm: 'com', cpm: 'com', coom: 'com', nll: 'nl', nk: 'nl' };
+  function tip(adres) {
+    var a = String(adres || '').trim().toLowerCase().split('@');
+    if (a.length !== 2 || !a[0] || !a[1]) return '';
+    if (DOMEIN[a[1]]) return a[0] + '@' + DOMEIN[a[1]];
+    var d = a[1].split('.'), ext = d[d.length - 1];
+    if (EXT[ext]) { d[d.length - 1] = EXT[ext]; var n = d.join('.'); return a[0] + '@' + (DOMEIN[n] || n); }
+    return '';
+  }
+  function toon(el, tekst, voorstel, veld) {
+    if (!el) return;
+    el.textContent = tekst + ' ';
+    if (voorstel && veld) {
+      var k = document.createElement('button');
+      k.type = 'button';
+      k.textContent = 'Gebruik ' + voorstel;
+      k.style.cssText = 'font:inherit;font-weight:700;color:inherit;background:none;border:0;padding:0;text-decoration:underline;cursor:pointer';
+      k.addEventListener('click', function () {
+        veld.value = voorstel;
+        el.textContent = 'Aangepast. Druk nog een keer op de knop.';
+        veld.focus();
+      });
+      el.appendChild(k);
+    }
+    el.hidden = false;
+  }
+  window.dpvMail = { tip: tip, toon: toon };
+})();
+</script>

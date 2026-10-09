@@ -225,6 +225,24 @@ html:not(#x):not(#y) .pvs{display:none !important}
 })();
 </script>
 
+<script>
+/* Cookiemelding (app Avada): knop "Begrepen!" heet "Accepteren", zodat duidelijk is dat het een keuze is,
+   en "Kom meer te weten" gaat naar de cookieverklaring in plaats van de privacyverklaring. 9 okt. */
+(function () {
+  var COOKIE = '/pages/cookieverklaring-de-prijsvergelijker';
+  function zet() {
+    var b = document.querySelectorAll('.Avada-CookiesBar_BtnAgree');
+    for (var i = 0; i < b.length; i++) if (b[i].textContent.trim() !== 'Accepteren') b[i].textContent = 'Accepteren';
+    var a = document.querySelectorAll('[class*="Avada-CookiesBar"] a');
+    for (var j = 0; j < a.length; j++) if (a[j].getAttribute('href') !== COOKIE && /meer te weten|privacy/i.test(a[j].textContent + ' ' + (a[j].getAttribute('href') || ''))) a[j].setAttribute('href', COOKIE);
+  }
+  var bezig = false;
+  function plan() { if (bezig) return; bezig = true; setTimeout(function () { bezig = false; zet(); }, 50); }
+  zet();
+  try { new MutationObserver(plan).observe(document.documentElement, { childList: true, subtree: true }); } catch (e) {}
+})();
+</script>
+
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

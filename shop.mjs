@@ -158,6 +158,20 @@ const NEDGAME_SALES = process.env.NEDGAME_SALES ||
 const NEDGAME_TWEEDEHANDS = process.env.NEDGAME_TWEEDEHANDS ||
   'https://pf.tradetracker.net/?aid=512670&encoding=utf-8&type=csv&fid=891177&filter_html=1&filter_nl=1&r=feed' +
   '&categoryType=2&additionalType=2&csvDelimiter=%3B&csvEnclosure=%22&filter_extended=1'
+// 9 okt: Expert.nl via TradeTracker, alleen wat op voorraad is (filter_stock=1).
+const EXPERT_FEED = process.env.EXPERT_FEED ||
+  'https://pf.tradetracker.net/?aid=512670&encoding=utf-8&type=csv&fid=254727&filter_html=1&filter_nl=1&filter_stock=1&r=feed' +
+  '&categoryType=2&additionalType=2&csvDelimiter=%3B&csvEnclosure=%22&filter_extended=1'
+// Hoofdgroepen van Expert naar onze categorieen. Eerst kijken we naar de soort
+// (zoals bij Coolblue), dan naar dit pad, en pas daarna naar trefwoorden.
+const EXPERT_PAD = [
+  [/^Wonen\|Koffie en thee/, 'keuken'], [/^Wonen\|Klimaat/, 'huishoudelijk'], [/^Wonen\|Smart home/, 'slim-huis'],
+  [/^Wonen/, 'wonen'], [/^Witgoed/, 'huishoudelijk'], [/^Koken/, 'keuken'], [/^Huishoudelijk/, 'huishoudelijk'],
+  [/^Computers\|(Randapparatuur|Printers|Netwerk)/, 'randapparatuur'], [/^Computers/, 'laptops'],
+  [/^Telefoons en tablets\|[^|]*\|Accessoires/, 'accessoires'], [/^Telefoons en tablets/, 'telefoons'],
+  [/^Audio/, 'audio'], [/^Televisies/, 'tv-beeld'], [/^Verzorging/, 'verzorging'], [/^Gaming/, 'gaming'],
+  [/^Foto/, 'foto'], [/^Elektronica/, 'accessoires']
+]
 // Platforms van nu. Een product van Nedgame dat nog bij geen andere winkel ligt,
 // nemen we alleen op als het voor een van deze platforms is. Oudere platforms
 // (PS4, PS3, Xbox One, 3DS, Wii) en merchandise komen alleen mee als een andere
@@ -1237,6 +1251,45 @@ async function haalNedgame () {
   }
 }
 
+function ttTekst (t) {
+  return String(t || '').replace(/&apos;|&#0?39;/g, "'").replace(/&quot;/g, '"').replace(/&amp;/g, '&').trim()
+}
+
+function uitExpert (r) {
+  const prijs = num(r.price)
+  if (!(prijs > 0)) return null
+  const naam = ttTekst(r.name)
+  if (!naam) return null
+  const pad = String(r.categoryPath || '').replace(/&apos;/g, "'")
+  const delen = pad.split('|').map(x => x.trim()).filter(Boolean)
+  const soort = (delen.length > 1 ? delen[delen.length - 1] : '').toLowerCase()
+  let cat = TYPE_NAAR_CAT[soort] || ''
+  if (!cat) for (const [re, c] of EXPERT_PAD) if (re.test(pad)) { cat = c; break }
+  if (!cat) cat = bepaalCat(soort, naam, 'Expert', pad)
+  if (!GELDIG.has(cat)) return null
+  let ean = /^\d{8,14}$/.test(r.EAN || '') ? r.EAN : ''
+  if (ean.length === 11 || ean.length === 12) ean = ean.padStart(13, '0')
+  let van = num(r.fromPrice)
+  if (!(van > prijs * 1.01)) van = 0
+  return {
+    bron: 'expert',
+    naam,
+    merk: (r.brand || '').trim(),
+    prijs,
+    van,
+    winkel: 'Expert',
+    url: (r.productURL || '').trim(),
+    afb: (r.imageURL_large || r.imageURL || '').trim(),
+    ean,
+    type: nettSoort(soort, cat, ''),
+    cat,
+    voorraad: 1,
+    staat: /refurb|tweedekans|outlet|gebruikt/i.test(naam + ' ' + pad) ? 'refurbished' : 'nieuw',
+    kleur: (r.color || '').trim(),
+    verzend: num(r.deliveryCosts)
+  }
+}
+
 // basis: een product van een andere winkel met hetzelfde EAN, of undefined.
 function uitNedgame (r, basis) {
   const prijs = num(r.price)
@@ -1806,6 +1859,14 @@ async function main () {
       MM_ONDERGRENS + '). Staat er HTTP 403 of 401 hierboven, dan is MM_TOKEN verlopen of ' +
       'gedraaid. Zonder MediaMarkt valt er niets te vergelijken, dus hier stoppen.')
   }
+
+  // Expert, ook voor bol, om dezelfde reden.
+  try {
+    const ex = await leesTtFeed(EXPERT_FEED, process.env.LOKAAL_EXPERT)
+    let n = 0
+    for (const r of ex) { const it = uitExpert(r); if (it) { rauw.push(it); n++ } }
+    console.log('Expert:', ex.length, 'regels,', n, 'bruikbaar')
+  } catch (e) { console.log('Expert niet opgehaald (' + e.message + '), verder zonder') }
 
   // Nedgame, voor bol: zo neemt bol de EAN's van Nedgame mee in zijn ronde, en
   // krijgt een game die alleen Nedgame had er een bol-prijs naast.

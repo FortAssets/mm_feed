@@ -61,6 +61,7 @@
           </select>
         </label>
       </div>
+      <div class="bv-tabs" id="bv-tabs" role="toolbar" aria-label="Naar schap" hidden></div>
       <div class="bv-actief" id="bv-actief" hidden></div>
       <p class="bv-vooruit" id="bv-vooruit" hidden></p>
       <div class="bv-grid" id="bv-grid"><p class="bv-leeg">Laden…</p></div>
@@ -71,8 +72,9 @@
   <div class="bv-mee" id="bv-mee" hidden>
     <button type="button" class="bv-fknop" id="bv-mee-f" aria-controls="bv-zij">
       <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14v2H3zm3 4h8v2H6zm2 4h4v2H8z"/></svg>Filters<span id="bv-mee-n" hidden></span></button>
-    <span class="bv-nuschap" id="bv-nuschap" hidden></span>
-    <label class="bv-kies"><span class="bv-weg">Ga naar schap</span><select id="bv-cc"></select></label>
+    <label class="bv-kies bv-mee-sort"><span class="bv-weg">Sorteer</span><select id="bv-sort2" aria-label="Sorteer"></select></label>
+    <div class="bv-tabs" id="bv-mee-tabs" role="toolbar" aria-label="Naar schap" hidden></div>
+    <span class="bv-mee-oud" hidden><span class="bv-nuschap" id="bv-nuschap"></span><select id="bv-cc" tabindex="-1" aria-hidden="true"></select></span>
   </div>
 
   <section class="bv-sec" id="bv-zoekextra" hidden>
@@ -556,6 +558,31 @@ html:not(#x):not(#y) .bv-mee .bv-nuschap{flex:1;min-width:0;max-width:none;backg
 .bv-mee .bv-kies{flex:0 1 220px;min-width:0}
 html:not(#x):not(#y) .bv-mee .bv-kies select{height:42px;width:100%;max-width:none;font-size:14px}
 @media(max-width:820px){.bv-mee{padding:8px 14px}.bv-mee .bv-kies{flex:0 0 118px}.bv-mee .bv-nuschap{font-size:15.5px}html:not(#x):not(#y) .bv-mee .bv-fknop{padding:0 12px}}
+/* 9 okt: schaptabs (variant B). Bovenaan en in de balk die meeloopt staat
+   hetzelfde: rij 1 filters en sorteren, rij 2 alle schappen om te vegen. Een
+   tik springt naar dat schap; het schap waar je bent kleurt donker en schuift
+   vanzelf in beeld. Alleen bij sorteren per schap, want alleen dan staan de
+   producten per schap. */
+.bv-mee-oud{display:none !important}
+.bv-mee{flex-wrap:wrap;row-gap:8px}
+.bv-mee .bv-mee-sort{flex:1 1 auto;min-width:0;max-width:300px;margin-left:auto}
+html:not(#x):not(#y) .bv-mee .bv-mee-sort select{width:100%}
+.bv-tabs{display:flex;gap:7px;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-webkit-overflow-scrolling:touch;
+  margin:-4px 0 12px;padding:2px 2px 4px;scroll-padding:0 14px}
+.bv-tabs::-webkit-scrollbar{display:none}
+.bv-tabs[hidden]{display:none}
+.bv-mee .bv-tabs{flex:0 0 100%;margin:0;padding:0 0 2px}
+html:not(#x):not(#y) .bv-tabs button{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;font:inherit;font-size:13.5px;font-weight:700;
+  white-space:nowrap;color:#0D1B2A !important;background:#fff !important;border:1.5px solid #CBD3DF !important;border-radius:99px !important;
+  padding:7px 12px;min-height:0;cursor:pointer;box-shadow:none !important;text-transform:none;letter-spacing:0}
+html:not(#x):not(#y) .bv-tabs button small{font-size:12px;font-weight:600;color:#4A5A70}
+html:not(#x):not(#y) .bv-tabs button.aan{background:#0D1B2A !important;border-color:#0D1B2A !important;color:#fff !important}
+html:not(#x):not(#y) .bv-tabs button.aan small{color:#9FB0C4}
+@media(max-width:820px){
+  .bv-mee .bv-mee-sort{flex:1 1 0;max-width:none}
+  .bv-tabs{margin:-2px -14px 12px;padding:2px 14px 4px}
+  .bv-mee .bv-tabs{margin:0 -14px;padding:0 14px 2px}
+}
 
 </style>
 
@@ -900,9 +927,42 @@ html:not(#x):not(#y) .bv-mee .bv-kies select{height:42px;width:100%;max-width:no
           '<span class="bv-lm">'+(y.titel?e(y.titel):'geen actie')+(y.perEenheid?' · '+eu(y.perEenheid)+' per '+e(eh):'')+(dt?' · '+(y.nu?'gecheckt ':'gezien ')+dt.getDate()+' '+MND[dt.getMonth()]:'')+'</span></a>'}).join('')}
     return h}
 
+  /* Schaptabs: alle schappen in het huidige resultaat, met het aantal. */
+  var tabsBoven=document.getElementById('bv-tabs'), tabsMee=document.getElementById('bv-mee-tabs'), laatsteR=[];
+  function tekenTabs(r){
+    laatsteR=r;
+    var volg=[], n={};
+    if(sort==='schap')r.forEach(function(x){var c=x.p.categorie||'Overig';if(!n[c]){n[c]=0;volg.push(c)}n[c]++});
+    var html=volg.map(function(c){return '<button type="button" data-schap="'+e(c)+'">'+e(c)+' <small>'+n[c]+'</small></button>'}).join('');
+    [tabsBoven,tabsMee].forEach(function(t){if(!t)return;t.hidden=volg.length<2;if(t.dataset.html!==html){t.innerHTML=html;t.dataset.html=html}});
+    zetTab(huidigeTab,true);
+  }
+  var huidigeTab='';
+  function zetTab(c,stil){
+    huidigeTab=c;
+    [tabsBoven,tabsMee].forEach(function(t){if(!t||t.hidden)return;var gekozen=null;
+      Array.prototype.forEach.call(t.querySelectorAll('button'),function(b){var aan=b.getAttribute('data-schap')===c;b.classList.toggle('aan',aan);b.setAttribute('aria-pressed',aan?'true':'false');if(aan)gekozen=b});
+      if(gekozen){var links=gekozen.offsetLeft-t.offsetLeft-14, rechts=links+gekozen.offsetWidth+28;
+        if(links<t.scrollLeft||rechts>t.scrollLeft+t.clientWidth){try{t.scrollTo({left:Math.max(0,links),behavior:stil?'auto':'smooth'})}catch(err){t.scrollLeft=Math.max(0,links)}}}});
+  }
+  function naarSchap(c){
+    var kop=root.querySelector('.bv-schapkop[data-schap="'+(window.CSS&&CSS.escape?CSS.escape(c):c)+'"]');
+    if(!kop&&laatsteR.length>getoond){getoond=laatsteR.length;teken();
+      kop=root.querySelector('.bv-schapkop[data-schap="'+(window.CSS&&CSS.escape?CSS.escape(c):c)+'"]')}
+    if(!kop)return;
+    zetTab(c);
+    var hoog=(mee&&!mee.hidden?mee.offsetHeight:(tabsMee?tabsMee.offsetHeight+70:110));
+    var y=kop.getBoundingClientRect().top+window.pageYOffset-bovenrand()-hoog-8;
+    try{window.scrollTo({top:Math.max(0,y),behavior:'smooth'})}catch(err){window.scrollTo(0,Math.max(0,y))}
+    try{if(window.gtag)gtag('event','bv_schaptab',{schap:c})}catch(err){}
+  }
+  [document.getElementById('bv-tabs'),document.getElementById('bv-mee-tabs')].forEach(function(t){if(!t)return;
+    t.addEventListener('click',function(ev){var b=ev.target.closest('button');if(b)naarSchap(b.getAttribute('data-schap'))})});
+
   function teken(){
     var r=gefilterd(), g=document.getElementById('bv-grid');
     if(!r.length){
+      tekenTabs([]);
       g.innerHTML='<div class="bv-niets"><b>Niets gevonden</b><span>Geen aanbieding die aan deze filters voldoet. Wis een filter of zoek op een ander merk.</span></div>';
       document.getElementById('bv-meer').hidden=true;
       document.getElementById('bv-telling').innerHTML='0 producten';
@@ -925,6 +985,7 @@ html:not(#x):not(#y) .bv-mee .bv-kies select{height:42px;width:100%;max-width:no
         g.innerHTML=zicht.map(kaart).join('');
       }
       var m=document.getElementById('bv-meer');
+      tekenTabs(r);
       m.hidden=r.length<=getoond;
       m.textContent='Toon '+Math.min(STAP*2,r.length-getoond)+' van de '+(r.length-getoond)+' overige producten';
       var w=0;r.forEach(function(x){w+=x.ds.length});
@@ -1107,16 +1168,21 @@ html:not(#x):not(#y) .bv-mee .bv-kies select{height:42px;width:100%;max-width:no
       .filter(function(r){return r.bottom>0&&r.height>0}).sort(function(a,b){return a.top-b.top})
       .forEach(function(r){if(r.top<=m+5)m=Math.max(m,r.bottom)});return Math.round(m)}
   function plak(){raf=0;if(!mee||!balk)return;
-    var boven=bovenrand(), br=balk.getBoundingClientRect(), gr=document.getElementById('bv-grid').getBoundingClientRect();
+    var onderkant=(tabsBoven&&!tabsBoven.hidden)?tabsBoven:balk;
+    var boven=bovenrand(), br=onderkant.getBoundingClientRect(), gr=document.getElementById('bv-grid').getBoundingClientRect();
     var aan=br.bottom<boven+2&&gr.bottom>boven+160&&!zij.classList.contains('open');
-    if(!aan){mee.hidden=true;return}
+    if(!aan){mee.hidden=true;
+      var kp=sort==='schap'?root.querySelectorAll('.bv-schapkop'):[];
+      if(kp.length&&huidigeTab!==(kp[0].getAttribute('data-schap')||''))zetTab(kp[0].getAttribute('data-schap')||'',true);
+      return}
     var breed=window.innerWidth>820, hr=(breed?document.querySelector('.bv-hoofd'):root).getBoundingClientRect();
     mee.hidden=false;mee.style.top=boven+'px';mee.style.left=(breed?hr.left:0)+'px';mee.style.width=(breed?hr.width:window.innerWidth)+'px';
     /* Welk schap staat er nu bovenaan? De laatste kop die onder de balk door is. */
     var koppen=sort==='schap'?document.querySelectorAll('.bv-schapkop'):[], nu='', grens=boven+mee.offsetHeight+14;
     for(var i=0;i<koppen.length;i++){if(koppen[i].getBoundingClientRect().top<=grens)nu=koppen[i].getAttribute('data-schap')||'';else break}
     if(!nu&&koppen.length)nu=koppen[0].getAttribute('data-schap')||'';
-    wijzer.hidden=!nu;if(nu&&wijzer.textContent!==nu)wijzer.textContent=nu}
+    wijzer.hidden=!nu;if(nu&&wijzer.textContent!==nu)wijzer.textContent=nu;
+    if(nu!==huidigeTab)zetTab(nu)}
   window.addEventListener('scroll',function(){if(!raf)raf=requestAnimationFrame(plak)},{passive:true});
   window.addEventListener('resize',function(){meet();plak()});
   setTimeout(function(){meet();plak()},1200);
@@ -1153,6 +1219,12 @@ html:not(#x):not(#y) .bv-mee .bv-kies select{height:42px;width:100%;max-width:no
     vraag=q.value.trim().toLowerCase();wis.hidden=!vraag;getoond=STAP;teken();brederZoeken(vraag)},220)});
   wis.addEventListener('click',function(){q.value='';vraag='';wis.hidden=true;getoond=STAP;teken();brederZoeken('');q.focus()});
   document.getElementById('bv-zoekform').addEventListener('submit',function(ev){ev.preventDefault()});
+  (function(){var s1=document.getElementById('bv-sort'), s2=document.getElementById('bv-sort2'); if(!s2)return;
+    s2.innerHTML=s1.innerHTML; s2.value=s1.value;
+    s2.addEventListener('change',function(){s1.value=s2.value;sort=s2.value;getoond=STAP;teken();
+      try{var y=balk.getBoundingClientRect().top+window.pageYOffset-bovenrand()-12;window.scrollTo({top:Math.max(0,y),behavior:'smooth'})}catch(err){}});
+    s1.addEventListener('change',function(){s2.value=s1.value});
+  })();
   document.getElementById('bv-sort').addEventListener('change',function(){sort=this.value;getoond=STAP;teken()});
   document.getElementById('bv-meer').addEventListener('click',function(){getoond+=STAP*2;teken()});
   document.getElementById('bv-zij-wis').addEventListener('click',function(){

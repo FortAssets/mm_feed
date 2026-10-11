@@ -1,0 +1,65 @@
+{%- comment -%}
+  Microsoft Clarity (11 okt): heatmaps, scrolldiepte en sessie-opnames.
+
+  Werkt pas als hieronder het project-ID staat (Clarity > Settings > Overview,
+  de 10 tekens na clarity.ms/tag/). Zonder ID doet de sectie niets.
+  In de thema-editor laadt hij niet, zodat je eigen bewerksessies niet
+  worden opgenomen.
+
+  Toestemming: Clarity krijgt de keuze uit de cookiebanner van Shopify door
+  (consentv2). Zonder toestemming meet Clarity zonder cookies.
+  Doorkliks naar aanbieders lopen via onze eigen links en worden hier niet
+  door geraakt.
+
+  Gebeurtenissen die je in Clarity kunt filteren:
+  - doorklik: een klik op een link naar een aanbieder
+  - aanmelding: een klik op een aanmeldknop
+{%- endcomment -%}
+{%- assign cid = section.settings.project_id | strip -%}
+{%- if cid != blank and request.design_mode == false -%}
+<script>
+(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script",{{ cid | json }});
+
+(function(){
+  function geefDoor(){
+    try{
+      var cp = window.Shopify && window.Shopify.customerPrivacy;
+      if(!cp || !cp.analyticsProcessingAllowed) return false;
+      var an = cp.analyticsProcessingAllowed();
+      var ad = cp.marketingAllowed ? cp.marketingAllowed() : false;
+      window.clarity('consentv2', { ad_Storage: ad ? 'granted' : 'denied', analytics_Storage: an ? 'granted' : 'denied' });
+      return true;
+    }catch(e){ return false; }
+  }
+  document.addEventListener('visitorConsentCollected', geefDoor);
+  if(!geefDoor() && window.Shopify && window.Shopify.loadFeatures){
+    window.Shopify.loadFeatures([{ name: 'consent-tracking-api', version: '0.1' }], function(err){ if(!err) geefDoor(); });
+  }
+
+  window.clarity('set', 'paginatype', {{ request.page_type | json }});
+
+  // Doorkliks en aanmeldingen als gebeurtenis, om sessies op te filteren.
+  var AFF = /go\.deprijsvergelijker\.com|\/api\/go|\/api\/shop\/go|awin1\.com|daisycon|tradetracker|tradedoubler|partner\.bol\.com|amazon\.nl|impact|prf\.hn/i;
+  document.addEventListener('click', function(e){
+    var el = e.target && e.target.closest ? e.target.closest('a,button') : null;
+    if(!el) return;
+    var href = el.getAttribute('href') || '';
+    if(el.tagName === 'A' && AFF.test(href)) { window.clarity('event', 'doorklik'); return; }
+    var t = (el.textContent || '').toLowerCase();
+    if(/aanmeld|op de lijst|seintje|mail mij/.test(t) || /aanmeld|stuur/.test(el.id || '')) window.clarity('event', 'aanmelding');
+  }, true);
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Clarity (heatmaps)",
+  "settings": [
+    { "type": "paragraph", "content": "Plak hier het project-ID uit Microsoft Clarity (Settings > Overview). Leeg laten = uit." },
+    { "type": "text", "id": "project_id", "label": "Clarity project-ID" }
+  ]
+}
+{% endschema %}

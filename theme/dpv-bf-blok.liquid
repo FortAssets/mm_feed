@@ -1,0 +1,104 @@
+{%- comment -%}
+  Black Friday-blok (11 okt). Onder elk artikel met de tag "black friday" en op
+  /pages/black-friday:
+  1. links naar de Black Friday-artikelen per winkel en Cyber Monday (het
+     artikel waar je op staat, valt weg), zodat Google en lezers ze vinden;
+  2. acht populaire producten met de laagste prijs en een knop naar die winkel.
+  De prijzen in de HTML zijn van 11 oktober; zodra het blok in beeld komt,
+  haalt het script de prijs en winkel van vandaag op uit de shop-API. Lukt dat
+  niet, dan blijft de prijs van 11 oktober staan, met een doorklik die altijd
+  naar de goedkoopste winkel van dat moment gaat.
+{%- endcomment -%}
+{%- liquid
+  assign toon = false
+  assign huidig = ''
+  if template.name == 'article' and article.tags contains 'black friday'
+    assign toon = true
+    assign huidig = article.handle
+  elsif template.name == 'page' and page.handle == 'black-friday'
+    assign toon = true
+  endif
+  if section.settings.aan == false
+    assign toon = false
+  endif
+-%}
+{%- if toon -%}
+<div class="bfb" id="bfb">
+  <div class="bfb-in">
+    <p class="bfb-eb"><i></i>Black Friday 2026 &middot; vrijdag 27 november</p>
+    <h2 class="bfb-kop">Black Friday per winkel</h2>
+    <div class="bfb-tegels">{%- unless huidig == "black-friday-bol-2026" -%}<a class="bfb-t" href="/blogs/advies/black-friday-bol-2026"><small>Black Friday bij</small><b>bol.com</b><span>AirPods, Switch 2, airfryers</span></a>{%- endunless -%}{%- unless huidig == "black-friday-mediamarkt-2026" -%}<a class="bfb-t" href="/blogs/advies/black-friday-mediamarkt-2026"><small>Black Friday bij</small><b>MediaMarkt</b><span>PS5, MacBook Pro, koffie</span></a>{%- endunless -%}{%- unless huidig == "black-friday-coolblue-2026" -%}<a class="bfb-t" href="/blogs/advies/black-friday-coolblue-2026"><small>Black Friday bij</small><b>Coolblue</b><span>Garmin, Bose, Ninja</span></a>{%- endunless -%}{%- unless huidig == "black-friday-expert-2026" -%}<a class="bfb-t" href="/blogs/advies/black-friday-expert-2026"><small>Black Friday bij</small><b>Expert</b><span>Nespresso, MacBook Air</span></a>{%- endunless -%}{%- unless huidig == "cyber-monday-2026" -%}<a class="bfb-t" href="/blogs/advies/cyber-monday-2026"><small>Daarna</small><b>Cyber Monday</b><span>30 november</span></a>{%- endunless -%}</div>
+    <h2 class="bfb-kop">Populair met Black Friday: de laagste prijs nu</h2>
+    <p class="bfb-sub">Elke nacht vergeleken bij bol.com, MediaMarkt, Coolblue, Expert en meer. Zakt de prijs richting Black Friday, dan zie je dat hier.</p>
+    <div class="bfb-rij"><div class="bfb-k" data-i="e0195950543742" data-c="audio"><a class="bfb-afb" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=audio&amp;i=e0195950543742" target="_blank" rel="sponsored nofollow noopener"><img src="https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_161494432/fee_786_587.png" alt="Apple AirPods Pro 3" loading="lazy" width="200" height="150"></a><p class="bfb-n">Apple AirPods Pro 3</p><p class="bfb-s">oordopjes, noise cancelling</p><p class="bfb-p">€224,95</p><p class="bfb-w">bij bol.com</p><a class="bfb-knop" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=audio&amp;i=e0195950543742" target="_blank" rel="sponsored nofollow noopener">Bekijk bij bol.com</a></div><div class="bfb-k" data-i="e0711719020837" data-c="gaming"><a class="bfb-afb" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=gaming&amp;i=e0711719020837" target="_blank" rel="sponsored nofollow noopener"><img src="https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_161824013/fee_786_587.png" alt="PlayStation 5 Digital" loading="lazy" width="200" height="150"></a><p class="bfb-n">PlayStation 5 Digital</p><p class="bfb-s">console, 825 GB</p><p class="bfb-p">€649,99</p><p class="bfb-w">bij MediaMarkt</p><a class="bfb-knop" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=gaming&amp;i=e0711719020837" target="_blank" rel="sponsored nofollow noopener">Bekijk bij MediaMarkt</a></div><div class="bfb-k" data-i="e0045496337414" data-c="gaming"><a class="bfb-afb" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=gaming&amp;i=e0045496337414" target="_blank" rel="sponsored nofollow noopener"><img src="https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_152249615/fee_786_587.png" alt="Nintendo Switch 2" loading="lazy" width="200" height="150"></a><p class="bfb-n">Nintendo Switch 2</p><p class="bfb-s">console, 256 GB</p><p class="bfb-p">€499,99</p><p class="bfb-w">bij bol.com</p><a class="bfb-knop" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=gaming&amp;i=e0045496337414" target="_blank" rel="sponsored nofollow noopener">Bekijk bij bol.com</a></div><div class="bfb-k" data-i="e8806097827481" data-c="telefoons"><a class="bfb-afb" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=telefoons&amp;i=e8806097827481" target="_blank" rel="sponsored nofollow noopener"><img src="https://mobiel-product.imgix.net/529id3pft172h1d5o068drqbnnh9" alt="Samsung Galaxy S26" loading="lazy" width="200" height="150"></a><p class="bfb-n">Samsung Galaxy S26</p><p class="bfb-s">256 GB</p><p class="bfb-p">€718,90</p><p class="bfb-w">via een partner op bol.com</p><a class="bfb-knop" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=telefoons&amp;i=e8806097827481" target="_blank" rel="sponsored nofollow noopener">Bekijk bij bol.com</a></div><div class="bfb-k" data-i="e4548736162716" data-c="audio"><a class="bfb-afb" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=audio&amp;i=e4548736162716" target="_blank" rel="sponsored nofollow noopener"><img src="https://coolblue.bynder.com/transform/2828ac7c-6f9f-4e70-a42e-0fd72e28eec3/962724?io=transform:fit,height:800,width:800&amp;format=png" alt="Sony WH-1000XM6" loading="lazy" width="200" height="150"></a><p class="bfb-n">Sony WH-1000XM6</p><p class="bfb-s">koptelefoon, noise cancelling</p><p class="bfb-p">€347,54</p><p class="bfb-w">bij bol.com</p><a class="bfb-knop" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=audio&amp;i=e4548736162716" target="_blank" rel="sponsored nofollow noopener">Bekijk bij bol.com</a></div><div class="bfb-k" data-i="e8720389032998" data-c="keuken"><a class="bfb-afb" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=keuken&amp;i=e8720389032998" target="_blank" rel="sponsored nofollow noopener"><img src="https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_158568328/fee_786_587.png" alt="Philips Airfryer Dual Basket" loading="lazy" width="200" height="150"></a><p class="bfb-n">Philips Airfryer Dual Basket</p><p class="bfb-s">NA352/00, 9 liter</p><p class="bfb-p">€132</p><p class="bfb-w">bij MediaMarkt</p><a class="bfb-knop" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=keuken&amp;i=e8720389032998" target="_blank" rel="sponsored nofollow noopener">Bekijk bij MediaMarkt</a></div><div class="bfb-k" data-i="e5025155136201" data-c="huishoudelijk"><a class="bfb-afb" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=huishoudelijk&amp;i=e5025155136201" target="_blank" rel="sponsored nofollow noopener"><img src="https://assets.mmsrg.com/isr/166325/c1/-/ASSET_MMS_177261396/fee_786_587.png" alt="Dyson V15 Detect Absolute" loading="lazy" width="200" height="150"></a><p class="bfb-n">Dyson V15 Detect Absolute</p><p class="bfb-s">steelstofzuiger</p><p class="bfb-p">€799</p><p class="bfb-w">bij MediaMarkt</p><a class="bfb-knop" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=huishoudelijk&amp;i=e5025155136201" target="_blank" rel="sponsored nofollow noopener">Bekijk bij MediaMarkt</a></div><div class="bfb-k" data-i="e0195950689280" data-c="laptops"><a class="bfb-afb" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=laptops&amp;i=e0195950689280" target="_blank" rel="sponsored nofollow noopener"><img src="https://www.expert.nl/media/frontend/catalog/products/768/372662768/1260x1260/372662768-15345488.jpg" alt="MacBook Air 13 inch M5" loading="lazy" width="200" height="150"></a><p class="bfb-n">MacBook Air 13 inch M5</p><p class="bfb-s">16 GB, 1 TB</p><p class="bfb-p">€1.699</p><p class="bfb-w">bij Expert</p><a class="bfb-knop" href="https://shop.deprijsvergelijker.com/api/shop/go?cat=laptops&amp;i=e0195950689280" target="_blank" rel="sponsored nofollow noopener">Bekijk bij Expert</a></div></div>
+    <p class="bfb-fijn" id="bfb-datum">Prijzen van 11 oktober 2026.</p>
+    <p class="bfb-fijn">Klik je door naar een winkel en koop je iets, dan ontvangen wij een vergoeding van die winkel. Jij betaalt hetzelfde en de volgorde blijft op prijs.</p>
+  </div>
+</div>
+<style>
+.bfb{max-width:760px;margin:30px auto 10px;padding:0 20px;font-family:'Instrument Sans',system-ui,sans-serif;color:#0D1B2A}
+.bfb *{box-sizing:border-box}
+.bfb-in{border-top:1.5px solid #E3E8F0;padding-top:22px}
+.bfb-eb{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid #0D1B2A;border-radius:999px;padding:4px 11px;margin:0 0 12px}
+.bfb-eb i{width:8px;height:8px;border-radius:50%;background:#F9C31F;display:block}
+.bfb-kop{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-size:23px;letter-spacing:-.03em;line-height:1.15;margin:4px 0 12px;color:#0D1B2A}
+.bfb-sub{font-size:15px;line-height:1.5;color:#4A5A70;margin:-4px 0 6px}
+.bfb-tegels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:0 0 26px}
+.bfb-t:last-child:nth-child(odd){grid-column:1/-1}
+@media(min-width:700px){.bfb-tegels{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))}.bfb-t:last-child:nth-child(odd){grid-column:auto}}
+.bfb-t{display:block;background:#fff;border:1.5px solid #0D1B2A;border-radius:14px;padding:11px 12px;text-decoration:none !important;color:#0D1B2A !important;box-shadow:4px 4px 0 #3FAE7A}
+.bfb-t small{display:block;font-size:11.5px;font-weight:700;color:#4A5A70;text-transform:uppercase;letter-spacing:.04em}
+.bfb-t b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:19px;letter-spacing:-.03em;margin:3px 0 2px}
+.bfb-t span{display:block;font-size:12.5px;color:#4A5A70;font-weight:600;line-height:1.35}
+.bfb-rij{display:flex;gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 2px 14px;margin:6px -2px 2px;scrollbar-width:none}
+.bfb-rij::-webkit-scrollbar{display:none}
+.bfb-k{flex:0 0 72%;max-width:250px;scroll-snap-align:start;display:flex;flex-direction:column;background:#fff;border:1.5px solid #0D1B2A;border-radius:14px;padding:12px}
+@media(min-width:700px){.bfb-k{flex:0 0 calc(25% - 9px);max-width:none}}
+.bfb-afb{height:130px;background:#F1F3F8;border-radius:10px;position:relative;overflow:hidden;margin:0 0 10px;display:block}
+.bfb-afb img{position:absolute;inset:12px;width:calc(100% - 24px);height:calc(100% - 24px);object-fit:contain;mix-blend-mode:multiply;margin:0 !important}
+.bfb-n{font-size:15px;line-height:1.25;font-weight:700;margin:0}
+.bfb-s{font-size:13px;color:#4A5A70;font-weight:500;margin:3px 0 0}
+.bfb-p{font-family:'Bricolage Grotesque',sans-serif;font-size:25px;font-weight:800;letter-spacing:-.04em;line-height:1;margin:10px 0 2px}
+.bfb-w{font-size:12.5px;color:#4A5A70;font-weight:600;margin:0 0 11px}
+.bfb-knop,.bfb-knop:visited{margin-top:auto;display:flex;align-items:center;justify-content:center;min-height:44px;padding:8px 10px;background:#F9C31F;color:#0D1B2A !important;border:1.5px solid #0D1B2A;border-radius:10px;box-shadow:3px 3px 0 #0D1B2A;font-size:14px;font-weight:700;text-decoration:none !important;text-align:center}
+.bfb-fijn{font-size:12.5px;color:#4A5A70;line-height:1.5;margin:4px 0 0}
+</style>
+<script>
+(function(){
+  var blok=document.getElementById('bfb'); if(!blok||!window.fetch) return;
+  var API='https://shop.deprijsvergelijker.com/api/shop/product';
+  function eur(n){n=Math.round(n*100)/100;var s=(n%1===0?String(n):n.toFixed(2).replace('.',','));var d=s.split(',');d[0]=d[0].replace(/\B(?=(\d{3})+(?!\d))/g,'.');return '\u20ac'+d.join(',');}
+  function wn(w){return w==='bol.com partner'?'via een partner op bol.com':'bij '+w;}
+  function kn(w){return /^bol\.com/.test(w)?'Bekijk bij bol.com':'Bekijk bij '+w;}
+  function laad(){
+    var ks=blok.querySelectorAll('.bfb-k'), klaar=0;
+    Array.prototype.forEach.call(ks,function(k){
+      fetch(API+'?i='+encodeURIComponent(k.dataset.i)+'&cat='+encodeURIComponent(k.dataset.c)).then(function(r){return r.ok?r.json():null;}).then(function(d){
+        var o=d&&d.product&&d.product.o; if(!o||!o.length) return;
+        o=o.filter(function(x){return x.p>0;}).sort(function(a,b){return a.p-b.p;}); if(!o.length) return;
+        k.querySelector('.bfb-p').textContent=eur(o[0].p);
+        k.querySelector('.bfb-w').textContent=wn(o[0].w);
+        var url='https://shop.deprijsvergelijker.com/api/shop/go?cat='+encodeURIComponent(k.dataset.c)+'&i='+encodeURIComponent(k.dataset.i)+'&w='+encodeURIComponent(o[0].w);
+        k.querySelectorAll('a').forEach(function(a){a.href=url;});
+        k.querySelector('.bfb-knop').textContent=kn(o[0].w);
+        klaar++;
+      }).catch(function(){}).then(function(){
+        if(klaar){document.getElementById('bfb-datum').textContent='Prijzen van vandaag, automatisch bijgewerkt.';}
+      });
+    });
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(e){if(e[0].isIntersecting){io.disconnect();laad();}},{rootMargin:'400px'});io.observe(blok);
+  } else laad();
+})();
+</script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Black Friday-blok",
+  "settings": [
+    { "type": "checkbox", "id": "aan", "label": "Blok tonen onder Black Friday-artikelen en op de Black Friday-pagina", "default": true }
+  ]
+}
+{% endschema %}

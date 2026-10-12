@@ -646,7 +646,6 @@ html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:1px solid var(--r5)}
 html:not(#x) .dhd .pj{display:block;line-height:0;pointer-events:none}
 html:not(#x) .dhd .pj svg{display:block;width:100%;height:auto}
 html:not(#x) .dhd .hero-tekst{position:relative}
-html:not(#x) .dhd .pj-hero{position:absolute;right:0;top:-6px;width:128px}
 html:not(#x) .dhd .gz{padding:40px 0 44px;background:#fff;border-bottom:1px solid var(--lijn2)}
 html:not(#x) .dhd .gz .kopregel{align-items:center;margin-bottom:18px}
 html:not(#x) .dhd .gzk{display:flex;align-items:center;gap:10px}
@@ -667,10 +666,7 @@ html:not(#x) .dhd .gzp s{color:#8A97A8;font-size:14px}
 html:not(#x) .dhd .gzw{font-size:12.5px;color:var(--zacht);margin:2px 0 12px}
 html:not(#x) .dhd .gzc .knop{margin-top:auto;width:100%;text-align:center;white-space:normal;line-height:1.2}
 html:not(#x) .dhd .bf-top{position:relative}
-html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
 @media (max-width:900px){
- html:not(#x) .dhd .pj-hero{width:78px;top:-4px}
- html:not(#x) .dhd .hero h1{padding-right:84px}
  html:not(#x) .dhd .gz{padding:26px 0 30px}
  html:not(#x) .dhd .gz .kopregel{margin-bottom:12px;flex-wrap:nowrap}
  html:not(#x) .dhd .pj-gz{width:54px}
@@ -683,8 +679,34 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
  html:not(#x) .dhd .gzc{flex:0 0 72%;scroll-snap-align:start;padding:12px}
  html:not(#x) .dhd .gzf{height:110px}html:not(#x) .dhd .gzf img{max-height:102px}
  html:not(#x):not(#y) .dhd a.gz-alle{font-size:13.5px}
- html:not(#x) .dhd .pj-bf{position:absolute;right:0;top:-8px;width:74px;margin:0}
- html:not(#x) .dhd .bf-top h2{padding-right:78px}
+}
+
+/* ---- Logo's in de kaartjes en Prijsje die praat (12 okt, L1/Hb/Ba) ---- */
+html:not(#x) .dhd .pk3 .lg{flex:none;width:44px;height:44px;border-radius:12px;border:1px solid var(--lijn);background:#fff;padding:6px;object-fit:contain;display:block}
+html:not(#x) .dhd .pk3 .lg.s{width:32px;height:32px;border-radius:9px;padding:4px}
+html:not(#x) .dhd .pk3 .lg.xs{display:inline-block;width:20px;height:20px;border-radius:6px;padding:2px;vertical-align:-5px;margin-right:6px}
+html:not(#x) .dhd .pk3 .lg[hidden]{display:none}
+html:not(#x) .dhd .c-aanbod.met-pj{padding-top:86px}
+html:not(#x) .dhd .pk3.top{position:relative}
+html:not(#x) .dhd .pj-op{position:absolute;right:8px;top:-92px;display:flex;align-items:center;gap:8px;z-index:3;pointer-events:none}
+html:not(#x) .dhd .pj-op .pj{width:84px;flex:none}
+html:not(#x) .dhd .sb,html:not(#x) .dhd .sbb{position:relative;margin:0;background:#fff;color:var(--inkt);border:1.5px solid var(--inkt);border-radius:14px;box-shadow:3px 3px 0 var(--inkt);padding:10px 14px;font-weight:700;font-size:14.5px;line-height:1.38;text-align:left}
+html:not(#x) .dhd .sb{max-width:240px}
+html:not(#x) .dhd .sb::after,html:not(#x) .dhd .sbb::after{content:"";position:absolute;top:50%;width:12px;height:12px;background:#fff}
+html:not(#x) .dhd .sb.r::after{right:-7.5px;border-right:1.5px solid var(--inkt);border-top:1.5px solid var(--inkt);transform:translateY(-50%) rotate(45deg)}
+html:not(#x) .dhd .bf-pj{display:flex;align-items:center;gap:12px;flex:1;min-width:0}
+html:not(#x) .dhd .bf-pj .pj{width:88px;flex:none}
+html:not(#x) .dhd .sbb{flex:1;max-width:540px;font-weight:600;border-color:#fff;box-shadow:3px 3px 0 var(--geel)}
+html:not(#x) .dhd .sbb::after{left:-7.5px;border-left:1.5px solid #fff;border-bottom:1.5px solid #fff;transform:translateY(-50%) rotate(45deg)}
+html:not(#x) .dhd .bf-cta p.sbb{color:var(--inkt);font-size:15px}
+html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#1F7A52;margin-bottom:1px}
+@media (max-width:900px){
+ html:not(#x) .dhd .c-aanbod.met-pj{padding-top:76px}
+ html:not(#x) .dhd .pj-op{right:4px;top:-80px}
+ html:not(#x) .dhd .pj-op .pj{width:70px}
+ html:not(#x) .dhd .sb{max-width:200px;font-size:14px;padding:9px 12px}
+ html:not(#x) .dhd .bf-pj .pj{width:70px}
+ html:not(#x) .dhd .sbb{font-size:14.5px}
 }
 </style>
 
@@ -696,7 +718,7 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
 <section class="hero" aria-labelledby="dhd-h1">
   <div class="wrap">
     <div class="hero-tekst">
-      {%- if s.pj_aan -%}<span class="pj pj-hero"><svg viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible" aria-hidden="true" focusable="false"><defs><filter id="pj-h" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-h)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 L228 180" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M238.4 185.0 Q238.3 186.9 237.8 187.7 Q237.3 188.6 236.7 189.3 Q236.2 190.1 235.3 190.6 Q234.5 191.1 233.6 191.3 Q232.6 191.4 231.7 191.4 Q230.7 191.3 229.9 191.0 Q229.0 190.6 228.2 190.1 Q227.4 189.6 226.8 188.8 Q226.3 188.0 225.9 187.2 Q225.6 186.3 225.6 185.3 Q225.5 184.3 225.8 183.4 Q226.0 182.5 226.5 181.7 Q227.0 180.9 227.7 180.2 Q228.4 179.5 229.3 179.2 Q230.2 178.9 231.1 178.8 Q232.0 178.6 233.0 178.7 Q233.9 178.8 234.8 179.2 Q235.6 179.6 236.4 180.2 Q237.1 180.9 237.5 181.7 Q237.9 182.6 238.2 183.5 Q238.4 184.4 238.4 185.3" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M246 190 l9 4 M240 202 l6 8 M228 206 l1 10" fill="none" stroke="#0D1B2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#0D1B2A" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><circle cx="130" cy="74" r="8" fill="#fff"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M111 150.8 Q128.1 164.1 149 148.9" fill="none" stroke="#fff" stroke-width="4.2749999999999995" stroke-linecap="round" stroke-linejoin="round" /><path d="M103.4 109 q10 -5.699999999999999 19 -1.9 M135.7 106.15 q10 -3.8 18.05 1.9" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span>{%- endif -%}
+
       <p class="eb"><i aria-hidden="true"></i><span data-meting="lang">Prijzen elke nacht gemeten</span></p>
       <h1 id="dhd-h1">{{ s.kop }}<span class="sr"> {{ s.kop_sr }}</span></h1>
       <p class="sub">{{ s.sub }}</p>
@@ -723,22 +745,23 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
       <div class="c-aanbod">
         <article class="pk3 top" data-h="1">
           <p class="winnaar"><span class="nr">1</span><span data-f="wat">laagste maandprijs</span></p>
-          <div class="info"><span class="beeld" data-f="beeld" hidden></span><div><p class="aanb" data-f="aanb">Lebara</p><p class="bundel" data-f="bundel">39 GB · 250 min</p></div></div>
+          <div class="info"><span class="beeld" data-f="beeld" hidden></span><img class="lg" data-f="logo" alt="" width="44" height="44" hidden><div><p class="aanb" data-f="aanb">Lebara</p><p class="bundel"><img class="lg xs" data-f="logok" alt="" width="20" height="20" hidden><span data-f="bundel">39 GB · 250 min</span></p></div></div>
           <p class="prijsrij"><span class="prijs" data-f="prijs">€3,30</span><span class="pm" data-f="per">per maand</span></p>
           <ul class="tags" data-f="tags"><li>2 jaar</li><li>€79,20 over 24 maanden</li></ul>
           <p class="let" data-f="let" hidden></p>
           <a class="knop" data-f="knop" href="/pages/sim-only">Bekijk bij Lebara</a>
+          {%- if s.pj_aan -%}<div class="pj-op" data-f="pj" aria-hidden="true"><p class="sb r" data-f="pjzegt">Dit is vandaag de laagste maandprijs!</p><span class="pj"><svg aria-hidden="true" focusable="false" viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible"><defs><filter id="pj-op" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-op)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 L228 180" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M238.4 185.0 Q238.3 186.9 237.8 187.7 Q237.3 188.6 236.7 189.3 Q236.2 190.1 235.3 190.6 Q234.5 191.1 233.6 191.3 Q232.6 191.4 231.7 191.4 Q230.7 191.3 229.9 191.0 Q229.0 190.6 228.2 190.1 Q227.4 189.6 226.8 188.8 Q226.3 188.0 225.9 187.2 Q225.6 186.3 225.6 185.3 Q225.5 184.3 225.8 183.4 Q226.0 182.5 226.5 181.7 Q227.0 180.9 227.7 180.2 Q228.4 179.5 229.3 179.2 Q230.2 178.9 231.1 178.8 Q232.0 178.6 233.0 178.7 Q233.9 178.8 234.8 179.2 Q235.6 179.6 236.4 180.2 Q237.1 180.9 237.5 181.7 Q237.9 182.6 238.2 183.5 Q238.4 184.4 238.4 185.3" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M246 190 l9 4 M240 202 l6 8 M228 206 l1 10" fill="none" stroke="#0D1B2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#0D1B2A" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><circle cx="130" cy="74" r="8" fill="#fff"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M113.85 148.9 Q130 152.7 146.15 147.95 Q142.35 167.9 130 167.9 Q116.7 167.9 113.85 148.9 Z" fill="#fff" stroke="#fff" stroke-width="2.8499999999999996" stroke-linejoin="round"/><path d="M103.4 107.1 q10 -6.6499999999999995 19 -1.9 M135.7 104.25 q10 -4.75 18.05 1.9" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span></div>{%- endif -%}
         </article>
         <article class="pk3" data-h="2">
           <p class="winnaar"><span class="nr open">2</span><span>ook goedkoop</span></p>
-          <div class="info"><div><p class="aanb" data-f="aanb">Youfone</p><p class="bundel" data-f="bundel">39 GB · 300 min · 2 jaar</p></div></div>
+          <div class="info"><img class="lg s" data-f="logo" alt="" width="32" height="32" hidden><div><p class="aanb" data-f="aanb">Youfone</p><p class="bundel" data-f="bundel">39 GB · 300 min · 2 jaar</p></div></div>
           <p class="prijsrij"><span class="prijs" data-f="prijs">€3,50</span><span class="pm" data-f="per">p/m</span></p>
           <p class="extra" data-f="extra">€84 over 24 maanden</p>
           <a class="knop2" data-f="knop" href="/pages/sim-only">Bekijk bij Youfone</a>
         </article>
         <article class="pk3" data-h="3">
           <p class="winnaar"><span class="nr open">3</span><span>ook goedkoop</span></p>
-          <div class="info"><div><p class="aanb" data-f="aanb">Simpel</p><p class="bundel" data-f="bundel">29 GB · onbeperkt bellen · 2 jaar</p></div></div>
+          <div class="info"><img class="lg s" data-f="logo" alt="" width="32" height="32" hidden><div><p class="aanb" data-f="aanb">Simpel</p><p class="bundel" data-f="bundel">29 GB · onbeperkt bellen · 2 jaar</p></div></div>
           <p class="prijsrij"><span class="prijs" data-f="prijs">€4</span><span class="pm" data-f="per">p/m</span></p>
           <p class="extra" data-f="extra">€96 over 24 maanden</p>
           <a class="knop2" data-f="knop" href="/pages/sim-only">Bekijk bij Simpel</a>
@@ -806,7 +829,7 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
         <p class="eb"><i aria-hidden="true"></i>{{ s.bf_datum }}</p>
         <h2 id="dhd-bf">{{ s.bf_kop }} <em>{{ s.bf_kop_geel }}</em></h2>
       </div>
-      {%- if s.pj_aan -%}<span class="pj pj-bf"><svg viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible" aria-hidden="true" focusable="false"><defs><filter id="pj-b" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-b)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 q24 -6 30 -30" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><g transform="translate(218 70) rotate(8)"><path d="M0 0 h44 v30 h-44 z M0 0 l22 17 l22 -17" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /></g><path d="M270 64 l8 -6 M272 78 l10 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#fff" stroke="#fff" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M111 150.8 Q128.1 164.1 149 148.9" fill="none" stroke="#0D1B2A" stroke-width="4.2749999999999995" stroke-linecap="round" stroke-linejoin="round" /><path d="M103.4 109 q10 -5.699999999999999 19 -1.9 M135.7 106.15 q10 -3.8 18.05 1.9" fill="none" stroke="#0D1B2A" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span>{%- endif -%}
+
       {%- assign bf_s = s.bf_moment | date: '%s' | plus: 0 -%}
       {%- assign nu_s = 'now' | date: '%s' | plus: 0 -%}
       {%- assign bf_d = bf_s | minus: nu_s | divided_by: 86400 -%}
@@ -830,7 +853,7 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
         </a></li>
       {%- endfor -%}
     </ul>
-    <div class="bf-cta"><p>{{ s.bf_regel }}</p><a class="knop" href="{{ s.bf_link }}">{{ s.bf_knop }}</a></div>
+    <div class="bf-cta">{%- if s.pj_aan -%}<div class="bf-pj"><span class="pj"><svg aria-hidden="true" focusable="false" viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible"><defs><filter id="pj-sein" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-sein)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 q24 -6 30 -30" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><g transform="translate(218 70) rotate(8)"><path d="M0 0 h44 v30 h-44 z M0 0 l22 17 l22 -17" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /></g><path d="M270 64 l8 -6 M272 78 l10 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#fff" stroke="#fff" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M113.85 148.9 Q130 152.7 146.15 147.95 Q142.35 167.9 130 167.9 Q116.7 167.9 113.85 148.9 Z" fill="#0D1B2A" stroke="#0D1B2A" stroke-width="2.8499999999999996" stroke-linejoin="round"/><path d="M103.4 107.1 q10 -6.6499999999999995 19 -1.9 M135.7 104.25 q10 -4.75 18.05 1.9" fill="none" stroke="#0D1B2A" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span><p class="sbb"><small>Prijsje</small>{{ s.bf_regel }}</p></div>{%- else -%}<p>{{ s.bf_regel }}</p>{%- endif -%}<a class="knop" href="{{ s.bf_link }}">{{ s.bf_knop }}</a></div>
   </div>
 </section>
 {%- endif -%}
@@ -1342,7 +1365,7 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
                 sub: [JSON.parse(m[2]), polis === 'natura' ? 'naturapolis' : polis + 'polis', 'eigen risico ' + euro(er)].join(' · '),
                 prijs: premie, per: 'per maand', onder: euro(premie * 12) + ' per jaar',
                 let: er > 385 ? 'Let op: eigen risico ' + euro(er) + ' in plaats van €385. Je betaalt minder premie, maar meer als je zorg nodig hebt.' : '',
-                url: url, knop: partner, aff: true });
+                url: url, knop: partner, lg: JSON.parse(m[2]), aff: true });
             } catch (e) {}
           }
           if (!uit.length) throw new Error('geen polissen');
@@ -1366,6 +1389,35 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
     cA.hidden = true; cP.hidden = true; cF.hidden = false; cluster.classList.add('is-prod');
     cF.innerHTML = '<p class="leeg">' + html + '</p>';
   }
+  // Logo's bij de aanbieders in de kaartjes (12 okt). Alleen bekende namen;
+  // een onbekende naam krijgt geen logo, liever niets dan een verkeerd plaatje.
+  var LOGO = {
+    'kpn': 'kpn.com', 'odido': 'odido.nl', 'vodafone': 'vodafone.nl', 'simyo': 'simyo.nl', 'ben': 'ben.nl', 'lebara': 'lebara.nl',
+    'youfone': 'youfone.nl', 'simpel': 'simpel.nl', 'hollandsnieuwe': 'hollandsnieuwe.nl', 'lycamobile': 'lycamobile.nl', 'budget mobiel': 'budgetmobiel.nl',
+    '50plusmobiel': '50plusmobiel.nl', 'robin mobile': 'robinmobile.nl', 'ziggo': 'ziggo.nl', 'delta': 'delta.nl', 'online.nl': 'online.nl', 'caiway': 'caiway.nl',
+    'budget thuis': 'budgetthuis.nl', 'vattenfall': 'vattenfall.nl', 'eneco': 'eneco.nl', 'essent': 'essent.nl', 'energiedirect': 'energiedirect.nl',
+    'vandebron': 'vandebron.nl', 'greenchoice': 'greenchoice.nl', 'oxxio': 'oxxio.nl', 'frank energie': 'frankenergie.nl', 'zonneplan': 'zonneplan.nl',
+    'pure energie': 'pure-energie.nl', 'mega': 'mega.nl', 'budget energie': 'budgetenergie.nl', 'engie': 'engie.nl', 'innova energie': 'innovaenergie.nl',
+    'gewoon energie': 'gewoonenergie.nl', 'nle': 'nle.nl', 'tibber': 'tibber.com', 'vrijopnaam': 'vrijopnaam.nl', 'powerpeers': 'powerpeers.nl', 'coolblue energie': 'coolblue.nl',
+    'zilveren kruis': 'zilverenkruis.nl', 'cz': 'cz.nl', 'vgz': 'vgz.nl', 'menzis': 'menzis.nl', 'fbto': 'fbto.nl', 'a.s.r.': 'asr.nl', 'asr': 'asr.nl',
+    'interpolis': 'interpolis.nl', 'ditzo': 'ditzo.nl', 'ohra': 'ohra.nl', 'univé': 'unive.nl', 'unive': 'unive.nl', 'zekur': 'zekur.nl', 'vinkvink': 'vinkvink.nl',
+    'anderzorg': 'anderzorg.nl', 'dsw': 'dsw.nl', 'onvz': 'onvz.nl', 'de friesland': 'defriesland.nl', 'salland': 'salland.nl', 'iza': 'iza.nl', 'umc': 'umczorgverzekering.nl',
+    'pro life': 'prolife.nl', 'hema': 'hema.nl', 'nn': 'nn.nl', 'stad holland': 'stadholland.nl', 'zorg en zekerheid': 'zorgenzekerheid.nl', 'eno': 'eno.nl', 'bewuzt': 'bewuzt.nl'
+  };
+  function logoUrl(n) {
+    var k = String(n || '').toLowerCase().trim();
+    var d = LOGO[k] || LOGO[k.replace(/\s+(zorgverzekering|zorgverzekeraar|energie|mobiel)$/, '')];
+    return d ? 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://' + d : '';
+  }
+  function zetLogo(img, n) {
+    if (!img) return;
+    var u = logoUrl(n);
+    img.hidden = !u;
+    if (!u) { img.removeAttribute('src'); return; }
+    img.onerror = function () { this.hidden = true; };
+    if (img.getAttribute('src') !== u) img.src = u;
+  }
+
   function tekenAanbod(naam) {
     var tab = AANBOD[naam], st = staat[naam], chip = gekozen(tab, st), lijst = gesorteerd(tab, st.items, chip);
     zet(cV, 'voet', tab.voet ? (tab.voet[chip.id] || '') + ' ' : '');
@@ -1394,7 +1446,12 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
         (x.tags || (x.onder ? [x.onder] : [])).forEach(function (t) { var li = document.createElement('li'); li.textContent = t; tags.appendChild(li); });
         tags.hidden = !tags.firstChild;
         lt.textContent = x.let || ''; lt.hidden = !x.let;
+        // Met een toestelfoto komt het logo klein bij de aanbieder, anders groot voor de naam.
+        zetLogo(q(el, 'logo'), x.foto ? '' : (x.lg || x.knop));
+        zetLogo(q(el, 'logok'), x.foto ? (x.lg || x.knop) : '');
+        var pjz = q(el, 'pjzegt'); if (pjz) pjz.textContent = 'Dit is vandaag de ' + chip.wat + '!';
       } else {
+        zetLogo(q(el, 'logo'), x.lg || x.knop);
         zet(el, 'per', 'p/m');
         zet(el, 'bundel', x.sub);
         var extra = x.mini || (vooraf ? '+ ' + vooraf[1] : x.onder) || '';
@@ -1405,6 +1462,7 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
       a.textContent = 'Bekijk bij ' + x.knop;
       doorklik(a, x.url, n, x.knop, naam, !!x.aff);
     }
+    cA.classList.toggle('met-pj', !!q(cA, 'pj'));
     cF.hidden = true; cP.hidden = true; cA.hidden = false; cluster.classList.remove('is-prod');
   }
 
@@ -1968,7 +2026,7 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
     { "type": "text", "id": "bf_kop", "label": "Kop", "default": "Black Friday 2026:" },
     { "type": "text", "id": "bf_kop_geel", "label": "Kop, geel deel", "default": "waar is het nu al goedkoper?" },
     { "type": "textarea", "id": "bf_artikelen", "label": "Artikelen", "info": "Een per regel: handle|winkel|korte titel", "default": "black-friday-bol-2026|bol.com|Waar bol nu al het goedkoopst is\nblack-friday-mediamarkt-2026|MediaMarkt|PS5, airfryers en MacBook Pro\nblack-friday-coolblue-2026|Coolblue|Garmin, Bose en Ninja\nblack-friday-expert-2026|Expert|Nespresso en MacBook Air" },
-    { "type": "text", "id": "bf_regel", "label": "Regel onderaan", "default": "Zet een seintje op je product en zie het zodra de prijs zakt." },
+    { "type": "text", "id": "bf_regel", "label": "Regel onderaan", "default": "Zet een seintje op je product, dan mail ik je op Black Friday wat het dan kost." },
     { "type": "text", "id": "bf_knop", "label": "Knop", "default": "Alle Black Friday-deals" },
     { "type": "text", "id": "bf_link", "label": "Link", "default": "/pages/black-friday" },
     { "type": "header", "content": "Bronnen" },

@@ -1883,7 +1883,7 @@ html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
     for (var i = 0; i < kand.length && keuze.length < 4; i++) { if (cats[kand[i].c]) continue; cats[kand[i].c] = 1; keuze.push(kand[i]); }
     if (keuze.length < 2) return;
     rij.innerHTML = keuze.map(function (x, n) {
-      var go = shop + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c) + '&w=' + encodeURIComponent(x.w);
+      var go = shop + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c) + '&w=' + encodeURIComponent(x.w) + '&ref=home-gezakt&log=1';
       var naam = x.n.length > 70 ? x.n.slice(0, 68).replace(/[\s,-]+\S*$/, '') + '…' : x.n;
       return '<li class="gzc"><span class="gzb">&minus;' + eur(x.d) + ' · ' + x.k + '%</span>' +
         '<a class="gzf" href="' + go + '" target="_blank" rel="sponsored nofollow noopener" data-pos="gz.' + (n + 1) + '" data-naam="' + esc(x.w) + '" data-tab="gezakt" data-product="' + esc(x.i) + '"><img src="' + esc(x.im) + '" alt="' + esc(naam) + '" loading="lazy" width="160" height="122"></a>' +

@@ -314,6 +314,15 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
 .ds-badge.daal{background:#0D1B2A;color:#FFD84D}
 .ds-winkelrij .ds-was{white-space:nowrap}
 @media (max-width:640px){.ds-dealtip{display:none}}
+
+/* ---------------------------------------------------------------- uitleg met Prijsje (12 okt) */
+.ds-tip{display:flex;align-items:center;gap:12px;background:#F4F6FA;border:1px solid #D5DCE6;border-radius:14px;padding:10px 12px 10px 10px;margin:0 0 12px;font-size:14px;line-height:1.45;color:#26384F}
+.ds-tip .pj{flex:none;width:56px;line-height:0}.ds-tip .pj svg,.ds-leeg .pj svg{display:block;width:100%;height:auto}
+.ds-tip p{flex:1;margin:0}.ds-tip b{color:#0D1B2A;margin-right:4px}
+html:not(#x):not(#y) .ds .ds-tip-ok{flex:none;height:36px;padding:0 13px;border-radius:10px;border:1.5px solid #0D1B2A;background:#fff;color:#0D1B2A;font:inherit;font-weight:800;font-size:13px;cursor:pointer}
+html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;background:none;color:#8A97A8;font-size:20px;line-height:1;cursor:pointer;border-radius:8px}
+.ds-leeg .pj{display:block;width:92px;margin:0 auto 6px}
+@media (max-width:640px){.ds-tip{font-size:13.5px;flex-wrap:wrap}.ds-tip .pj{width:46px}.ds-tip p{flex:1 1 60%}html:not(#x):not(#y) .ds .ds-tip-ok{margin-left:58px}}
 </style>
 
 {%- if section.settings.bf_knop -%}{%- render 'dpv-bf-knop', api: section.settings.bf_api, tot: section.settings.bf_tot -%}{%- endif -%}
@@ -444,9 +453,13 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
         <div class="ds-skel"><i></i><u></u><u></u></div>
       </div>
 
+      {%- if section.settings.tip_aan and section.settings.tip_tekst != blank -%}
+      <div class="ds-tip" id="ds-tip" hidden role="note"><span class="pj"><svg viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible" aria-hidden="true" focusable="false"><defs><filter id="pj-tip" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-tip)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 q22 -6 30 -30" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M224 116 l9 -13" fill="none" stroke="#0D1B2A" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" /><path d="M265.1 84.0 Q264.4 89.6 263.0 92.0 Q261.7 94.5 259.9 96.6 Q258.1 98.8 255.6 100.0 Q253.1 101.3 250.5 102.0 Q247.8 102.7 245.1 102.6 Q242.3 102.6 239.7 101.6 Q237.1 100.7 234.8 99.1 Q232.5 97.5 230.7 95.3 Q228.9 93.1 228.1 90.4 Q227.3 87.7 227.3 84.9 Q227.4 82.1 228.0 79.5 Q228.7 76.8 230.1 74.4 Q231.5 72.0 233.5 70.1 Q235.4 68.1 238.0 67.0 Q240.6 65.9 243.3 65.6 Q246.1 65.4 248.9 65.4 Q251.7 65.5 254.1 66.9 Q256.5 68.3 258.5 70.3 Q260.5 72.2 262.0 74.5 Q263.5 76.8 264.4 79.5 Q265.3 82.2 265.0 85.0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M236 76 q6 -7 14 -6" fill="none" stroke="#0D1B2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".5"/><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#fff" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M118.6 155.55 q11.399999999999999 -3.8 22.799999999999997 0" fill="none" stroke="#0D1B2A" stroke-width="4.2749999999999995" stroke-linecap="round" stroke-linejoin="round" /><path d="M103.4 110.9 l19 -2.8499999999999996 M135.7 102.35 l18.05 4.75" fill="none" stroke="#0D1B2A" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span><p><b>Tip</b>{{ section.settings.tip_tekst }}</p><button type="button" class="ds-tip-ok" data-tip-weg>Begrepen</button><button type="button" class="ds-tip-x" data-tip-weg aria-label="Tip sluiten">&times;</button></div>
+      {%- endif -%}
       <div class="ds-raster" id="ds-raster" hidden></div>
 
       <div class="ds-leeg" id="ds-leeg" hidden>
+        <span class="pj"><svg viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible" aria-hidden="true" focusable="false"><defs><filter id="pj-leeg" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-leeg)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 q22 8 26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#fff" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M118.6 155.55 q11.399999999999999 -3.8 22.799999999999997 0" fill="none" stroke="#0D1B2A" stroke-width="4.2749999999999995" stroke-linecap="round" stroke-linejoin="round" /><path d="M103.4 110.9 l19 -2.8499999999999996 M135.7 102.35 l18.05 4.75" fill="none" stroke="#0D1B2A" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span>
         <b>Niets gevonden</b>
         <p>Er is geen product dat aan alle filters voldoet.</p>
         <button type="button" id="ds-leeg-reset">Filters wissen</button>
@@ -827,7 +840,7 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
       (x.wd ? ' op ' + kortDatum(x.wd) : '') + '</span></div>';
     h += '<div class="ds-kaartknop">';
     h += '<a href="' + API + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c) +
-      '&w=' + encodeURIComponent(x.w) + '" target="_blank" rel="sponsored noopener">Naar ' + esc(x.w) + '</a>';
+      '&w=' + encodeURIComponent(x.w) + '&ref=deals&log=1" target="_blank" rel="sponsored noopener">Naar ' + esc(x.w) + '</a>';
     h += '<button type="button" data-open="' + esc(x.i) + '" aria-label="Alle winkels en prijsverloop">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg></button>';
     h += '</div>';
@@ -849,6 +862,7 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
     var r = dealSelectie();
     tekenFacetten(r.facetten);
     zetDealKnop();
+    if (tipEl) tipEl.hidden = true;
     el.laden.hidden = true;
     el.meerKnop.disabled = false;
     el.meerKnop.textContent = 'Meer laden';
@@ -1001,7 +1015,18 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
     return h;
   }
 
+  // Tip met Prijsje (12 okt): pas na de eerste lijst, niet in de deals (daar kun
+  // je niet aanvinken), en weg voor altijd zodra iemand op Begrepen klikt.
+  var tipEl = document.getElementById('ds-tip');
+  function tipWeg() { try { return localStorage.getItem('dpv-tip-vink') === '1'; } catch (e) { return false; } }
+  function zetTip() { if (tipEl) tipEl.hidden = st.deals || tipWeg() || !items.length; }
+  if (tipEl) tipEl.addEventListener('click', function (e) {
+    if (!e.target.closest('[data-tip-weg]')) return;
+    tipEl.hidden = true;
+    try { localStorage.setItem('dpv-tip-vink', '1'); } catch (er) {}
+  });
   function tekenLijst(d) {
+    setTimeout(zetTip, 0);
     el.laden.hidden = true;
     el.meerKnop.disabled = false;
     el.meerKnop.textContent = 'Meer laden';
@@ -1574,6 +1599,23 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
       "label": "Amazon partnerlabel",
       "default": "fortassets-21",
       "info": "Leeg laten betekent geen Amazon op de pagina. Een prijs staat er alleen als die met de hand is afgelezen en in amazon.json is gezet, met de dag erbij, en hoogstens een week."
+    },
+    {
+      "type": "header",
+      "content": "Tip met Prijsje"
+    },
+    {
+      "type": "checkbox",
+      "id": "tip_aan",
+      "label": "Tip boven de producten tonen",
+      "default": true,
+      "info": "Verdwijnt voor een bezoeker zodra die op Begrepen klikt."
+    },
+    {
+      "type": "text",
+      "id": "tip_tekst",
+      "label": "Tekst van de tip",
+      "default": "Vink twee of drie producten aan, dan zie je ze naast elkaar met alle prijzen per winkel."
     },
     {
       "type": "header",

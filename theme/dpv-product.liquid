@@ -326,7 +326,7 @@
   function model(n) {
     var t = String(n || '').toLowerCase().split(/[\s,()|]+/);
     for (var i = 0; i < t.length; i++) {
-      var w = t[i].replace(/[-/.]/g, '');
+      var w = t[i].split(/[./]/)[0].replace(/-/g, '').replace(/(\d)[a-z]{1,2}$/, '$1');
       if (w.length >= 5 && /\d/.test(w) && /[a-z]/.test(w) && !/^\d+(gb|tb|mb|mah|inch|w|cm|mm)$/.test(w)) return w;
     }
     var b = basis(n); if (MERK_L && b.indexOf(MERK_L + ' ') === 0) b = b.slice(MERK_L.length + 1);
@@ -351,9 +351,11 @@
     uit[0].concat(uit[1]).forEach(function (x) { if (x && !gezien[x.i]) { gezien[x.i] = 1; items.push(x); } });
     function bij(l) { l.forEach(function (x) { if (!gezien[x.i]) { gezien[x.i] = 1; items.push(x); } }); }
     if (items.length >= 4 || !ruim) return [items, kaart];
-    // Te weinig in deze soort: eerst ruimer in prijs, dan de hele categorie in die prijsklasse.
+    // Te weinig in deze soort: eerst ruimer in prijs, dan dezelfde soort in alle
+    // categorieen (een stofzuiger die per abuis bij telefoons staat, vindt zo
+    // toch andere stofzuigers en geen telefoons).
     return lijst(ruim).then(function (l) { bij(l); if (items.length >= 4 || !SOORT) return [items, kaart];
-      return fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + '&n=60&sort=winkels' + ruim).then(function (r) { return r.json(); })
+      return fetch(API + '/api/shop/lijst?cat=alles&type=' + encodeURIComponent(SOORT) + '&n=60&sort=winkels' + ruim).then(function (r) { return r.json(); })
         .then(function (d) { bij((d && d.items) || []); return [items, kaart]; }).catch(function () { return [items, kaart]; }); });
   }).then(function (uit) {
     var items = uit[0], kaart = uit[1], merk = String(MERK || '').toLowerCase();
@@ -372,7 +374,8 @@
     items.sort(function (a, b) { return b._sc - a._sc; });
     // Een model maar een keer, niet vier kleuren of geheugens van hetzelfde toestel.
     var gehad = {};
-    items = items.filter(function (x) { var k = model(x.n); if (gehad[k]) return false; gehad[k] = 1; return true; });
+    function kort(n) { var b = basis(n); if (MERK_L && b.indexOf(MERK_L + ' ') === 0) b = b.slice(MERK_L.length + 1); return '~' + b.split(' ').slice(0, 4).join(' '); }
+    items = items.filter(function (x) { var k = model(x.n), k2 = kort(x.n); if (gehad[k] || gehad[k2]) return false; gehad[k] = 1; gehad[k2] = 1; return true; });
     items = items.slice(0, 8);
     if (!items.length) return;
     document.getElementById('dpp-meer').innerHTML = items.map(function (x) {

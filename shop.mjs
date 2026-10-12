@@ -624,6 +624,7 @@ const GELDIG = new Set(CATEGORIEEN.map(c => c.slug))
 
 // Coolblue vult product_type netjes; dat is de betrouwbaarste bron die er is.
 // Alles wat hier niet in staat valt terug op de trefwoorden verderop.
+const SOORT_WINT = new Set(['huishoudelijk', 'keuken', 'wonen', 'verzorging', 'drogisterij', 'speelgoed', 'klussen'])
 const TYPE_NAAR_CAT = {
   // gaming
   'consoles': 'gaming', 'games': 'gaming', 'gaming headsets': 'gaming',
@@ -1486,6 +1487,14 @@ function koppel (items) {
     const metMerk = aanbod.find(a => a.merk) || beste
     // Coolblue's product_type is de nettere woordenlijst, dus die eerst
     const metType = aanbod.find(a => a.type && a.bron === 'awin') || aanbod.find(a => a.type) || beste
+    // 12 okt: de categorie komt van de goedkoopste winkel. Een telefoonwinkel
+    // (Dutch-Plaza) zet alles in telefoons, ook een Dyson-steelstofzuiger, en dan
+    // stond die stofzuiger tussen de telefoons met telefoons als "vergelijkbaar".
+    // Zegt de soort duidelijk dat het een huishoud-, keuken- of verzorgingsartikel
+    // is, dan gaat de soort voor. Telefoonhoesjes en kabels blijven waar ze staan.
+    const soortNet = nettSoort(metType.type, beste.cat, '')
+    const catSoort = TYPE_NAAR_CAT[String(soortNet || '').toLowerCase()] || ''
+    const catDef = (catSoort && catSoort !== beste.cat && SOORT_WINT.has(catSoort) && GELDIG.has(catSoort)) ? catSoort : beste.cat
 
     uit.push({
       i: k,
@@ -1497,8 +1506,8 @@ function koppel (items) {
         ? beste.naam.slice(0, 104) + (beste.gebruikt ? ' (tweedehands)' : ' (refurbished)')
         : beste.naam.slice(0, 120)),
       b: (metMerk.merk || '').slice(0, 30),
-      c: beste.cat,
-      t: nettSoort(metType.type, beste.cat, ''),
+      c: catDef,
+      t: soortNet,
       p: Math.round(beste.prijs * 100) / 100,
       // Een doorgestreepte prijs die meer dan vijf keer de prijs is (meer dan
       // tachtig procent korting) nemen wij niet over. Dat komt in de feeds

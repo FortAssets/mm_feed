@@ -293,10 +293,25 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
 /* ---------------------------------------------------------------- toetsenbord */
 .ds :focus-visible{outline:2px solid var(--pa);outline-offset:2px}
 .ds-vz{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------------------------------------------------------------- deals (12 okt) */
+.ds-dealrij{display:flex;align-items:center;gap:10px;margin:0 0 10px;flex-wrap:wrap}
+html:not(#x):not(#y) .ds .ds-dealchip{height:42px;padding:0 16px;border:1.5px solid #0D1B2A;background:#fff;color:#0D1B2A;border-radius:999px}
+html:not(#x):not(#y) .ds .ds-dealchip b{font-weight:800}
+html:not(#x):not(#y) .ds .ds-dealchip .n{color:#4A5A70;font-weight:700;font-size:12.5px}
+html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"]{background:#0D1B2A;color:#fff}
+html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D;color:#0D1B2A;border-radius:99px;padding:2px 8px}
+.ds-dealchip .ds-dot{width:8px;height:8px;border-radius:50%;background:#10b981;flex:0 0 auto}
+.ds-dealtip{font-size:12.5px;color:#4A5A70;font-weight:600}
+.ds-dealuitleg{border:1px solid #D5DCE6;border-radius:12px;background:#fff;box-shadow:0 10px 28px rgba(13,27,42,.06);padding:12px 14px;margin:0 0 12px;font-size:13.5px;line-height:1.55;color:#33445A}
+.ds-dealuitleg b{color:#0D1B2A}
+.ds-badge.daal{background:#0D1B2A;color:#FFD84D}
+.ds-winkelrij .ds-was{white-space:nowrap}
+@media (max-width:640px){.ds-dealtip{display:none}}
 </style>
 
 {%- if section.settings.bf_knop -%}{%- render 'dpv-bf-knop', api: section.settings.bf_api, tot: section.settings.bf_tot -%}{%- endif -%}
-<section class="ds" id="ds" data-api="{{ section.settings.api }}" data-amazon="{{ section.settings.amazon_tag }}" data-bf="{% if section.settings.bf_knop %}1{% endif %}">
+<section class="ds" id="ds" data-api="{{ section.settings.api }}" data-amazon="{{ section.settings.amazon_tag }}" data-bf="{% if section.settings.bf_knop %}1{% endif %}" data-deals="{% if section.settings.deals_aan %}{{ section.settings.deals_url }}{% endif %}">
 
   <div class="ds-kop">
     {%- if section.settings.label != blank -%}
@@ -319,6 +334,15 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
       <button class="ds-wis" type="button" id="ds-wis" aria-label="Zoekveld leegmaken" hidden>&times;</button>
     </div>
   </div>
+
+  {%- if section.settings.deals_aan -%}
+  <div class="ds-dealrij">
+    <button class="ds-chip ds-dealchip" type="button" id="ds-deals" aria-pressed="false">
+      <span class="ds-dot" aria-hidden="true"></span><b>{{ section.settings.deals_label | default: "Black Friday-deals" }}</b> <span class="n" id="ds-deals-n" hidden></span>
+    </button>
+    {%- if section.settings.deals_tip != blank -%}<span class="ds-dealtip">{{ section.settings.deals_tip }}</span>{%- endif -%}
+  </div>
+  {%- endif -%}
 
   <nav class="ds-chips" id="ds-cats" aria-label="Categorieen">
     <button class="ds-chip" type="button" data-cat="" aria-pressed="true"><b>Alles</b></button>
@@ -380,6 +404,9 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     </aside>
 
     <div class="ds-hoofd">
+      {%- if section.settings.deals_aan and section.settings.deals_uitleg != blank -%}
+      <div class="ds-dealuitleg" id="ds-dealuitleg" hidden>{{ section.settings.deals_uitleg }}</div>
+      {%- endif -%}
       <div class="ds-balk">
         <button type="button" class="ds-fknop" id="ds-fknop" aria-controls="ds-zij" aria-expanded="false">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
@@ -459,6 +486,10 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
   /* Het partnerlabel van Amazon. Leeg betekent: geen Amazon op de pagina. */
   var AMZ = (wortel.getAttribute('data-amazon') || '').trim();
   var BF = wortel.getAttribute('data-bf') === '1';
+  /* Deals (12 okt): gezakt.json uit de GitHub Action. Daarin alleen producten
+     die bij dezelfde winkel echt lager staan dan de laagste prijs uit de 30
+     dagen voor de daling. Leeg betekent: geen deals-knop. */
+  var DEALS = (wortel.getAttribute('data-deals') || '').trim();
 
   /* Een EAN is de nauwkeurigste zoekopdracht die Amazon aanneemt; staat er
      geen EAN bij, dan het merk met de productnaam. Een vast ASIN heeft
@@ -495,6 +526,7 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     min: '',
     max: '',
     sort: 'populair',
+    deals: false,
     pagina: 1,
     perPagina: 24
   };
@@ -561,7 +593,8 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     Object.keys(st.filters).forEach(function (k) { if (st.filters[k]) p.set(k, '1'); });
     if (st.min !== '') p.set('min', st.min);
     if (st.max !== '') p.set('max', st.max);
-    if (st.sort !== 'populair') p.set('sort', st.sort);
+    if (st.sort !== 'populair' && !(st.deals && st.sort === 'korting')) p.set('sort', st.sort);
+    if (st.deals) p.set('deals', 'black-friday');
     var s = p.toString();
     var nieuw = location.pathname + (s ? '?' + s : '');
     try {
@@ -582,7 +615,9 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     });
     st.min = p.get('min') || '';
     st.max = p.get('max') || '';
-    st.sort = p.get('sort') || 'populair';
+    st.deals = !!DEALS && !!p.get('deals');
+    st.sort = p.get('sort') || (st.deals ? 'korting' : 'populair');
+    if (st.deals) st.filters = {};
     st.pagina = 1;
   }
 
@@ -603,13 +638,18 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     var cats = index.categorieen || [];
     var kop = cats.filter(function (c) { return c.kop; });
     var rest = cats.filter(function (c) { return !c.kop; });
+    var dc = (st.deals && gz) ? dealPerCat() : null;
+    if (dc) {
+      kop = kop.filter(function (c) { return dc[c.slug] || c.slug === st.cat; });
+      rest = rest.filter(function (c) { return dc[c.slug] || c.slug === st.cat; });
+    }
     var h = '<button class="ds-chip" type="button" data-cat="" aria-pressed="' +
       (st.cat ? 'false' : 'true') + '"><b>Alles</b> <span class="n">' +
-      (index.totaal || '') + '</span></button>';
+      (dc ? gz.p.length : (index.totaal || '')) + '</span></button>';
     function chip(c) {
       return '<button class="ds-chip" type="button" data-cat="' + esc(c.slug) + '" aria-pressed="' +
         (st.cat === c.slug ? 'true' : 'false') + '"><b>' + esc(c.naam) +
-        '</b> <span class="n">' + c.aantal + '</span></button>';
+        '</b> <span class="n">' + (dc ? (dc[c.slug] || 0) : c.aantal) + '</span></button>';
     }
     kop.forEach(function (c) { h += chip(c); });
     // de kleinere categorieen pas na een klik op "meer", anders is de rij te lang
@@ -642,6 +682,7 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
   }
 
   function laad(bijvoegen) {
+    if (st.deals) return laadDeals(bijvoegen);
     if (bezig) { try { bezig.abort(); } catch (e) {} }
     bezig = new AbortController();
 
@@ -678,6 +719,141 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
         el.leeg.querySelector('b').textContent = 'Even niet beschikbaar';
         el.leeg.querySelector('p').textContent = 'De prijzen konden niet geladen worden. Probeer het straks nog eens.';
       });
+  }
+
+
+  // ---------------------------------------------------------------- deals
+  var gz = null, gzP = null;
+  function haalDeals() {
+    if (!DEALS) return Promise.reject(new Error('geen deals'));
+    if (!gzP) {
+      gzP = fetch(DEALS).then(function (r) { if (!r.ok) throw new Error('deals ' + r.status); return r.json(); })
+        .then(function (d) {
+          if (!d || !d.p) throw new Error('deals leeg');
+          gz = d;
+          var n = document.getElementById('ds-deals-n');
+          if (n) { n.textContent = d.p.length.toLocaleString('nl-NL'); n.hidden = false; }
+          return d;
+        });
+      gzP.catch(function () { gzP = null; });
+    }
+    return gzP;
+  }
+  function dealPerCat() {
+    var m = {};
+    gz.p.forEach(function (x) { m[x.c] = (m[x.c] || 0) + 1; });
+    return m;
+  }
+  var MND = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+  function kortDatum(d) {
+    var m = /^(\d{4})-(\d\d)-(\d\d)/.exec(d || '');
+    return m ? (+m[3]) + ' ' + MND[+m[2] - 1] : '';
+  }
+  function zetDealKnop() {
+    var k = document.getElementById('ds-deals');
+    if (k) k.setAttribute('aria-pressed', st.deals ? 'true' : 'false');
+    var u = document.getElementById('ds-dealuitleg');
+    if (u) u.hidden = !st.deals;
+    // de andere aanbiedingsfilters gaan over de feed, niet over gezakt.json
+    el.filters.querySelectorAll('[data-f]').forEach(function (b) {
+      if (st.deals) { b.disabled = true; b.setAttribute('aria-pressed', 'false'); }
+      else b.disabled = false;
+    });
+  }
+  function dealSelectie() {
+    var woorden = st.q.toLowerCase().split(/\s+/).filter(Boolean);
+    var mn = st.min === '' ? null : +st.min, mx = st.max === '' ? null : +st.max;
+    var basis = gz.p.filter(function (x) {
+      if (st.cat && x.c !== st.cat) return false;
+      if (mn != null && x.p < mn) return false;
+      if (mx != null && x.p > mx) return false;
+      if (woorden.length) {
+        var t = (x.n + ' ' + (x.b || '')).toLowerCase();
+        for (var i = 0; i < woorden.length; i++) if (t.indexOf(woorden[i]) === -1) return false;
+      }
+      return true;
+    });
+    function telling(veld) {
+      var m = {};
+      basis.forEach(function (x) { if (x[veld]) m[x[veld]] = (m[x[veld]] || 0) + 1; });
+      return Object.keys(m).map(function (k) { return [k, m[k]]; }).sort(function (a, b) { return b[1] - a[1]; });
+    }
+    var lijst = basis.filter(function (x) {
+      if (st.merk.length && st.merk.indexOf(x.b) === -1) return false;
+      if (st.type.length && st.type.indexOf(x.t) === -1) return false;
+      return true;
+    });
+    var srt = {
+      'prijs': function (a, b) { return a.p - b.p; },
+      'prijs-af': function (a, b) { return b.p - a.p; },
+      'naam': function (a, b) { return a.n.localeCompare(b.n, 'nl'); },
+      'verschil': function (a, b) { return b.d - a.d || b.k - a.k; }
+    }[st.sort] || function (a, b) { return b.k - a.k || b.d - a.d; };
+    lijst.sort(srt);
+    return { lijst: lijst, facetten: { merken: telling('b'), types: telling('t') } };
+  }
+  function dealKaart(x) {
+    var h = '<article class="ds-kaart" data-i="' + esc(x.i) + '">';
+    h += '<div class="ds-badges"><span class="ds-badge daal">&minus;' + eur(x.d) + ' gezakt</span>' +
+      (x.nw > 1 ? '<span class="ds-badge multi">' + x.nw + ' winkels</span>' : '') + '</div>';
+    h += '<div class="ds-afb">' + (x.im
+      ? '<img src="' + esc(x.im) + '" alt="' + esc(x.n) + '" loading="lazy" decoding="async">'
+      : '<span class="ds-geen">geen<br>afbeelding</span>') + '</div>';
+    h += '<div class="ds-kaartin">';
+    h += '<span class="ds-merk">' + (x.b ? esc(x.b) : '&nbsp;') + '</span>';
+    h += '<p class="ds-naam"><a href="#" data-open="' + esc(x.i) + '">' + esc(x.n) + '</a></p>';
+    h += '<div class="ds-prijsrij"><span class="ds-prijs">' + eur(x.p) + '</span>' +
+      '<span class="ds-van">' + eur(x.was) + '</span><span class="ds-korting">-' + x.k + '%</span></div>';
+    h += '<div class="ds-winkelrij"><b>' + esc(x.w) + '</b> <span class="ds-was">&middot; was ' + eur(x.was) +
+      (x.wd ? ' op ' + kortDatum(x.wd) : '') + '</span></div>';
+    h += '<div class="ds-kaartknop">';
+    h += '<a href="' + API + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c) +
+      '&w=' + encodeURIComponent(x.w) + '" target="_blank" rel="sponsored noopener">Naar ' + esc(x.w) + '</a>';
+    h += '<button type="button" data-open="' + esc(x.i) + '" aria-label="Alle winkels en prijsverloop">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M4 19V10M10 19V5M16 19v-6M22 19H2"/></svg></button>';
+    h += '</div>';
+    if (BF && window.dpvBf && window.dpvBf.aan) h += window.dpvBf.knop({ i: x.i, c: x.c, n: x.n });
+    h += '</div></article>';
+    return h;
+  }
+  function laadDeals(bijvoegen) {
+    if (bezig) { try { bezig.abort(); } catch (e) {} bezig = null; }
+    if (!gz) {
+      el.laden.hidden = false; el.raster.hidden = true; el.leeg.hidden = true; el.meer.hidden = true;
+      return haalDeals().then(function () { tekenCats(); return laadDeals(bijvoegen); }).catch(function () {
+        el.laden.hidden = true;
+        el.leeg.hidden = false;
+        el.leeg.querySelector('b').textContent = 'Even niet beschikbaar';
+        el.leeg.querySelector('p').textContent = 'De deals konden niet geladen worden. Probeer het straks nog eens.';
+      });
+    }
+    var r = dealSelectie();
+    tekenFacetten(r.facetten);
+    zetDealKnop();
+    el.laden.hidden = true;
+    el.meerKnop.disabled = false;
+    el.meerKnop.textContent = 'Meer laden';
+    var tot = r.lijst.length;
+    var zicht = r.lijst.slice(0, st.pagina * st.perPagina);
+    if (!tot) {
+      el.raster.hidden = true;
+      el.leeg.hidden = false;
+      el.leeg.querySelector('b').textContent = 'Hier is nu niets echt gezakt';
+      el.leeg.querySelector('p').textContent = 'Kies een andere categorie, of zet de deals uit om alles te zien.';
+      el.meer.hidden = true;
+      el.telling.innerHTML = '<b>0</b> gezakte prijzen';
+      return Promise.resolve();
+    }
+    el.leeg.hidden = true;
+    el.raster.hidden = false;
+    el.raster.innerHTML = zicht.map(dealKaart).join('');
+    zicht.forEach(function (x) { gekozenData[x.i] = gekozenData[x.i] || { i: x.i, n: x.n, c: x.c }; });
+    var naam = '';
+    (index && index.categorieen || []).forEach(function (c) { if (c.slug === st.cat) naam = c.naam; });
+    el.telling.innerHTML = '<b>' + tot.toLocaleString('nl-NL') + '</b> ' + (tot === 1 ? 'echt gezakte prijs' : 'echt gezakte prijzen') +
+      (naam ? ' in ' + esc(naam.toLowerCase()) : '');
+    el.meer.hidden = zicht.length >= tot;
+    return Promise.resolve();
   }
 
   // Breed zoeken geeft alleen naam, prijs en categorie terug. Dat is genoeg om
@@ -1116,6 +1292,20 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     vernieuw(true);
   });
 
+  var dealKnop = document.getElementById('ds-deals');
+  if (dealKnop && DEALS) dealKnop.addEventListener('click', function () {
+    st.deals = !st.deals;
+    if (st.deals) {
+      st.filters = {};
+      if (st.sort === 'populair') st.sort = 'korting';
+    } else if (st.sort === 'korting') st.sort = 'populair';
+    el.sort.value = st.sort;
+    st.merk = []; st.type = [];
+    zetDealKnop();
+    vernieuw(true);
+  });
+  else if (dealKnop) dealKnop.parentNode.hidden = true;
+
   el.filters.addEventListener('click', function (e) {
     var b = e.target.closest('button[data-f]');
     if (!b || b.disabled) return;
@@ -1209,6 +1399,7 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     st.merk = []; st.type = []; st.filters = {}; st.min = ''; st.max = '';
     el.min.value = ''; el.max.value = '';
     el.filters.querySelectorAll('[aria-pressed]').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
+    zetDealKnop();
     vernieuw(true);
   }
   document.getElementById('ds-leeg-reset').addEventListener('click', function () { wisFilters(true); });
@@ -1283,6 +1474,7 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     el.filters.querySelectorAll('[data-f]').forEach(function (b) {
       b.setAttribute('aria-pressed', st.filters[b.getAttribute('data-f')] ? 'true' : 'false');
     });
+    zetDealKnop();
     tekenCats();
     laad(false);
   });
@@ -1301,8 +1493,11 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
     b.setAttribute('aria-pressed', st.filters[b.getAttribute('data-f')] ? 'true' : 'false');
   });
 
+  zetDealKnop();
   haalIndex().then(function () {
-    if (!st.cat && !st.q) {
+    // het aantal deals op de knop, zonder de pagina op te houden
+    if (DEALS && !st.deals) setTimeout(function () { haalDeals().then(function () {}, function () {}); }, 1500);
+    if (!st.cat && !st.q && !st.deals) {
       var sc = '{{ section.settings.start_cat | default: "alles" }}';
       if (sc && sc !== 'alles') st.cat = sc;
     }
@@ -1361,6 +1556,42 @@ html:not(#x):not(#y) .ds-zij .ds-chip span.n{margin-left:auto;color:#4A5A70 !imp
       "label": "Amazon partnerlabel",
       "default": "fortassets-21",
       "info": "Leeg laten betekent geen Amazon op de pagina. Een prijs staat er alleen als die met de hand is afgelezen en in amazon.json is gezet, met de dag erbij, en hoogstens een week."
+    },
+    {
+      "type": "header",
+      "content": "Deals-knop (echt gezakt)"
+    },
+    {
+      "type": "checkbox",
+      "id": "deals_aan",
+      "label": "Deals-knop tonen",
+      "default": true,
+      "info": "Met ?deals=black-friday in de link staat hij meteen aan. Zo linken de Black Friday-mail en de homepage hierheen."
+    },
+    {
+      "type": "text",
+      "id": "deals_label",
+      "label": "Tekst op de knop",
+      "default": "Black Friday-deals"
+    },
+    {
+      "type": "text",
+      "id": "deals_tip",
+      "label": "Tekst naast de knop",
+      "default": "Echt gezakt, gemeten bij dezelfde winkel"
+    },
+    {
+      "type": "richtext",
+      "id": "deals_uitleg",
+      "label": "Uitleg boven de deals",
+      "default": "<p><b>Zo meten wij dit.</b> Een product staat hier alleen als de winkel die nu het goedkoopst is, minstens 10 procent en 10 euro onder de laagste prijs zit die wij bij diezelfde winkel maten in de 30 dagen voor de daling. Een van-prijs van de winkel zelf telt niet mee. Wij meten sinds 3 oktober, dus tot begin november is die periode nog korter dan 30 dagen.</p>"
+    },
+    {
+      "type": "text",
+      "id": "deals_url",
+      "label": "Bestand met gezakte prijzen",
+      "default": "https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/shop/gezakt.json",
+      "info": "Maakt de GitHub Action twee keer per dag."
     },
     {
       "type": "text",

@@ -374,7 +374,7 @@
     items.sort(function (a, b) { return b._sc - a._sc; });
     // Een model maar een keer, niet vier kleuren of geheugens van hetzelfde toestel.
     var gehad = {};
-    function kort(n) { var b = basis(n); if (MERK_L && b.indexOf(MERK_L + ' ') === 0) b = b.slice(MERK_L.length + 1); return '~' + b.split(' ').slice(0, 4).join(' '); }
+    function kort(n) { var b = basis(n); if (MERK_L && b.indexOf(MERK_L + ' ') === 0) b = b.slice(MERK_L.length + 1); return '~' + b.split(' ').filter(function (w) { return !/^\d{5,}$/.test(w); }).slice(0, 4).join(' '); }
     items = items.filter(function (x) { var k = model(x.n), k2 = kort(x.n); if (gehad[k] || gehad[k2]) return false; gehad[k] = 1; gehad[k2] = 1; return true; });
     items = items.slice(0, 8);
     if (!items.length) return;

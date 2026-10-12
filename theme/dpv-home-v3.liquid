@@ -625,6 +625,22 @@ html:not(#x) .dhd .pk3.top .info{margin-top:8px}
 html:not(#x) .dhd .pk3.top .prijsrij{margin-top:8px}
 html:not(#x) .dhd .pk3.top .prijsrij+*,html:not(#x) .dhd .pk3.top .tags{margin-bottom:12px}
 }
+/* 12 okt: chips in Actueel */
+html:not(#x) .dhd .achips{display:flex;gap:8px;flex-wrap:wrap;margin:-12px 0 18px}
+html:not(#x):not(#y) body .dhd .achips .ac{flex:none;min-height:38px;padding:0 14px;border-radius:999px;border:1.5px solid #C5CEDB;background:#fff;color:var(--inkt);font-family:var(--body);font-size:14px;font-weight:700;line-height:1;cursor:pointer;box-shadow:none;text-transform:none;letter-spacing:0}
+html:not(#x):not(#y) body .dhd .achips .ac:hover{border-color:var(--inkt)}
+html:not(#x):not(#y) body .dhd .achips .ac.aan{background:var(--inkt);border-color:var(--inkt);color:#fff}
+/* 12 okt: rand R5, lichte lijn met zwevende schaduw */
+html:not(#x) .dhd{--r5:#D5DCE6;--r5s:0 10px 28px rgba(13,27,42,.10)}
+html:not(#x) .dhd .kaartje .label,html:not(#x) .dhd .feat,html:not(#x) .dhd .lst a,html:not(#x) .dhd .pk3:not(.top),html:not(#x) .dhd .pblok,html:not(#x) .dhd .z2 .label,html:not(#x) .dhd .uitleg .model,html:not(#x) .dhd .leeg{border:1px solid var(--r5);box-shadow:var(--r5s)}
+html:not(#x) .dhd .pk3.top{box-shadow:0 14px 36px rgba(13,27,42,.12)}
+html:not(#x) .dhd .cat .label:hover,html:not(#x) .dhd .feat:hover,html:not(#x) .dhd .lst a:hover{box-shadow:0 14px 34px rgba(13,27,42,.16);border-color:#C5CEDB}
+html:not(#x) .dhd .z2 .rechts{border-left:1px solid var(--r5)}
+@media (max-width:900px){
+html:not(#x) .dhd .achips{flex-wrap:nowrap;overflow-x:auto;margin:-8px -16px 14px;padding:2px 16px 6px;scrollbar-width:none}
+html:not(#x) .dhd .achips::-webkit-scrollbar{display:none}
+html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:1px solid var(--r5)}
+}
 </style>
 
 <div class="dhd" id="dhd" data-worker="{{ worker }}" data-shop="{{ shopw }}" data-mail="{{ mailw }}"
@@ -998,7 +1014,17 @@ html:not(#x) .dhd .pk3.top .prijsrij+*,html:not(#x) .dhd .pk3.top .tags{margin-b
       {%- endif -%}
     {%- endfor -%}
     {%- assign act_getoond = '|' -%}
-    <div class="act">
+    {%- comment -%} Filterchips: label|tags (komma's). Het script filtert op de tags van de nieuwste artikelen. {%- endcomment -%}
+    {%- assign chipregels = s.act_chips | newline_to_br | split: '<br />' -%}
+    <div class="achips" id="dhd-achips" role="group" aria-label="Filter artikelen">
+      <button type="button" class="ac aan" data-ac="" aria-pressed="true">Alles</button>
+      {%- for r in chipregels -%}{%- assign d = r | strip | split: '|' -%}{%- if d.size > 1 -%}<button type="button" class="ac" data-ac="{{ d[1] | strip | downcase | escape }}" aria-pressed="false" hidden>{{ d[0] | strip }}</button>{%- endif -%}{%- endfor -%}
+    </div>
+    <script type="application/json" id="dhd-adata">[
+      {%- for a in arts limit: 50 -%}{%- assign tg = a.tags | join: ',' | downcase -%}
+      {"u":{{ a.url | json }},"t":{{ a.title | json }},"r":{{ a.tags | first | capitalize | json }},"g":{{ tg | json }},"i":{% if a.image %}{{ a.image | image_url: width: 900 | json }}{% else %}""{% endif %},"x":{{ a.excerpt_or_content | strip_html | strip | truncatewords: 22 | json }}}{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}]</script>
+    <div class="act" id="dhd-act">
     {%- for i in (0..4) -%}
       {%- assign article = nil -%}
       {%- assign h = act_ruw[i] | strip | split: '/' | last -%}
@@ -1664,55 +1690,6 @@ html:not(#x) .dhd .pk3.top .prijsrij+*,html:not(#x) .dhd .pk3.top .tags{margin-b
     meet('dhk_klik', { tab: a.getAttribute('data-tab'), keuze: inKiezer ? ((st || {}).keuze || '') : (a.getAttribute('data-product') || ''), positie: a.getAttribute('data-pos'), aanbieder: a.getAttribute('data-naam') });
   });
 
-
-  // ---- v3: aftellen naar Black Friday -------------------------------------
-  var tel = wortel.querySelector('.tel[data-tot]');
-  if (tel) {
-    var doel = Date.parse(tel.getAttribute('data-tot'));
-    var tik = function () {
-      var r = doel - Date.now();
-      if (!(r > 0)) { tel.hidden = true; return; }
-      var d = Math.floor(r / 864e5), u = Math.floor(r / 36e5) % 24, m = Math.floor(r / 6e4) % 60;
-      tel.querySelector('[data-t="d"]').textContent = d;
-      tel.querySelector('[data-t="u"]').textContent = u;
-      tel.querySelector('[data-t="m"]').textContent = m;
-    };
-    if (!isNaN(doel)) { tik(); setInterval(tik, 30000); }
-  }
-
-  // ---- v3: vaste balk onderin op de telefoon --------------------------------
-  // Toont nummer 1 van de open categorie zodra de hero uit beeld is, en verdwijnt
-  // weer bij de voet. De link is dezelfde doorklik als de knop in de hero, met
-  // positie "vast" voor de meting.
-  var vast = document.getElementById('dhd-vast'), held = wortel.querySelector('.hero');
-  var NAAM = { sim: 'sim only', telefoon: 'telefoon met abonnement', internet: 'internet', energie: 'energiecontract', zorg: 'basisverzekering' };
-  function vulVast() {
-    var een = cA.querySelector('[data-h="1"]'), k = een ? q(een, 'knop') : null, vk = vast.querySelector('[data-v="knop"]');
-    if (!een || cA.hidden || !k || !k.target) return false;
-    vast.querySelector('[data-v="aanb"]').textContent = (q(een, 'aanb') || {}).textContent || '';
-    vast.querySelector('[data-v="prijs"]').textContent = (q(een, 'prijs') || {}).textContent || '';
-    vast.querySelector('[data-v="per"]').textContent = /maand/.test((q(een, 'per') || {}).textContent || '') ? ' p/m' : '';
-    vast.querySelector('[data-v="wat"]').textContent = 'goedkoopste ' + (NAAM[actief] || 'aanbieding');
-    vk.href = k.href; vk.target = '_blank'; vk.rel = k.rel;
-    vk.setAttribute('data-pos', 'vast'); vk.setAttribute('data-naam', k.getAttribute('data-naam') || ''); vk.setAttribute('data-tab', actief);
-    return true;
-  }
-  if (vast && held && 'IntersectionObserver' in window && window.matchMedia) {
-    var smal = window.matchMedia('(max-width:900px)'), heroWeg = false, voetIn = false;
-    var zetVast = function () {
-      var aan = smal.matches && heroWeg && !voetIn && vulVast();
-      vast.hidden = !aan;
-      document.documentElement.classList.toggle('dhd-vast-aan', !!aan);
-    };
-    new IntersectionObserver(function (e) { heroWeg = !e[0].isIntersecting; zetVast(); }, { rootMargin: '0px 0px -40% 0px' }).observe(held.querySelector('.cluster') || held);
-    var voet = document.querySelector('footer, .pv-footer, #shopify-section-pv-footer');
-    if (voet) new IntersectionObserver(function (e) { voetIn = e[0].isIntersecting; zetVast(); }).observe(voet);
-    if (smal.addEventListener) smal.addEventListener('change', zetVast);
-    vast.querySelector('[data-v="knop"]').addEventListener('click', function () {
-      meet('dhk_klik', { tab: actief, keuze: ((staat[actief] || {}).keuze || ''), positie: 'vast', aanbieder: this.getAttribute('data-naam') });
-    });
-  }
-
   // ---- Zorg 2027: aanmelden -------------------------------------------------
   var form = document.getElementById('dhd-zmail');
   if (form) {
@@ -1805,6 +1782,7 @@ html:not(#x) .dhd .pk3.top .prijsrij+*,html:not(#x) .dhd .pk3.top .tags{margin-b
     { "type": "text", "id": "act_3", "label": "Actueel: artikel 3 (handle)", "default": "zorgverzekering-2027" },
     { "type": "text", "id": "act_4", "label": "Actueel: artikel 4 (handle)", "default": "iphone-18-pro-pre-order-wanneer-en-waar" },
     { "type": "text", "id": "act_5", "label": "Actueel: artikel 5 (handle)", "default": "telefoon-met-abonnement-black-friday-2026" },
+    { "type": "textarea", "id": "act_chips", "label": "Actueel: filterchips", "info": "Een per regel: label|tags. Tags met komma's ertussen; een chip verschijnt als er minstens twee artikelen bij horen.", "default": "Black Friday|black friday,cyber monday\nZorg 2027|zorg,zorgverzekering\niPhone|iphone,apple\nSim only|sim only,esim\nEnergie|energie,stroom" },
     { "type": "header", "content": "Black Friday-band" },
     { "type": "checkbox", "id": "bf_aan", "label": "Band tonen", "default": true },
     { "type": "text", "id": "bf_tot", "label": "Tonen tot en met (JJJJ-MM-DD)", "default": "2026-11-30" },

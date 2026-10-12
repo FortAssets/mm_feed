@@ -1801,6 +1801,23 @@ function prijslogboek (producten) {
         o.mt = r.length
       }
 
+      // Echt gezakt (12 okt): de goedkoopste winkel van nu, vergeleken met haar
+      // eigen prijs van 60 dagen terug, of met haar eerste meting als die
+      // jonger is. Geen "van"-prijs van de winkel zelf, alleen wat wij zagen.
+      // Voor de Black Friday-mail en de deals-chip in de vergelijker.
+      if (p.s === 'n' && p.p >= 20 && p.o.length) {
+        const lo = p.o.reduce((a, o) => (o.p < a.p ? o : a), p.o[0])
+        const r = hist[p.i + '|' + lo.w]
+        if (Array.isArray(r) && r.length > 1) {
+          const grens = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10)
+          let ref = r[0]
+          for (const e of r) if (e[0] <= grens) ref = e
+          const was = ref[1]; const wd = ref[0] < grens ? grens : ref[0]
+          // niet-opsombaar, zodat het niet in de categoriebestanden belandt
+          if (was >= lo.p * 1.10 && was - lo.p >= 10) Object.defineProperty(p, 'gz', { value: { w: lo.w, was: Math.round(was * 100) / 100, wd }, enumerable: false, configurable: true })
+        }
+      }
+
       // op productniveau het beste aanbod samenvatten
       const b = p.o[0]
       if (b) {
@@ -2191,6 +2208,23 @@ async function main () {
     .sort((a, b) => b.k - a.k)
     .slice(0, 3000)
   schrijf(UIT + '/deals.json', { gemaakt: index.gemaakt, aantal: deals.length, p: deals }, true)
+
+  // Echt gezakt: zie prijslogboek. Zelfde rem als op de site: een winkel die
+  // meer dan 40% onder de volgende zit heeft bijna altijd een fout in de feed.
+  // Los JSON-bestand zonder gzip, zodat de vergelijker en de mailworker het
+  // rechtstreeks kunnen lezen.
+  const gezakt = producten.filter(p => p.gz).filter(p => {
+    const ander = p.o.filter(o => o.w !== p.gz.w).map(o => o.p).sort((a, b) => a - b)
+    const nu = Math.min(...p.o.map(o => o.p))
+    return !(ander.length && nu < ander[0] * 0.6)
+  }).map(p => {
+    const nu = Math.min(...p.o.map(o => o.p))
+    return { i: p.i, n: p.n, b: p.b, c: p.c, t: p.t, im: p.im, p: nu, w: p.gz.w, was: p.gz.was, wd: p.gz.wd,
+      d: Math.round((p.gz.was - nu) * 100) / 100, k: Math.round((1 - nu / p.gz.was) * 100), nw: p.o.length }
+  }).sort((a, b) => b.k - a.k || b.d - a.d).slice(0, 2500)
+  for (const p of producten) delete p.gz
+  schrijf(UIT + '/gezakt.json', { gemaakt: index.gemaakt, aantal: gezakt.length, p: gezakt }, false)
+  console.log('Echt gezakt: ' + gezakt.length + ' producten')
 
   // Producten die bij meer dan een winkel liggen: daar is vergelijken zinvol.
   const vgl = producten.filter(p => p.o.length > 1)

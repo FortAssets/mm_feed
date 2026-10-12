@@ -1168,10 +1168,13 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
   </div>
 </section>
 
+{%- comment -%} 12 okt: de vaste balk onderin staat standaard uit (irriteerde meer dan hij opleverde); aan te zetten in de sectie-instellingen. {%- endcomment -%}
+{%- if s.vast_aan -%}
 <div class="vast" id="dhd-vast" hidden>
   <div class="vast-tx"><b><span data-v="aanb">Lebara</span> <span data-v="prijs">€3,30</span><span data-v="per"> p/m</span></b><span data-v="wat">goedkoopste sim only</span></div>
   <a class="knop" data-v="knop" href="/pages/sim-only">Bekijk</a>
 </div>
+{%- endif -%}
 
 </div>
 
@@ -2017,6 +2020,7 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
     { "type": "text", "id": "act_5", "label": "Actueel: artikel 5 (handle)", "default": "telefoon-met-abonnement-black-friday-2026" },
     { "type": "textarea", "id": "act_chips", "label": "Actueel: filterchips", "info": "Een per regel: label|tags. Tags met komma's ertussen; een chip verschijnt als er minstens twee artikelen bij horen.", "default": "Black Friday|black friday,cyber monday\nZorg 2027|zorg,zorgverzekering\niPhone|iphone,apple\nSim only|sim only,esim\nEnergie|energie,stroom" },
     { "type": "header", "content": "Prijsje en echt gezakt" },
+    { "type": "checkbox", "id": "vast_aan", "label": "Vaste balk onderin met de goedkoopste (telefoon)", "default": false },
     { "type": "checkbox", "id": "pj_aan", "label": "Prijsje tonen (hero, deals, Black Friday-band)", "default": true },
     { "type": "checkbox", "id": "gz_aan", "label": "Blok 'Vandaag echt gezakt' tonen", "default": true },
     { "type": "text", "id": "gz_kop", "label": "Echt gezakt: kop", "default": "Vandaag echt gezakt" },

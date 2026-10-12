@@ -577,9 +577,9 @@ html:not(#x) .dhd .hero{padding:20px 0 24px}
 html:not(#x) .dhd .hero .wrap{text-align:left}
 html:not(#x) .dhd .hero-tekst{align-items:flex-start}
 html:not(#x) .dhd .eb{font-size:12px;padding:5px 11px}
-html:not(#x) .dhd .hero h1{font-size:36px;margin-top:12px}
-html:not(#x) .dhd .hero .sub{font-size:15px;margin:6px 0 0}
-html:not(#x) .dhd .tabs{display:flex;justify-content:flex-start;border:0;border-radius:0;background:none;gap:6px;margin-top:14px}
+html:not(#x) .dhd .hero h1{font-size:34px;margin-top:10px}
+html:not(#x) .dhd .hero .sub{display:none}
+html:not(#x) .dhd .tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;justify-content:flex-start;border:0;border-radius:0;background:none;gap:6px;margin:12px -16px 0;padding:2px 16px;width:calc(100% + 32px);max-width:none}
 html:not(#x) .dhd .tabs .tab{border:1.5px solid var(--rand2);border-radius:999px;min-height:40px;padding:0 14px;font-size:14px;background:#fff}
 html:not(#x) .dhd .tabs .tab.aan{border-color:var(--inkt)}
 html:not(#x) .dhd .subs{justify-content:flex-start}
@@ -603,7 +603,7 @@ html:not(#x) .dhd .logorij{flex-direction:column;align-items:flex-start;gap:8px}
 html:not(#x) .dhd .bfband{padding:28px 0 30px}
 html:not(#x) .dhd .bf-top{flex-direction:column;align-items:flex-start;gap:14px}
 html:not(#x):not(#y) .dhd .bfband h2{font-size:27px}
-html:not(#x) .dhd .bf-rij{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:0 16px 4px;gap:12px;scrollbar-width:none}
+html:not(#x) .dhd .bf-rij{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 16px;margin:0 -16px;padding:0 16px 4px;gap:12px;scrollbar-width:none}
 html:not(#x) .dhd .bf-rij::-webkit-scrollbar{display:none}
 html:not(#x) .dhd .bf-rij li{flex:0 0 78%;scroll-snap-align:start}
 html:not(#x) .dhd .bf-cta{flex-direction:column;align-items:stretch;gap:12px}
@@ -616,6 +616,14 @@ html:not(#x) .dhd .lst h3{font-size:14.5px}
 html:not(#x) .dhd .prod .foto{height:130px}
 html:not(#x) .dhd .prod .foto img{max-height:110px}
 html.dhd-vast-aan body{padding-bottom:76px}
+html.dhd-vast-aan #dpvai-fab{transform:translateY(-70px);transition:transform .2s}
+html:not(#x) .dhd .z2{margin-right:0}
+html:not(#x) .dhd .z2 .rechts{border-top:1px solid var(--lijn2)}
+html:not(#x) .dhd .g2,html:not(#x) .dhd .blogs{padding-right:0}
+html:not(#x) .dhd .pk3.top{padding:14px 16px}
+html:not(#x) .dhd .pk3.top .info{margin-top:8px}
+html:not(#x) .dhd .pk3.top .prijsrij{margin-top:8px}
+html:not(#x) .dhd .pk3.top .prijsrij+*,html:not(#x) .dhd .pk3.top .tags{margin-bottom:12px}
 }
 </style>
 
@@ -768,7 +776,7 @@ html.dhd-vast-aan body{padding-bottom:76px}
           <p class="meta" data-f="meta"><span class="sticker" data-f="scheelt">scheelt €120</span></p>
           <div class="wl" data-f="anders"></div>
           <a class="knop" data-f="knop" href="/pages/product/apple-iphone-17-pro-max-256gb-oranje">Bekijk bij Dutch-Plaza</a>
-          <a class="tl" href="/pages/product/apple-iphone-17-pro-max-256gb-oranje">Prijsverloop en specificaties ›</a>
+          <a class="tl" href="/pages/product/apple-iphone-17-pro-max-256gb-oranje">Prijsverloop en specificaties</a>
           <div class="bf" data-f="bf"></div>
         </div>
       </li>
@@ -780,7 +788,7 @@ html.dhd-vast-aan body{padding-bottom:76px}
           <p class="meta" data-f="meta"></p>
           <div class="wl" data-f="anders"></div>
           <a class="knop" data-f="knop" href="/pages/product/samsung-galaxy-s26-ultra-256gb-paars-5g">Bekijk bij Dutch-Plaza</a>
-          <a class="tl" href="/pages/product/samsung-galaxy-s26-ultra-256gb-paars-5g">Prijsverloop en specificaties ›</a>
+          <a class="tl" href="/pages/product/samsung-galaxy-s26-ultra-256gb-paars-5g">Prijsverloop en specificaties</a>
           <div class="bf" data-f="bf"></div>
         </div>
       </li>
@@ -792,7 +800,7 @@ html.dhd-vast-aan body{padding-bottom:76px}
           <p class="meta" data-f="meta"><span class="sticker" data-f="scheelt">scheelt €23</span></p>
           <div class="wl" data-f="anders"></div>
           <a class="knop" data-f="knop" href="/pages/product/sony-wh-1000xm6-over-ear-draadloze-hoofdtelefoon-met-noise-cancelling">Bekijk bij MediaMarkt</a>
-          <a class="tl" href="/pages/product/sony-wh-1000xm6-over-ear-draadloze-hoofdtelefoon-met-noise-cancelling">Prijsverloop en specificaties ›</a>
+          <a class="tl" href="/pages/product/sony-wh-1000xm6-over-ear-draadloze-hoofdtelefoon-met-noise-cancelling">Prijsverloop en specificaties</a>
           <div class="bf" data-f="bf"></div>
         </div>
       </li>
@@ -804,7 +812,7 @@ html.dhd-vast-aan body{padding-bottom:76px}
           <p class="meta" data-f="meta"></p>
           <div class="wl" data-f="anders"></div>
           <a class="knop" data-f="knop" href="/pages/vergelijken?cat=audio&amp;q=AirPods%20Pro%203">Bekijk de prijzen</a>
-          <a class="tl" href="/pages/vergelijken?cat=audio&amp;q=AirPods%20Pro%203">Prijsverloop en specificaties ›</a>
+          <a class="tl" href="/pages/vergelijken?cat=audio&amp;q=AirPods%20Pro%203">Prijsverloop en specificaties</a>
           <div class="bf" data-f="bf"></div>
         </div>
       </li>

@@ -1801,20 +1801,33 @@ function prijslogboek (producten) {
         o.mt = r.length
       }
 
-      // Echt gezakt (12 okt): de goedkoopste winkel van nu, vergeleken met haar
-      // eigen prijs van 60 dagen terug, of met haar eerste meting als die
-      // jonger is. Geen "van"-prijs van de winkel zelf, alleen wat wij zagen.
+      // Echt gezakt (12 okt): de goedkoopste winkel van nu, vergeleken met de
+      // laagste prijs die wij bij diezelfde winkel maten in de 30 dagen voor de
+      // daling begon. Dat is dezelfde maatstaf als de wet aan een van-prijs
+      // stelt. Geen "van"-prijs van de winkel zelf, alleen wat wij zagen, en
+      // minstens twee meetdagen ervoor, zodat een prijs van een dag niet telt.
       // Voor de Black Friday-mail en de deals-chip in de vergelijker.
       if (p.s === 'n' && p.p >= 20 && p.o.length) {
         const lo = p.o.reduce((a, o) => (o.p < a.p ? o : a), p.o[0])
-        const r = hist[p.i + '|' + lo.w]
-        if (Array.isArray(r) && r.length > 1) {
-          const grens = new Date(Date.now() - 60 * 864e5).toISOString().slice(0, 10)
-          let ref = r[0]
-          for (const e of r) if (e[0] <= grens) ref = e
-          const was = ref[1]; const wd = ref[0] < grens ? grens : ref[0]
-          // niet-opsombaar, zodat het niet in de categoriebestanden belandt
-          if (was >= lo.p * 1.10 && was - lo.p >= 10) Object.defineProperty(p, 'gz', { value: { w: lo.w, was: Math.round(was * 100) / 100, wd }, enumerable: false, configurable: true })
+        const r0 = hist[p.i + '|' + lo.w]
+        if (Array.isArray(r0) && r0.length > 1) {
+          const r = r0.slice().sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0))
+          let j = r.length
+          while (j > 0 && r[j - 1][1] <= lo.p * 1.05) j--
+          if (j > 0 && j < r.length) {
+            const dag = s => Date.parse(String(s).slice(0, 10) + 'T00:00:00Z')
+            const grens = dag(r[j][0]) - 30 * 864e5
+            const voor = r.slice(0, j).filter(e => dag(e[2] || e[0]) >= grens)
+            const dagen = new Set()
+            for (const e of voor) for (let t = Math.max(dag(e[0]), grens); t <= dag(e[2] || e[0]); t += 864e5) dagen.add(t)
+            if (voor.length && dagen.size >= 2) {
+              const ref = voor.reduce((a, e) => (e[1] < a[1] ? e : a), voor[0])
+              const was = ref[1]
+              const k = 1 - lo.p / was
+              // niet-opsombaar, zodat het niet in de categoriebestanden belandt
+              if (was >= lo.p * 1.10 && was - lo.p >= 10 && k <= 0.70) Object.defineProperty(p, 'gz', { value: { w: lo.w, was: Math.round(was * 100) / 100, wd: String(ref[0]).slice(0, 10), sd: String(r[j][0]).slice(0, 10) }, enumerable: false, configurable: true })
+            }
+          }
         }
       }
 
@@ -2219,7 +2232,7 @@ async function main () {
     return !(ander.length && nu < ander[0] * 0.6)
   }).map(p => {
     const nu = Math.min(...p.o.map(o => o.p))
-    return { i: p.i, n: p.n, b: p.b, c: p.c, t: p.t, im: p.im, p: nu, w: p.gz.w, was: p.gz.was, wd: p.gz.wd,
+    return { i: p.i, n: p.n, b: p.b, c: p.c, t: p.t, im: p.im, p: nu, w: p.gz.w, was: p.gz.was, wd: p.gz.wd, sd: p.gz.sd,
       d: Math.round((p.gz.was - nu) * 100) / 100, k: Math.round((1 - nu / p.gz.was) * 100), nw: p.o.length }
   }).sort((a, b) => b.k - a.k || b.d - a.d).slice(0, 2500)
   for (const p of producten) delete p.gz

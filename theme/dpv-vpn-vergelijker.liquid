@@ -42,7 +42,7 @@
 .vp-actie{grid-area:actie;display:flex;align-items:center;gap:14px;border-top:1px solid #EEF1F6;padding-top:12px}
 .vp-mnd{font-size:12.5px;color:#4A5A70;font-weight:600}
 .vp-tw{overflow-x:auto;border:1px solid #E3E8F0;border-radius:14px;background:#fff;-webkit-overflow-scrolling:touch}
-.vp-t{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+.vp table.vp-t{display:table!important;border-collapse:collapse;width:100%!important;min-width:720px;font-size:14px;margin:0}
 .vp-t th,.vp-t td{padding:11px 12px;text-align:left;border-bottom:1px solid #EEF1F6;white-space:nowrap}
 .vp-t thead th{font-size:12px;color:#4A5A70;font-weight:700;background:#F7F8FB}
 .vp-t tbody th{position:sticky;left:0;background:#fff;font-weight:700}.vp-t tbody th a{color:#0D1B2A;text-decoration:none}
@@ -226,7 +226,7 @@
     document.getElementById('vp-naam').textContent=N[top];
     document.getElementById('vp-reden').textContent=d.r;
     var u=document.getElementById('vp-uknop');u.textContent='Bekijk '+N[top]+' \u2193';u.setAttribute('href','#vpn-'+top);
-    if(scroll){try{history.replaceState(null,'',k==='alles'?location.pathname:location.pathname+'?doel='+k);}catch(e){}}
+    if(scroll){try{var q=new URLSearchParams(location.search);if(k==='alles')q.delete('doel');else q.set('doel',k);var z=q.toString();history.replaceState(null,'',location.pathname+(z?'?'+z:''));}catch(e){}}
   }
   el.addEventListener('click',function(e){var b=e.target.closest('button.vp-chip');if(!b)return;zet(b.getAttribute('data-doel'),true);});
   var k='alles';try{var q=new URLSearchParams(location.search).get('doel');if(D[q])k=q;}catch(e){}

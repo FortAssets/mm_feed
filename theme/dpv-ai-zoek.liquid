@@ -100,6 +100,8 @@ body.dpvai-fab-open .pvlang{bottom:74px !important;transition:bottom .22s ease}
 .dpvai-rij b{color:#0D1B2A}
 .dpvai-rij .det{color:#64748b;display:block;font-size:12px;margin-top:1px}
 .dpvai-geen{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:11px 13px;font-size:13px;line-height:1.55;color:#78350f;margin-bottom:11px}
+.dpvai-pr{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:9px 4px;border-top:1px solid #E3E8F0;text-decoration:none;color:#0D1B2A;font-size:13.5px}
+.dpvai-pr:first-of-type{border-top:none}.dpvai-pr b{font-weight:800;white-space:nowrap}.dpvai-pr small{display:block;color:#64748b;font-size:11.5px;font-weight:600}.dpvai-pr:hover span{text-decoration:underline}
 .dpvai-links{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
 .dpvai-links a{font-size:12.5px;font-weight:700;text-decoration:none;border-radius:11px;padding:9px 13px;border:1.5px solid #dbe4ff;color:#1B3FA0;background:#eff4ff}
 .dpvai-links a.groen{background:#059669;color:#fff;border-color:#059669}
@@ -177,6 +179,10 @@ body.dpvai-fab-open .pvlang{bottom:74px !important;transition:bottom .22s ease}
   var ESIM_PAD = {{ section.settings.esim_url | default: '/pages/internet-op-vakantie' | json }};
   var BOOD_API = {{ section.settings.bood_api | default: 'https://dpv-boodschappen.business-347.workers.dev' | json }};
   var BOOD_PAD = {{ section.settings.bood_pad | default: '/pages/boodschappen' | json }};
+  // 12 okt: producten (ps5, airfryer, koptelefoon) horen in de productvergelijker,
+  // niet in de telefoonvergelijker. De AI-worker kent alleen abonnementen.
+  var SHOP_API = {{ section.settings.shop_api | default: 'https://shop.deprijsvergelijker.com' | json }};
+  var PROD_PAD = {{ section.settings.prod_pad | default: '/pages/vergelijken' | json }};
 
   function landSleutel(t){
     return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')
@@ -700,8 +706,8 @@ body.dpvai-fab-open .pvlang{bottom:74px !important;transition:bottom .22s ease}
 
     // Eerst kijken of dit een merk uit de schappen is. Zo ja, dan is het
     // antwoord hier al compleet en hoeft de bezoeker nergens heen.
-    Promise.all([boodZoek(v), siteZoek(v)]).then(function(beide){
-      var groepen = beide[0], site = beide[1];
+    Promise.all([boodZoek(v), siteZoek(v), shopZoek(v)]).then(function(beide){
+      var groepen = beide[0], site = beide[1], shop = beide[2];
       if (groepen && toonBoodschappen(groepen, v)) {
         knop.disabled = false; knop.innerHTML = oud;
         var uitVak = document.querySelector('.dpvai-uit'); if (uitVak) uitVak.className = 'dpvai-uit';
@@ -719,14 +725,62 @@ body.dpvai-fab-open .pvlang{bottom:74px !important;transition:bottom .22s ease}
       // in staat, zoals bij een toestel dat pas in de pre-order komt.
       if (site && site.sterk) {
         var heeftVgl = !!document.querySelector('.pvx-outer');
-        if (toonSite(site, v, !heeftVgl)) {
-          if (heeftVgl) vraagAi(v, knop, oud, true);
+        // een product: de knop gaat naar de productvergelijker, niet naar de AI
+        if (toonSite(site, v, !heeftVgl || !!shop, shop)) {
+          if (heeftVgl && !shop) vraagAi(v, knop, oud, true);
           else { knop.disabled = false; knop.innerHTML = oud; }
           return;
         }
       }
+      if (shop && toonProducten(shop, v, site)) { knop.disabled = false; knop.innerHTML = oud; return; }
       vraagAi(v, knop, oud, false, site);
     });
+  }
+
+  // ---- Producten: de productvergelijker -------------------------------------
+  // Een vraag over een abonnement, energie of zorg gaat naar de AI-zoekhulp;
+  // de rest zoeken we eerst in de productvergelijker.
+  function telecomVraag(v){
+    return siteFiltervraag(v) || /\b(sim|simonly|sim-only|e-?sim|bundel|abonnement|abo|provider|kpn|odido|vodafone|simyo|lebara|lyca|lycamobile|youfone|hollandsnieuwe|tele2|delight|50plus|data|bellen|sms|internet|glasvezel|wifi|ziggo|energie|stroom|gas|zorg|zorgverzekering|verzekering|polis|toestel|iphone|galaxy|pixel|telefoon|smartphone|mobiel)\b/i.test(v);
+  }
+  function shopZoek(v){
+    if (telecomVraag(v)) return Promise.resolve(null);
+    return fetch(SHOP_API + '/api/shop/zoek?q=' + encodeURIComponent(v) + '&n=4')
+      .then(function(r){ return r.ok ? r.json() : null; })
+      .then(function(j){ return (j && j.aantal > 0 && j.items && j.items.length) ? j : null; })
+      .catch(function(){ return null; });
+  }
+  // Link naar de productvergelijker. Valt bijna alles in een categorie, dan
+  // meteen die categorie, zodat filters en sortering erbij staan.
+  function prodLink(shop, v){
+    var u = PROD_PAD + '?q=' + encodeURIComponent(v);
+    if (shop && shop.perCat) {
+      var top = null, n = 0;
+      Object.keys(shop.perCat).forEach(function(c){ if (shop.perCat[c] > n) { n = shop.perCat[c]; top = c; } });
+      if (top && n >= shop.aantal * 0.8) u = PROD_PAD + '?cat=' + encodeURIComponent(top) + '&q=' + encodeURIComponent(v);
+    }
+    return u;
+  }
+  function prodTekst(shop, v){
+    return 'Vergelijk ' + (shop.aantal > 1 ? shop.aantal.toLocaleString('nl-NL') + ' prijzen' : 'de prijs') + ' voor \u201c' + boodVeilig(v) + '\u201d &rsaquo;';
+  }
+  function toonProducten(shop, v, site){
+    var vak = boodVak();
+    if (!vak) return false;
+    var h = '<div class="lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M3 5h2l2 11h11l2-8H7"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg>In de productvergelijker</div>';
+    shop.items.slice(0, 4).forEach(function(x){
+      h += '<a class="dpvai-pr" href="' + boodVeilig(prodLink(shop, x.n)) + '"><span>' + boodVeilig(x.n) +
+        '<small>' + (x.w > 1 ? x.w + ' winkels' : '1 winkel') + '</small></span><b>vanaf ' + boodEuro(x.p) + '</b></a>';
+    });
+    h += '<div class="dpvai-links"><a class="groen" href="' + boodVeilig(prodLink(shop, v)) + '">' + prodTekst(shop, v) + '</a>';
+    if (site && site.lijst && site.lijst.length) h += '<a href="/search?q=' + encodeURIComponent(v) + '&type=article,page">Artikelen over \u201c' + boodVeilig(v) + '\u201d &rsaquo;</a>';
+    h += '</div>';
+    vak.innerHTML = h;
+    vak.className = 'dpvai-bood aan';
+    hintTonen(false);
+    var uitVak = document.querySelector('.dpvai-uit'); if (uitVak) uitVak.className = 'dpvai-uit';
+    var neeVak = document.querySelector('.dpvai-nee'); if (neeVak) neeVak.className = 'dpvai-nee';
+    return true;
   }
 
   // ---- De site zelf: pagina's en artikelen ---------------------------------
@@ -766,7 +820,7 @@ body.dpvai-fab-open .pvlang{bottom:74px !important;transition:bottom .22s ease}
       })
       .catch(function(){ return null; });
   }
-  function toonSite(site, v, metKnop){
+  function toonSite(site, v, metKnop, shop){
     var vak = boodVak();
     if (!vak || !site || !site.lijst.length) return false;
     var h = '<div class="lbl"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2"><path d="M5 4h11l3 3v13H5z"/><path d="M8 10h8M8 14h8M8 18h5"/></svg>Hierover op De Prijsvergelijker</div>';
@@ -774,7 +828,9 @@ body.dpvai-fab-open .pvlang{bottom:74px !important;transition:bottom .22s ease}
       h += '<a class="dpvai-sr" href="' + boodVeilig(x.url) + '"><span class="dpvai-ss">' + x.soort + '</span><span class="dpvai-st">' + boodVeilig(x.titel) + '</span><span class="dpvai-sp">&rsaquo;</span></a>';
     });
     h += '<div class="dpvai-links"><a href="/search?q=' + encodeURIComponent(v) + '&type=article,page">Alles over \u201c' + boodVeilig(v) + '\u201d &rsaquo;</a>' +
-      (metKnop ? '<a class="groen" href="#" data-dpvai-vgl>Zoek in de vergelijker &rsaquo;</a>' : '') + '</div>';
+      (metKnop ? (shop
+        ? '<a class="groen" href="' + boodVeilig(prodLink(shop, v)) + '">' + prodTekst(shop, v) + '</a>'
+        : '<a class="groen" href="#" data-dpvai-vgl>Zoek in de vergelijker &rsaquo;</a>') : '') + '</div>';
     vak.innerHTML = h;
     vak.className = 'dpvai-bood aan';
     hintTonen(false);
@@ -995,7 +1051,9 @@ body.dpvai-fab-open .pvlang{bottom:74px !important;transition:bottom .22s ease}
     { "type": "text", "id": "knoptekst", "label": "Tekst op de zwevende knop", "default": "Zoekhulp" },
     { "type": "text", "id": "esim_url", "label": "Link naar de eSIM-vergelijker", "default": "/pages/internet-op-vakantie" },
     { "type": "text", "id": "bood_api", "label": "Adres van de boodschappenworker", "default": "https://dpv-boodschappen.business-347.workers.dev" },
-    { "type": "text", "id": "bood_pad", "label": "Link naar de boodschappenpagina", "default": "/pages/boodschappen" }
+    { "type": "text", "id": "bood_pad", "label": "Link naar de boodschappenpagina", "default": "/pages/boodschappen" },
+    { "type": "text", "id": "shop_api", "label": "Adres van de productworker", "default": "https://shop.deprijsvergelijker.com" },
+    { "type": "text", "id": "prod_pad", "label": "Link naar de productvergelijker", "default": "/pages/vergelijken" }
   ],
   "presets": [ { "name": "DPV AI-zoekbalk" } ]
 }

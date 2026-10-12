@@ -83,7 +83,7 @@
           <img src="{% if section.settings.b_img != blank %}{{ section.settings.b_img }}{% else %}{{ 'dpv-po-duo.webp' | asset_url }}{% endif %}" alt="" width="48" height="42" loading="eager" decoding="async">
         </span>
         <span class="dpb-tx">
-          <span class="dpb-titel">{{ section.settings.b_titel }}</span>
+          <span class="dpb-titel"><i class="dpb-dot" aria-hidden="true"></i>{{ section.settings.b_titel }} <span class="dpb-cnt" id="dpb-cnt" hidden></span></span>
           <span class="dpb-sub" id="dpb-b-sub">{{ section.settings.b_sub }}</span>
         </span>
       </span>
@@ -95,41 +95,41 @@
 </div>
 
 <style>
-/* 12 okt: strak wit, als een nieuwsregel (homepage v3). Eén kleur, tekstlinks in plaats van knoppen,
-   zodat de balk niet concurreert met de hero. Op de telefoon alleen het dringendste bericht (rechts). */
+/* 12 okt: donkere regel (concept B van de homepage). Eén donkere kleur, tekstlinks in geel,
+   bij de Duo een groene stip en "nog X dagen". Op de telefoon alleen het dringendste bericht (rechts). */
 #shopify-section-{{ section.id }}{position:-webkit-sticky;position:sticky;top:0;z-index:90}
-.dpb{--ink:#0D1B2A;--zacht:#4A5A70;--lijn:#E3E8F0;--blauw:#2456D6;position:relative;z-index:1;
-  font-family:'Instrument Sans',system-ui,sans-serif;background:#fff;border-bottom:1px solid var(--lijn)}
+.dpb{--ink:#0D1B2A;--geel:#F9C31F;--groen:#3FAE7A;position:relative;z-index:1;
+  font-family:'Instrument Sans',system-ui,sans-serif;background:var(--ink);color:#fff}
 .dpb *{box-sizing:border-box}
-.dpb-in{display:flex;align-items:center;max-width:1240px;margin:0 auto;position:relative;padding:0 48px 0 24px;min-height:52px}
-.dpb a.dpb-helft,.dpb a.dpb-helft:visited{flex:1 1 0;min-width:0;display:flex;align-items:center;gap:12px;padding:8px 0;text-decoration:none;color:var(--ink) !important}
-.dpb a.dpb-helft+a.dpb-helft{border-left:1px solid var(--lijn);padding-left:22px;margin-left:22px}
-.dpb-links{display:flex;align-items:center;gap:11px;min-width:0;flex:1 1 auto}
-.dpb-img{flex:0 0 auto;width:32px;height:34px;display:flex;align-items:center;justify-content:center}
-.dpb-img img{max-width:32px;max-height:34px;width:auto;height:auto;object-fit:contain}
-.dpb-img-breed{width:40px}.dpb-img-breed img{max-width:40px !important;max-height:34px !important}
-.dpb-tx{min-width:0;display:flex;align-items:baseline;gap:8px;white-space:nowrap;overflow:hidden}
-.dpb-titel{font-weight:700;font-size:14.5px;line-height:1.2;color:var(--ink)}
-.dpb-sub{font-size:14px;line-height:1.2;color:var(--zacht);overflow:hidden;text-overflow:ellipsis}
-.dpb-knop{flex:0 0 auto;margin-left:auto;color:var(--blauw);font-weight:700;font-size:14px;white-space:nowrap}
+.dpb-in{display:flex;align-items:center;justify-content:center;max-width:1240px;margin:0 auto;position:relative;padding:0 48px 0 24px;min-height:44px}
+.dpb a.dpb-helft,.dpb a.dpb-helft:visited{flex:0 1 auto;min-width:0;display:flex;align-items:center;gap:14px;padding:8px 0;text-decoration:none;color:#fff !important}
+.dpb a.dpb-straks{order:-1}
+.dpb a.dpb-nu{border-left:1px solid rgba(255,255,255,.18);padding-left:22px;margin-left:22px}
+.dpb-links{display:flex;align-items:center;gap:10px;min-width:0}
+.dpb-img{display:none}
+.dpb-tx{min-width:0;display:flex;align-items:center;gap:10px;white-space:nowrap;overflow:hidden}
+.dpb-titel{display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;line-height:1.2;color:#fff}
+.dpb-dot{width:8px;height:8px;border-radius:50%;background:var(--groen);box-shadow:0 0 0 4px rgba(63,174,122,.25);flex:none}
+.dpb-cnt{background:var(--geel);color:var(--ink);font-weight:800;font-size:12.5px;border-radius:6px;padding:2px 8px;line-height:1.3}
+.dpb-sub{font-size:14px;line-height:1.2;color:#C9D4E3;overflow:hidden;text-overflow:ellipsis}
+.dpb-knop{flex:0 0 auto;color:var(--geel);font-weight:700;font-size:14px;white-space:nowrap}
 .dpb-knop::after{content:" \2192"}
 .dpb a.dpb-helft:hover .dpb-knop{text-decoration:underline;text-underline-offset:3px}
-.dpb-sluit{position:absolute;top:50%;right:12px;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:8px;
-  background:transparent;color:#8A97A8;font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
-html:not(#x):not(#y) .dpb .dpb-sluit,html:not(#x):not(#y) .dpb.is-open .dpb-sluit{background:transparent !important;color:#8A97A8 !important;border:0 !important}
-html:not(#x):not(#y) .dpb .dpb-sluit:hover{color:var(--ink) !important}
-.dpb-sluit:focus-visible,.dpb a.dpb-helft:focus-visible{outline:2px solid var(--blauw);outline-offset:2px}
+.dpb-sluit{position:absolute;top:50%;right:12px;transform:translateY(-50%);width:28px;height:28px;border:0;border-radius:8px;
+  background:transparent;color:#9FB0C6;font-size:19px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center}
+html:not(#x):not(#y) .dpb .dpb-sluit,html:not(#x):not(#y) .dpb.is-open .dpb-sluit{background:transparent !important;color:#9FB0C6 !important;border:0 !important}
+html:not(#x):not(#y) .dpb .dpb-sluit:hover{color:#fff !important}
+.dpb-sluit:focus-visible,.dpb a.dpb-helft:focus-visible{outline:2px solid var(--geel);outline-offset:2px}
 @media(max-width:820px){
   #shopify-section-{{ section.id }}{position:relative}
-  .dpb-in{padding:0 40px 0 14px;min-height:48px}
+  .dpb-in{justify-content:flex-start;padding:0 38px 0 12px;min-height:42px}
   .dpb a.dpb-nu{display:none}
-  .dpb a.dpb-helft+a.dpb-helft{border-left:0;padding-left:0;margin-left:0}
-  .dpb a.dpb-helft{gap:8px;padding:7px 0}
-  .dpb-img-breed{width:30px}.dpb-img-breed img{max-width:30px !important;max-height:30px !important}
-  .dpb-tx{flex-wrap:wrap;white-space:normal;gap:0 6px}
-  .dpb-titel{font-size:13.5px}.dpb-sub{font-size:13px;white-space:nowrap}
-  .dpb-knop{font-size:13.5px}
-  .dpb-sluit{right:6px;width:28px;height:28px;font-size:18px}
+  .dpb a.dpb-helft{flex:1 1 auto;gap:8px;padding:6px 0}
+  .dpb-sub{display:none}
+  .dpb-titel{font-size:13.5px;gap:7px}
+  .dpb-cnt{font-size:12px;padding:2px 7px}
+  .dpb-knop{margin-left:auto;font-size:13.5px}
+  .dpb-sluit{right:6px}
 }
 </style>
 
@@ -139,6 +139,13 @@ html:not(#x):not(#y) .dpb .dpb-sluit:hover{color:var(--ink) !important}
   if (!balk) return;
 
   var start = Date.parse(balk.getAttribute('data-start') || '');
+  var cnt = document.getElementById('dpb-cnt');
+  if (cnt && !isNaN(start) && Date.now() < start) {
+    var dag = function (t) { var d = new Date(t); return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / 864e5; };
+    var n = dag(start) - dag(Date.now());
+    cnt.textContent = n <= 0 ? 'vandaag' : n === 1 ? 'morgen' : 'nog ' + n + ' dagen';
+    cnt.hidden = false;
+  }
   if (!isNaN(start) && Date.now() >= start) {
     balk.classList.add('is-open');
     var b = document.getElementById('dpb-b');

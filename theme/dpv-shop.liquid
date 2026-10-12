@@ -305,6 +305,12 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
 .ds-dealtip{font-size:12.5px;color:#4A5A70;font-weight:600}
 .ds-dealuitleg{border:1px solid #D5DCE6;border-radius:12px;background:#fff;box-shadow:0 10px 28px rgba(13,27,42,.06);padding:12px 14px;margin:0 0 12px;font-size:13.5px;line-height:1.55;color:#33445A}
 .ds-dealuitleg b{color:#0D1B2A}
+.ds-dealuitleg summary{cursor:pointer;font-weight:800;color:#0D1B2A;list-style:none}
+.ds-dealuitleg summary::-webkit-details-marker{display:none}
+.ds-dealuitleg summary::after{content:" +";color:#4A5A70}
+.ds-dealuitleg[open] summary::after{content:" \2212"}
+.ds-dealuitleg p{margin:6px 0 0}
+.ds-dealuitleg:not([open]){padding:10px 14px}
 .ds-badge.daal{background:#0D1B2A;color:#FFD84D}
 .ds-winkelrij .ds-was{white-space:nowrap}
 @media (max-width:640px){.ds-dealtip{display:none}}
@@ -405,7 +411,7 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
 
     <div class="ds-hoofd">
       {%- if section.settings.deals_aan and section.settings.deals_uitleg != blank -%}
-      <div class="ds-dealuitleg" id="ds-dealuitleg" hidden>{{ section.settings.deals_uitleg }}</div>
+      <details class="ds-dealuitleg" id="ds-dealuitleg" hidden><summary>Hoe meten wij dit?</summary>{{ section.settings.deals_uitleg }}</details>
       {%- endif -%}
       <div class="ds-balk">
         <button type="button" class="ds-fknop" id="ds-fknop" aria-controls="ds-zij" aria-expanded="false">
@@ -593,7 +599,7 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
     Object.keys(st.filters).forEach(function (k) { if (st.filters[k]) p.set(k, '1'); });
     if (st.min !== '') p.set('min', st.min);
     if (st.max !== '') p.set('max', st.max);
-    if (st.sort !== 'populair' && !(st.deals && st.sort === 'korting')) p.set('sort', st.sort);
+    if (st.sort !== 'populair' && st.sort !== 'beste') p.set('sort', st.sort);
     if (st.deals) p.set('deals', 'black-friday');
     var s = p.toString();
     var nieuw = location.pathname + (s ? '?' + s : '');
@@ -616,7 +622,7 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
     st.min = p.get('min') || '';
     st.max = p.get('max') || '';
     st.deals = !!DEALS && !!p.get('deals');
-    st.sort = p.get('sort') || (st.deals ? 'korting' : 'populair');
+    st.sort = p.get('sort') || (st.deals ? 'beste' : 'populair');
     if (st.deals) st.filters = {};
     st.pagina = 1;
   }
@@ -753,12 +759,24 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
     var k = document.getElementById('ds-deals');
     if (k) k.setAttribute('aria-pressed', st.deals ? 'true' : 'false');
     var u = document.getElementById('ds-dealuitleg');
-    if (u) u.hidden = !st.deals;
+    if (u) { u.hidden = !st.deals; if (st.deals && !u.dataset.gezet) { u.dataset.gezet = '1'; u.open = window.innerWidth > 640; } }
+    zetSortOpties();
     // de andere aanbiedingsfilters gaan over de feed, niet over gezakt.json
     el.filters.querySelectorAll('[data-f]').forEach(function (b) {
       if (st.deals) { b.disabled = true; b.setAttribute('aria-pressed', 'false'); }
       else b.disabled = false;
     });
+  }
+  // Beste deal: korting in procenten maal de wortel van het bedrag. Zo komt een
+  // koptelefoon die 178 euro zakte boven een pak wasmiddel dat 60 euro zakte.
+  function beste(x) { return x.k * Math.sqrt(Math.min(x.d, 600)); }
+  function zetSortOpties() {
+    var o = el.sort.querySelector('option[value="beste"]');
+    if (st.deals && !o) {
+      o = document.createElement('option'); o.value = 'beste'; o.textContent = 'Beste deals';
+      el.sort.insertBefore(o, el.sort.firstChild);
+    } else if (!st.deals && o) o.parentNode.removeChild(o);
+    el.sort.value = st.sort;
   }
   function dealSelectie() {
     var woorden = st.q.toLowerCase().split(/\s+/).filter(Boolean);
@@ -787,8 +805,9 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
       'prijs': function (a, b) { return a.p - b.p; },
       'prijs-af': function (a, b) { return b.p - a.p; },
       'naam': function (a, b) { return a.n.localeCompare(b.n, 'nl'); },
-      'verschil': function (a, b) { return b.d - a.d || b.k - a.k; }
-    }[st.sort] || function (a, b) { return b.k - a.k || b.d - a.d; };
+      'verschil': function (a, b) { return b.d - a.d || b.k - a.k; },
+      'korting': function (a, b) { return b.k - a.k || b.d - a.d; }
+    }[st.sort] || function (a, b) { return beste(b) - beste(a); };
     lijst.sort(srt);
     return { lijst: lijst, facetten: { merken: telling('b'), types: telling('t') } };
   }
@@ -1297,9 +1316,8 @@ html:not(#x):not(#y) .ds .ds-dealchip[aria-pressed="true"] .n{background:#FFD84D
     st.deals = !st.deals;
     if (st.deals) {
       st.filters = {};
-      if (st.sort === 'populair') st.sort = 'korting';
-    } else if (st.sort === 'korting') st.sort = 'populair';
-    el.sort.value = st.sort;
+      if (st.sort === 'populair') st.sort = 'beste';
+    } else if (st.sort === 'beste') st.sort = 'populair';
     st.merk = []; st.type = [];
     zetDealKnop();
     vernieuw(true);

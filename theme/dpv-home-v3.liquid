@@ -1690,6 +1690,79 @@ html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:1px solid var(--r5)}
     meet('dhk_klik', { tab: a.getAttribute('data-tab'), keuze: inKiezer ? ((st || {}).keuze || '') : (a.getAttribute('data-product') || ''), positie: a.getAttribute('data-pos'), aanbieder: a.getAttribute('data-naam') });
   });
 
+
+  // ---- v3: aftellen naar Black Friday -------------------------------------
+  var tel = wortel.querySelector('.tel[data-tot]');
+  if (tel) {
+    var doel = Date.parse(tel.getAttribute('data-tot'));
+    var tik = function () {
+      var r = doel - Date.now();
+      if (!(r > 0)) { tel.hidden = true; return; }
+      var d = Math.floor(r / 864e5), u = Math.floor(r / 36e5) % 24, m = Math.floor(r / 6e4) % 60;
+      tel.querySelector('[data-t="d"]').textContent = d;
+      tel.querySelector('[data-t="u"]').textContent = u;
+      tel.querySelector('[data-t="m"]').textContent = m;
+    };
+    if (!isNaN(doel)) { tik(); setInterval(tik, 30000); }
+  }
+
+  // ---- v3: vaste balk onderin op de telefoon --------------------------------
+  // Toont nummer 1 van de open categorie zodra de hero uit beeld is, en verdwijnt
+  // weer bij de voet. De link is dezelfde doorklik als de knop in de hero, met
+  // positie "vast" voor de meting.
+  var vast = document.getElementById('dhd-vast'), held = wortel.querySelector('.hero');
+  var NAAM = { sim: 'sim only', telefoon: 'telefoon met abonnement', internet: 'internet', energie: 'energiecontract', zorg: 'basisverzekering' };
+  function vulVast() {
+    var een = cA.querySelector('[data-h="1"]'), k = een ? q(een, 'knop') : null, vk = vast.querySelector('[data-v="knop"]');
+    if (!een || cA.hidden || !k || !k.target) return false;
+    vast.querySelector('[data-v="aanb"]').textContent = (q(een, 'aanb') || {}).textContent || '';
+    vast.querySelector('[data-v="prijs"]').textContent = (q(een, 'prijs') || {}).textContent || '';
+    vast.querySelector('[data-v="per"]').textContent = /maand/.test((q(een, 'per') || {}).textContent || '') ? ' p/m' : '';
+    vast.querySelector('[data-v="wat"]').textContent = 'goedkoopste ' + (NAAM[actief] || 'aanbieding');
+    vk.href = k.href; vk.target = '_blank'; vk.rel = k.rel;
+    vk.setAttribute('data-pos', 'vast'); vk.setAttribute('data-naam', k.getAttribute('data-naam') || ''); vk.setAttribute('data-tab', actief);
+    return true;
+  }
+  if (vast && held && 'IntersectionObserver' in window && window.matchMedia) {
+    var smal = window.matchMedia('(max-width:900px)'), heroWeg = false, voetIn = false;
+    var zetVast = function () {
+      var aan = smal.matches && heroWeg && !voetIn && vulVast();
+      vast.hidden = !aan;
+      document.documentElement.classList.toggle('dhd-vast-aan', !!aan);
+    };
+    new IntersectionObserver(function (e) { heroWeg = !e[0].isIntersecting; zetVast(); }, { rootMargin: '0px 0px -40% 0px' }).observe(held.querySelector('.cluster') || held);
+    var voet = document.querySelector('footer, .pv-footer, #shopify-section-pv-footer');
+    if (voet) new IntersectionObserver(function (e) { voetIn = e[0].isIntersecting; zetVast(); }).observe(voet);
+    if (smal.addEventListener) smal.addEventListener('change', zetVast);
+    vast.querySelector('[data-v="knop"]').addEventListener('click', function () {
+      meet('dhk_klik', { tab: actief, keuze: ((staat[actief] || {}).keuze || ''), positie: 'vast', aanbieder: this.getAttribute('data-naam') });
+    });
+  }
+  // ---- v3: Actueel filteren met chips -----------------------------------------
+  (function () {
+    var box = document.getElementById('dhd-achips'), act = document.getElementById('dhd-act'), dat = document.getElementById('dhd-adata');
+    if (!box || !act || !dat) return;
+    var lijst = []; try { lijst = JSON.parse(dat.textContent); } catch (e) { return; }
+    var start = act.innerHTML;
+    function past(a, f) { if (!f) return true; return f.split(',').some(function (t) { t = t.trim(); return t && (',' + a.g + ',').indexOf(t) > -1; }); }
+    [].forEach.call(box.querySelectorAll('.ac[data-ac]'), function (b) { var f = b.getAttribute('data-ac'); if (!f) return; var n = lijst.filter(function (a) { return past(a, f); }).length; b.hidden = n < 2; });
+    function img(a, w) { return a.i ? '<img src="' + esc(a.i) + '" alt="" loading="lazy" width="' + w + '" height="' + Math.round(w * 0.525) + '">' : ''; }
+    function teken(f) {
+      if (!f) { act.innerHTML = start; return; }
+      var l = lijst.filter(function (a) { return past(a, f); }).slice(0, 5);
+      if (!l.length) return;
+      var e = l[0];
+      act.innerHTML = '<a class="feat" href="' + esc(e.u) + '">' + img(e, 900) + '<span class="tx">' + (e.r ? '<small>' + esc(e.r) + '</small>' : '') + '<h3>' + esc(e.t) + '</h3>' + (e.x ? '<span class="uitt">' + esc(e.x) + '</span>' : '') + '</span></a>' +
+        '<ul class="lst">' + l.slice(1).map(function (a) { return '<li><a href="' + esc(a.u) + '">' + img(a, 400) + '<span class="tx">' + (a.r ? '<small>' + esc(a.r) + '</small>' : '') + '<h3>' + esc(a.t) + '</h3></span></a></li>'; }).join('') + '</ul>';
+    }
+    box.addEventListener('click', function (ev) {
+      var b = ev.target.closest ? ev.target.closest('.ac') : null; if (!b) return;
+      [].forEach.call(box.querySelectorAll('.ac'), function (x) { var a = x === b; x.classList.toggle('aan', a); x.setAttribute('aria-pressed', a ? 'true' : 'false'); });
+      teken(b.getAttribute('data-ac')); meet('dhd_actueel_filter', { filter: b.textContent.trim() });
+    });
+  })();
+
+
   // ---- Zorg 2027: aanmelden -------------------------------------------------
   var form = document.getElementById('dhd-zmail');
   if (form) {

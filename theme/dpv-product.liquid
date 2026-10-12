@@ -316,10 +316,25 @@
   // bestaat niet in de shop-worker; dan kwamen de goedkoopste toestellen terug
   // (een Nokia van 45 euro onder een iPhone).
   var MERK = {{ m.merk.value | default: '' | json }}, NAAM = {{ naam | default: '' | json }};
-  function model(n) {
-    return String(n || '').toLowerCase().replace(/\s+[-–]\s+/g, ' ')
+  var MERK_L = String(MERK || '').toLowerCase();
+  function basis(n) {
+    return String(n || '').toLowerCase().replace(/\|.*$/, '').replace(/\s+[-–]\s+/g, ' ')
       .replace(/\b\d+\s?(gb|tb|mb)\b[\s\S]*$/, '').replace(/\b[45]g\b/g, '').replace(/\s+/g, ' ').trim();
   }
+  // Wat hetzelfde model is: een typenummer (wh-1000xm6, na352/00) als dat er is,
+  // anders de naam tot aan het geheugen, zonder merknaam ("iPhone 17 Pro").
+  function model(n) {
+    var t = String(n || '').toLowerCase().split(/[\s,()|]+/);
+    for (var i = 0; i < t.length; i++) {
+      var w = t[i].replace(/[-/.]/g, '');
+      if (w.length >= 5 && /\d/.test(w) && /[a-z]/.test(w) && !/^\d+(gb|tb|mb|mah|inch|w|cm|mm)$/.test(w)) return w;
+    }
+    var b = basis(n); if (MERK_L && b.indexOf(MERK_L + ' ') === 0) b = b.slice(MERK_L.length + 1);
+    return b.replace(/^(apple|samsung|xiaomi|google|sony|philips)\s+/, '');
+  }
+  var STOP = { met: 1, voor: 1, van: 1, and: 1, the: 1, zwart: 1, wit: 1, black: 1, white: 1, grijs: 1, blauw: 1, inch: 1 };
+  function woorden(n) { return basis(n).split(/[^a-z0-9]+/).filter(function (w) { return w.length >= 3 && !STOP[w] && w !== MERK_L && !/^\d+$/.test(w); }); }
+  var EIGEN_W = woorden(NAAM);
   var EIGEN = model(NAAM);
   function lijst(extra) {
     return fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + (SOORT ? '&type=' + encodeURIComponent(SOORT) : '') + '&n=60&sort=winkels' + extra)
@@ -334,8 +349,12 @@
   ]).then(function (uit) {
     var kaart = uit[2] || {}, gezien = {}, items = [];
     uit[0].concat(uit[1]).forEach(function (x) { if (x && !gezien[x.i]) { gezien[x.i] = 1; items.push(x); } });
-    if (items.length < 4 && ruim) return lijst(ruim).then(function (l) { l.forEach(function (x) { if (!gezien[x.i]) { gezien[x.i] = 1; items.push(x); } }); return [items, kaart]; });
-    return [items, kaart];
+    function bij(l) { l.forEach(function (x) { if (!gezien[x.i]) { gezien[x.i] = 1; items.push(x); } }); }
+    if (items.length >= 4 || !ruim) return [items, kaart];
+    // Te weinig in deze soort: eerst ruimer in prijs, dan de hele categorie in die prijsklasse.
+    return lijst(ruim).then(function (l) { bij(l); if (items.length >= 4 || !SOORT) return [items, kaart];
+      return fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + '&n=60&sort=winkels' + ruim).then(function (r) { return r.json(); })
+        .then(function (d) { bij((d && d.items) || []); return [items, kaart]; }).catch(function () { return [items, kaart]; }); });
   }).then(function (uit) {
     var items = uit[0], kaart = uit[1], merk = String(MERK || '').toLowerCase();
     items = items.filter(function (x) { return x.i !== ID && x.im && x.s !== 'r' && model(x.n) !== EIGEN; });
@@ -344,6 +363,9 @@
       if (PRIJS > 0 && x.p > 0) sc -= Math.abs(Math.log(x.p / PRIJS)) * 3;   // dichter bij de prijs is beter
       if (merk && String(x.b || '').toLowerCase() === merk) sc += 1.2;        // zelfde merk
       if (kaart[x.i]) sc += 0.8;                                              // heeft een eigen pagina
+      var w = woorden(x.n), gedeeld = 0;                                      // lijkt de naam erop (MacBook bij MacBook)
+      for (var j = 0; j < w.length; j++) if (EIGEN_W.indexOf(w[j]) > -1) gedeeld++;
+      sc += Math.min(gedeeld, 3) * 0.6;
       sc += Math.min((x.o && x.o.length) || 1, 5) * 0.15;                     // bij meer winkels te koop
       x._sc = sc;
     });

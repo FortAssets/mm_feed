@@ -641,6 +641,47 @@ html:not(#x) .dhd .achips{flex-wrap:nowrap;overflow-x:auto;margin:-8px -16px 14p
 html:not(#x) .dhd .achips::-webkit-scrollbar{display:none}
 html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:1px solid var(--r5)}
 }
+
+/* ---- Prijsje en "Vandaag echt gezakt" (12 okt) ---- */
+html:not(#x) .dhd .pj{display:block;line-height:0;pointer-events:none}
+html:not(#x) .dhd .pj svg{display:block;width:100%;height:auto}
+html:not(#x) .dhd .hero-tekst{position:relative}
+html:not(#x) .dhd .pj-hero{position:absolute;right:0;top:-6px;width:128px}
+html:not(#x) .dhd .gz{padding:40px 0 44px;background:#fff;border-bottom:1px solid var(--lijn2)}
+html:not(#x) .dhd .gz .kopregel{align-items:center;margin-bottom:18px}
+html:not(#x) .dhd .gzk{display:flex;align-items:center;gap:10px}
+html:not(#x) .dhd .pj-gz{width:74px;flex:none;margin:-14px 0 -10px}
+html:not(#x) .dhd .gz h2{margin:0}
+html:not(#x) .dhd .gzk p{color:var(--zacht);font-size:15px;margin-top:2px}
+html:not(#x):not(#y) .dhd a.gz-alle{font-weight:800;color:#1F7A52;text-decoration:none;font-size:15px;white-space:nowrap}
+html:not(#x) .dhd .gz-rij{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+html:not(#x) .dhd .gzc{position:relative;display:flex;flex-direction:column;background:#fff;border:1px solid var(--lijn);border-radius:16px;padding:14px;box-shadow:0 10px 28px rgba(13,27,42,.08);min-width:0}
+html:not(#x) .dhd .gzb{position:absolute;top:12px;left:12px;z-index:1;background:var(--inkt);color:var(--geel);font-weight:800;font-size:12.5px;border-radius:7px;padding:3px 8px}
+html:not(#x) .dhd .gzf{display:flex;align-items:center;justify-content:center;height:130px;margin-top:8px}
+html:not(#x) .dhd .gzf img{max-width:88%;max-height:122px;width:auto;height:auto;object-fit:contain}
+html:not(#x) .dhd .gzc small{font-size:11.5px;font-weight:700;color:var(--zacht);text-transform:uppercase;letter-spacing:.06em;margin-top:8px}
+html:not(#x) .dhd .gzc b{font-family:var(--kop);font-weight:800;font-size:16px;line-height:1.22;margin-top:2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:39px}
+html:not(#x) .dhd .gzp{display:flex;align-items:baseline;gap:8px;margin-top:8px}
+html:not(#x) .dhd .gzp strong{font-family:var(--kop);font-weight:800;font-size:26px;letter-spacing:-.03em}
+html:not(#x) .dhd .gzp s{color:#8A97A8;font-size:14px}
+html:not(#x) .dhd .gzw{font-size:12.5px;color:var(--zacht);margin:2px 0 12px}
+html:not(#x) .dhd .gzc .knop{margin-top:auto;width:100%;text-align:center;white-space:normal;line-height:1.2}
+html:not(#x) .dhd .bf-top{position:relative}
+html:not(#x) .dhd .pj-bf{width:118px;margin:-20px 0 -26px auto;flex:none}
+@media (max-width:900px){
+ html:not(#x) .dhd .pj-hero{width:78px;top:-4px}
+ html:not(#x) .dhd .hero h1{padding-right:84px}
+ html:not(#x) .dhd .gz{padding:26px 0 30px}
+ html:not(#x) .dhd .gz .kopregel{margin-bottom:12px;flex-wrap:nowrap}
+ html:not(#x) .dhd .pj-gz{width:58px}
+ html:not(#x) .dhd .gz-rij{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;gap:10px;margin:0 -16px;padding:2px 16px 8px;scrollbar-width:none}
+ html:not(#x) .dhd .gz-rij::-webkit-scrollbar{display:none}
+ html:not(#x) .dhd .gzc{flex:0 0 72%;scroll-snap-align:start;padding:12px}
+ html:not(#x) .dhd .gzf{height:110px}html:not(#x) .dhd .gzf img{max-height:102px}
+ html:not(#x):not(#y) .dhd a.gz-alle{font-size:13.5px}
+ html:not(#x) .dhd .pj-bf{position:absolute;right:0;top:-8px;width:74px;margin:0}
+ html:not(#x) .dhd .bf-top h2{padding-right:78px}
+}
 </style>
 
 <div class="dhd" id="dhd" data-worker="{{ worker }}" data-shop="{{ shopw }}" data-mail="{{ mailw }}"
@@ -651,6 +692,7 @@ html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:1px solid var(--r5)}
 <section class="hero" aria-labelledby="dhd-h1">
   <div class="wrap">
     <div class="hero-tekst">
+      {%- if s.pj_aan -%}<span class="pj pj-hero"><svg viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible" aria-hidden="true" focusable="false"><defs><filter id="pj-h" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-h)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 L228 180" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M238.4 185.0 Q238.3 186.9 237.8 187.7 Q237.3 188.6 236.7 189.3 Q236.2 190.1 235.3 190.6 Q234.5 191.1 233.6 191.3 Q232.6 191.4 231.7 191.4 Q230.7 191.3 229.9 191.0 Q229.0 190.6 228.2 190.1 Q227.4 189.6 226.8 188.8 Q226.3 188.0 225.9 187.2 Q225.6 186.3 225.6 185.3 Q225.5 184.3 225.8 183.4 Q226.0 182.5 226.5 181.7 Q227.0 180.9 227.7 180.2 Q228.4 179.5 229.3 179.2 Q230.2 178.9 231.1 178.8 Q232.0 178.6 233.0 178.7 Q233.9 178.8 234.8 179.2 Q235.6 179.6 236.4 180.2 Q237.1 180.9 237.5 181.7 Q237.9 182.6 238.2 183.5 Q238.4 184.4 238.4 185.3" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M246 190 l9 4 M240 202 l6 8 M228 206 l1 10" fill="none" stroke="#0D1B2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#0D1B2A" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><circle cx="130" cy="74" r="8" fill="#fff"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M111 150.8 Q128.1 164.1 149 148.9" fill="none" stroke="#fff" stroke-width="4.2749999999999995" stroke-linecap="round" stroke-linejoin="round" /><path d="M103.4 109 q10 -5.699999999999999 19 -1.9 M135.7 106.15 q10 -3.8 18.05 1.9" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span>{%- endif -%}
       <p class="eb"><i aria-hidden="true"></i><span data-meting="lang">Prijzen elke nacht gemeten</span></p>
       <h1 id="dhd-h1">{{ s.kop }}<span class="sr"> {{ s.kop_sr }}</span></h1>
       <p class="sub">{{ s.sub }}</p>
@@ -737,6 +779,18 @@ html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:1px solid var(--r5)}
   </div>
 </section>
 
+<!-- VANDAAG ECHT GEZAKT (12 okt) -->
+{%- if s.gz_aan -%}
+<section class="gz" aria-labelledby="dhd-gz" data-gz="{{ s.gz_bron | default: 'https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/shop/gezakt.json' }}" hidden>
+  <div class="wrap">
+    <div class="kopregel">
+      <div class="gzk">{%- if s.pj_aan -%}<span class="pj pj-gz"><svg viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible" aria-hidden="true" focusable="false"><defs><filter id="pj-g" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-g)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 140 q-24 -10 -28 -40" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M43.4 94.0 Q43.3 95.9 42.8 96.7 Q42.3 97.6 41.7 98.3 Q41.2 99.1 40.3 99.6 Q39.5 100.1 38.6 100.3 Q37.6 100.4 36.7 100.4 Q35.7 100.3 34.9 100.0 Q34.0 99.6 33.2 99.1 Q32.4 98.6 31.8 97.8 Q31.3 97.0 30.9 96.2 Q30.6 95.3 30.6 94.3 Q30.5 93.3 30.8 92.4 Q31.0 91.5 31.5 90.7 Q32.0 89.9 32.7 89.2 Q33.4 88.5 34.3 88.2 Q35.2 87.9 36.1 87.8 Q37.0 87.6 38.0 87.7 Q38.9 87.8 39.8 88.2 Q40.6 88.6 41.4 89.2 Q42.1 89.9 42.5 90.7 Q42.9 91.6 43.2 92.5 Q43.4 93.4 43.4 94.3" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 140 q24 -10 28 -40" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M229.4 94.0 Q229.3 95.9 228.8 96.7 Q228.3 97.6 227.7 98.3 Q227.2 99.1 226.3 99.6 Q225.5 100.1 224.6 100.3 Q223.6 100.4 222.7 100.4 Q221.7 100.3 220.9 100.0 Q220.0 99.6 219.2 99.1 Q218.4 98.6 217.8 97.8 Q217.3 97.0 216.9 96.2 Q216.6 95.3 216.6 94.3 Q216.5 93.3 216.8 92.4 Q217.0 91.5 217.5 90.7 Q218.0 89.9 218.7 89.2 Q219.4 88.5 220.3 88.2 Q221.2 87.9 222.1 87.8 Q223.0 87.6 224.0 87.7 Q224.9 87.8 225.8 88.2 Q226.6 88.6 227.4 89.2 Q228.1 89.9 228.5 90.7 Q228.9 91.6 229.2 92.5 Q229.4 93.4 229.4 94.3" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#0D1B2A" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><circle cx="130" cy="74" r="8" fill="#fff"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><ellipse cx="130" cy="155.55" rx="5.699999999999999" ry="7.6" fill="none" stroke="#fff" stroke-width="4.2749999999999995"/><path d="M103.4 105.2 q10 -7.6 19 -2.8499999999999996 M135.7 101.4 q10 -5.699999999999999 18.05 2.8499999999999996" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span>{%- endif -%}<div><h2 id="dhd-gz">{{ s.gz_kop }}</h2><p>{{ s.gz_sub }}</p></div></div>
+      <a class="gz-alle" href="{{ s.gz_link }}">{{ s.gz_link_tekst }} &rarr;</a>
+    </div>
+    <ul class="gz-rij" id="dhd-gzrij"></ul>
+  </div>
+</section>
+{%- endif -%}
 
 <!-- BLACK FRIDAY -->
 {%- assign vandaag = 'now' | date: '%Y-%m-%d' -%}
@@ -748,6 +802,7 @@ html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:1px solid var(--r5)}
         <p class="eb"><i aria-hidden="true"></i>{{ s.bf_datum }}</p>
         <h2 id="dhd-bf">{{ s.bf_kop }} <em>{{ s.bf_kop_geel }}</em></h2>
       </div>
+      {%- if s.pj_aan -%}<span class="pj pj-bf"><svg viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible" aria-hidden="true" focusable="false"><defs><filter id="pj-b" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-b)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 q24 -6 30 -30" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><g transform="translate(218 70) rotate(8)"><path d="M0 0 h44 v30 h-44 z M0 0 l22 17 l22 -17" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /></g><path d="M270 64 l8 -6 M272 78 l10 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#fff" stroke="#fff" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M111 150.8 Q128.1 164.1 149 148.9" fill="none" stroke="#0D1B2A" stroke-width="4.2749999999999995" stroke-linecap="round" stroke-linejoin="round" /><path d="M103.4 109 q10 -5.699999999999999 19 -1.9 M135.7 106.15 q10 -3.8 18.05 1.9" fill="none" stroke="#0D1B2A" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span>{%- endif -%}
       {%- assign bf_s = s.bf_moment | date: '%s' | plus: 0 -%}
       {%- assign nu_s = 'now' | date: '%s' | plus: 0 -%}
       {%- assign bf_d = bf_s | minus: nu_s | divided_by: 86400 -%}
@@ -1802,6 +1857,43 @@ html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:1px solid var(--r5)}
 })();
 </script>
 
+<script>
+/* Vandaag echt gezakt (12 okt): vier producten uit gezakt.json, een per categorie.
+   Alleen wat bij dezelfde winkel echt lager staat dan de laagste prijs uit de
+   30 dagen ervoor. Lukt het laden niet, dan blijft het blok verborgen. */
+(function () {
+  var sec = document.querySelector('#dhd .gz'); if (!sec) return;
+  var rij = document.getElementById('dhd-gzrij'); var bron = sec.getAttribute('data-gz');
+  var shop = (document.getElementById('dhd').getAttribute('data-shop') || 'https://shop.deprijsvergelijker.com').replace(/\/+$/, '');
+  var NAAM = { gaming: 'Gaming', telefoons: 'Telefoons', laptops: 'Laptops', 'tv-beeld': "Tv's", audio: 'Audio', huishoudelijk: 'Huishoudelijk', keuken: 'Keuken', foto: 'Foto en video', 'slim-huis': 'Slim huis', randapparatuur: 'Randapparatuur', verzorging: 'Verzorging', speelgoed: 'Speelgoed', accessoires: 'Accessoires' };
+  var NIET = /wasmiddel|wascapsule|capsules|tabletten|cartridge|inktpatroon|\btoner\b|luiers|navulling|scheermesjes|opzetborstel|stofzuigerzakken|hoesje|screenprotector|\bcase\b/i;
+  var MND = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+  function eur(v) { v = Math.round(v * 100) / 100; var t = v % 1 === 0 ? String(v) : v.toFixed(2).replace('.', ','); var d = t.split(','); d[0] = d[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.'); return '€' + d.join(','); }
+  function esc(x) { return String(x == null ? '' : x).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function dag(d) { var m = /^(\d{4})-(\d\d)-(\d\d)/.exec(d || ''); return m ? (+m[3]) + ' ' + MND[+m[2] - 1] : ''; }
+  function score(x) { return x.k * Math.sqrt(Math.min(x.d, 600)); }
+  fetch(bron).then(function (r) { return r.json(); }).then(function (g) {
+    var kand = (g.p || []).filter(function (x) { return x.im && x.p >= 30 && x.d >= 15 && x.k >= 12 && x.k <= 60 && x.c !== 'drogisterij' && !/partner/i.test(x.w || '') && !NIET.test(x.n); })
+      .sort(function (a, b) { return score(b) - score(a); });
+    var keuze = [], cats = {};
+    for (var i = 0; i < kand.length && keuze.length < 4; i++) { if (cats[kand[i].c]) continue; cats[kand[i].c] = 1; keuze.push(kand[i]); }
+    if (keuze.length < 2) return;
+    rij.innerHTML = keuze.map(function (x, n) {
+      var go = shop + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c) + '&w=' + encodeURIComponent(x.w);
+      var naam = x.n.length > 70 ? x.n.slice(0, 68).replace(/[\s,-]+\S*$/, '') + '…' : x.n;
+      return '<li class="gzc"><span class="gzb">&minus;' + eur(x.d) + ' · ' + x.k + '%</span>' +
+        '<a class="gzf" href="' + go + '" target="_blank" rel="sponsored nofollow noopener" data-pos="gz.' + (n + 1) + '" data-naam="' + esc(x.w) + '" data-tab="gezakt" data-product="' + esc(x.i) + '"><img src="' + esc(x.im) + '" alt="' + esc(naam) + '" loading="lazy" width="160" height="122"></a>' +
+        '<small>' + esc(NAAM[x.c] || '') + '</small><b>' + esc(naam) + '</b>' +
+        '<p class="gzp"><strong>' + eur(x.p) + '</strong><s>' + eur(x.was) + '</s></p>' +
+        '<p class="gzw">bij ' + esc(x.w) + (x.wd ? ' · was ' + eur(x.was) + ' op ' + dag(x.wd) : '') + '</p>' +
+        '<a class="knop" href="' + go + '" target="_blank" rel="sponsored nofollow noopener" data-pos="gz.' + (n + 1) + '" data-naam="' + esc(x.w) + '" data-tab="gezakt" data-product="' + esc(x.i) + '">Bekijk bij ' + esc(x.w) + '</a></li>';
+    }).join('');
+    var a = sec.querySelector('.gz-alle'); if (a && g.p) a.innerHTML = a.innerHTML.replace('{n}', g.p.length.toLocaleString('nl-NL'));
+    sec.hidden = false;
+  }).catch(function () {});
+})();
+</script>
+
 {% schema %}
 {
   "name": "Homepage v3",
@@ -1856,6 +1948,14 @@ html:not(#x) .dhd .z2 .rechts{border-left:0;border-top:1px solid var(--r5)}
     { "type": "text", "id": "act_4", "label": "Actueel: artikel 4 (handle)", "default": "iphone-18-pro-pre-order-wanneer-en-waar" },
     { "type": "text", "id": "act_5", "label": "Actueel: artikel 5 (handle)", "default": "telefoon-met-abonnement-black-friday-2026" },
     { "type": "textarea", "id": "act_chips", "label": "Actueel: filterchips", "info": "Een per regel: label|tags. Tags met komma's ertussen; een chip verschijnt als er minstens twee artikelen bij horen.", "default": "Black Friday|black friday,cyber monday\nZorg 2027|zorg,zorgverzekering\niPhone|iphone,apple\nSim only|sim only,esim\nEnergie|energie,stroom" },
+    { "type": "header", "content": "Prijsje en echt gezakt" },
+    { "type": "checkbox", "id": "pj_aan", "label": "Prijsje tonen (hero, deals, Black Friday-band)", "default": true },
+    { "type": "checkbox", "id": "gz_aan", "label": "Blok 'Vandaag echt gezakt' tonen", "default": true },
+    { "type": "text", "id": "gz_kop", "label": "Echt gezakt: kop", "default": "Vandaag echt gezakt" },
+    { "type": "text", "id": "gz_sub", "label": "Echt gezakt: regel eronder", "default": "Lager dan de 30 dagen ervoor, bij dezelfde winkel" },
+    { "type": "text", "id": "gz_link", "label": "Echt gezakt: link naar alle deals", "default": "/pages/vergelijken?deals=black-friday" },
+    { "type": "text", "id": "gz_link_tekst", "label": "Echt gezakt: tekst van die link", "info": "{n} wordt het aantal gezakte producten.", "default": "Alle {n} deals" },
+    { "type": "text", "id": "gz_bron", "label": "Echt gezakt: bestand", "default": "https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/shop/gezakt.json" },
     { "type": "header", "content": "Black Friday-band" },
     { "type": "checkbox", "id": "bf_aan", "label": "Band tonen", "default": true },
     { "type": "text", "id": "bf_tot", "label": "Tonen tot en met (JJJJ-MM-DD)", "default": "2026-11-30" },

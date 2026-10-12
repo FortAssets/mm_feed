@@ -1810,7 +1810,9 @@ function prijslogboek (producten) {
       if (p.s === 'n' && p.p >= 20 && p.o.length) {
         const lo = p.o.reduce((a, o) => (o.p < a.p ? o : a), p.o[0])
         const r0 = hist[p.i + '|' + lo.w]
-        if (Array.isArray(r0) && r0.length > 1) {
+        // Bij een bol-partner kan achter dezelfde naam een andere verkoper zitten,
+        // dus dan is het geen prijs van dezelfde winkel. Die tellen niet mee.
+        if (!/partner/i.test(lo.w) && Array.isArray(r0) && r0.length > 1) {
           const r = r0.slice().sort((x, y) => (x[0] < y[0] ? -1 : x[0] > y[0] ? 1 : 0))
           let j = r.length
           while (j > 0 && r[j - 1][1] <= lo.p * 1.05) j--

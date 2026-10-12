@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "vergelijker": {
+      "type": "dpv-vpn-vergelijker",
+      "settings": {}
+    }
+  },
+  "order": [
+    "vergelijker"
+  ]
+}

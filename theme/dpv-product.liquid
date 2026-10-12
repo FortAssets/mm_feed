@@ -311,24 +311,46 @@
     if (a) meet('dpp_klik', { winkel: a.getAttribute('data-w') || '', product: HANDLE });
   });
 
-  // Vergelijkbare producten: eerst met een eigen pagina, de rest naar de vergelijker.
+  // Vergelijkbare producten (12 okt): zelfde soort, in dezelfde prijsklasse,
+  // en het merk telt mee. Eerder vroegen we sort=populair op, maar die sortering
+  // bestaat niet in de shop-worker; dan kwamen de goedkoopste toestellen terug
+  // (een Nokia van 45 euro onder een iPhone).
+  var MERK = {{ m.merk.value | default: '' | json }}, NAAM = {{ naam | default: '' | json }};
+  function model(n) {
+    return String(n || '').toLowerCase().replace(/\s+[-–]\s+/g, ' ')
+      .replace(/\b\d+\s?(gb|tb|mb)\b[\s\S]*$/, '').replace(/\b[45]g\b/g, '').replace(/\s+/g, ' ').trim();
+  }
+  var EIGEN = model(NAAM);
+  function lijst(extra) {
+    return fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + (SOORT ? '&type=' + encodeURIComponent(SOORT) : '') + '&n=60&sort=winkels' + extra)
+      .then(function (r) { return r.json(); }).then(function (d) { return (d && d.items) || []; }).catch(function () { return []; });
+  }
+  var nauw = PRIJS > 0 ? '&min=' + Math.floor(PRIJS * 0.6) + '&max=' + Math.ceil(PRIJS * 1.6) : '';
+  var ruim = PRIJS > 0 ? '&min=' + Math.floor(PRIJS * 0.4) + '&max=' + Math.ceil(PRIJS * 2.5) : '';
   Promise.all([
-    // Zelfde soort, de populairste eerst; lukt dat niet, dan de hele categorie.
-    fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + (SOORT ? '&type=' + encodeURIComponent(SOORT) : '') + '&n=60&sort=populair').then(function (r) { return r.json(); })
-      .then(function (d) { return (d && d.items && d.items.length > 4) || !SOORT ? d : fetch(API + '/api/shop/lijst?cat=' + encodeURIComponent(CAT) + '&n=60&sort=populair').then(function (r) { return r.json(); }); }),
+    lijst(nauw),
+    MERK ? lijst(ruim + '&merk=' + encodeURIComponent(MERK)) : Promise.resolve([]),
     fetch(KAART).then(function (r) { return r.json(); }).catch(function () { return {}; })
   ]).then(function (uit) {
-    var items = (uit[0] && uit[0].items) || [], kaart = uit[1] || {};
-    items = items.filter(function (x) { return x.i !== ID && x.im; });
-    // In een vergelijkbare prijsklasse: geen kabels van twee euro onder een koptelefoon van tweehonderd.
-    if (PRIJS > 0) {
-      var band = items.filter(function (x) { return x.p >= PRIJS * 0.4 && x.p <= PRIJS * 2.5; });
-      if (band.length >= 4) items = band;
-    }
-    items.sort(function (a, b) { return (kaart[b.i] ? 1 : 0) - (kaart[a.i] ? 1 : 0) || (b.r || 0) - (a.r || 0); });
-    // Een model maar een keer, niet vier kleuren van dezelfde koptelefoon.
+    var kaart = uit[2] || {}, gezien = {}, items = [];
+    uit[0].concat(uit[1]).forEach(function (x) { if (x && !gezien[x.i]) { gezien[x.i] = 1; items.push(x); } });
+    if (items.length < 4 && ruim) return lijst(ruim).then(function (l) { l.forEach(function (x) { if (!gezien[x.i]) { gezien[x.i] = 1; items.push(x); } }); return [items, kaart]; });
+    return [items, kaart];
+  }).then(function (uit) {
+    var items = uit[0], kaart = uit[1], merk = String(MERK || '').toLowerCase();
+    items = items.filter(function (x) { return x.i !== ID && x.im && x.s !== 'r' && model(x.n) !== EIGEN; });
+    items.forEach(function (x) {
+      var sc = 0;
+      if (PRIJS > 0 && x.p > 0) sc -= Math.abs(Math.log(x.p / PRIJS)) * 3;   // dichter bij de prijs is beter
+      if (merk && String(x.b || '').toLowerCase() === merk) sc += 1.2;        // zelfde merk
+      if (kaart[x.i]) sc += 0.8;                                              // heeft een eigen pagina
+      sc += Math.min((x.o && x.o.length) || 1, 5) * 0.15;                     // bij meer winkels te koop
+      x._sc = sc;
+    });
+    items.sort(function (a, b) { return b._sc - a._sc; });
+    // Een model maar een keer, niet vier kleuren of geheugens van hetzelfde toestel.
     var gehad = {};
-    items = items.filter(function (x) { var k = String(x.n || '').toLowerCase().split(/\s+/).slice(0, 3).join(' '); if (gehad[k]) return false; gehad[k] = 1; return true; });
+    items = items.filter(function (x) { var k = model(x.n); if (gehad[k]) return false; gehad[k] = 1; return true; });
     items = items.slice(0, 8);
     if (!items.length) return;
     document.getElementById('dpp-meer').innerHTML = items.map(function (x) {

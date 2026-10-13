@@ -714,6 +714,23 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
  html:not(#x) .dhd .bf-pj .pj{width:70px}
  html:not(#x) .dhd .sbb{font-size:14.5px}
 }
+/* 13 okt, variant C: groene balk onder de top 3 met Prijsje en de knop naar alles */
+html:not(#x) .dhd .alle-ban{display:flex;align-items:center;gap:18px;background:#DDF3E8;border:1.5px solid var(--inkt);border-radius:18px;padding:14px 22px;margin:22px 0 14px;text-align:left}
+html:not(#x) .dhd .alle-ban .pj{width:72px;flex:none}
+html:not(#x) .dhd .alle-ban .pj svg{width:100%;height:auto;display:block}
+html:not(#x) .dhd .alle-ban .t{flex:1;color:var(--inkt);font-size:14.5px;line-height:1.45}
+html:not(#x) .dhd .alle-ban .t b{display:block;font-family:var(--kop);font-weight:800;font-size:19px;letter-spacing:-.02em;line-height:1.25}
+html:not(#x) .dhd .alle-ban .t span{color:#26384F}
+html:not(#x):not(#y) body .dhd .alle-ban .alle-l{display:inline-flex;align-items:center;justify-content:center;min-height:48px;margin:0;padding:12px 20px;background:var(--geel);border:1.5px solid var(--inkt);border-radius:12px;box-shadow:3px 3px 0 var(--inkt);font-weight:800;font-size:15.5px;color:var(--inkt);white-space:nowrap;text-decoration:none}
+html:not(#x):not(#y) body .dhd .alle-ban .alle-l:hover{background:#FFD447}
+html:not(#x) .dhd .regel a.volg{color:inherit;text-decoration:underline;text-underline-offset:3px}
+@media (max-width:900px){
+ html:not(#x) .dhd .alle-ban{flex-wrap:wrap;gap:12px;padding:14px 16px;margin-top:16px}
+ html:not(#x) .dhd .alle-ban .pj{width:54px}
+ html:not(#x) .dhd .alle-ban .t{flex:1 1 200px}
+ html:not(#x) .dhd .alle-ban .t b{font-size:17.5px}
+ html:not(#x):not(#y) body .dhd .alle-ban .alle-l{width:100%;white-space:normal;text-align:center}
+}
 </style>
 
 <div class="dhd" id="dhd" data-worker="{{ worker }}" data-shop="{{ shopw }}" data-mail="{{ mailw }}"
@@ -748,8 +765,8 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
     </div>
 
     <div class="cluster" id="dhd-paneel" role="tabpanel" aria-labelledby="dhd-t-sim" aria-live="polite">
-      <div class="c-aanbod{% if s.pj_aan %} met-pj{% endif %}">
-        {%- if s.pj_aan -%}<div class="pj-op" data-f="pj" aria-hidden="true"><p class="sb r" data-f="pjzegt">Kijk, vandaag de laagste maandprijs!</p><span class="pj"><svg aria-hidden="true" focusable="false" viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible"><defs><filter id="pj-op" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-op)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 L228 180" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M238.4 185.0 Q238.3 186.9 237.8 187.7 Q237.3 188.6 236.7 189.3 Q236.2 190.1 235.3 190.6 Q234.5 191.1 233.6 191.3 Q232.6 191.4 231.7 191.4 Q230.7 191.3 229.9 191.0 Q229.0 190.6 228.2 190.1 Q227.4 189.6 226.8 188.8 Q226.3 188.0 225.9 187.2 Q225.6 186.3 225.6 185.3 Q225.5 184.3 225.8 183.4 Q226.0 182.5 226.5 181.7 Q227.0 180.9 227.7 180.2 Q228.4 179.5 229.3 179.2 Q230.2 178.9 231.1 178.8 Q232.0 178.6 233.0 178.7 Q233.9 178.8 234.8 179.2 Q235.6 179.6 236.4 180.2 Q237.1 180.9 237.5 181.7 Q237.9 182.6 238.2 183.5 Q238.4 184.4 238.4 185.3" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M246 190 l9 4 M240 202 l6 8 M228 206 l1 10" fill="none" stroke="#0D1B2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#0D1B2A" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><circle cx="130" cy="74" r="8" fill="#fff"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M113.85 148.9 Q130 152.7 146.15 147.95 Q142.35 167.9 130 167.9 Q116.7 167.9 113.85 148.9 Z" fill="#fff" stroke="#fff" stroke-width="2.8499999999999996" stroke-linejoin="round"/><path d="M103.4 107.1 q10 -6.6499999999999995 19 -1.9 M135.7 104.25 q10 -4.75 18.05 1.9" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span></div>{%- endif -%}
+      <div class="c-aanbod">
+        
         <article class="pk3 top" data-h="1">
           <p class="winnaar"><span class="nr">1</span><span data-f="wat">laagste maandprijs</span></p>
           <div class="info"><span class="beeld" data-f="beeld" hidden></span><img class="lg" data-f="logo" alt="" width="44" height="44" hidden><div><p class="aanb" data-f="aanb">Lebara</p><p class="bundel"><img class="lg xs" data-f="logok" alt="" width="20" height="20" hidden><span data-f="bundel">39 GB · 250 min</span></p></div></div>
@@ -785,8 +802,9 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
       </div>
       <div class="c-fout" hidden><p class="leeg">De prijzen laden nu niet.</p></div>
       <div class="c-voet">
-        <p class="regel"><b>Hoe is deze lijst bepaald?</b> <span data-f="voet"></span><span data-f="regel">De laagste maandprijs binnen jouw keuze, bij een gelijke prijs de grootste bundel. Aanbieders betalen niet voor een plek.</span></p>
-        <a class="alle-l" data-f="alle" href="/pages/sim-only">Alle sim only vergelijken</a>
+        {%- comment -%} 13 okt, variant C: niet iedereen zoekt de laagste prijs. Onder de top 3 een balk met Prijsje en een duidelijke knop naar de volledige vergelijker. {%- endcomment -%}
+        <div class="alle-ban">{%- if s.pj_aan -%}<span class="pj"><svg aria-hidden="true" focusable="false" viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible"><defs><filter id="pj-ban" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-ban)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 L234 134" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M245.4 132.0 Q245.3 133.9 244.8 134.7 Q244.3 135.6 243.7 136.3 Q243.2 137.1 242.3 137.6 Q241.5 138.1 240.6 138.3 Q239.6 138.4 238.7 138.4 Q237.7 138.3 236.9 138.0 Q236.0 137.6 235.2 137.1 Q234.4 136.6 233.8 135.8 Q233.3 135.0 232.9 134.2 Q232.6 133.3 232.6 132.3 Q232.5 131.3 232.8 130.4 Q233.0 129.5 233.5 128.7 Q234.0 127.9 234.7 127.2 Q235.4 126.5 236.3 126.2 Q237.2 125.9 238.1 125.8 Q239.0 125.6 240.0 125.7 Q240.9 125.8 241.8 126.2 Q242.6 126.6 243.4 127.2 Q244.1 127.9 244.5 128.7 Q244.9 129.6 245.2 130.5 Q245.4 131.4 245.4 132.3" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M250 124 l8 -6 M252 136 l10 0 M248 147 l8 6" fill="none" stroke="#0D1B2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#0D1B2A" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><circle cx="130" cy="74" r="8" fill="#fff"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#fff" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M111 150.8 Q128.1 164.1 149 148.9" fill="none" stroke="#fff" stroke-width="4.2749999999999995" stroke-linecap="round" stroke-linejoin="round" /><path d="M103.4 109 q10 -5.699999999999999 19 -1.9 M135.7 106.15 q10 -3.8 18.05 1.9" fill="none" stroke="#fff" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span>{%- endif -%}<div class="t"><b data-f="allekop">Zoek je meer dan de laagste prijs?</b> <span data-f="allesub">Vergelijk alle sim only bundels op data, netwerk en looptijd.</span></div><a class="alle-l" data-f="alle" href="/pages/sim-only">Alle sim only vergelijken</a></div>
+        <p class="regel"><a class="volg" href="/pages/zo-vergelijken-wij#volgorde"><b>Hoe bepalen wij de volgorde?</b></a> <span data-f="voet"></span><span data-f="regel">De laagste maandprijs binnen jouw keuze, bij een gelijke prijs de grootste bundel. Aanbieders betalen niet voor een plek.</span></p>
         {%- if s.seintje_url != blank -%}<p class="sein" data-f="sein">Zit je nog vast aan je contract? <a href="{{ s.seintje_url }}">Krijg een mail op de dag dat je kunt overstappen</a></p>{%- endif -%}
       </div>
     </div>
@@ -807,7 +825,6 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
         </div>
       </div>
       {%- endif -%}
-      <a href="/pages/zo-vergelijken-wij#volgorde">Hoe bepalen wij de volgorde?</a>
     </div>
   </div>
 </section>
@@ -1263,7 +1280,7 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
         });
       },
       regel: 'Zo kiezen wij: de laagste maandprijs binnen jouw keuze, bij een gelijke prijs de grootste bundel.' + VERGOEDING,
-      alle: ['Alle sim only vergelijken', '/pages/sim-only'], sein: true
+      alle: ['Alle sim only vergelijken', '/pages/sim-only', 'Zoek je meer dan de laagste prijs?', 'Vergelijk alle sim only bundels op data, netwerk en looptijd.'], sein: true
     },
 
     telefoon: {
@@ -1296,7 +1313,7 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
         });
       },
       regel: 'Zo kiezen wij: de laagste totale kosten per maand over de hele looptijd, dus toestel, abonnement en bijbetaling samen.' + VERGOEDING,
-      alle: ['Alle telefoons met abonnement', '/pages/telefoonabonnement'], sein: true
+      alle: ['Alle telefoons met abonnement', '/pages/telefoonabonnement', 'Ander toestel of meer data?', 'Kies zelf je toestel, opslag en abonnement.'], sein: true
     },
 
     internet: {
@@ -1320,7 +1337,7 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
         });
       },
       regel: 'Zo kiezen wij: de laagste maandprijs binnen jouw keuze, bij een gelijke prijs de hoogste snelheid. Controleer bij de aanbieder of dit op jouw adres kan.' + VERGOEDING,
-      alle: ['Alle internetabonnementen', '/pages/internet-tv'], sein: true
+      alle: ['Alle internetabonnementen', '/pages/internet-tv', 'Zoek je meer dan de laagste prijs?', 'Vergelijk op snelheid, tv-pakket en looptijd.'], sein: true
     },
 
     energie: {
@@ -1349,7 +1366,7 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
         });
       },
       regel: 'Zo kiezen wij: de laagste jaarrekening voor dit verbruik, een contract per leverancier. Dynamische contracten doen niet mee, want dat is een schatting. Leveranciers betalen niet voor een plek.',
-      alle: ['Reken met je eigen verbruik en postcode', '/pages/energie']
+      alle: ['Reken het zelf uit', '/pages/energie', 'Ander verbruik dan dit voorbeeld?', 'Vul je postcode en verbruik in en zie wat jij per jaar betaalt.']
     },
 
     zorg: {
@@ -1382,7 +1399,7 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
         });
       },
       regel: 'Zo kiezen wij: de laagste premie binnen jouw keuze, uit een selectie van basisverzekeringen. Wij vragen geen leeftijd of gezondheidsgegevens. Controleer het bedrag bij de verzekeraar voordat je afsluit.' + VERGOEDING,
-      alle: ['Alle premies en uitleg', ZORG]
+      alle: ['Alle premies en uitleg', ZORG, 'Alle polissen naast elkaar zien?', 'Vergelijk premies, eigen risico en vergoedingen.']
     }
   };
 
@@ -1464,7 +1481,6 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
         // Met een toestelfoto komt het logo klein bij de aanbieder, anders groot voor de naam.
         zetLogo(q(el, 'logo'), x.foto ? '' : (x.lg || x.knop));
         zetLogo(q(el, 'logok'), x.foto ? (x.lg || x.knop) : '');
-        var pjz = q(cA, 'pjzegt'); if (pjz) pjz.textContent = 'Kijk, vandaag de ' + chip.wat + '!';
       } else {
         zetLogo(q(el, 'logo'), x.lg || x.knop);
         zet(el, 'per', 'p/m');
@@ -1477,7 +1493,6 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
       a.textContent = 'Bekijk bij ' + x.knop;
       doorklik(a, x.url, n, x.knop, naam, !!x.aff);
     }
-    cA.classList.toggle('met-pj', !!q(cA, 'pj'));
     cF.hidden = true; cP.hidden = true; cA.hidden = false; cluster.classList.remove('is-prod');
   }
 
@@ -1542,13 +1557,13 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
     prod: {
       vraag: 'Wat zoek je?', zoek: true, chips: groepen(wortel.getAttribute('data-prod')),
       laad: function (chip) { return shopBron(chip.bron); },
-      alle: function (chip) { return chip.meer ? ['Alle ' + chip.label.toLowerCase() + ' vergelijken', '/pages/vergelijken?cat=' + encodeURIComponent(chip.meer)] : ['Alle producten vergelijken', '/pages/vergelijken']; },
+      alle: function (chip) { return chip.meer ? ['Alle ' + chip.label.toLowerCase() + ' vergelijken', '/pages/vergelijken?cat=' + encodeURIComponent(chip.meer), 'Zoek je een ander model?', 'Vergelijk dezelfde uitvoering bij bol, Coolblue, MediaMarkt en meer.'] : ['Alle producten vergelijken', '/pages/vergelijken', 'Zoek je iets anders?', 'Ruim 50.000 producten, vergeleken bij bol, Coolblue, MediaMarkt en meer.']; },
       regel: WINKELREGEL
     },
     gaming: {
       vraag: 'Wat zoek je?', chips: groepen(wortel.getAttribute('data-gaming')),
       laad: function (chip) { return shopBron(chip.bron); },
-      alle: function () { return ['Alle gaming-aanbiedingen', '/pages/gaming']; },
+      alle: function () { return ['Alle gaming-aanbiedingen', '/pages/gaming', 'Meer games en consoles?', 'Bekijk alle gaming-aanbiedingen op een rij.']; },
       regel: WINKELREGEL
     },
     boodschappen: {
@@ -1588,12 +1603,12 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
             meer: x.d.length > 3 ? ['+ ' + (x.d.length - 3) + (x.d.length - 3 === 1 ? ' winkel' : ' winkels'), pagina] : null };
         }));
       },
-      alle: function () { return ['Alle aanbiedingen van deze week', '/pages/boodschappen']; },
+      alle: function () { return ['Alle aanbiedingen van deze week', '/pages/boodschappen', 'Meer aanbiedingen?', 'Bekijk alle aanbiedingen van deze week per supermarkt.']; },
       regel: 'Per product staan de winkels op prijs per liter, kilo of stuk, de laagste bovenaan. De prijzen komen uit de folders en sites van de supermarkten.'
     }
   };
 
-  function zetAlle(a) { var l = q(cV, 'alle'); if (l) { l.href = a[1]; l.textContent = a[0]; } }
+  function zetAlle(a) { var l = q(cV, 'alle'); if (l) { l.href = a[1]; l.textContent = a[0]; } if (a[2]) zet(cV, 'allekop', a[2]); if (a[3]) zet(cV, 'allesub', a[3]); }
   function tekenProd(naam) {
     var tab = PROD[naam], st = staat[naam], chip = gekozen(tab, st);
     if (!chip) return;
@@ -1650,7 +1665,7 @@ html:not(#x) .dhd .sbb small{display:block;font-size:10.5px;font-weight:800;lett
     var gek = subs.querySelector('.sk.aan');
     subs.scrollLeft = gek ? Math.max(0, gek.offsetLeft - 40) : 0;
   }
-  // "Hoe is deze lijst bepaald?" staat voor de uitleg; de aanhef "Zo kiezen wij:" valt dan weg.
+  // "Hoe bepalen wij de volgorde?" staat voor de uitleg; de aanhef "Zo kiezen wij:" valt dan weg.
   function uitleg(t) { t = String(t || '').replace(/^Zo kiezen wij:\s*/, ''); return t.charAt(0).toUpperCase() + t.slice(1); }
   function bouw(naam) {
     var st = staat[naam], t = AANBOD[naam], p = PROD[naam], sein = q(cV, 'sein');

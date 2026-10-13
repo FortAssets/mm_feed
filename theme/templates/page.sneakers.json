@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "sneakers": {
+      "type": "dpv-sneakers",
+      "settings": {}
+    }
+  },
+  "order": [
+    "sneakers"
+  ]
+}

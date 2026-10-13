@@ -1345,11 +1345,52 @@ function uitNedgame (r, basis) {
 
 // ------------------------------------------------------------------ koppelen
 
+// 13 okt: hetzelfde merk kwam in het merkfilter onder verschillende namen.
+// PS5-games en -accessoires stonden onder "Sony Computer Entertainment",
+// "Playstation", "Playstation Games" en "Sony". Dat staat nu allemaal onder
+// "PlayStation". Gewone Sony-apparaten (tv's, camera's, koptelefoons) blijven
+// bij Sony. Verder kiezen we per merk één schrijfwijze, de meest gebruikte:
+// "SONY" en "Sony" waren twee merken in het filter.
+const PS_MERK = /^(sony\s+(computer|interactive)(\s+entertainment)?(\s+europe)?|sie|scee|sony\s+playstation|playstation(\s+(games|studios))?)$/i
+const PS_NAAM = /\b(playstation|ps[345]|dualsense|dualshock|pulse\s+(elite|explore|3d)|psvr\s*2?|vr2)\b/i
+function netMerk (merk, naam) {
+  const m = String(merk || '').trim()
+  if (!m) return m
+  if (PS_MERK.test(m)) return 'PlayStation'
+  if (/^sony$/i.test(m) && PS_NAAM.test(naam || '')) return 'PlayStation'
+  return m
+}
+function merkenGelijk (items) {
+  for (const it of items) it.merk = netMerk(it.merk, it.naam)
+  const tel = new Map()
+  for (const it of items) {
+    if (!it.merk) continue
+    const k = it.merk.toLowerCase()
+    if (!tel.has(k)) tel.set(k, new Map())
+    const t = tel.get(k); t.set(it.merk, (t.get(it.merk) || 0) + 1)
+  }
+  const kies = new Map()
+  for (const [k, t] of tel) {
+    // De meest gebruikte schrijfwijze; bij gelijkspel niet de versie in hoofdletters.
+    const best = [...t.entries()].sort((a, b) => b[1] - a[1] || (a[0] === a[0].toUpperCase()) - (b[0] === b[0].toUpperCase()))[0][0]
+    kies.set(k, best)
+  }
+  let anders = 0
+  for (const it of items) {
+    if (!it.merk) continue
+    const b = kies.get(it.merk.toLowerCase())
+    if (b !== it.merk) { it.merk = b; anders++ }
+  }
+  return anders
+}
+
 let ongecontroleerdUitVergelijking = 0
 let onmogelijkePrijzen = 0
 let onmogelijkeKortingen = 0
 
 function koppel (items) {
+  const merkAnders = merkenGelijk(items)
+  if (merkAnders) console.log('  ' + merkAnders + ' merknamen gelijkgetrokken')
   // Eerst de EAN-groepen, en per naamsleutel bijhouden welke EAN daarbij hoort.
   // Zonder die tweede stap valt eenzelfde product uiteen zodra de ene winkel een
   // EAN meestuurt en de andere niet: "Grand Theft Auto VI PS5" stond daardoor

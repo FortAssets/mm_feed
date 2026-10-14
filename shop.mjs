@@ -1428,6 +1428,22 @@ function koppel (items) {
   const merkAnders = merkenGelijk(items)
   const kaartBij = kaartenGelijk(items)
   if (kaartBij) console.log('  ' + kaartBij + ' producten naar verzamelkaarten')
+  // 14 okt: Nedgame stuurt sommige kaartproducten twee keer mee, met twee EAN's
+  // maar dezelfde productpagina. De Pitch Black Elite Trainer Box stond daardoor
+  // twee keer naast elkaar. Bij verzamelkaarten is dezelfde link bij dezelfde
+  // winkel hetzelfde product, dus de dubbele valt weg (de goedkoopste blijft).
+  // Alleen bij kaarten: bij telefoons delen kleuren soms één pagina.
+  const zelfdeLink = new Map()
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i]
+    if (it.cat !== 'kaarten' || !it.url) continue
+    const k = it.winkel + '|' + it.url
+    const j = zelfdeLink.get(k)
+    if (j === undefined) zelfdeLink.set(k, i)
+    else if (it.prijs < items[j].prijs) { items[j] = null; zelfdeLink.set(k, i) } else items[i] = null
+  }
+  const dubbel = items.filter(x => x === null).length
+  if (dubbel) { const rest = items.filter(Boolean); items.length = 0; items.push(...rest); console.log('  ' + dubbel + ' dubbele kaartproducten weg') }
   if (merkAnders) console.log('  ' + merkAnders + ' merknamen gelijkgetrokken')
   // Eerst de EAN-groepen, en per naamsleutel bijhouden welke EAN daarbij hoort.
   // Zonder die tweede stap valt eenzelfde product uiteen zodra de ene winkel een

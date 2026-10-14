@@ -1,0 +1,11 @@
+{
+  "sections": {
+    "pokemon": {
+      "type": "dpv-pokemon",
+      "settings": {}
+    }
+  },
+  "order": [
+    "pokemon"
+  ]
+}

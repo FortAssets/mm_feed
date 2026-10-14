@@ -225,14 +225,26 @@ function lijktOp (onze, merk, hunne) {
 // oplevert: wat al bij meer winkels ligt, en daarbinnen het duurste.
 // Een koppeling komt er alleen als Amazon precies een gewoon resultaat geeft
 // en de titel op de onze lijkt. Twijfel is overslaan.
-async function matchRonde (d, aantal, cat) {
+// 14 okt: --cat mag een lijst zijn (gaming,telefoons) en --merk beperkt tot
+// merken (apple,sony,playstation). --populair is een vaste set van merken
+// waar mensen het vaakst op zoeken. Volgorde: populairste eerst (r uit de
+// build), daarna het aantal winkels en de prijs.
+const POPULAIR = ['apple', 'samsung', 'sony', 'playstation', 'nintendo', 'google', 'microsoft', 'xbox', 'jbl', 'bose', 'philips', 'dyson', 'lego', 'garmin', 'lg', 'xiaomi']
+async function matchRonde (d, aantal, cat, merken) {
   d.geen = d.geen || {}
   const lijst = []
+  const cats = cat ? new Set(cat.split(',').map(x => x.trim()).filter(Boolean)) : null
+  const mset = merken && merken.length ? new Set(merken) : null
+  const gehad = new Set()
   for (const f of fs.readdirSync(UIT).filter(x => x.startsWith('c-') && x.endsWith('.json.gz'))) {
-    if (cat && f !== 'c-' + cat + '.json.gz') continue
+    if (f === 'c-alles.json.gz') continue
+    if (cats && !cats.has(f.slice(2, -8))) continue
     const c = JSON.parse(zlib.gunzipSync(fs.readFileSync(UIT + '/' + f)).toString('utf8'))
     for (const p of c.p) {
       if (!p.e || p.s === 'r' || d.ean[p.e] || d.geen[p.e]) continue
+      if (mset && !mset.has(String(p.b || '').toLowerCase())) continue
+      if (gehad.has(p.e)) continue
+      gehad.add(p.e)
       // Bij een gekozen categorie alles proberen: verzamelkaarten liggen vaak
       // bij een winkel en kosten minder dan 150 euro, en juist die wil je bij
       // Amazon naast elkaar zien.
@@ -240,7 +252,7 @@ async function matchRonde (d, aantal, cat) {
       lijst.push(p)
     }
   }
-  lijst.sort((a, b) => b.o.length - a.o.length || b.p - a.p)
+  lijst.sort((a, b) => (b.r || 0) - (a.r || 0) || b.o.length - a.o.length || b.p - a.p)
   console.log(lijst.length + ' producten zonder koppeling, deze ronde ' + Math.min(aantal, lijst.length))
   let raak = 0; let mis = 0; let twijfel = 0; let dicht = 0
   const vandaag = new Date().toISOString().slice(0, 10)
@@ -313,7 +325,9 @@ async function main () {
   const m = args.find(a => a.startsWith('--match='))
   if (m) {
     const cat = (args.find(a => a.startsWith('--cat=')) || '').slice(6)
-    await matchRonde(d, Number(m.slice(8)) || 40, cat)
+    let merken = (args.find(a => a.startsWith('--merk=')) || '').slice(7).toLowerCase().split(',').map(x => x.trim()).filter(Boolean)
+    if (args.includes('--populair')) merken = merken.concat(POPULAIR)
+    await matchRonde(d, Number(m.slice(8)) || 40, cat, merken)
     schrijf(d)
     console.log(Object.keys(d.ean).length + ' koppelingen in ' + LIJST)
     return

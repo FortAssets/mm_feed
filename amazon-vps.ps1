@@ -62,7 +62,7 @@ try {
   Schrijf "start"
   git pull --rebase --autostash 2>&1 | Out-Null
 
-  $extra = @(); if ($Cat) { $extra += "--cat=$Cat" }
+  $extra = @(); if ($Cat) { $extra += "--cat=$Cat" } else { $extra += "--populair" }
   node amazon.mjs --prijzen=$Prijzen --match=$Match @extra 2>&1 | ForEach-Object { Schrijf $_ }
 
   git add data/shop/amazon.json

@@ -50,7 +50,9 @@ const amazonEan = new Map()
 // het logboek in. Zonder verkoper staat hij alleen als "gezien op" op de
 // kaart. Ouder dan drie dagen telt niet meer: dan draait het script blijkbaar
 // niet, en een oude prijs die "goedkoopst" heet is erger dan geen prijs.
-const AMAZON_PRIJS_DAGEN = Number(process.env.AMAZON_PRIJS_DAGEN || 3)
+// 14 okt: van drie dagen naar een. Partnernet wil dat een getoonde prijs niet
+// ouder is dan 24 uur, en een prijs van eergisteren is bij een actie al mis.
+const AMAZON_PRIJS_DAGEN = Number(process.env.AMAZON_PRIJS_DAGEN || 1)
 const amazonPrijs = new Map()
 
 function leesAmazon () {

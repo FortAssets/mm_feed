@@ -172,6 +172,8 @@
  font-weight:800;cursor:pointer;white-space:nowrap}
 .ds-dok .ds-dok-vgl{background:var(--pa);color:#fff}
 .ds-dok .ds-dok-leeg{background:#fff;border:1.5px solid var(--rd);color:var(--mut);padding:0 12px}
+/* 14 okt: de zwevende knop Zoekhulp lag op mobiel over Wissen en Vergelijk. Staat de balk er, dan schuift hij erboven. */
+body:has(#ds-dok:not([hidden])) .dpvai-fab{bottom:calc(var(--dsdok,62px) + 12px)}
 
 /* ---------------------------------------------------------------- overlay */
 .ds-ovl{position:fixed;inset:0;z-index:80;background:rgba(13,27,42,.55);display:flex;align-items:flex-end;
@@ -1062,6 +1064,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     el.dokT.innerHTML = '<b>' + gekozen.length + '</b> van ' + MAX_VGL + ' gekozen';
     wijkVoorCookiebalk();
     document.body.style.paddingBottom = (el.dok.offsetHeight + 8) + 'px';
+    document.documentElement.style.setProperty('--dsdok', (el.dok.offsetHeight + (parseInt(el.dok.style.bottom, 10) || 0)) + 'px');
   }
 
   // De cookiebalk van Avada staat onderaan en dekt deze balk af op mobiel.

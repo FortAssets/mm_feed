@@ -6,7 +6,28 @@
     "0045496321444": "B0F2J4SYJ2",
     "0196214123182": "B0F2GZJ3TZ",
     "0196214130685": "B0FPDLTVVV",
-    "0196214152038": "B0GFZV1ZVV"
+    "0196214152038": "B0GFZV1ZVV",
+    "0195950643589": "B0FQFJVJBQ",
+    "0195950643985": "B0FQFGMW6V",
+    "0195950627640": "B0FQG15YVP",
+    "0195950639292": "B0FQG1TSY1",
+    "0195951379036": "B0HJB781TY",
+    "0195950543742": "B0FQF32239",
+    "0045496312343": "B0F2JCL3NZ",
+    "0045496313845": "B0G495SLC9",
+    "0045496312787": "B0F3JDTKQX",
+    "0045496321475": "B0F3JR79YY",
+    "0711719577171": "B0CLT54ZNZ",
+    "0711719591955": "B0D67G5Y6T",
+    "8806097827092": "B0GSGHVH7T",
+    "0196214139954": "B0GR6N18F6",
+    "0196214142138": "B0GYVHLP4L",
+    "0196214142671": "B0GYTRYV7P",
+    "0196214144828": "B0H8SV3WJ8",
+    "0196214124813": "B0FPM3LQJ4",
+    "0196214111523": "B0F2BDXW4J",
+    "0196214113664": "B0F6PTRKTH",
+    "0820650853159": "B0C8YN3BY4"
   },
   "prijs": {
     "0711719020837": {
@@ -20,5 +41,28 @@
       "d": "2026-10-03"
     }
   },
-  "geen": {}
+  "geen": {},
+  "hand": {
+    "0195950643589": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0195950643985": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0195950627640": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0195950639292": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0195951379036": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0195950543742": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0045496312343": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0045496313845": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0045496312787": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0045496321475": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0711719577171": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0711719591955": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "8806097827092": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0196214139954": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0196214142138": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0196214142671": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0196214144828": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0196214124813": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0196214111523": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0196214113664": "2026-10-14 via zoekmachine, titel gecontroleerd",
+    "0820650853159": "2026-10-14 via zoekmachine, titel gecontroleerd"
+  }
 }

@@ -233,7 +233,10 @@ async function matchRonde (d, aantal, cat) {
     const c = JSON.parse(zlib.gunzipSync(fs.readFileSync(UIT + '/' + f)).toString('utf8'))
     for (const p of c.p) {
       if (!p.e || p.s === 'r' || d.ean[p.e] || d.geen[p.e]) continue
-      if (p.o.length < 2 && p.p < 150) continue
+      // Bij een gekozen categorie alles proberen: verzamelkaarten liggen vaak
+      // bij een winkel en kosten minder dan 150 euro, en juist die wil je bij
+      // Amazon naast elkaar zien.
+      if (!cat && p.o.length < 2 && p.p < 150) continue
       lijst.push(p)
     }
   }

@@ -49,6 +49,7 @@
 param(
   [int]$Prijzen = 200,   # hoeveel gekoppelde producten per keer
   [int]$Match   = 25,    # hoeveel nieuwe producten opzoeken per keer
+  [string]$Cat  = "",    # alleen deze categorie opzoeken, bijv. "kaarten"
   [string]$Map  = "C:\mm_feed"
 )
 
@@ -61,7 +62,8 @@ try {
   Schrijf "start"
   git pull --rebase --autostash 2>&1 | Out-Null
 
-  node amazon.mjs --prijzen=$Prijzen --match=$Match 2>&1 | ForEach-Object { Schrijf $_ }
+  $extra = @(); if ($Cat) { $extra += "--cat=$Cat" }
+  node amazon.mjs --prijzen=$Prijzen --match=$Match @extra 2>&1 | ForEach-Object { Schrijf $_ }
 
   git add data/shop/amazon.json
   git diff --staged --quiet

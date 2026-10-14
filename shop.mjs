@@ -1442,7 +1442,12 @@ function koppel (items) {
     const k = it.winkel + '|' + it.url
     const j = zelfdeLink.get(k)
     if (j === undefined) zelfdeLink.set(k, i)
-    else if (it.prijs < items[j].prijs) { items[j] = null; zelfdeLink.set(k, i) } else items[i] = null
+    else {
+      // De EAN van de weggevallen dubbele bewaren: daar kan een Amazon-koppeling aan hangen.
+      const [blijft, weg] = it.prijs < items[j].prijs ? [it, items[j]] : [items[j], it]
+      if (weg.ean) (blijft.altEan = blijft.altEan || []).push(weg.ean, ...(weg.altEan || []))
+      if (blijft === it) { items[j] = null; zelfdeLink.set(k, i) } else items[i] = null
+    }
   }
   const dubbel = items.filter(x => x === null).length
   if (dubbel) { const rest = items.filter(Boolean); items.length = 0; items.push(...rest); console.log('  ' + dubbel + ' dubbele kaartproducten weg') }
@@ -1618,7 +1623,7 @@ function koppel (items) {
       g: beste.gebruikt ? 1 : undefined,
       // Het ASIN bij Amazon, als wij dat weten. Een tweedekansexemplaar krijgt
       // er geen: dat is bij Amazon een ander product.
-      az: (beste.ean && beste.staat !== 'refurbished' && amazonEan.get(beste.ean)) || undefined,
+      az: (beste.ean && beste.staat !== 'refurbished' && (amazonEan.get(beste.ean) || aanbod.flatMap(a => [a.ean, ...(a.altEan || [])]).filter(Boolean).map(e => amazonEan.get(e)).find(Boolean))) || undefined,
       // Alleen als de prijs niet als winkel meedoet: dan is hij wel gezien maar
       // weten wij niet wie er verkoopt.
       azp: (beste.ean && beste.staat !== 'refurbished' && !(amazonPrijs.get(beste.ean) || {}).vk && amazonPrijs.get(beste.ean) || {}).p,

@@ -615,6 +615,7 @@ const CATEGORIEEN = [
   { slug: 'accessoires', naam: 'Accessoires', kop: false },
   { slug: 'verzorging', naam: 'Persoonlijke verzorging', kop: false },
   { slug: 'klussen', naam: 'Klussen & tuin', kop: false },
+  { slug: 'kaarten', naam: 'Verzamelkaarten', kop: false },
   { slug: 'speelgoed', naam: 'Speelgoed', kop: false },
   { slug: 'wonen', naam: 'Wonen & meubels', kop: false },
   { slug: 'kantoor', naam: 'Kantoor', kop: false },
@@ -624,8 +625,11 @@ const GELDIG = new Set(CATEGORIEEN.map(c => c.slug))
 
 // Coolblue vult product_type netjes; dat is de betrouwbaarste bron die er is.
 // Alles wat hier niet in staat valt terug op de trefwoorden verderop.
-const SOORT_WINT = new Set(['huishoudelijk', 'keuken', 'wonen', 'verzorging', 'drogisterij', 'speelgoed', 'klussen'])
+const SOORT_WINT = new Set(['huishoudelijk', 'keuken', 'wonen', 'verzorging', 'drogisterij', 'speelgoed', 'klussen', 'kaarten'])
 const TYPE_NAAR_CAT = {
+  // 14 okt: verzamelkaarten (Pokémon en andere kaartspellen)
+  'pokemon': 'kaarten', 'one piece': 'kaarten', 'magic: the gathering': 'kaarten', 'lorcana': 'kaarten', 'yu-gi-oh!': 'kaarten',
+  'digimon': 'kaarten', 'dragon ball': 'kaarten', 'star wars unlimited': 'kaarten', 'overige kaartspellen': 'kaarten', 'kaartaccessoires': 'kaarten',
   // gaming
   'consoles': 'gaming', 'games': 'gaming', 'gaming headsets': 'gaming',
   'controllers': 'gaming', 'gaming stoelen': 'gaming', 'racesturen': 'gaming',
@@ -1291,6 +1295,35 @@ function uitExpert (r) {
   }
 }
 
+// 14 okt: verzamelkaarten. Nedgame heeft ze onder "Trading Card Games"; bij bol
+// en andere winkels herkennen we ze aan de naam. De soort is het kaartspel,
+// zodat de Pokémonpagina met type=pokemon precies de Pokémonkaarten krijgt.
+const KAART_RE = /\b(tcg|trading ?cards?|booster ?(pack|packs|box|bundle|display|blister)|elite trainer box|verzamelkaarten|ruilkaarten)\b|pok[eé]mon[^|]*\bboosters?\b/i
+const GEEN_KAART = /\b(funko|knuffel|pluche|plush|figuur|figure|beeldje|mok|beker|shirt|hoodie|trui|sokken|puzzel|lamp|rugzak|tas|nintendo switch|playstation|ps5|ps4|xbox|game boy|videogame)\b/i
+const KAART_ACC = /\b(sleeves?|deck ?protector|portfolio|binder|album|playmat|speelmat|deck ?box|toploader|card ?case|kaarthoes|opbergbox)\b/i
+function kaartSoort (naam) {
+  const n = String(naam || '')
+  if (KAART_ACC.test(n)) return 'kaartaccessoires'
+  if (/pok[eé]mon/i.test(n)) return 'pokemon'
+  if (/one piece/i.test(n)) return 'one piece'
+  if (/\bmagic\b|\bmtg\b/i.test(n)) return 'magic: the gathering'
+  if (/lorcana/i.test(n)) return 'lorcana'
+  if (/yu-?gi-?oh/i.test(n)) return 'yu-gi-oh!'
+  if (/digimon/i.test(n)) return 'digimon'
+  if (/dragon ball/i.test(n)) return 'dragon ball'
+  if (/star wars/i.test(n)) return 'star wars unlimited'
+  return 'overige kaartspellen'
+}
+function kaartenGelijk (items) {
+  let n = 0
+  for (const it of items) {
+    if (it.cat === 'kaarten') continue
+    if (!KAART_RE.test(it.naam || '') || GEEN_KAART.test(it.naam || '')) continue
+    it.cat = 'kaarten'; it.type = kaartSoort(it.naam); n++
+  }
+  return n
+}
+
 // basis: een product van een andere winkel met hetzelfde EAN, of undefined.
 function uitNedgame (r, basis) {
   const prijs = num(r.price)
@@ -1306,7 +1339,9 @@ function uitNedgame (r, basis) {
   const [top, sub = ''] = pad.split(' > ').map(s => s.trim())
   const platform = NEDGAME_HUIDIG[top]
   let cat
-  if (basis) cat = basis.cat
+  const kaart = top === 'Trading Card Games'
+  if (kaart) cat = 'kaarten'
+  else if (basis) cat = basis.cat
   else {
     if (!platform) return null
     if (/digitaal/i.test(sub)) return null          // downloadcodes: niet naast een doos zetten
@@ -1321,6 +1356,7 @@ function uitNedgame (r, basis) {
   // Nedgame zet het platform niet in de naam van een game ("Just Dance 2022").
   // Zonder platform is niet te zien welke versie het is, en zoeken op "PS5"
   // vindt hem niet. Dus erachter zetten, zoals de andere winkels doen.
+  if (kaart) type = /accessoires/i.test(sub) ? 'kaartaccessoires' : kaartSoort(naam)
   if (type === 'games' && platform && !/\b(ps5|ps4|playstation|switch|xbox|pc)\b/i.test(naam)) naam += ' - ' + platform
   let van = num(r.fromPrice)
   if (!(van > prijs * 1.01)) van = 0
@@ -1334,7 +1370,7 @@ function uitNedgame (r, basis) {
     url: (r.productURL || '').trim(),
     afb: (r.imageURL || '').trim(),
     ean,
-    type: basis ? basis.type : type,
+    type: kaart ? type : (basis ? basis.type : type),
     cat,
     voorraad: 1,
     staat: 'nieuw',
@@ -1390,6 +1426,8 @@ let onmogelijkeKortingen = 0
 
 function koppel (items) {
   const merkAnders = merkenGelijk(items)
+  const kaartBij = kaartenGelijk(items)
+  if (kaartBij) console.log('  ' + kaartBij + ' producten naar verzamelkaarten')
   if (merkAnders) console.log('  ' + merkAnders + ' merknamen gelijkgetrokken')
   // Eerst de EAN-groepen, en per naamsleutel bijhouden welke EAN daarbij hoort.
   // Zonder die tweede stap valt eenzelfde product uiteen zodra de ene winkel een

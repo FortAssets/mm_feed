@@ -371,10 +371,10 @@
             var d = k.unlimited ? 'Onbeperkt data' : (k.dataGB ? k.dataGB + ' GB' : '');
             var b = /onbeperkt/i.test(k.minutes || '') ? 'onbeperkt bellen' : (k.minutes || '');
             var net = k.network && String(k.network).toLowerCase() !== String(k.provider).toLowerCase() ? 'netwerk van ' + k.network : '';
-            return { k: k, naam: k.provider, sub: [d, b, duur(k), net].filter(Boolean).join(' · '), prijs: p, per: 'per maand',
+            return { k: k, naam: k.provider, sub: [d, b, duur(k), net].filter(Boolean).join(' · '), prijs: p, per: k.uitleg ? 'gemiddeld per maand' : 'per maand',
               kort: [d, b, net].filter(Boolean).join(' · '), tags: [duur(k), euro(p * m) + ' over ' + m + ' maanden'],
               rang2: -(k.unlimited ? 9999 : k.dataGB || 0),
-              onder: euro(p * m) + ' over ' + m + ' maanden', url: ga(k, 'simonly'), knop: k.provider, beeld: merkLogo(k.provider), aff: true };
+              onder: (k.uitleg ? k.uitleg + ' · ' : '') + euro(p * m) + ' over ' + m + ' maanden', url: ga(k, 'simonly'), knop: k.provider, beeld: merkLogo(k.provider), aff: true };
           });
         });
       },

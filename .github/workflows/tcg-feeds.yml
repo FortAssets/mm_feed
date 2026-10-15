@@ -1,0 +1,56 @@
+name: TCG-feeds voor BoosterScout
+
+# Pokémon-producten van MediaMarkt (Tradedoubler) en de Awin-winkels voor de
+# voorraadworker van BoosterScout. MediaMarkt elke run, Awin hooguit elke 4 uur.
+#
+# De uitkomst gaat naar een eigen branch, tcg-data, en niet naar main. Op main
+# pint shop-feed.yml een commit in index.json; commits van deze job elk
+# kwartier zouden die pin laten verschuiven.
+on:
+  schedule:
+    - cron: '4,19,34,49 * * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tcg-feeds
+  cancel-in-progress: false
+
+jobs:
+  feeds:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Vorige uitkomst ophalen
+        run: |
+          mkdir -p data/tcg
+          if git fetch -q origin tcg-data; then
+            git show origin/tcg-data:feeds.json > data/tcg/feeds.json 2>/dev/null || true
+            git show origin/tcg-data:awin.json > data/tcg/awin.json 2>/dev/null || true
+          fi
+      - name: Pokémon uit de feeds
+        env:
+          AWIN_KEY: ${{ secrets.AWIN_KEY }}
+          MM_TOKEN: ${{ secrets.MM_TOKEN }}
+        run: node tcg-feeds.mjs
+      - name: Naar de branch tcg-data
+        run: |
+          git config user.name "tcg-feeds"
+          git config user.email "actions@users.noreply.github.com"
+          if git rev-parse -q --verify origin/tcg-data >/dev/null; then
+            git worktree add -q /tmp/td origin/tcg-data && git -C /tmp/td checkout -q -B tcg-data
+          else
+            git worktree add -q --detach /tmp/td && git -C /tmp/td checkout -q --orphan tcg-data && git -C /tmp/td rm -rfq . || true
+          fi
+          cp data/tcg/*.json /tmp/td/
+          cd /tmp/td
+          git add -A
+          git diff --cached --quiet && { echo "niets veranderd"; exit 0; }
+          git commit -q -m "TCG-feeds $(date -u +%FT%TZ)"
+          git push -q origin tcg-data

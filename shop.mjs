@@ -1583,7 +1583,13 @@ function koppel (items) {
       const b = perWinkel.get(w)
       if (!b || it.prijs < b.prijs) perWinkel.set(w, it)
     }
-    let aanbod = [...perWinkel.values()].sort((a, b) => a.prijs - b.prijs)
+    // eBay rekent bijna altijd verzendkosten (vaak 10 tot 20 euro), de winkels
+    // hier meestal niet. Op alleen de artikelprijs stond eBay daardoor
+    // bovenaan terwijl het met verzending duurder was: Lego voor 7,89 plus
+    // 12,99 verzending boven MediaMarkt voor 9,99. Dus eBay op prijs plus
+    // verzending in de volgorde; de andere winkels zoals het was.
+    const volgorde = it => it.prijs + (it.bron === 'ebay' ? (it.verzend || 0) : 0)
+    let aanbod = [...perWinkel.values()].sort((a, b) => volgorde(a) - volgorde(b))
     // Hier staat of valt de betrouwbaarheid van de tabel. Een bol-prijs waarvan
     // niet gecontroleerd is wie er verkoopt, mag niet naast Coolblue en
     // MediaMarkt staan: dan doet een marktplaatsverkoper mee alsof het de prijs

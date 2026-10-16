@@ -1,7 +1,8 @@
 name: TCG-feeds voor BoosterScout
 
 # Pokémon-producten van MediaMarkt (Tradedoubler) en de Awin-winkels voor de
-# voorraadworker van BoosterScout. MediaMarkt elke run, Awin hooguit elke 4 uur.
+# voorraadworker van BoosterScout. MediaMarkt elke run, Awin hooguit elke 4 uur,
+# eBay hooguit elke 3 uur (ebay-tcg.mjs).
 #
 # De uitkomst gaat naar een eigen branch, tcg-data, en niet naar main. Op main
 # pint shop-feed.yml een commit in index.json; commits van deze job elk
@@ -33,11 +34,14 @@ jobs:
           if git fetch -q origin tcg-data; then
             git show origin/tcg-data:feeds.json > data/tcg/feeds.json 2>/dev/null || true
             git show origin/tcg-data:awin.json > data/tcg/awin.json 2>/dev/null || true
+            git show origin/tcg-data:ebay.json > data/tcg/ebay.json 2>/dev/null || true
           fi
       - name: Pokémon uit de feeds
         env:
           AWIN_KEY: ${{ secrets.AWIN_KEY }}
           MM_TOKEN: ${{ secrets.MM_TOKEN }}
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
         run: node tcg-feeds.mjs
       - name: Naar de branch tcg-data
         run: |

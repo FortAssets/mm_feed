@@ -33,6 +33,17 @@ jobs:
         with:
           node-version: '20'
 
+      # eBay als winkel: per EAN de goedkoopste nieuwe aanbieding van een
+      # EU-verkoper (ebay.mjs, zie de uitleg daar). Mag mislukken: dan rekent
+      # shop.mjs met de eBay-prijzen van de vorige runs, zolang die vers zijn.
+      - name: eBay-prijzen
+        continue-on-error: true
+        timeout-minutes: 20
+        env:
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+        run: node ebay.mjs
+
       - name: Genereer de shop-bestanden
         env:
           AWIN_KEY: ${{ secrets.AWIN_KEY }}

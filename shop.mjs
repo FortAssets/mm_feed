@@ -71,6 +71,28 @@ function leesAmazon () {
   } catch (e) { /* nog geen lijst */ }
 }
 
+// ------------------------------------------------------------------- eBay
+// Prijzen van eBay staan in ebay.json, daar neergezet door ebay.mjs (draait
+// in dezelfde workflow, vlak hiervoor). Per EAN de goedkoopste nieuwe
+// aanbieding van een EU-verkoper die naar Nederland verstuurt, met de
+// verzendkosten apart. Ouder dan EBAY_PRIJS_DAGEN telt niet: dan is hij een
+// paar runs niet nagekeken en is de aanbieding misschien al weg.
+const EBAY_LIJST = UIT + '/ebay.json'
+const EBAY_PRIJS_DAGEN = Number(process.env.EBAY_PRIJS_DAGEN || 4)
+const ebayPrijs = new Map()
+
+function leesEbay () {
+  try {
+    const d = JSON.parse(fs.readFileSync(EBAY_LIJST, 'utf8'))
+    const grens = Date.now() - EBAY_PRIJS_DAGEN * 864e5
+    for (const [ean, r] of Object.entries(d.prijs || {})) {
+      const t = Date.parse((r && r.d) || '')
+      if (r && r.p > 0 && r.u && t && t >= grens) ebayPrijs.set(String(ean), r)
+    }
+    console.log('eBay: ' + ebayPrijs.size + ' verse prijzen')
+  } catch (e) { /* nog geen bestand */ }
+}
+
 const AWIN_KEY = process.env.AWIN_KEY || ''
 const MM_TOKEN = process.env.MM_TOKEN || ''
 
@@ -1974,6 +1996,7 @@ async function main () {
   const rauw = []
   bolLeesVerkopers()
   leesAmazon()
+  leesEbay()
 
   const awin = await haalAwin()
   for (const r of awin) { const it = uitAwin(r); if (it) rauw.push(it) }
@@ -2172,6 +2195,38 @@ async function main () {
       n++
     }
     console.log('Amazon: ' + n + ' prijzen als winkel in de vergelijking')
+  }
+
+  // eBay als winkel, alleen bij producten die er al zijn (gezocht op hun EAN).
+  // De verkoper gaat mee, zodat er "verkocht door ..." onder staat.
+  if (ebayPrijs.size) {
+    const perEan = new Map()
+    for (const it of rauw) if (it.ean && it.staat !== 'refurbished' && !perEan.has(it.ean)) perEan.set(it.ean, it)
+    let n = 0
+    for (const [ean, e] of ebayPrijs) {
+      const basis = perEan.get(ean)
+      if (!basis) continue
+      rauw.push({
+        bron: 'ebay',
+        naam: basis.naam,
+        merk: basis.merk,
+        prijs: +e.p,
+        van: 0,
+        winkel: 'eBay',
+        verkoper: e.vk || '',
+        url: e.u,
+        afb: basis.afb,
+        ean,
+        type: basis.type,
+        cat: basis.cat,
+        voorraad: 1,
+        staat: 'nieuw',
+        kleur: '',
+        verzend: +e.vz || 0
+      })
+      n++
+    }
+    console.log('eBay: ' + n + ' prijzen als winkel in de vergelijking')
   }
 
   console.log('Totaal bruikbaar:', rauw.length)

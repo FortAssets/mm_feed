@@ -9,6 +9,7 @@
 // Awin: hooguit elke 4 uur, want dat is de volledige feed.
 import fs from 'fs'
 import zlib from 'zlib'
+import { ebayTcg } from './ebay-tcg.mjs'
 
 const MM_TOKEN = process.env.MM_TOKEN || ''
 const AWIN_KEY = process.env.AWIN_KEY || ''
@@ -100,7 +101,7 @@ async function awin () {
   return uit
 }
 
-const items = [...await mediamarkt(), ...await awin()]
+const items = [...await mediamarkt(), ...await awin(), ...await ebayTcg()]
 fs.mkdirSync('data/tcg', { recursive: true })
 // Alleen wegschrijven als er iets veranderd is aan de producten, zodat niet elke run een commit wordt.
 let oud = null; try { oud = JSON.parse(fs.readFileSync(UIT, 'utf8')) } catch (e) {}

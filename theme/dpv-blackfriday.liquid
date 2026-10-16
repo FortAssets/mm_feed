@@ -44,6 +44,26 @@
     <p class="bfr-sub">{{ section.settings.sub }}</p>
   </header>
 
+  {%- comment -%}
+    16 okt: bezoekers uit de advertentie ("Registreren") kwamen hier en zagen
+    eerst een raster met producten; aanmelden kon alleen per product of
+    helemaal onderaan. Daarom bovenaan één regel met een e-mailveld. Zelfde
+    lijst en zelfde worker als het blok verderop, met een eigen bron zodat je
+    ziet hoeveel aanmeldingen hier vandaan komen.
+  {%- endcomment -%}
+  {%- if section.settings.snel_aan -%}
+  <div class="bfr-snel" data-mailvorm data-bron="{{ section.settings.snel_bron | default: 'blackfriday-top' }}" id="bfr-snel">
+    <label class="bfr-snel-kop" for="bfr-snel-{{ section.id }}">{{ section.settings.snel_kop }}</label>
+    <div class="bfr-rij">
+      <input id="bfr-snel-{{ section.id }}" type="email" inputmode="email" autocomplete="email"
+             placeholder="Je e-mailadres" aria-label="Je e-mailadres">
+      <button type="button">{{ section.settings.snel_knop }}</button>
+    </div>
+    <p class="bfr-uit" role="status"></p>
+    <p class="bfr-snel-fijn">{{ section.settings.snel_fijn }}</p>
+  </div>
+  {%- endif -%}
+
 
   {%- assign chips = section.settings.chips | newline_to_br | split: '<br />' -%}
   {%- if chips.size > 0 and section.settings.chips != blank -%}
@@ -56,7 +76,7 @@
   {%- endif -%}
 {%- endif -%}
 {%- if deel == 'alles' or deel == 'aanmeld' %}
-  <section class="bfr-aanmeld" id="bfr-aanmeld">
+  <section class="bfr-aanmeld" id="bfr-aanmeld" data-mailvorm>
     <p class="bfr-eyebrow">Vrijdag 27 november</p>
     <p class="bfr-akop">{{ section.settings.aanmeld_kop }}</p>
     <p class="bfr-asub">{{ section.settings.aanmeld_sub }}</p>
@@ -201,6 +221,12 @@
 .bfr.bfr-d-uitleg{padding-top:0}
 .bfr-eb-licht{color:#6d28d9}
 .bfr a.bfr-link,.bfr a.bfr-link:visited{color:#059669;font-weight:700;text-decoration:underline;text-underline-offset:3px}
+.bfr-snel{background:#FFF8E1;border:1px solid #FBBF24;border-radius:14px;padding:14px 14px 12px;margin:0 0 14px;max-width:660px}
+.bfr-snel-kop{display:block;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;letter-spacing:-.01em;margin:0 0 10px}
+.bfr-snel .bfr-rij input{background:#fff;color:var(--ink);border:1px solid #D9DEE7}
+.bfr-snel .bfr-rij input::placeholder{color:#8A96A8}
+.bfr-snel-fijn{font-size:12.5px;line-height:1.5;color:var(--soft);margin:8px 0 0}
+.bfr-snel .bfr-uit{margin:9px 0 0}
 .bfr-chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 10px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 .bfr-chips::-webkit-scrollbar{display:none}
 .bfr .bfr-chips a,.bfr .bfr-chips a:visited{flex:0 0 auto;display:inline-flex;align-items:center;min-height:40px;padding:0 15px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--ink);font-size:14px;font-weight:700;text-decoration:none;white-space:nowrap}
@@ -218,12 +244,10 @@
     if (st) st.textContent = {{ section.settings.status_na | json }};
     var blok = document.getElementById('bfr-aanmeld');
     if (blok) blok.hidden = true;
+    var snel = document.getElementById('bfr-snel');
+    if (snel) snel.hidden = true;
   }
 
-  var knop = document.getElementById('bfr-knop');
-  var veld = document.getElementById('bfr-mail');
-  var uit = document.getElementById('bfr-uit');
-  if (!knop || !veld || !wortel.contains(knop)) return;
   /* 3 okt: dit veld ging naar de mc-lijst en was enkele opt-in: het postte een
      adres en zei "Gelukt", zonder bevestigingsmail. Dat is wat artikel 11.7
      Telecomwet van je vraagt, en het betekende ook dat iemand dit formulier kon
@@ -239,9 +263,19 @@
   var ONDERWERPEN = (wortel.getAttribute('data-onderwerpen') || '')
     .split(',').map(function (x) { return x.trim(); }).filter(Boolean);
 
+  // 16 okt: meerdere formulieren op de pagina (bovenaan en het blok verderop).
+  // Elk formulier met data-mailvorm krijgt dezelfde afhandeling.
+  function koppel (vorm) {
+  var knop = vorm.querySelector('button');
+  var veld = vorm.querySelector('input[type=email]');
+  var uit = vorm.querySelector('.bfr-uit');
+  if (!knop || !veld || !uit) return;
+  var licht = vorm.classList.contains('bfr-snel');
+  var bron = vorm.getAttribute('data-bron') || BRON;
+
   function zeg(tekst, goed) {
     uit.textContent = tekst;
-    uit.style.color = goed ? '#7FE3BC' : '#FFB4A8';
+    uit.style.color = licht ? (goed ? '#0b7d5c' : '#b42318') : (goed ? '#7FE3BC' : '#FFB4A8');
     uit.style.display = 'block';
   }
 
@@ -254,7 +288,7 @@
     fetch(API, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: adres, bron: BRON, onderwerpen: ONDERWERPEN })
+      body: JSON.stringify({ email: adres, bron: bron, onderwerpen: ONDERWERPEN })
     }).then(function (r) { return r.json(); }).then(function (res) {
       if (res && res.ok && res.status === 'al-actief') {
         zeg('Je stond al op de lijst. Je hoort van ons op 27 november.', true);
@@ -281,6 +315,9 @@
 
   knop.addEventListener('click', stuur);
   veld.addEventListener('keydown', function (e) { if (e.key === 'Enter') stuur(); });
+  }
+  var vormen = wortel.querySelectorAll('[data-mailvorm]');
+  for (var vi = 0; vi < vormen.length; vi++) koppel(vormen[vi]);
 })();
 </script>
 
@@ -288,6 +325,36 @@
 {
   "name": "Black Friday",
   "settings": [
+    {
+      "type": "checkbox",
+      "id": "snel_aan",
+      "label": "E-mailveld bovenaan (bij Kop en snelkoppelingen)",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "snel_kop",
+      "label": "Kop van het e-mailveld bovenaan",
+      "default": "Mail mij op 27 november de beste deals"
+    },
+    {
+      "type": "text",
+      "id": "snel_knop",
+      "label": "Knop van het e-mailveld bovenaan",
+      "default": "Zet mijn seintje aan"
+    },
+    {
+      "type": "text",
+      "id": "snel_fijn",
+      "label": "Kleine tekst onder het e-mailveld bovenaan",
+      "default": "Gratis. Eén mail op de dag zelf, met de deals die we hebben nagerekend. Afmelden kan met één klik."
+    },
+    {
+      "type": "text",
+      "id": "snel_bron",
+      "label": "Bron van aanmeldingen bovenaan",
+      "default": "blackfriday-top"
+    },
     {
       "type": "select",
       "id": "deel",

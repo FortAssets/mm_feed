@@ -786,7 +786,9 @@ const TREFWOORDEN = [
   ['randapparatuur', /\b(toetsenbord|keyboard|muis|mouse|ssd|harde schijf|usb-stick|geheugenkaart|microsd|router|wifi|printer|toner|cartridge|videokaart|rtx \d|processor|moederbord)\b/i],
   ['accessoires', /\b(hoesje|case voor|screenprotector|powerbank|oplader|usb-c kabel|adapter|telefoonhouder)\b/i],
   ['speelgoed', /\b(lego|playmobil|barbie|knuffel|puzzel \d|speelgoed)\b/i],
-  ['drogisterij', /\b(eau de parfum|eau de toilette|parfum|deodorant|crème|creme|lotion|mascara|lippenstift|nagellak)\b/i],
+  // 16 okt: crème en lotion eruit. Crème is meestal een kleur (SMEG-broodrooster
+  // Crème, Marshall Crème, Garmin-bandje Crème) en die belandden zo in Drogisterij.
+  ['drogisterij', /\b(eau de parfum|eau de toilette|parfum|deodorant|bodylotion|mascara|lippenstift|nagellak)\b/i],
   ['wonen', /\b(bureau|bureaustoel|eetkamerstoel|fauteuil|barkruk|vergadertafel|kast|bed |matras|dekbed|parasol|tuinset)\b/i],
   ['kantoor', /\b(balpen|stift|marker|etiket|map |ordner|papier a4|nietmachine|perforator|papiervernietiger)\b/i]
 ]
@@ -1873,8 +1875,38 @@ function altijdBuiten (p) {
   return ALTIJD_NAAM.test(kop) && !ALTIJD_NIET.test(kop)
 }
 
+// 16 okt: verzorging, eten, wasmiddel en kleding, in welke categorie ze ook
+// belanden en bij hoeveel winkels ook. Een haargloss-toner van Syoss kwam bij
+// randapparatuur terecht (vanwege "toner"), Nivea-douchegel en Oral-B-tandpasta
+// liggen bij bol en 2dekansje tegelijk en gingen daardoor langs geenApparaat().
+// Staat er een apparaatwoord in de naam vóór het verbruikswoord (een LED-
+// make-upspiegel, een wenkbrauwtrimmer), dan blijft hij staan. Staat het
+// apparaatwoord pas achteraan, zoals "Robijn Wasverzachter ... Koffiezetapparaat",
+// dan is dat een rij zoekwoorden van de verkoper en gaat hij eruit.
+const VERBRUIK = /(?<![\w-])(haargloss|haarkleuring|haarkleur|haarverf|haarmasker|haarlak|haarspray|haargel|haarolie|haarserum|haarwax|shampoo|droogshampoo|zilvershampoo|conditioner|douchegel|doucheolie|badschuim|tandpasta|mondwater|mondspoeling|scheerschuim|scheergel|aftershave|deodorant|deospray|bodylotion|bodybutter|handcr[eè]me|dagcr[eè]me|nachtcr[eè]me|gezichtscr[eè]me|oogcr[eè]me|gezichtsserum|mascara|lipstick|lippenstift|lipgloss|nagellak|gellak|foundation|concealer|oogschaduw|schmink|parfum|eau de toilette|eau de parfum|zonnebrand|zonnebrandcr[eè]me|wasverzachter|wasmiddel|wascapsules|wasparfum|vaatwastabletten|vaatwasmiddel|chloortabletten|koffiebonen|t-shirt|longsleeve|hoodie|sweater|make-?up(?!\s*-?\s*spiegel))(?![\w-])/i
+const VERBRUIK_APPARAAT = new RegExp(AP_SOORT.source + '|' + AP_STROOM.source, 'i')
+function verbruik (p) {
+  const n = String(p.n || '').slice(0, 90)
+  const v = VERBRUIK.exec(n)
+  if (!v) return false
+  const a = VERBRUIK_APPARAAT.exec(n)
+  return !a || v.index < a.index
+}
+// Films op dvd of blu-ray horen niet in een vergelijker voor apparaten; een
+// blu-rayspeler of dvd-brander wel.
+const FILM = /(?<![\w-])(blu-?ray|dvd)(?![\w-])/i
+const FILM_APPARAAT = /(speler|player|recorder|brander|writer|drive|station|combo|wallet|hoes|hoesjes|opberg|\brek\b)/i
+// MediaMarkt zet de distributeur voor de titel, zonder dvd of blu-ray erbij.
+const FILM_UITGEVER = /^(warner bros\.? entertainment|universal pictures|sony pictures entertainment|ww entertainment|lumiere publishing|dutch filmworks|paramount (home|pictures)|tdm )/i
+function film (p) {
+  const n = String(p.n || '').slice(0, 90)
+  if (FILM_UITGEVER.test(n)) return true
+  return p.c !== 'gaming' && FILM.test(n) && !FILM_APPARAAT.test(n)
+}
+
 function buitenAanbod (p) {
   if (altijdBuiten(p)) return true
+  if (verbruik(p) || film(p)) return true
   if (!BUITEN_CATS.has(p.c)) return false
   if ((p.o || []).length !== 1) return false
   if (/^(coolblue|mediamarkt)/i.test(p.o[0].w || '')) return false

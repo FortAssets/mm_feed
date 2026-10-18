@@ -1,0 +1,109 @@
+{%- comment -%}
+  DPV eSIM-aanbod: altijd zichtbaar aanbod + snelkoppelingen naar populaire bestemmingen.
+  Lost op dat de vakantiepagina zonder landkeuze geen enkele koopoptie toont.
+  19-10-2026: regel "Meer landen" met de nieuwe landenblogs (Japan, Curaçao, Kaapverdië, Gambia, wintersport).
+{%- endcomment -%}
+<style>
+.deo{max-width:1000px;margin:0 auto;padding:8px 24px 36px;font-family:'Inter',system-ui,sans-serif;color:#0D1B2A}
+.deo *{box-sizing:border-box}
+.deo-label{display:flex;align-items:center;gap:12px;margin-bottom:4px}
+.deo-label h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:22px;margin:0;white-space:nowrap}
+.deo-rule{flex:1;height:1px;background:#e8edf5}
+.deo-note{font-size:13px;color:#64748b;margin-bottom:18px}
+.deo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:12px}
+.deo-card{background:#fff;border:1px solid #e8edf5;border-radius:18px;padding:20px;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:border-color .12s,transform .12s,box-shadow .12s}
+.deo-card:hover{border-color:#dbe4ff;transform:translateY(-2px);box-shadow:0 16px 40px -20px rgba(13,27,42,.18)}
+.deo-card.best{border:2px solid #059669;box-shadow:0 18px 44px -22px rgba(5,150,105,.25)}
+.deo-badge{display:inline-block;background:#059669;color:#fff;font-size:10px;font-weight:800;letter-spacing:.05em;padding:3px 10px;border-radius:20px;text-transform:uppercase;margin-bottom:11px;align-self:flex-start}
+.deo-head{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.deo-logo{width:44px;height:44px;flex:0 0 44px;border-radius:11px;border:1px solid #e8edf5;background:#fff;padding:5px;object-fit:contain}
+.deo-name{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;line-height:1.2}
+.deo-sub{font-size:12.5px;color:#64748b;margin-top:2px}
+.deo-txt{font-size:13px;color:#64748b;line-height:1.5;margin:0 0 14px}
+.deo-cta{display:block;text-align:center;background:#059669;color:#fff!important;font-weight:700;font-size:14.5px;padding:12px;border-radius:12px;text-decoration:none;margin-top:auto;box-shadow:0 8px 18px -10px rgba(5,150,105,.6)}
+.deo-cta.alt{background:#fff;color:#1e3a8a!important;border:1.5px solid #dbe4ff;box-shadow:none}
+.deo-dest{margin-top:26px}
+.deo-dest h3{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:17px;margin:0 0 4px}
+.deo-dest p{font-size:13px;color:#64748b;margin:0 0 14px}
+.deo-chips{display:flex;flex-wrap:wrap;gap:8px}
+.deo-chip{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid #e8edf5;border-radius:999px;padding:9px 16px;font-size:13.5px;font-weight:700;text-decoration:none;color:#0D1B2A;transition:border-color .12s,transform .12s}
+.deo-chip:hover{border-color:#059669;transform:translateY(-1px)}
+.deo-meer{font-size:13.5px;color:#0D1B2A;margin:14px 0 0;line-height:1.8}
+.deo-meer a{color:#1e3a8a;font-weight:700;text-decoration:none;border-bottom:1.5px solid #dbe4ff}
+.deo-meer a:hover{border-color:#059669}
+.deo-fine{font-size:11.5px;color:#94a3b8;margin-top:18px;line-height:1.5}
+.deo-fine a{color:#2563eb;text-decoration:none;font-weight:600}
+@media(max-width:820px){.deo-grid{grid-template-columns:1fr}}
+</style>
+
+<div class="deo">
+  <div class="deo-label"><h2>{{ section.settings.heading }}</h2><div class="deo-rule"></div></div>
+  <div class="deo-note">{{ section.settings.subnote }}</div>
+
+  <div class="deo-grid">
+    <a class="deo-card best" href="https://airalo.pxf.io/VOQNgM" target="_blank" rel="sponsored noopener">
+      <span class="deo-badge">Meest gekozen</span>
+      <div class="deo-head">
+        <img class="deo-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://airalo.com" alt="Airalo" loading="lazy">
+        <div><div class="deo-name">Airalo</div><div class="deo-sub">200+ landen &middot; lokale bundels</div></div>
+      </div>
+      <p class="deo-txt">De bekendste eSIM-aanbieder. Lokale databundels per land, meestal het voordeligst voor korte reizen.</p>
+      <span class="deo-cta">Bekijk bundels &rarr;</span>
+    </a>
+
+    <a class="deo-card" href="https://yesim.app/?partner_id=5117" target="_blank" rel="sponsored noopener">
+      <div class="deo-head">
+        <img class="deo-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://yesim.app" alt="Yesim" loading="lazy">
+        <div><div class="deo-name">Yesim</div><div class="deo-sub">Onbeperkte dagbundels</div></div>
+      </div>
+      <p class="deo-txt">Zwitserse aanbieder met onbeperkte dagbundels en hotspot. Handig bij langere reizen of meerdere landen.</p>
+      <span class="deo-cta alt">Bekijk bundels &rarr;</span>
+    </a>
+
+    <a class="deo-card" href="https://go.saily.site/aff_c?offer_id=101&amp;aff_id=15162" target="_blank" rel="sponsored noopener">
+      <div class="deo-head">
+        <img class="deo-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://saily.com" alt="Saily" loading="lazy">
+        <div><div class="deo-name">Saily</div><div class="deo-sub">Van de makers van NordVPN</div></div>
+      </div>
+      <p class="deo-txt">Scherp geprijsd met een prettige app. Vaak voordelig bij grotere databundels.</p>
+      <span class="deo-cta alt">Bekijk bundels &rarr;</span>
+    </a>
+  </div>
+
+  <div class="deo-dest">
+    <h3>{{ section.settings.dest_heading }}</h3>
+    <p>{{ section.settings.dest_sub }}</p>
+    <div class="deo-chips">
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=TR">&#127481;&#127479; Turkije</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=MA">&#127474;&#127462; Marokko</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=US">&#127482;&#127480; Amerika</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=TH">&#127481;&#127469; Thailand</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=ID">&#127470;&#127465; Indonesi&euml;</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=EG">&#127466;&#127468; Egypte</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=AE">&#127462;&#127466; Dubai</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=CH">&#127464;&#127469; Zwitserland</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=JP">&#127471;&#127477; Japan</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=CW">&#127464;&#127484; Cura&ccedil;ao</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=CV">&#127464;&#127483; Kaapverdi&euml;</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=SR">&#127480;&#127479; Suriname</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=CA">&#127464;&#127462; Canada</a>
+      <a class="deo-chip" href="/pages/internet-op-vakantie?land=GM">&#127468;&#127474; Gambia</a>
+    </div>
+    <p class="deo-meer">Lees ook per land: <a href="/blogs/advies/internet-esim-japan">eSIM voor Japan</a> &middot; <a href="/blogs/advies/internet-esim-curacao">eSIM voor Cura&ccedil;ao</a> &middot; <a href="/blogs/advies/internet-wintersport-zwitserland-andorra">Internet op wintersport in Zwitserland en Andorra</a> &middot; <a href="/blogs/advies/internet-esim-kaapverdie">eSIM voor Kaapverdi&euml;</a> &middot; <a href="/blogs/advies/internet-esim-gambia">eSIM voor Gambia</a> &middot; <a href="/blogs/advies/internet-esim-oostenrijk">Internet in Oostenrijk op wintersport</a></p>
+  </div>
+
+  <p class="deo-fine">Reis je binnen de EU? Dan werkt je Nederlandse bundel meestal gewoon. Kies hierboven je land om te checken. Lees ook onze gids over <a href="/blogs/advies/bellen-en-internetten-in-het-buitenland-zo-voorkom-je-een-hoge-rekening">bellen en internetten in het buitenland</a>.<br>Links naar eSIM-aanbieders zijn affiliate-links: koop je via zo'n link, dan ontvangen wij mogelijk een vergoeding, zonder extra kosten voor jou.</p>
+</div>
+
+{% schema %}
+{
+  "name": "DPV eSIM-aanbod",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Kop", "default": "Direct een eSIM regelen" },
+    { "type": "text", "id": "subnote", "label": "Subtekst", "default": "Werkt in 200+ landen: installeer thuis, direct online bij aankomst" },
+    { "type": "text", "id": "dest_heading", "label": "Kop bestemmingen", "default": "Populaire bestemmingen" },
+    { "type": "text", "id": "dest_sub", "label": "Subtekst bestemmingen", "default": "Klik je land aan en zie meteen of je eigen bundel werkt" }
+  ],
+  "presets": [ { "name": "DPV eSIM-aanbod" } ]
+}
+{% endschema %}

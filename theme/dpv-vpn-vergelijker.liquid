@@ -23,11 +23,11 @@
 .vp-pod .vp-bv{position:relative;height:190px;display:flex;align-items:center;justify-content:center}.vp-pod .vp-v:first-child .vp-bv{height:250px}
 .vp-pod .vp-bv img{width:96px;height:96px;border-radius:22px;background:#fff;padding:12px;object-fit:contain;box-shadow:0 18px 30px rgba(0,0,0,.3)}
 .vp-rang{position:absolute;top:14px;left:14px;background:#fff;color:var(--ink);font-weight:700;font-size:13px;padding:5px 11px;border-radius:99px}.vp-pod .vp-v:first-child .vp-rang{background:var(--geel)}
-.vp-pod .vp-in{padding:18px;display:flex;flex-direction:column;gap:6px;flex:1}.vp-pod h3{font-size:22px}.vp-hoe{color:var(--zacht);font-size:14.5px}
+.vp-pod .vp-in{padding:18px;display:flex;flex-direction:column;gap:6px;flex:1}.vp-pod .vp-prw{display:flex;flex-direction:column;gap:3px;margin:4px 0}.vp-pod .vp-wie{display:flex;flex-direction:column-reverse;gap:2px}.vp-pod h3{font-size:22px}.vp-hoe{color:var(--zacht);font-size:14.5px}
 .vp-pr{font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.1}.vp-pr small{font-size:13px;font-weight:500;color:var(--zacht);margin-left:4px}
 .vp-mnd{color:var(--zacht);font-size:14.5px}
 .vp-pod .vp-plus{margin:4px 0 10px;padding:0;list-style:none;font-size:14.5px}.vp-pod .vp-plus li{padding:3px 0 3px 22px;position:relative}.vp-pod .vp-plus li:before{content:"\2713";position:absolute;left:0;color:var(--groen);font-weight:700}
-.vp-pod .vp-plus li:nth-child(n+3),.vp-pod .vp-min,.vp-pod .vp-ch,.vp-pod .vp-kl{display:none}
+.vp-pod .vp-plus li:nth-child(n+3),.vp-pod .vp-min,.vp-pod .vp-ch,.vp .vp-pod .vp-act a.vp-kl{display:none}
 .vp-pod .vp-act{margin-top:auto;display:flex;flex-direction:column;gap:8px}
 .vp-lijst .vp-v{display:grid;grid-template-columns:56px 1.4fr 1fr 1.6fr auto;gap:18px;align-items:center;padding:16px 18px;border:1px solid var(--lijn);border-radius:14px;margin-bottom:10px;background:#fff}
 .vp-lijst .vp-bv{position:relative}.vp-lijst .vp-bv img{width:52px;height:52px;border-radius:12px;padding:8px;background:var(--vlak);object-fit:contain}.vp-lijst .vp-rang{display:none}
@@ -207,7 +207,7 @@
 </script>
 {% schema %}
 {
- "name": "VPN vergelijker (ranglijst)",
+ "name": "VPN vergelijker",
  "settings": [
   {
    "type": "text",
@@ -298,7 +298,7 @@
  ],
  "presets": [
   {
-   "name": "VPN vergelijker (ranglijst)"
+   "name": "VPN vergelijker"
   }
  ]
 }

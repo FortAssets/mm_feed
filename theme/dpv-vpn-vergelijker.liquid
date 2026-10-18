@@ -1,169 +1,145 @@
-{%- comment -%} VPN vergelijken: zeven VPN's met prijs, voor- en nadelen. De lijst staat als HTML in de pagina; het script zet alleen de volgorde om per doel. Links via de klikteller (cat=vpn). {%- endcomment -%}
+{%- comment -%} VPN vergelijken, versie 2 (18 okt 2026): ranglijst in de stijl van de sneakerspagina. Podium met de top 3, rijen voor de rest; de doelknoppen sorteren. Gemaakt met /home/claude/vpn2/bouw-b.py. Links via de klikteller (cat=vpn). {%- endcomment -%}
 {%- assign go = section.settings.go | default: 'https://go.deprijsvergelijker.com/api/go' -%}
 <style>
-.vp{font-family:'Instrument Sans',system-ui,sans-serif;color:#0D1B2A;font-size:15.5px;line-height:1.5}
-.vp *{box-sizing:border-box}
-.vp h1,.vp h2,.vp h3{font-family:'Bricolage Grotesque','Instrument Sans',sans-serif;font-weight:800;letter-spacing:-.04em;color:#0D1B2A;margin:0}
-.vp-w{max-width:980px;margin:0 auto;padding:0 24px}
-.vp-hero{background:#F1F3F8;border-bottom:1px solid #E3E8F0;padding:24px 0 26px}
-.vp-kruimel{font-size:13px;color:#4A5A70;margin:0 0 8px}.vp-kruimel a{color:#4A5A70}
-.vp h1{font-size:38px;line-height:1.05;margin-bottom:10px}
-.vp-intro{max-width:660px;color:#4A5A70;font-size:16.5px;margin:0}
-.vp-peil{display:inline-block;margin-top:12px;font-size:12.5px;font-weight:700;color:#1F7A52;background:#E3F3EA;border-radius:999px;padding:4px 11px}
-.vp-sec{padding:28px 0 4px}.vp h2{font-size:25px;margin-bottom:4px}.vp-uit{color:#4A5A70;margin:0 0 16px;max-width:700px}
-.vp-ind{border:1px solid #E3E8F0;border-radius:16px;padding:18px;display:grid;grid-template-columns:1.25fr 1fr;gap:22px;align-items:center;background:#fff}
-.vp-ind>div>span{display:block;font-size:12.5px;font-weight:700;color:#4A5A70;margin-bottom:6px}
-.vp-chips{display:flex;gap:7px;flex-wrap:wrap}
-.vp button.vp-chip{font:600 13.5px 'Instrument Sans',sans-serif;padding:0 13px;min-height:40px;border:1px solid #CBD3DF;border-radius:999px;background:#fff;color:#0D1B2A;cursor:pointer;box-shadow:none;margin:0}
-.vp button.vp-chip[aria-pressed=true]{background:#0D1B2A;color:#fff;border-color:#0D1B2A}
-.vp-uitk{background:#F1F3F8;border-radius:14px;padding:18px}.vp-uitk small{display:block;font-size:12.5px;font-weight:700;color:#4A5A70}
-.vp-uitk b{display:block;font:800 30px/1.1 'Bricolage Grotesque',sans-serif;letter-spacing:-.04em;margin:4px 0 2px}
-.vp-uitk p{font-size:13.5px;color:#4A5A70;margin:6px 0 10px}
-.vp a.vp-knop,.vp a.vp-knop:visited{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 16px;background:#F9C31F;border:1.5px solid #0D1B2A;border-radius:10px;box-shadow:3px 3px 0 #0D1B2A;font-weight:700;font-size:15px;color:#0D1B2A;text-decoration:none;white-space:nowrap;transition:transform .1s,box-shadow .1s}
-.vp a.vp-knop:hover{background:#EDB50C;transform:translate(2px,2px);box-shadow:1px 1px 0 #0D1B2A}
-.vp-tip{display:flex;align-items:center;gap:12px;background:#F4F6FA;border:1px solid #D5DCE6;border-radius:14px;padding:10px 14px 10px 10px;margin:18px 0 0;font-size:14px;line-height:1.45;color:#26384F}
-.vp-tip .pj{flex:none;width:56px;line-height:0}.vp-tip .pj svg{display:block;width:100%;height:auto}.vp-tip p{margin:0}.vp-tip b{color:#0D1B2A}
-.vp-tel{display:flex;justify-content:space-between;align-items:center;font-size:13.5px;color:#4A5A70;margin:0 0 12px;gap:10px}.vp-tel b{color:#0D1B2A}
-.vp-rij{position:relative;display:grid;grid-template-columns:1fr auto;grid-template-areas:"wie pr" "ch ch" "vn vn" "actie actie";gap:12px 18px;align-items:center;border:1px solid #E3E8F0;border-radius:14px;padding:16px;margin-bottom:12px;background:#fff}
-.vp-rij.vp-top{border:1.5px solid #0D1B2A;box-shadow:6px 6px 0 #3FAE7A;margin:16px 6px 20px 0;padding-top:22px}
-.vp-lint{position:absolute;left:14px;top:-12px;background:#3FAE7A;color:#fff;font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px}
-.vp-wie{grid-area:wie;display:flex;align-items:center;gap:12px}
-.vp-logo{width:44px;height:44px;flex:none;border-radius:11px;border:1px solid #E3E8F0;padding:6px;background:#fff;object-fit:contain}
-.vp-wie h3{font-size:20px;line-height:1.15;letter-spacing:-.03em}
-.vp-hoe{font-size:12.5px;color:#4A5A70;font-weight:600}
-.vp-pr{grid-area:pr;text-align:right}.vp-pr em{display:block;font-style:normal;font-size:11.5px;font-weight:700;color:#1F7A52}
-.vp-pr b{display:block;font:800 27px/1 'Bricolage Grotesque',sans-serif;letter-spacing:-.04em}.vp-pr span{font-size:11.5px;color:#4A5A70;font-weight:600}
-.vp-ch{grid-area:ch;list-style:none;padding:0;margin:0;display:flex;gap:6px;flex-wrap:wrap}.vp-ch li{font-size:12.5px;background:#F1F3F8;border-radius:8px;padding:5px 9px;font-weight:500;margin:0}
-.vp-ch li.vp-ok{background:#E3F3EA;color:#1F7A52;font-weight:700}
-.vp-vn{grid-area:vn;display:grid;grid-template-columns:1fr 1fr;gap:6px 18px}
-.vp-vn ul{list-style:none;margin:0;padding:0}.vp-vn li{position:relative;padding-left:22px;font-size:14px;margin:0 0 5px;color:#26384F}
-.vp-plus li::before,.vp-min li::before{position:absolute;left:0;top:1px;width:16px;height:16px;border-radius:50%;font-size:12px;font-weight:800;line-height:16px;text-align:center}
-.vp-plus li::before{content:"+";background:#E3F3EA;color:#1F7A52}.vp-min li::before{content:"\2212";background:#FBE9E7;color:#B4382C}
-.vp-actie{grid-area:actie;display:flex;align-items:center;gap:14px;border-top:1px solid #EEF1F6;padding-top:12px}
-.vp-mnd{font-size:12.5px;color:#4A5A70;font-weight:600}
-.vp-tw{overflow-x:auto;border:1px solid #E3E8F0;border-radius:14px;background:#fff;-webkit-overflow-scrolling:touch}
-.vp table.vp-t{display:table!important;border-collapse:collapse;width:100%!important;min-width:720px;font-size:14px;margin:0}
-.vp-t th,.vp-t td{padding:11px 12px;text-align:left;border-bottom:1px solid #EEF1F6;white-space:nowrap}
-.vp-t thead th{font-size:12px;color:#4A5A70;font-weight:700;background:#F7F8FB}
-.vp-t tbody th{position:sticky;left:0;background:#fff;font-weight:700}.vp-t tbody th a{color:#0D1B2A;text-decoration:none}
-.vp-t tr:last-child th,.vp-t tr:last-child td{border-bottom:0}
+.vp{--ink:#0D1B2A;--zacht:#5B6676;--vlak:#F3F4F7;--lijn:#E6E9EF;--groen:#1F7A52;--geel:#F9C31F;font-family:'Instrument Sans',system-ui,sans-serif;color:var(--ink);font-size:16px;line-height:1.5}
+.vp *{box-sizing:border-box}.vp a{color:inherit;text-decoration:none}
+.vp h1,.vp h2,.vp h3{font-family:'Instrument Sans',system-ui,sans-serif;font-weight:700;letter-spacing:-.025em;color:var(--ink);margin:0}
+.vp-w{max-width:1320px;margin:0 auto;padding:0 32px}
+.vp-sub{border-bottom:1px solid var(--lijn)}.vp-sub nav{display:flex;gap:30px;overflow-x:auto;scrollbar-width:none;padding:14px 0;font-size:15.5px;font-weight:500;white-space:nowrap}.vp-sub nav::-webkit-scrollbar{display:none}.vp-sub a:hover{color:var(--groen)}
+.vp-label{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500;color:var(--groen)}.vp-label i{font-style:normal;display:inline-flex;width:24px;height:24px;border-radius:6px;background:var(--vlak);align-items:center;justify-content:center;font-size:12px}
+.vp-held{padding:40px 0 10px;max-width:820px}.vp h1{font-size:44px;line-height:1.08;margin:10px 0 14px}.vp-intro{font-size:18px;color:var(--zacht);margin:0}
+.vp-peil{display:inline-block;margin-top:14px;font-size:12.5px;font-weight:700;color:var(--groen);background:#E3F3EA;border-radius:999px;padding:4px 11px}
+.vp-doel{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.vp button.vp-chip{font:600 15px 'Instrument Sans',sans-serif;padding:0 16px;min-height:42px;border:1.5px solid var(--lijn);border-radius:999px;background:#fff;color:var(--ink);cursor:pointer;box-shadow:none;margin:0}
+.vp button.vp-chip[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.vp a.vp-knop,.vp a.vp-knop:visited{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:46px;padding:10px 18px;background:var(--geel);border:1.5px solid var(--ink);border-radius:10px;box-shadow:3px 3px 0 var(--ink);font-weight:700;font-size:15px;color:var(--ink);text-decoration:none}
+.vp a.vp-knop:hover{background:#EDB50C;transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+.vp a.vp-knop.licht{background:#fff;box-shadow:none;border-color:var(--lijn)}.vp a.vp-knop.licht:hover{background:var(--vlak);transform:none;box-shadow:none}
+.vp-kop{display:flex;justify-content:space-between;align-items:center;gap:16px;margin:40px 0 16px}.vp h2{font-size:27px}.vp-uit{color:var(--zacht);margin:0 0 16px;max-width:700px}
+.vp-pil{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:99px;background:var(--vlak);font-size:14px;font-weight:600}
+.vp-pod{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:14px;margin-top:30px}
+.vp-x{display:none}
+.vp-pod .vp-v{border-radius:16px;overflow:hidden;background:var(--vlak);display:flex;flex-direction:column}
+.vp-pod .vp-bv{position:relative;height:190px;display:flex;align-items:center;justify-content:center}.vp-pod .vp-v:first-child .vp-bv{height:250px}
+.vp-pod .vp-bv img{width:96px;height:96px;border-radius:22px;background:#fff;padding:12px;object-fit:contain;box-shadow:0 18px 30px rgba(0,0,0,.3)}
+.vp-rang{position:absolute;top:14px;left:14px;background:#fff;color:var(--ink);font-weight:700;font-size:13px;padding:5px 11px;border-radius:99px}.vp-pod .vp-v:first-child .vp-rang{background:var(--geel)}
+.vp-pod .vp-in{padding:18px;display:flex;flex-direction:column;gap:6px;flex:1}.vp-pod h3{font-size:22px}.vp-hoe{color:var(--zacht);font-size:14.5px}
+.vp-pr{font-size:30px;font-weight:700;letter-spacing:-.03em;line-height:1.1}.vp-pr small{font-size:13px;font-weight:500;color:var(--zacht);margin-left:4px}
+.vp-mnd{color:var(--zacht);font-size:14.5px}
+.vp-pod .vp-plus{margin:4px 0 10px;padding:0;list-style:none;font-size:14.5px}.vp-pod .vp-plus li{padding:3px 0 3px 22px;position:relative}.vp-pod .vp-plus li:before{content:"\2713";position:absolute;left:0;color:var(--groen);font-weight:700}
+.vp-pod .vp-plus li:nth-child(n+3),.vp-pod .vp-min,.vp-pod .vp-ch,.vp-pod .vp-kl{display:none}
+.vp-pod .vp-act{margin-top:auto;display:flex;flex-direction:column;gap:8px}
+.vp-lijst .vp-v{display:grid;grid-template-columns:56px 1.4fr 1fr 1.6fr auto;gap:18px;align-items:center;padding:16px 18px;border:1px solid var(--lijn);border-radius:14px;margin-bottom:10px;background:#fff}
+.vp-lijst .vp-bv{position:relative}.vp-lijst .vp-bv img{width:52px;height:52px;border-radius:12px;padding:8px;background:var(--vlak);object-fit:contain}.vp-lijst .vp-rang{display:none}
+.vp-lijst .vp-in{display:contents}.vp-lijst .vp-wie h3{font-size:18px}.vp-lijst .vp-hoe{display:block;font-size:13.5px}
+.vp-lijst .vp-prw .vp-pr{font-size:22px}.vp-lijst .vp-prw .vp-pr small{display:none}.vp-lijst .vp-mnd{display:block;font-size:13px}
+.vp-lijst .vp-ch{display:flex;gap:6px;flex-wrap:wrap;list-style:none;margin:0;padding:0}.vp-lijst .vp-ch li{font-size:13px;padding:4px 10px;border-radius:99px;background:var(--vlak);margin:0}.vp-lijst .vp-ch li:nth-child(n+4){display:none}
+.vp-lijst .vp-plus,.vp-lijst .vp-min{display:none}
+.vp-lijst .vp-act .vp-knop{display:none}.vp-lijst .vp-act .vp-kl{display:inline-flex}
+.vp-tip{display:flex;gap:16px;align-items:center;background:#FFF6D6;border-radius:14px;padding:16px 20px;margin-top:28px;font-size:15px;line-height:1.45}.vp-tip .pj{flex:none;width:56px;line-height:0}.vp-tip .pj svg{display:block;width:100%;height:auto}.vp-tip p{margin:0}.vp-tip b{display:block;font-size:17px}
+.vp-tw{overflow-x:auto;border:1px solid var(--lijn);border-radius:14px;background:#fff;-webkit-overflow-scrolling:touch}
+.vp table.vp-t{display:table!important;border-collapse:collapse;width:100%!important;min-width:720px;font-size:15px;margin:0}
+.vp-t th,.vp-t td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--lijn);white-space:nowrap}.vp-t thead th{font-size:13px;color:var(--zacht);font-weight:600;background:var(--vlak)}
+.vp-t tbody th{position:sticky;left:0;background:#fff;font-weight:700}.vp-t tbody th a{color:var(--ink)}.vp-t tr:last-child th,.vp-t tr:last-child td{border-bottom:0}
 .vp-twee{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.vp-kaart{border:1px solid #E3E8F0;border-radius:14px;padding:16px 18px;background:#fff}
-.vp-kaart h3{font-size:19px;letter-spacing:-.03em;margin-bottom:8px}
-.vp-kaart ul{list-style:none;margin:0;padding:0}.vp-kaart li{position:relative;padding-left:22px;font-size:14.5px;margin:0 0 8px;color:#26384F}
-.vp-kaart li b{color:#0D1B2A}
-.vp-dek{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.vp-d{border:1px solid #E3E8F0;border-radius:14px;padding:15px;background:#fff}.vp-d h3{font-size:17px;letter-spacing:-.03em}.vp-d p{font-size:13.5px;color:#4A5A70;margin:4px 0 0}
-.vp a.vp-reis{display:flex;align-items:center;justify-content:space-between;gap:16px;border:1px solid #E3E8F0;border-radius:14px;padding:16px 18px;background:#F1F3F8;color:#0D1B2A;text-decoration:none}
-.vp a.vp-reis:hover{border-color:#0D1B2A}.vp-reis b{display:block;font:800 18px 'Bricolage Grotesque',sans-serif;letter-spacing:-.03em}.vp-reis span{font-size:14px;color:#4A5A70}.vp-reis i{font-style:normal;font-weight:700;white-space:nowrap}
-.vp details{border:1px solid #E3E8F0;border-radius:12px;padding:0 16px;margin-bottom:8px;background:#fff}.vp summary{cursor:pointer;font-weight:700;padding:14px 0;list-style:none}.vp summary::-webkit-details-marker{display:none}.vp details p{margin:0 0 14px;color:#4A5A70}
-.vp-fijn{font-size:12.5px;color:#4A5A70;margin:12px 0 0;max-width:820px}
-.vp-eind{height:34px}
-.vp .dpvmb{display:none!important}
-@media(max-width:820px){.vp-dek{grid-template-columns:1fr 1fr}}
-@media(max-width:700px){.vp-w{padding:0 16px}.vp h1{font-size:29px}.vp h2{font-size:22px}.vp-ind{grid-template-columns:1fr;gap:14px;padding:14px}
-.vp-rij{padding:14px}.vp-wie h3{font-size:18px}.vp-pr b{font-size:24px}.vp-vn{grid-template-columns:1fr}.vp-rij.vp-top{margin-right:6px}
-.vp-actie{flex-direction:column;align-items:stretch;gap:8px}.vp a.vp-knop{width:calc(100% - 3px);min-height:48px}.vp-mnd{text-align:center}
-.vp-twee{grid-template-columns:1fr}.vp-tip{font-size:13.5px}.vp-tip .pj{width:46px}.vp a.vp-reis{flex-direction:column;align-items:flex-start;gap:6px}}
+.vp-kaart{border:1px solid var(--lijn);border-radius:14px;padding:18px 20px;background:#fff}.vp-kaart h3{font-size:19px;margin-bottom:8px}
+.vp-kaart ul{list-style:none;margin:0;padding:0}.vp-kaart li{position:relative;padding-left:24px;font-size:15px;margin:0 0 8px;color:#26384F}.vp-kaart li b{color:var(--ink)}
+.vp-kaart .vp-plus li::before,.vp-kaart .vp-min li::before{position:absolute;left:0;top:2px;width:17px;height:17px;border-radius:50%;font-size:12px;font-weight:800;line-height:17px;text-align:center}
+.vp-kaart .vp-plus li::before{content:"+";background:#E3F3EA;color:var(--groen)}.vp-kaart .vp-min li::before{content:"\2212";background:#FBE9E7;color:#B4382C}
+.vp-dek{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.vp-d{background:var(--vlak);border-radius:14px;padding:16px}.vp-d h3{font-size:17px}.vp-d p{font-size:14px;color:var(--zacht);margin:4px 0 0}
+.vp a.vp-reis{display:flex;align-items:center;justify-content:space-between;gap:16px;border-radius:14px;padding:18px 20px;background:linear-gradient(135deg,#132A55,#0B1B38);color:#fff}
+.vp-reis b{display:block;font-size:19px;letter-spacing:-.02em}.vp-reis span{font-size:14.5px;color:#C9D3E3}.vp-reis i{font-style:normal;font-weight:700;white-space:nowrap;background:var(--geel);color:var(--ink);padding:9px 14px;border-radius:10px}
+.vp details{border:1px solid var(--lijn);border-radius:12px;padding:0 16px;margin-bottom:8px;background:#fff}.vp summary{cursor:pointer;font-weight:700;padding:14px 0;list-style:none}.vp summary::-webkit-details-marker{display:none}.vp details p{margin:0 0 14px;color:#26384F}
+.vp-fijn{font-size:13px;color:var(--zacht);margin:12px 0 0;max-width:820px}.vp-eind{height:40px}.vp .dpvmb{display:none!important}
+@media(max-width:1000px){.vp-pod{grid-template-columns:1fr}.vp-pod .vp-v:first-child .vp-bv,.vp-pod .vp-bv{height:170px}.vp-lijst .vp-v{grid-template-columns:52px 1fr auto;gap:12px}.vp-lijst .vp-ch,.vp-lijst .vp-act{display:none}.vp-dek{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.vp-w{padding:0 16px}.vp-held{padding-top:24px}.vp h1{font-size:31px}.vp-intro{font-size:16px}.vp h2{font-size:22px}.vp-kop{margin:32px 0 12px}
+.vp-doel{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}.vp-doel::-webkit-scrollbar{display:none}.vp button.vp-chip{white-space:nowrap}
+.vp-twee{grid-template-columns:1fr}.vp a.vp-reis{flex-direction:column;align-items:flex-start;gap:10px}.vp-tip{font-size:14px}.vp-tip .pj{width:46px}}
 @media(max-width:420px){.vp-dek{grid-template-columns:1fr}}
 </style>
 <div class="vp" id="vp">
- <div class="vp-hero"><div class="vp-w">
-  <p class="vp-kruimel"><a href="/">Home</a> / VPN vergelijken</p>
-  <h1>{{ section.settings.kop }}</h1>
-  <p class="vp-intro">{{ section.settings.intro }}</p>
-  <span class="vp-peil">Prijzen gecheckt op {{ section.settings.peil }}</span>
- </div></div>
-
- <div class="vp-sec"><div class="vp-w">
-  <h2>Waar gebruik je hem voor?</h2><p class="vp-uit">Kies je doel, dan staat de beste keuze bovenaan.</p>
-  <div class="vp-ind">
-   <div><span id="vp-l1">Mijn doel</span><div class="vp-chips" role="group" aria-labelledby="vp-l1">
-    <button type="button" class="vp-chip" data-doel="alles" aria-pressed="true">Alles-in-één</button>
-    <button type="button" class="vp-chip" data-doel="stream" aria-pressed="false">Streamen</button>
-    <button type="button" class="vp-chip" data-doel="privacy" aria-pressed="false">Privacy</button>
-    <button type="button" class="vp-chip" data-doel="prijs" aria-pressed="false">Zo goedkoop mogelijk</button>
-    <button type="button" class="vp-chip" data-doel="app" aria-pressed="false">Veel apparaten</button>
-    <button type="button" class="vp-chip" data-doel="gratis" aria-pressed="false">Gratis beginnen</button>
-   </div></div>
-   <div class="vp-uitk" aria-live="polite"><small id="vp-keuze">Beste keuze voor alles-in-één</small><b id="vp-naam">NordVPN</b><p id="vp-reden">Snel, veel landen, extern gecontroleerd en scherp geprijsd bij twee jaar.</p><a class="vp-knop" id="vp-uknop" href="#vpn-nord">Bekijk NordVPN ↓</a></div>
-  </div>
-  <div class="vp-tip" role="note"><span class="pj"><svg aria-hidden="true" focusable="false" viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible"><defs><filter id="pj-vpn" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-vpn)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 L234 134" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M245.4 132.0 Q245.3 133.9 244.8 134.7 Q244.3 135.6 243.7 136.3 Q243.2 137.1 242.3 137.6 Q241.5 138.1 240.6 138.3 Q239.6 138.4 238.7 138.4 Q237.7 138.3 236.9 138.0 Q236.0 137.6 235.2 137.1 Q234.4 136.6 233.8 135.8 Q233.3 135.0 232.9 134.2 Q232.6 133.3 232.6 132.3 Q232.5 131.3 232.8 130.4 Q233.0 129.5 233.5 128.7 Q234.0 127.9 234.7 127.2 Q235.4 126.5 236.3 126.2 Q237.2 125.9 238.1 125.8 Q239.0 125.6 240.0 125.7 Q240.9 125.8 241.8 126.2 Q242.6 126.6 243.4 127.2 Q244.1 127.9 244.5 128.7 Q244.9 129.6 245.2 130.5 Q245.4 131.4 245.4 132.3" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M250 124 l8 -6 M252 136 l10 0 M248 147 l8 6" fill="none" stroke="#0D1B2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#fff" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M113.85 148.9 Q130 152.7 146.15 147.95 Q142.35 167.9 130 167.9 Q116.7 167.9 113.85 148.9 Z" fill="#0D1B2A" stroke="#0D1B2A" stroke-width="2.8499999999999996" stroke-linejoin="round"/><path d="M103.4 107.1 q10 -6.6499999999999995 19 -1.9 M135.7 104.25 q10 -4.75 18.05 1.9" fill="none" stroke="#0D1B2A" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span><p><b>Let op de verlengprijs.</b> {{ section.settings.tip }}</p></div>
- </div></div>
-
- <div class="vp-sec"><div class="vp-w">
-  <h2>{{ section.settings.kop_lijst }}</h2><p class="vp-uit">Per VPN de prijs, wat je krijgt en de voor- en nadelen op een rij.</p>
-  <div class="vp-tel"><span><b>7 VPN's</b> vergeleken</span><span id="vp-sort">Beste keuze bovenaan</span></div>
-  <div id="vp-lijst">
-  <article class="vp-rij" data-vpn="nord" id="vpn-nord">
-   <span class="vp-lint" hidden></span>
-   <div class="vp-wie"><img class="vp-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://nordvpn.com" alt="" width="44" height="44" loading="lazy"><div><h3>NordVPN</h3><span class="vp-hoe">Gevestigd in Panama</span></div></div>
-   <div class="vp-pr"><b>€2,99</b><span>per maand bij 2 jaar</span></div>
-   <ul class="vp-ch"><li>10 apparaten</li><li>110+ landen</li><li>30 dagen geld terug</li><li class="vp-ok">No-logs gecontroleerd</li></ul>
-   <div class="vp-vn"><ul class="vp-plus"><li>Snel in onafhankelijke tests, ook bij streamen</li><li>No-logsbeleid meerdere keren extern gecontroleerd</li><li>Extra bescherming tegen advertenties en malware in de duurdere pakketten</li></ul><ul class="vp-min"><li>Na de eerste periode flink duurder</li><li>Veel opties, de app voelt soms druk</li></ul></div>
-   <div class="vp-actie"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_nord | default: 'https://nordvpn.com/nl/' | url_encode }}&amp;cat=vpn&amp;p=NordVPN&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar NordVPN →</a><span class="vp-mnd">Per maand opzegbaar: €11,59</span></div>
+<div class="vp-sub"><div class="vp-w"><nav><a href="#vp-pod">Ranglijst</a><a href="?doel=stream">Streamen</a><a href="?doel=privacy">Privacy</a><a href="?doel=prijs">Goedkoopst</a><a href="?doel=gratis">Gratis VPN</a><a href="/pages/internet-op-vakantie">Op vakantie</a><a href="#vp-tabel">Verlengprijzen</a><a href="#vp-faq">Vragen</a></nav></div></div>
+ <div class="vp-w">
+  <div class="vp-held"><span class="vp-label"><i>🏆</i>Ranglijst {{ section.settings.peil | split: " " | slice: 1, 2 | join: " " }}</span>
+   <h1>{{ section.settings.kop }}</h1><p class="vp-intro">{{ section.settings.intro }}</p>
+   <div class="vp-doel" role="group" aria-label="Waar gebruik je hem voor?"><button type="button" class="vp-chip" data-doel="alles" aria-pressed="true">Alles-in-één</button><button type="button" class="vp-chip" data-doel="stream" aria-pressed="false">Streamen</button><button type="button" class="vp-chip" data-doel="privacy" aria-pressed="false">Privacy</button><button type="button" class="vp-chip" data-doel="prijs" aria-pressed="false">Zo goedkoop mogelijk</button><button type="button" class="vp-chip" data-doel="app" aria-pressed="false">Veel apparaten</button><button type="button" class="vp-chip" data-doel="gratis" aria-pressed="false">Gratis beginnen</button></div>
+   <span class="vp-peil">Prijzen gecheckt op {{ section.settings.peil }}</span></div>
+  <div class="vp-pod" id="vp-pod">
+  <article class="vp-v" data-vpn="nord" id="vpn-nord">
+   <div class="vp-bv" style="background:linear-gradient(160deg,#3E5FD6,#0B1638)"><span class="vp-rang"></span><img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://nordvpn.com" alt="" width="96" height="96" loading="lazy"></div>
+   <div class="vp-in"><div class="vp-wie"><h3>NordVPN</h3><span class="vp-hoe">Gevestigd in Panama</span></div>
+    <div class="vp-prw"><span class="vp-pr">€2,99<small>p/m bij 2 jaar</small></span><span class="vp-mnd">Daarna €11,59 per maand</span></div>
+    <ul class="vp-ch"><li>10 apparaten</li><li>110+ landen</li><li>30 dagen geld terug</li><li>No-logs gecontroleerd</li></ul>
+    <ul class="vp-plus"><li>Snel in onafhankelijke tests, ook bij streamen</li><li>No-logsbeleid meerdere keren extern gecontroleerd</li><li>Extra bescherming tegen advertenties en malware in de duurdere pakketten</li></ul><ul class="vp-min"><li>Na de eerste periode flink duurder</li><li>Veel opties, de app voelt soms druk</li></ul>
+    <div class="vp-act"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_nord | default: 'https://nordvpn.com/nl/' | url_encode }}&amp;cat=vpn&amp;p=NordVPN&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar NordVPN →</a><a class="vp-knop licht vp-kl" href="{{ go }}?u={{ section.settings.u_nord | default: 'https://nordvpn.com/nl/' | url_encode }}&amp;cat=vpn&amp;p=NordVPN&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Bekijk →</a></div>
+   </div>
   </article>
-  <article class="vp-rij" data-vpn="surf" id="vpn-surf">
-   <span class="vp-lint" hidden></span>
-   <div class="vp-wie"><img class="vp-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://surfshark.com" alt="" width="44" height="44" loading="lazy"><div><h3>Surfshark</h3><span class="vp-hoe">Gevestigd in Nederland</span></div></div>
-   <div class="vp-pr"><b>€2,49</b><span>per maand bij 2 jaar</span></div>
-   <ul class="vp-ch"><li>Onbeperkt apparaten</li><li>100 landen</li><li>30 dagen geld terug</li><li class="vp-ok">No-logs gecontroleerd</li></ul>
-   <div class="vp-vn"><ul class="vp-plus"><li>Eén account voor al je apparaten, zonder limiet</li><li>Gevestigd in Amsterdam</li><li>Lage prijs bij een abonnement van twee jaar</li></ul><ul class="vp-min"><li>Per maand is hij een van de duurste</li><li>Snelheid wisselt soms op drukke momenten</li></ul></div>
-   <div class="vp-actie"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_surf | default: 'https://surfshark.com/nl/' | url_encode }}&amp;cat=vpn&amp;p=Surfshark&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar Surfshark →</a><span class="vp-mnd">Per maand opzegbaar: €16,45</span></div>
+  <article class="vp-v" data-vpn="surf" id="vpn-surf">
+   <div class="vp-bv" style="background:linear-gradient(160deg,#17A9A6,#082F33)"><span class="vp-rang"></span><img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://surfshark.com" alt="" width="96" height="96" loading="lazy"></div>
+   <div class="vp-in"><div class="vp-wie"><h3>Surfshark</h3><span class="vp-hoe">Gevestigd in Nederland</span></div>
+    <div class="vp-prw"><span class="vp-pr">€2,49<small>p/m bij 2 jaar</small></span><span class="vp-mnd">Daarna €16,45 per maand</span></div>
+    <ul class="vp-ch"><li>Onbeperkt apparaten</li><li>100 landen</li><li>30 dagen geld terug</li><li>No-logs gecontroleerd</li></ul>
+    <ul class="vp-plus"><li>Eén account voor al je apparaten, zonder limiet</li><li>Gevestigd in Amsterdam</li><li>Lage prijs bij een abonnement van twee jaar</li></ul><ul class="vp-min"><li>Per maand is hij een van de duurste</li><li>Snelheid wisselt soms op drukke momenten</li></ul>
+    <div class="vp-act"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_surf | default: 'https://surfshark.com/nl/' | url_encode }}&amp;cat=vpn&amp;p=Surfshark&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar Surfshark →</a><a class="vp-knop licht vp-kl" href="{{ go }}?u={{ section.settings.u_surf | default: 'https://surfshark.com/nl/' | url_encode }}&amp;cat=vpn&amp;p=Surfshark&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Bekijk →</a></div>
+   </div>
   </article>
-  <article class="vp-rij" data-vpn="proton" id="vpn-proton">
-   <span class="vp-lint" hidden></span>
-   <div class="vp-wie"><img class="vp-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://protonvpn.com" alt="" width="44" height="44" loading="lazy"><div><h3>Proton VPN</h3><span class="vp-hoe">Gevestigd in Zwitserland</span></div></div>
-   <div class="vp-pr"><em>Gratis versie</em><b>€2,99</b><span>per maand bij 2 jaar</span></div>
-   <ul class="vp-ch"><li>10 apparaten</li><li>110+ landen</li><li>30 dagen geld terug</li><li class="vp-ok">No-logs gecontroleerd</li></ul>
-   <div class="vp-vn"><ul class="vp-plus"><li>Gratis versie zonder datalimiet en zonder reclame</li><li>Zwitserse privacywetten en apps met openbare broncode</li><li>Extern gecontroleerd no-logsbeleid</li></ul><ul class="vp-min"><li>Gratis versie: één apparaat en je kiest zelf geen land</li><li>Streamen en downloaden alleen in de betaalde versie</li></ul></div>
-   <div class="vp-actie"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_proton | default: 'https://protonvpn.com/nl' | url_encode }}&amp;cat=vpn&amp;p=Proton%20VPN&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar Proton VPN →</a><span class="vp-mnd">Per maand opzegbaar: €9,99</span></div>
+  <article class="vp-v" data-vpn="proton" id="vpn-proton">
+   <div class="vp-bv" style="background:linear-gradient(160deg,#6D4AFF,#1A0F45)"><span class="vp-rang"></span><img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://protonvpn.com" alt="" width="96" height="96" loading="lazy"></div>
+   <div class="vp-in"><div class="vp-wie"><h3>Proton VPN</h3><span class="vp-hoe">Gevestigd in Zwitserland</span></div>
+    <div class="vp-prw"><span class="vp-pr">€2,99<small>p/m bij 2 jaar</small></span><span class="vp-mnd">Daarna €9,99 per maand</span></div>
+    <ul class="vp-ch"><li>10 apparaten</li><li>110+ landen</li><li>30 dagen geld terug</li><li>No-logs gecontroleerd</li></ul>
+    <ul class="vp-plus"><li>Gratis versie zonder datalimiet en zonder reclame</li><li>Zwitserse privacywetten en apps met openbare broncode</li><li>Extern gecontroleerd no-logsbeleid</li></ul><ul class="vp-min"><li>Gratis versie: één apparaat en je kiest zelf geen land</li><li>Streamen en downloaden alleen in de betaalde versie</li></ul>
+    <div class="vp-act"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_proton | default: 'https://protonvpn.com/nl' | url_encode }}&amp;cat=vpn&amp;p=Proton%20VPN&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar Proton VPN →</a><a class="vp-knop licht vp-kl" href="{{ go }}?u={{ section.settings.u_proton | default: 'https://protonvpn.com/nl' | url_encode }}&amp;cat=vpn&amp;p=Proton%20VPN&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Bekijk →</a></div>
+   </div>
   </article>
-  <article class="vp-rij" data-vpn="express" id="vpn-express">
-   <span class="vp-lint" hidden></span>
-   <div class="vp-wie"><img class="vp-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://expressvpn.com" alt="" width="44" height="44" loading="lazy"><div><h3>ExpressVPN</h3><span class="vp-hoe">Gevestigd in Britse Maagdeneilanden</span></div></div>
-   <div class="vp-pr"><b>ca. €3</b><span>per maand bij 2 jaar</span></div>
-   <ul class="vp-ch"><li>10 apparaten</li><li>100+ landen</li><li>30 dagen geld terug</li><li class="vp-ok">No-logs gecontroleerd</li></ul>
-   <div class="vp-vn"><ul class="vp-plus"><li>Heel eenvoudige apps, ook voor op je router</li><li>Snel en stabiel, ook bij streamen</li><li>Meerdere keren door externe partijen gecontroleerd</li></ul><ul class="vp-min"><li>Duurder dan de meeste andere aanbieders</li><li>Na de eerste periode een hoge verlengprijs</li></ul></div>
-   <div class="vp-actie"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_express | default: 'https://www.expressvpn.com/nl' | url_encode }}&amp;cat=vpn&amp;p=ExpressVPN&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar ExpressVPN →</a><span class="vp-mnd">Per maand opzegbaar: ca. €13</span></div>
+  <article class="vp-v" data-vpn="express" id="vpn-express">
+   <div class="vp-bv" style="background:linear-gradient(160deg,#D2363E,#3D0B10)"><span class="vp-rang"></span><img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://expressvpn.com" alt="" width="96" height="96" loading="lazy"></div>
+   <div class="vp-in"><div class="vp-wie"><h3>ExpressVPN</h3><span class="vp-hoe">Gevestigd in Britse Maagdeneilanden</span></div>
+    <div class="vp-prw"><span class="vp-pr">ca. €3<small>p/m bij 2 jaar</small></span><span class="vp-mnd">Daarna ca. €13 per maand</span></div>
+    <ul class="vp-ch"><li>10 apparaten</li><li>100+ landen</li><li>30 dagen geld terug</li><li>No-logs gecontroleerd</li></ul>
+    <ul class="vp-plus"><li>Heel eenvoudige apps, ook voor op je router</li><li>Snel en stabiel, ook bij streamen</li><li>Meerdere keren door externe partijen gecontroleerd</li></ul><ul class="vp-min"><li>Duurder dan de meeste andere aanbieders</li><li>Na de eerste periode een hoge verlengprijs</li></ul>
+    <div class="vp-act"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_express | default: 'https://www.expressvpn.com/nl' | url_encode }}&amp;cat=vpn&amp;p=ExpressVPN&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar ExpressVPN →</a><a class="vp-knop licht vp-kl" href="{{ go }}?u={{ section.settings.u_express | default: 'https://www.expressvpn.com/nl' | url_encode }}&amp;cat=vpn&amp;p=ExpressVPN&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Bekijk →</a></div>
+   </div>
   </article>
-  <article class="vp-rij" data-vpn="cg" id="vpn-cg">
-   <span class="vp-lint" hidden></span>
-   <div class="vp-wie"><img class="vp-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://cyberghostvpn.com" alt="" width="44" height="44" loading="lazy"><div><h3>CyberGhost</h3><span class="vp-hoe">Gevestigd in Roemenië</span></div></div>
-   <div class="vp-pr"><b>€2,19</b><span>per maand bij 2 jaar</span></div>
-   <ul class="vp-ch"><li>7 apparaten</li><li>90+ landen</li><li>45 dagen geld terug</li></ul>
-   <div class="vp-vn"><ul class="vp-plus"><li>45 dagen geld terug bij een lang abonnement</li><li>Aparte servers per streamingdienst</li><li>Makkelijk voor beginners</li></ul><ul class="vp-min"><li>Maximaal zeven apparaten tegelijk</li><li>Bij een maandabonnement maar 14 dagen geld terug</li></ul></div>
-   <div class="vp-actie"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_cg | default: 'https://www.cyberghostvpn.com/nl_NL/' | url_encode }}&amp;cat=vpn&amp;p=CyberGhost&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar CyberGhost →</a><span class="vp-mnd">Per maand opzegbaar: €12,99</span></div>
+  <article class="vp-v" data-vpn="cg" id="vpn-cg">
+   <div class="vp-bv" style="background:linear-gradient(160deg,#E7B600,#3A2E00)"><span class="vp-rang"></span><img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://cyberghostvpn.com" alt="" width="96" height="96" loading="lazy"></div>
+   <div class="vp-in"><div class="vp-wie"><h3>CyberGhost</h3><span class="vp-hoe">Gevestigd in Roemenië</span></div>
+    <div class="vp-prw"><span class="vp-pr">€2,19<small>p/m bij 2 jaar</small></span><span class="vp-mnd">Daarna €12,99 per maand</span></div>
+    <ul class="vp-ch"><li>7 apparaten</li><li>90+ landen</li><li>45 dagen geld terug</li></ul>
+    <ul class="vp-plus"><li>45 dagen geld terug bij een lang abonnement</li><li>Aparte servers per streamingdienst</li><li>Makkelijk voor beginners</li></ul><ul class="vp-min"><li>Maximaal zeven apparaten tegelijk</li><li>Bij een maandabonnement maar 14 dagen geld terug</li></ul>
+    <div class="vp-act"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_cg | default: 'https://www.cyberghostvpn.com/nl_NL/' | url_encode }}&amp;cat=vpn&amp;p=CyberGhost&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar CyberGhost →</a><a class="vp-knop licht vp-kl" href="{{ go }}?u={{ section.settings.u_cg | default: 'https://www.cyberghostvpn.com/nl_NL/' | url_encode }}&amp;cat=vpn&amp;p=CyberGhost&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Bekijk →</a></div>
+   </div>
   </article>
-  <article class="vp-rij" data-vpn="pia" id="vpn-pia">
-   <span class="vp-lint" hidden></span>
-   <div class="vp-wie"><img class="vp-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://privateinternetaccess.com" alt="" width="44" height="44" loading="lazy"><div><h3>Private Internet Access</h3><span class="vp-hoe">Gevestigd in Verenigde Staten</span></div></div>
-   <div class="vp-pr"><b>€1,99</b><span>per maand bij 2 jaar</span></div>
-   <ul class="vp-ch"><li>Onbeperkt apparaten</li><li>90+ landen</li><li>30 dagen geld terug</li><li class="vp-ok">No-logs gecontroleerd</li></ul>
-   <div class="vp-vn"><ul class="vp-plus"><li>Onbeperkt apparaten voor een lage prijs</li><li>Veel instellingen voor wie dat wil</li><li>No-logsbeleid extern gecontroleerd</li></ul><ul class="vp-min"><li>Gevestigd in de Verenigde Staten</li><li>De app oogt minder modern</li></ul></div>
-   <div class="vp-actie"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_pia | default: 'https://www.privateinternetaccess.com/nl' | url_encode }}&amp;cat=vpn&amp;p=PIA&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar PIA →</a><span class="vp-mnd">Per maand opzegbaar: €11,95</span></div>
+  <article class="vp-v" data-vpn="pia" id="vpn-pia">
+   <div class="vp-bv" style="background:linear-gradient(160deg,#3F9E45,#0E2911)"><span class="vp-rang"></span><img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://privateinternetaccess.com" alt="" width="96" height="96" loading="lazy"></div>
+   <div class="vp-in"><div class="vp-wie"><h3>PIA</h3><span class="vp-hoe">Gevestigd in Verenigde Staten</span></div>
+    <div class="vp-prw"><span class="vp-pr">€1,99<small>p/m bij 2 jaar</small></span><span class="vp-mnd">Daarna €11,95 per maand</span></div>
+    <ul class="vp-ch"><li>Onbeperkt apparaten</li><li>90+ landen</li><li>30 dagen geld terug</li><li>No-logs gecontroleerd</li></ul>
+    <ul class="vp-plus"><li>Onbeperkt apparaten voor een lage prijs</li><li>Veel instellingen voor wie dat wil</li><li>No-logsbeleid extern gecontroleerd</li></ul><ul class="vp-min"><li>Gevestigd in de Verenigde Staten</li><li>De app oogt minder modern</li></ul>
+    <div class="vp-act"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_pia | default: 'https://www.privateinternetaccess.com/nl' | url_encode }}&amp;cat=vpn&amp;p=PIA&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar PIA →</a><a class="vp-knop licht vp-kl" href="{{ go }}?u={{ section.settings.u_pia | default: 'https://www.privateinternetaccess.com/nl' | url_encode }}&amp;cat=vpn&amp;p=PIA&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Bekijk →</a></div>
+   </div>
   </article>
-  <article class="vp-rij" data-vpn="mull" id="vpn-mull">
-   <span class="vp-lint" hidden></span>
-   <div class="vp-wie"><img class="vp-logo" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=64&amp;url=https://mullvad.net" alt="" width="44" height="44" loading="lazy"><div><h3>Mullvad</h3><span class="vp-hoe">Gevestigd in Zweden</span></div></div>
-   <div class="vp-pr"><b>€5</b><span>per maand, vaste prijs</span></div>
-   <ul class="vp-ch"><li>5 apparaten</li><li>45+ landen</li><li>30 dagen geld terug</li><li class="vp-ok">No-logs gecontroleerd</li></ul>
-   <div class="vp-vn"><ul class="vp-plus"><li>Geen e-mailadres nodig, contant betalen kan</li><li>Altijd €5 per maand, geen lokprijs en geen verlengverrassing</li><li>Sterk gericht op privacy, met externe audits</li></ul><ul class="vp-min"><li>Maximaal vijf apparaten</li><li>Minder geschikt om buitenlandse streamingdiensten te kijken</li></ul></div>
-   <div class="vp-actie"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_mull | default: 'https://mullvad.net/nl' | url_encode }}&amp;cat=vpn&amp;p=Mullvad&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar Mullvad →</a><span class="vp-mnd">Maandelijks opzegbaar</span></div>
+  <article class="vp-v" data-vpn="mull" id="vpn-mull">
+   <div class="vp-bv" style="background:linear-gradient(160deg,#2F5D8C,#0C1A2A)"><span class="vp-rang"></span><img src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://mullvad.net" alt="" width="96" height="96" loading="lazy"></div>
+   <div class="vp-in"><div class="vp-wie"><h3>Mullvad</h3><span class="vp-hoe">Gevestigd in Zweden</span></div>
+    <div class="vp-prw"><span class="vp-pr">€5<small>per maand, vast</small></span><span class="vp-mnd">Maandelijks opzegbaar</span></div>
+    <ul class="vp-ch"><li>5 apparaten</li><li>45+ landen</li><li>30 dagen geld terug</li><li>No-logs gecontroleerd</li></ul>
+    <ul class="vp-plus"><li>Geen e-mailadres nodig, contant betalen kan</li><li>Altijd €5 per maand, geen lokprijs en geen verlengverrassing</li><li>Sterk gericht op privacy, met externe audits</li></ul><ul class="vp-min"><li>Maximaal vijf apparaten</li><li>Minder geschikt om buitenlandse streamingdiensten te kijken</li></ul>
+    <div class="vp-act"><a class="vp-knop" href="{{ go }}?u={{ section.settings.u_mull | default: 'https://mullvad.net/nl' | url_encode }}&amp;cat=vpn&amp;p=Mullvad&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Naar Mullvad →</a><a class="vp-knop licht vp-kl" href="{{ go }}?u={{ section.settings.u_mull | default: 'https://mullvad.net/nl' | url_encode }}&amp;cat=vpn&amp;p=Mullvad&amp;bron=vpn-vergelijken" target="_blank" rel="nofollow sponsored noopener">Bekijk →</a></div>
+   </div>
   </article>
   </div>
-  <p class="vp-fijn">Prijzen zijn introductieprijzen per maand bij een abonnement van twee jaar, inclusief eventuele extra maanden, gecheckt op {{ section.settings.peil }}. Mullvad heeft één vaste prijs. Aanbieders passen hun prijzen vaak aan; de actuele prijs zie je bij de aanbieder.</p>
- </div></div>
-
- <div class="vp-sec"><div class="vp-w">
-  <h2>Alles op een rij</h2><p class="vp-uit">Op je telefoon kun je de tabel opzij schuiven.</p>
-
+  <div class="vp-kop"><h2>Ook goed</h2><span class="vp-pil" id="vp-sort">Beste keuze bovenaan</span></div>
+  <div class="vp-lijst" id="vp-lijst"></div>
+  <div class="vp-tip" role="note"><span class="pj"><svg aria-hidden="true" focusable="false" viewBox="-12 -6 290 260" xmlns="http://www.w3.org/2000/svg" style="overflow:visible"><defs><filter id="pj-vpn" x="-10%" y="-10%" width="120%" height="120%"><feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="2" seed="4"/><feDisplacementMap in="SourceGraphic" scale="2.4"/></filter></defs><g filter="url(#pj-vpn)"><path d="M110 212 q-3 14 -8 24 l-14 2 M150 212 q4 14 8 24 l14 0" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M66 150 q-22 8 -26 34" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M194 146 L234 134" fill="none" stroke="#0D1B2A" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" /><path d="M245.4 132.0 Q245.3 133.9 244.8 134.7 Q244.3 135.6 243.7 136.3 Q243.2 137.1 242.3 137.6 Q241.5 138.1 240.6 138.3 Q239.6 138.4 238.7 138.4 Q237.7 138.3 236.9 138.0 Q236.0 137.6 235.2 137.1 Q234.4 136.6 233.8 135.8 Q233.3 135.0 232.9 134.2 Q232.6 133.3 232.6 132.3 Q232.5 131.3 232.8 130.4 Q233.0 129.5 233.5 128.7 Q234.0 127.9 234.7 127.2 Q235.4 126.5 236.3 126.2 Q237.2 125.9 238.1 125.8 Q239.0 125.6 240.0 125.7 Q240.9 125.8 241.8 126.2 Q242.6 126.6 243.4 127.2 Q244.1 127.9 244.5 128.7 Q244.9 129.6 245.2 130.5 Q245.4 131.4 245.4 132.3" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M250 124 l8 -6 M252 136 l10 0 M248 147 l8 6" fill="none" stroke="#0D1B2A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 34 Q136 34 141 38 L190 82 Q196 87 196 96 V188 a24 24 0 0 1 -24 24 H88 a24 24 0 0 1 -24 -24 V96 Q64 87 70 82 L119 38 Q124 34 130 34 Z" fill="#fff" stroke="#0D1B2A" stroke-width="5.5" stroke-linejoin="round"/><path d="M66 104 V186 q0 22 22 24 M194 110 V184" fill="none" stroke="#0D1B2A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" opacity=".65" transform="translate(-3 2)"/><path d="M138.0 74.0 Q137.6 76.3 137.1 77.4 Q136.6 78.4 135.9 79.3 Q135.1 80.2 134.1 80.8 Q133.1 81.4 131.9 81.6 Q130.8 81.8 129.6 81.8 Q128.5 81.7 127.4 81.3 Q126.3 80.9 125.3 80.3 Q124.3 79.7 123.7 78.7 Q123.0 77.7 122.6 76.6 Q122.1 75.6 122.1 74.4 Q122.0 73.2 122.4 72.1 Q122.7 71.0 123.3 70.0 Q123.9 69.0 124.7 68.1 Q125.6 67.3 126.6 66.9 Q127.7 66.5 128.9 66.3 Q130.0 66.2 131.2 66.3 Q132.3 66.5 133.4 67.0 Q134.4 67.4 135.3 68.2 Q136.1 69.0 136.7 70.0 Q137.3 71.0 137.7 72.1 Q138.0 73.2 138.0 74.4" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><path d="M130 66 C120 40 146 30 140 8" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /><ellipse cx="113.85" cy="128" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="116.225" cy="129.9" r="3.61" fill="#0D1B2A"/><ellipse cx="144.25" cy="126.1" rx="8.549999999999999" ry="10.45" fill="#fff" stroke="#0D1B2A" stroke-width="3.8"/><circle cx="146.625" cy="128" r="3.61" fill="#0D1B2A"/><path d="M113.85 148.9 Q130 152.7 146.15 147.95 Q142.35 167.9 130 167.9 Q116.7 167.9 113.85 148.9 Z" fill="#0D1B2A" stroke="#0D1B2A" stroke-width="2.8499999999999996" stroke-linejoin="round"/><path d="M103.4 107.1 q10 -6.6499999999999995 19 -1.9 M135.7 104.25 q10 -4.75 18.05 1.9" fill="none" stroke="#0D1B2A" stroke-width="3.8" stroke-linecap="round" stroke-linejoin="round" /><path d="M96 186 l18 0 M122 186 l42 0" fill="none" stroke="#0D1B2A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".8"/></g></svg></span><p><b>Let op de verlengprijs.</b>{{ section.settings.tip }}</p></div>
+  <div class="vp-kop" id="vp-tabel"><h2>Alles op een rij</h2><span class="vp-pil">Schuif opzij op je telefoon</span></div>
   <div class="vp-tw" tabindex="0" role="region" aria-label="Tabel met alle VPN's"><table class="vp-t">
    <thead><tr><th scope="col">VPN</th><th scope="col">Per maand bij 2 jaar</th><th scope="col">Per maand los</th><th scope="col">Apparaten</th><th scope="col">Geld terug</th><th scope="col">Gratis versie</th><th scope="col">Gevestigd in</th></tr></thead>
    <tbody><tr><th scope="row"><a href="#vpn-nord">NordVPN</a></th><td><b>€2,99</b></td><td>€11,59</td><td>10</td><td>30 dagen</td><td>Nee</td><td>Panama</td></tr><tr><th scope="row"><a href="#vpn-surf">Surfshark</a></th><td><b>€2,49</b></td><td>€16,45</td><td>Onbeperkt</td><td>30 dagen</td><td>Nee</td><td>Nederland</td></tr><tr><th scope="row"><a href="#vpn-proton">Proton VPN</a></th><td><b>€2,99</b></td><td>€9,99</td><td>10</td><td>30 dagen</td><td>Ja</td><td>Zwitserland</td></tr><tr><th scope="row"><a href="#vpn-express">ExpressVPN</a></th><td><b>ca. €3</b></td><td>ca. €13</td><td>10</td><td>30 dagen</td><td>Nee</td><td>Britse Maagdeneilanden</td></tr><tr><th scope="row"><a href="#vpn-cg">CyberGhost</a></th><td><b>€2,19</b></td><td>€12,99</td><td>7</td><td>45 dagen</td><td>Nee</td><td>Roemenië</td></tr><tr><th scope="row"><a href="#vpn-pia">PIA</a></th><td><b>€1,99</b></td><td>€11,95</td><td>Onbeperkt</td><td>30 dagen</td><td>Nee</td><td>Verenigde Staten</td></tr><tr><th scope="row"><a href="#vpn-mull">Mullvad</a></th><td><b>€5</b> (vast)</td><td>€5</td><td>5</td><td>30 dagen</td><td>Nee</td><td>Zweden</td></tr></tbody>
   </table></div>
- </div></div>
-
- <div class="vp-sec"><div class="vp-w">
+  <p class="vp-fijn">Prijzen zijn introductieprijzen per maand bij een abonnement van twee jaar, inclusief eventuele extra maanden, gecheckt op {{ section.settings.peil }}. Mullvad heeft één vaste prijs. Aanbieders passen hun prijzen vaak aan; de actuele prijs zie je bij de aanbieder.</p>
+ </div>
+<div class="vp-sec"><div class="vp-w">
   <h2>Voor- en nadelen van een VPN</h2><p class="vp-uit">Wat een VPN wel en niet voor je doet.</p>
   <div class="vp-twee">
    <div class="vp-kaart"><h3>Voordelen</h3><ul class="vp-plus">
@@ -198,7 +174,7 @@
  </div></div>
 
  <div class="vp-sec"><div class="vp-w">
-  <h2>Veelgestelde vragen</h2><p class="vp-uit">Kort antwoord op wat mensen het vaakst vragen.</p>
+  <h2 id="vp-faq">Veelgestelde vragen</h2><p class="vp-uit">Kort antwoord op wat mensen het vaakst vragen.</p>
   <details><summary>Is een VPN legaal in Nederland?</summary><p>Ja. Een VPN gebruiken is in Nederland gewoon toegestaan. Wat zonder VPN verboden is, blijft met VPN verboden.</p></details>
   <details><summary>Ben ik met een VPN anoniem?</summary><p>Niet helemaal. Je internetprovider en de sites die je bezoekt zien je echte IP-adres niet meer, maar log je in bij Google of Facebook, dan weten die nog steeds wie je bent. De VPN-aanbieder zelf kan je verkeer in principe zien. Daarom is een extern gecontroleerd no-logsbeleid belangrijk.</p></details>
   <details><summary>Is een gratis VPN veilig?</summary><p>Soms. Proton VPN heeft een gratis versie zonder reclame en zonder datalimiet. Veel andere gratis VPN's verdienen aan reclame of aan je gegevens. Twijfel je, kies dan een betaalde VPN met geld-terug-garantie.</p></details>
@@ -206,28 +182,23 @@
   <details><summary>Wordt mijn internet trager met een VPN?</summary><p>Een beetje, omdat je verkeer via een extra server loopt. Met een goede VPN en een server dichtbij merk je daar bij surfen en streamen weinig van.</p></details>
   <details><summary>Waarom is de prijs na een jaar of twee hoger?</summary><p>De lage maandprijs is een introductieprijs voor de eerste periode. Daarna verlengt het abonnement tegen het gewone tarief. Zet je verlengdatum in je agenda, dan kun je op tijd opzeggen of overstappen.</p></details>
   <details><summary>Verdienen jullie hieraan?</summary><p>Bij een deel van de aanbieders ontvangen wij een vergoeding als je via onze knop een abonnement afsluit. Jij betaalt hetzelfde. De volgorde bepalen wij op prijs, privacy, snelheid en gebruiksgemak.</p></details>
-  <div class="vp-eind"></div>
+    <div class="vp-eind"></div>
  </div></div>
 </div>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is een VPN legaal in Nederland?","acceptedAnswer":{"@type":"Answer","text":"Ja. Een VPN gebruiken is in Nederland gewoon toegestaan. Wat zonder VPN verboden is, blijft met VPN verboden."}},{"@type":"Question","name":"Ben ik met een VPN anoniem?","acceptedAnswer":{"@type":"Answer","text":"Niet helemaal. Je internetprovider en de sites die je bezoekt zien je echte IP-adres niet meer, maar log je in bij Google of Facebook, dan weten die nog steeds wie je bent. De VPN-aanbieder zelf kan je verkeer in principe zien. Daarom is een extern gecontroleerd no-logsbeleid belangrijk."}},{"@type":"Question","name":"Is een gratis VPN veilig?","acceptedAnswer":{"@type":"Answer","text":"Soms. Proton VPN heeft een gratis versie zonder reclame en zonder datalimiet. Veel andere gratis VPN's verdienen aan reclame of aan je gegevens. Twijfel je, kies dan een betaalde VPN met geld-terug-garantie."}},{"@type":"Question","name":"Kan ik met een VPN Nederlandse tv kijken op vakantie?","acceptedAnswer":{"@type":"Answer","text":"Vaak wel. Met een Nederlandse server lijkt het of je thuis bent, zodat diensten die alleen in Nederland werken het weer doen. Lees wel de voorwaarden van de dienst, want niet elke dienst staat dat toe."}},{"@type":"Question","name":"Wordt mijn internet trager met een VPN?","acceptedAnswer":{"@type":"Answer","text":"Een beetje, omdat je verkeer via een extra server loopt. Met een goede VPN en een server dichtbij merk je daar bij surfen en streamen weinig van."}},{"@type":"Question","name":"Waarom is de prijs na een jaar of twee hoger?","acceptedAnswer":{"@type":"Answer","text":"De lage maandprijs is een introductieprijs voor de eerste periode. Daarna verlengt het abonnement tegen het gewone tarief. Zet je verlengdatum in je agenda, dan kun je op tijd opzeggen of overstappen."}},{"@type":"Question","name":"Verdienen jullie hieraan?","acceptedAnswer":{"@type":"Answer","text":"Bij een deel van de aanbieders ontvangen wij een vergoeding als je via onze knop een abonnement afsluit. Jij betaalt hetzelfde. De volgorde bepalen wij op prijs, privacy, snelheid en gebruiksgemak."}}]}</script>
 <script>
 (function(){
   var el=document.getElementById('vp');if(!el)return;
-  var D={"alles":{"n":"Alles-in-één","o":["nord","surf","proton","express","cg","pia","mull"],"r":"Snel, veel landen, extern gecontroleerd en scherp geprijsd bij twee jaar."},"stream":{"n":"Streamen","o":["nord","surf","express","cg","pia","proton","mull"],"r":"Haalt in tests hoge snelheden en werkt met de bekende streamingdiensten."},"privacy":{"n":"Privacy","o":["mull","proton","nord","surf","express","pia","cg"],"r":"Geen e-mailadres nodig, contant betalen kan en de apps zijn gecontroleerd."},"prijs":{"n":"Zo goedkoop mogelijk","o":["pia","cg","surf","nord","proton","express","mull"],"r":"De laagste prijs per maand bij een abonnement van twee jaar, op onbeperkt apparaten."},"app":{"n":"Veel apparaten","o":["surf","pia","nord","proton","express","cg","mull"],"r":"Onbeperkt apparaten op één account, gevestigd in Nederland."},"gratis":{"n":"Gratis beginnen","o":["proton","cg","nord","surf","express","pia","mull"],"r":"De enige betrouwbare gratis versie: geen datalimiet en geen reclame."}};
-  var N={"nord":"NordVPN","surf":"Surfshark","proton":"Proton VPN","express":"ExpressVPN","cg":"CyberGhost","pia":"PIA","mull":"Mullvad"};
-  var lijst=document.getElementById('vp-lijst');
-  function zet(k,scroll){
+  var D={"alles": {"n": "Alles-in-één", "o": ["nord", "surf", "proton", "express", "cg", "pia", "mull"], "r": "Snel, veel landen, extern gecontroleerd en scherp geprijsd bij twee jaar."}, "stream": {"n": "Streamen", "o": ["nord", "surf", "express", "cg", "pia", "proton", "mull"], "r": "Haalt in tests hoge snelheden en werkt met de bekende streamingdiensten."}, "privacy": {"n": "Privacy", "o": ["mull", "proton", "nord", "surf", "express", "pia", "cg"], "r": "Geen e-mailadres nodig, contant betalen kan en de apps zijn gecontroleerd."}, "prijs": {"n": "Zo goedkoop mogelijk", "o": ["pia", "cg", "surf", "nord", "proton", "express", "mull"], "r": "De laagste prijs per maand bij een abonnement van twee jaar, op onbeperkt apparaten."}, "app": {"n": "Veel apparaten", "o": ["surf", "pia", "nord", "proton", "express", "cg", "mull"], "r": "Onbeperkt apparaten op één account, gevestigd in Nederland."}, "gratis": {"n": "Gratis beginnen", "o": ["proton", "cg", "nord", "surf", "express", "pia", "mull"], "r": "De enige betrouwbare gratis versie: geen datalimiet en geen reclame."}};
+  var pod=document.getElementById('vp-pod'),lijst=document.getElementById('vp-lijst');
+  function zet(k,push){
     var d=D[k]||D.alles;
     el.querySelectorAll('button.vp-chip').forEach(function(b){b.setAttribute('aria-pressed',b.getAttribute('data-doel')===k?'true':'false');});
-    d.o.forEach(function(id,i){var r=document.getElementById('vpn-'+id);if(!r)return;lijst.appendChild(r);
-      var l=r.querySelector('.vp-lint');r.classList.toggle('vp-top',i===0);
-      if(i===0){l.textContent='Beste keuze voor '+d.n.toLowerCase();l.hidden=false;}else{l.hidden=true;}});
-    var top=d.o[0];
-    document.getElementById('vp-keuze').textContent='Beste keuze voor '+d.n.toLowerCase();
-    document.getElementById('vp-naam').textContent=N[top];
-    document.getElementById('vp-reden').textContent=d.r;
-    var u=document.getElementById('vp-uknop');u.textContent='Bekijk '+N[top]+' \u2193';u.setAttribute('href','#vpn-'+top);
-    if(scroll){try{var q=new URLSearchParams(location.search);if(k==='alles')q.delete('doel');else q.set('doel',k);var z=q.toString();history.replaceState(null,'',location.pathname+(z?'?'+z:''));}catch(e){}}
+    d.o.forEach(function(id,i){var r=document.getElementById('vpn-'+id);if(!r)return;(i<3?pod:lijst).appendChild(r);
+      r.querySelector('.vp-rang').textContent='#'+(i+1)+(i===0?' Beste keuze':'');
+      var h=r.querySelector('.vp-wie h3');h.textContent=(i>=3?'#'+(i+1)+' ':'')+h.textContent.replace(/^#\d+ /,'');});
+    document.getElementById('vp-sort').textContent='Beste keuze voor '+d.n.toLowerCase()+' bovenaan';
+    if(push){try{var q=new URLSearchParams(location.search);if(k==='alles')q.delete('doel');else q.set('doel',k);var z=q.toString();history.replaceState(null,'',location.pathname+(z?'?'+z:''));}catch(e){}}
   }
   el.addEventListener('click',function(e){var b=e.target.closest('button.vp-chip');if(!b)return;zet(b.getAttribute('data-doel'),true);});
   var k='alles';try{var q=new URLSearchParams(location.search).get('doel');if(D[q])k=q;}catch(e){}
@@ -236,19 +207,19 @@
 </script>
 {% schema %}
 {
- "name": "VPN vergelijker",
+ "name": "VPN vergelijker (ranglijst)",
  "settings": [
   {
    "type": "text",
    "id": "kop",
    "label": "Kop",
-   "default": "VPN vergelijken"
+   "default": "De beste VPN's van dit moment, eerlijk vergeleken"
   },
   {
    "type": "textarea",
    "id": "intro",
    "label": "Intro",
-   "default": "Zeven bekende VPN's naast elkaar: wat ze kosten, op hoeveel apparaten ze werken en wat de voor- en nadelen zijn. Kies waar je hem voor gebruikt, dan staat de beste keuze bovenaan."
+   "default": "Kies waarvoor je hem gebruikt. Wij zetten de VPN die daar het beste bij past bovenaan, met de prijs die je ook na de eerste periode betaalt."
   },
   {
    "type": "text",
@@ -292,7 +263,7 @@
    "type": "text",
    "id": "u_surf",
    "label": "Surfshark",
-   "default": "https://surfshark.com/nl/"
+   "default": "https://get.surfshark.net/aff_c?offer_id=926&aff_id=50575&aff_sub=vpn-vergelijken"
   },
   {
    "type": "text",
@@ -327,7 +298,7 @@
  ],
  "presets": [
   {
-   "name": "VPN vergelijker"
+   "name": "VPN vergelijker (ranglijst)"
   }
  ]
 }

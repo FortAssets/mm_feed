@@ -2,6 +2,7 @@ name: Pokémon losse kaarten (TCGdex)
 
 # Duurste losse kaarten per set met de Cardmarket-trendprijs, één keer per dag.
 # Schrijft kaarten.json naar de branch tcg-data, naast de feeds van tcg-feeds.yml.
+# Daarnaast elke dag een momentopname van alle kaartprijzen in geschiedenis/JJJJ-MM-DD.json.gz.
 # Zelfde concurrency-groep als tcg-feeds, zodat de twee niet tegelijk pushen.
 on:
   schedule:
@@ -34,8 +35,9 @@ jobs:
           git fetch -q origin tcg-data
           git worktree add -q /tmp/td origin/tcg-data && git -C /tmp/td checkout -q -B tcg-data
           cp data/tcg/kaarten.json /tmp/td/
+          mkdir -p /tmp/td/geschiedenis && cp data/tcg/geschiedenis/*.json.gz /tmp/td/geschiedenis/ 2>/dev/null || true
           cd /tmp/td
-          git add kaarten.json
+          git add kaarten.json geschiedenis
           git diff --cached --quiet && { echo "niets veranderd"; exit 0; }
           git commit -q -m "Pokémon losse kaarten $(date -u +%F)"
           git push -q origin tcg-data

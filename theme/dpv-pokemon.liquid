@@ -282,7 +282,7 @@ function oordeel(p,a){if(!a||!p)return null;var r=p/a;
   function kaart(c){
     var q=c.naam+' '+c.nr+(c.van?'/'+c.van:'');
     var cm='https://www.cardmarket.com/nl/Pokemon/Products/Search?searchString='+encodeURIComponent(c.naam+' '+c.setnaam);
-    var eb='https://www.ebay.nl/sch/i.html?_nkw='+encodeURIComponent('pokemon '+q)+'&_sacat=183454';
+    var eb='https://app.partner.ebay.com/c/7966591/627505/9356?u='+encodeURIComponent('https://www.ebay.nl/sch/i.html?_nkw='+encodeURIComponent('pokemon '+q)+'&_sacat=183454')+'&subId1=dpv-pokemon-losse-kaarten';
     var v='';if(c.gem30){var d=Math.round((c.trend-c.gem30)/c.gem30*100);if(Math.abs(d)>=3)v='<span class="ver '+(d>0?'op':'af')+'">'+(d>0?'+':'')+d+'% in 30 dagen</span>';}
     var a=document.createElement('article');a.className='lk';
     a.innerHTML='<div class="fk"><img loading="lazy" alt="" width="245" height="342"></div><h3></h3><span class="m"></span><div class="pr"><b>'+eur(c.trend)+'</b>'+v+'</div><div class="kn"><a class="c" target="_blank" rel="nofollow noopener">Cardmarket</a><a class="e" target="_blank" rel="nofollow sponsored noopener">eBay</a></div>';

@@ -1,0 +1,137 @@
+{%- comment -%}
+  Rekenhulp (19 okt 2026): toestel met abonnement, of los kopen met sim only?
+  Alles over 24 maanden bij elkaar opgeteld. De cijfers komen uit
+  data/rekenhulp.json (rekenhulp.mjs, elke ochtend): per model de losse prijs
+  uit de productvergelijker, en het goedkoopste toestel met abonnement en de
+  goedkoopste sim only uit de abonnementenfeed, per minimale databundel.
+  Zet je de keuze vast, dan kun je hem met ?toestel=<sleutel> delen.
+{%- endcomment -%}
+<style>
+.rh{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#1F7A52;--groenL:#E3F3EA;--b:#2a78d6;--o:#eb6834;max-width:1080px;margin:0 auto;padding:40px 20px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
+.rh h2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:clamp(26px,3.3vw,34px);letter-spacing:-.02em;line-height:1.1;margin:0 0 8px}
+.rh .rh-in{color:var(--soft);font-size:16px;line-height:1.55;margin:0 0 20px;max-width:700px}
+.rh-keuze{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;background:var(--vlak);border-radius:16px;padding:16px}
+.rh-keuze label{display:block;font-size:12.5px;font-weight:700;color:var(--soft);margin:0 0 6px}
+.rh-keuze select{width:100%;font:inherit;font-size:16px;padding:12px 12px;border:1px solid #CBD3DF;border-radius:10px;background:#fff;color:var(--ink)}
+.rh-chips{display:flex;gap:6px;flex-wrap:wrap}
+.rh-chips button{font:inherit;font-size:13.5px;font-weight:700;padding:9px 12px;border:1px solid #CBD3DF;border-radius:99px;background:#fff;color:var(--ink);cursor:pointer;min-height:40px}
+.rh-chips button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:#fff}
+.rh-bel{display:flex;gap:8px;align-items:center;margin-top:10px;font-size:14px;font-weight:600}
+.rh-bel input{width:18px;height:18px;accent-color:var(--ink)}
+.rh-oord{margin:18px 0 12px;font-size:18px;font-weight:800;line-height:1.35}
+.rh-oord span{color:var(--groen)}
+.rh-balk{margin:0 0 16px}
+.rh-rij{display:grid;grid-template-columns:150px 1fr;gap:10px;align-items:center;margin:8px 0;font-size:13.5px}
+.rh-rij b{font-weight:700}
+.rh-baan{display:flex;height:26px;border-radius:6px;overflow:hidden;background:#EEF1F5}
+.rh-baan i{display:block;height:100%}
+.rh-baan i+i{border-left:2px solid #fff}
+.rh-lab{font-size:12.5px;color:var(--soft);margin-top:3px}
+.rh-dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin:0 4px 0 2px;vertical-align:baseline}
+.rh-twee{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.rh-k{border:1px solid var(--line);border-radius:16px;padding:18px;background:#fff;position:relative}
+.rh-k.win{border:2px solid var(--groen)}
+.rh-k .rh-win{position:absolute;top:-11px;left:16px;background:var(--groen);color:#fff;font-size:12px;font-weight:800;border-radius:6px;padding:2px 8px}
+.rh-k h3{font-size:16px;margin:0 0 4px}
+.rh-tot{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.rh-tot small{font-size:14px;font-weight:600;color:var(--soft)}
+.rh-pm{font-size:14px;color:var(--soft);margin:2px 0 12px}
+.rh-r{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid var(--line);padding:10px 0 0;margin-top:10px;font-size:14px;line-height:1.4}
+.rh-r small{display:block;color:var(--soft);font-size:12.5px}
+.rh-r a{flex:none;background:#F9C31F;color:var(--ink);font-weight:800;text-decoration:none;border-radius:10px;padding:9px 13px;font-size:13.5px}
+.rh-leeg{color:var(--soft);font-size:14px;margin:8px 0 0}
+.rh-fijn{font-size:12.5px;color:var(--soft);line-height:1.55;margin:16px 0 0}
+.rh-bm{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;background:var(--groenL);border-radius:14px;padding:14px 16px;font-size:14.5px;line-height:1.5}
+.rh-bm a{margin-left:auto;background:var(--ink);color:#fff;font-weight:700;text-decoration:none;border-radius:10px;padding:10px 14px;white-space:nowrap}
+@media (max-width:760px){.rh-keuze,.rh-twee{grid-template-columns:1fr}.rh-rij{grid-template-columns:1fr;gap:4px}}
+</style>
+<section class="rh" id="rekenhulp">
+  <h2>{{ section.settings.kop | default: 'Toestel met abonnement, of los kopen?' }}</h2>
+  <p class="rh-in">{{ section.settings.intro | default: 'Kies je telefoon en hoeveel data je nodig hebt. Wij tellen alles over 24 maanden bij elkaar op: het toestel, het abonnement en de eenmalige kosten. Zo zie je meteen welke route goedkoper is.' }}</p>
+  <div class="rh-keuze">
+    <div><label for="rh-toestel">Welke telefoon?</label><select id="rh-toestel"><option>Laden…</option></select></div>
+    <div><label>Hoeveel data heb je nodig?</label>
+      <div class="rh-chips" id="rh-data"><button type="button" data-b="w" aria-pressed="false">Maakt niet uit</button><button type="button" data-b="g" aria-pressed="true">10 GB of meer</button><button type="button" data-b="v" aria-pressed="false">30 GB of meer</button></div>
+      <label class="rh-bel"><input type="checkbox" id="rh-bel"> Ik wil onbeperkt bellen</label>
+    </div>
+  </div>
+  <div id="rh-uit" aria-live="polite"></div>
+  <div class="rh-bm"><span><b>Al een abonnement?</b> Zet het in je Bespaarmonitor. Wij zeggen het als je eraf mag en wat je dan bespaart.</span><a href="https://mijn.deprijsvergelijker.com/mijn-contracten" target="_blank" rel="noopener">Naar de Bespaarmonitor</a></div>
+</section>
+<script>
+(function () {
+  var W = document.getElementById('rekenhulp'); if (!W || !window.fetch) return;
+  var DATA = 'https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/rekenhulp.json';
+  var SHOP = 'https://shop.deprijsvergelijker.com';
+  var sel = document.getElementById('rh-toestel'), uit = document.getElementById('rh-uit'), bel = document.getElementById('rh-bel');
+  var D = null, B = 'g';
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function eur(n) { n = Number(n) || 0; var heel = Math.abs(n - Math.round(n)) < 0.005; return '€' + n.toLocaleString('nl-NL', { minimumFractionDigits: heel ? 0 : 2, maximumFractionDigits: heel ? 0 : 2 }); }
+  function gb(x) { return x >= 999 ? 'onbeperkt data' : x + ' GB'; }
+  function met(u, bron) { return u ? u + (u.indexOf('?') > -1 ? '&' : '?') + 'bron=' + bron : '#'; }
+  function meet(n, x) { try { if (window.gtag) window.gtag('event', n, x || {}); } catch (e) {} }
+
+  function teken() {
+    var m = null; for (var i = 0; i < D.modellen.length; i++) if (D.modellen[i].k === sel.value) m = D.modellen[i];
+    if (!m) return;
+    var v = bel.checked ? 'onb' : 'alle';
+    var a = (m.abo[B] || {})[v], s = (D.sim[B] || {})[v], los = m.los;
+    var totB = s ? los.p + s.t : null, totA = a ? a.t : null;
+    var h = '';
+    if (totA != null && totB != null) {
+      var vers = Math.abs(totA - totB);
+      h += '<p class="rh-oord">' + (vers < 10 ? 'Het scheelt bijna niets: <span>' + eur(vers) + '</span> over 24 maanden.'
+        : (totB < totA ? 'Los kopen met sim only is <span>' + eur(vers) + ' goedkoper</span> over 24 maanden.'
+          : 'Toestel met abonnement is <span>' + eur(vers) + ' goedkoper</span> over 24 maanden.')) + '</p>';
+      // twee balken op dezelfde schaal: los = telefoon plus sim only, abonnement = alles in een
+      var max = Math.max(totA, totB);
+      h += '<div class="rh-balk" role="img" aria-label="Over 24 maanden: los kopen ' + eur(totB) + ', toestel met abonnement ' + eur(totA) + '">' +
+        '<div class="rh-rij"><b>Los + sim only</b><div><div class="rh-baan"><i style="width:' + (los.p / max * 100).toFixed(1) + '%;background:var(--b)"></i><i style="width:' + (s.t / max * 100).toFixed(1) + '%;background:var(--o)"></i></div>' +
+        '<div class="rh-lab">' + eur(totB) + ': <i class="rh-dot" style="background:var(--b)"></i>telefoon ' + eur(los.p) + ' en <i class="rh-dot" style="background:var(--o)"></i>sim only ' + eur(s.t) + '</div></div></div>' +
+        '<div class="rh-rij"><b>Met abonnement</b><div><div class="rh-baan"><i style="width:' + (totA / max * 100).toFixed(1) + '%;background:#0D1B2A"></i></div>' +
+        '<div class="rh-lab">' + eur(totA) + ' in totaal' + (a.eenmalig ? ', waarvan ' + eur(a.eenmalig) + ' eenmalig' : '') + '</div></div></div></div>';
+    }
+    var winA = totA != null && totB != null && totA < totB - 10, winB = totA != null && totB != null && totB < totA - 10;
+    var goLos = SHOP + '/api/shop/go?i=' + encodeURIComponent(los.i) + '&cat=telefoons&w=' + encodeURIComponent(los.w) + '&ref=rekenhulp&log=1';
+    h += '<div class="rh-twee">';
+    h += '<div class="rh-k' + (winB ? ' win' : '') + '">' + (winB ? '<span class="rh-win">Goedkoopst</span>' : '') + '<h3>Los kopen + sim only</h3>' +
+      (s ? '<div class="rh-tot">' + eur(totB) + ' <small>over 24 maanden</small></div><div class="rh-pm">gemiddeld ' + eur(totB / 24) + ' per maand</div>' : '<p class="rh-leeg">Geen sim only gevonden met deze bundel.</p>') +
+      '<div class="rh-r"><span><b>' + esc(m.naam) + '</b><small>' + eur(los.p) + ' bij ' + esc(los.w) + (los.nw > 1 ? ', laagste van ' + los.nw + ' winkels' : '') + '</small></span><a href="' + goLos + '" target="_blank" rel="sponsored noopener" data-m="los">Bekijk</a></div>' +
+      (s ? '<div class="rh-r"><span><b>Sim only ' + eur(s.pm) + ' per maand</b><small>' + esc(s.via || s.net) + (s.via && s.net && s.via !== s.net ? ' (netwerk ' + esc(s.net) + ')' : '') + ', ' + gb(s.gb) + (s.min ? ', ' + esc(s.min).toLowerCase() : '') + (s.mnd ? ', ' + s.mnd + ' maanden' : '') + '</small></span><a href="' + esc(met(s.u, 'rekenhulp')) + '" target="_blank" rel="sponsored noopener" data-m="sim">Bekijk</a></div>' : '') +
+      '</div>';
+    h += '<div class="rh-k' + (winA ? ' win' : '') + '">' + (winA ? '<span class="rh-win">Goedkoopst</span>' : '') + '<h3>Toestel met abonnement</h3>' +
+      (a ? '<div class="rh-tot">' + eur(totA) + ' <small>over 24 maanden</small></div><div class="rh-pm">gemiddeld ' + eur(a.pm) + ' per maand</div>' +
+        '<div class="rh-r"><span><b>' + esc(a.via || a.net) + (a.eenmalig ? ': ' + eur(a.eenmalig) + ' eenmalig + ' + eur(a.abo) + ' per maand' : ': ' + eur(a.abo) + ' per maand') + '</b><small>' + gb(a.gb) + (a.min ? ', ' + esc(a.min).toLowerCase() : '') + ', 24 maanden' + (a.via && a.net && a.via !== a.net ? ', netwerk ' + esc(a.net) : '') + '</small></span><a href="' + esc(met(a.u, 'rekenhulp')) + '" target="_blank" rel="sponsored noopener" data-m="abo">Bekijk</a></div>'
+        : '<p class="rh-leeg">Voor dit toestel vonden wij geen abonnement met deze bundel over 24 maanden.</p>') +
+      '</div></div>';
+    h += '<p class="rh-fijn">Gerekend over 24 maanden met de prijzen van vannacht, inclusief de eenmalige kosten die de aanbieder opgeeft. Na 24 maanden is het toestel in beide gevallen van jou. Een sim only met een korte looptijd kun je eerder opzeggen; bij een toestel met abonnement betaal je het toestel af. Via de knoppen ga je naar de aanbieder; sluit je iets af, dan krijgen wij soms een vergoeding. Dat verandert de prijs en de volgorde niet.</p>';
+    uit.innerHTML = h;
+    try { history.replaceState(null, '', location.pathname + '?toestel=' + encodeURIComponent(m.k) + location.hash); } catch (e) {}
+  }
+
+  fetch(DATA).then(function (r) { return r.json(); }).then(function (d) {
+    D = d; var merken = {};
+    d.modellen.forEach(function (m) { (merken[m.merk] = merken[m.merk] || []).push(m); });
+    sel.innerHTML = Object.keys(merken).map(function (k) { return '<optgroup label="' + esc(k) + '">' + merken[k].map(function (m) { return '<option value="' + esc(m.k) + '">' + esc(m.naam.replace(/(\d)(GB|TB)$/, '$1 $2')) + '</option>'; }).join('') + '</optgroup>'; }).join('');
+    var q = /[?&]toestel=([^&#]+)/.exec(location.search), start = q ? decodeURIComponent(q[1]).replace(/\+/g, ' ') : 'apple iphone 17 256gb';
+    if ([].some.call(sel.options, function (o) { return o.value === start; })) sel.value = start;
+    teken();
+  }).catch(function () { uit.innerHTML = '<p class="rh-leeg">De rekenhulp kon niet laden. Probeer het later nog eens.</p>'; });
+  sel.addEventListener('change', function () { teken(); meet('rekenhulp_toestel', { toestel: sel.value }); });
+  bel.addEventListener('change', teken);
+  [].forEach.call(W.querySelectorAll('#rh-data button'), function (b) {
+    b.addEventListener('click', function () { B = b.getAttribute('data-b'); [].forEach.call(W.querySelectorAll('#rh-data button'), function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); }); teken(); });
+  });
+  uit.addEventListener('click', function (e) { var a = e.target.closest('a[data-m]'); if (a) meet('rekenhulp_klik', { soort: a.getAttribute('data-m') }); });
+})();
+</script>
+{% schema %}
+{
+  "name": "Rekenhulp toestel of sim only",
+  "settings": [
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Toestel met abonnement, of los kopen?" },
+    { "type": "textarea", "id": "intro", "label": "Intro" }
+  ],
+  "presets": [{ "name": "Rekenhulp toestel of sim only" }]
+}
+{% endschema %}

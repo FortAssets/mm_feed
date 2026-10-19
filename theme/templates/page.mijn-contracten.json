@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "contracten": {
@@ -8,18 +17,23 @@
         "energie_sub": "Je hele rekening doorgerekend, niet alleen de prijs per kWh",
         "energie_url": "/pages/energie",
         "beeld": "shopify://shop_images/dpv-mc-toestel.png",
-        "mc_label": "Mijn contracten",
+        "mc_label": "Bespaarmonitor",
         "mc_titel": "Wij zeggen het wanneer je te veel betaalt",
-        "mc_sub": "Leg één keer vast wat je nu betaalt voor telecom, energie en zorg. Wij vergelijken dat elke ochtend met de markt en sturen bericht zodra je kunt overstappen of verlengen.",
-        "mc_cta": "Mijn contracten openen",
+        "mc_sub": "Leg één keer vast wat je nu betaalt voor telecom, energie en zorg, en volg de producten die je wilt kopen. Wij vergelijken dat elke ochtend met de markt en sturen bericht zodra je kunt overstappen of iets goedkoper wordt.",
+        "mc_cta": "Bespaarmonitor openen",
         "mc_cta2": "Scan je factuur",
         "mc_fijn": "Gratis. Geen bankkoppeling, geen wachtwoord. Alleen wat je zelf opgeeft.",
         "mc_voorbeeld": "De bedragen in de melding zijn voorbeelden op basis van de gemiddelde prijsontwikkeling.",
         "mc_url": "https://mijn.deprijsvergelijker.com/mijn-contracten"
       }
+    },
+    "rekenhulp": {
+      "type": "dpv-rekenhulp",
+      "settings": {}
     }
   },
   "order": [
-    "contracten"
+    "contracten",
+    "rekenhulp"
   ]
 }

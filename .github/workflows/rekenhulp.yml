@@ -1,0 +1,41 @@
+name: Rekenhulp toestel of sim only
+
+# Een keer per dag het kleine bestand data/rekenhulp.json voor de sectie
+# dpv-rekenhulp: per telefoonmodel de losse prijs, het goedkoopste toestel met
+# abonnement en de goedkoopste sim only, over 24 maanden. Na de shop-feed van
+# 04:07, zodat de losse prijzen van die nacht erin zitten.
+on:
+  schedule:
+    - cron: '52 5 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rekenhulp
+  cancel-in-progress: false
+
+jobs:
+  rekenhulp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Bestand maken
+        run: node rekenhulp.mjs
+      - name: Wegschrijven
+        run: |
+          git config user.name "rekenhulp"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/rekenhulp.json
+          git diff --cached --quiet && { echo "niets veranderd"; exit 0; }
+          git commit -q -m "Rekenhulp $(date -u +%F)"
+          for i in 1 2 3 4 5; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            sleep $((i * 7))
+          done
+          exit 1

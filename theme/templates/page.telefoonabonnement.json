@@ -40,6 +40,10 @@
         "feed_endpoint": "/api/feed/telefoon"
       }
     },
+    "rekenhulp": {
+      "type": "dpv-rekenhulp",
+      "settings": {}
+    },
     "dpv-mailhook": {
       "type": "dpv-mail-hook",
       "settings": {}
@@ -83,6 +87,7 @@
     "pv-hero",
     "dpv-devices",
     "pv-compare",
+    "rekenhulp",
     "dpv-mailhook",
     "dpv-zoekartikel",
     "dpv-skin",

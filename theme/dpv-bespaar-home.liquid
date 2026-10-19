@@ -1,0 +1,48 @@
+{%- comment -%}
+  Bespaartips-blok op de homepage (19 okt 2026). Zes thema's in de stijl van de
+  categorieën-kaartjes, met wat het per jaar kan schelen en een link naar
+  /pages/bespaartips?thema=... Wordt gerenderd vanuit dpv-home-v3, direct na
+  de categorieën. Bedragen zijn een indicatie en staan hier hard; pas ze aan
+  als de tips op de pagina veranderen.
+{%- endcomment -%}
+<style>
+html:not(#x) .dhd .bespaar{padding-top:0}
+html:not(#x) .dhd .bespaar .bt-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:14px 22px;list-style:none;margin:0;padding:0}
+html:not(#x) .dhd .bespaar .bt-grid li{margin:0}
+html:not(#x) .dhd .bespaar .bt-k .label{display:flex;flex-direction:column;gap:6px;padding:18px 16px 16px;min-height:150px;text-decoration:none;color:var(--inkt)}
+html:not(#x) .dhd .bespaar .bt-k .ico{width:40px;height:40px;border-radius:10px;background:var(--vlak,#F3F4F7);display:flex;align-items:center;justify-content:center;font-size:21px;line-height:1}
+html:not(#x) .dhd .bespaar .bt-k h3{font-size:16.5px;line-height:1.2;margin:6px 0 0;letter-spacing:-.02em}
+html:not(#x) .dhd .bespaar .bt-k .bes{color:var(--groen,#1F7A52);font-weight:700;font-size:14px}
+html:not(#x) .dhd .bespaar .bt-k small{color:var(--zacht);font-size:13px;margin-top:auto}
+html:not(#x) .dhd .bespaar .bt-k:hover .label{transform:translate(2px,2px)}
+html:not(#x) .dhd .bespaar .bt-k .label{transition:transform .12s ease}
+html:not(#x) .dhd .bespaar .bt-k.donker .label{background:var(--inkt);color:#fff}
+html:not(#x) .dhd .bespaar .bt-k.donker h3{color:#fff}
+html:not(#x) .dhd .bespaar .bt-k.donker .bes{color:var(--geel)}
+html:not(#x) .dhd .bespaar .bt-k.donker small{color:#C7D0DD}
+html:not(#x) .dhd .bespaar .bt-k.donker .ico{background:rgba(255,255,255,.14)}
+@media (max-width:1100px){html:not(#x) .dhd .bespaar .bt-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){html:not(#x) .dhd .bespaar .bt-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 18px}html:not(#x) .dhd .bespaar .bt-k .label{min-height:136px;padding:14px 12px 12px}html:not(#x) .dhd .bespaar .bt-k h3{font-size:15px}}
+</style>
+<section class="bespaar" aria-labelledby="dhd-bt">
+  <div class="wrap">
+    <div class="kopregel">
+      <h2 id="dhd-bt">Waar kun jij op besparen?</h2>
+      <p><a class="tl" href="/pages/bespaartips">Alle bespaartips</a></p>
+    </div>
+    <ul class="bt-grid">
+      <li class="bt-k kaartje donker" style="--vlak:#3FAE7A"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/bespaartips?thema=energie"><span class="ico" aria-hidden="true">&#9889;</span><h3>Energie</h3><span class="bes">tot &euro;450 per jaar</span><small>Contract, deken, ontvochtiger</small></a></li>
+      <li class="bt-k kaartje" style="--vlak:#E4DDFB"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/bespaartips?thema=abonnementen"><span class="ico" aria-hidden="true">&#128241;</span><h3>Abonnementen</h3><span class="bes">tot &euro;400 per jaar</span><small>Sim only, VPN, opzeggen</small></a></li>
+      <li class="bt-k kaartje" style="--vlak:#FFF0B3"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/bespaartips?thema=boodschappen"><span class="ico" aria-hidden="true">&#128722;</span><h3>Boodschappen</h3><span class="bes">&euro;20 per week</span><small>A-merken in de aanbieding</small></a></li>
+      <li class="bt-k kaartje" style="--vlak:#D6E8FF"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/bespaartips?thema=vakantie"><span class="ico" aria-hidden="true">&#9992;&#65039;</span><h3>Vakantie en roaming</h3><span class="bes">&euro;50 per reis</span><small>eSIM, wintersport</small></a></li>
+      <li class="bt-k kaartje" style="--vlak:#FFD9D2"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/bespaartips?thema=auto"><span class="ico" aria-hidden="true">&#9981;</span><h3>Auto en brandstof</h3><span class="bes">&euro;150 per jaar</span><small>Goedkoper tanken</small></a></li>
+      <li class="bt-k kaartje" style="--vlak:#CDEFE0"><div class="vlak" aria-hidden="true"></div>
+        <a class="label" href="/pages/bespaartips?thema=zorg"><span class="ico" aria-hidden="true">&#127973;</span><h3>Zorg en geld</h3><span class="bes">tot &euro;300 per jaar</span><small>Overstappen, eigen risico</small></a></li>
+    </ul>
+  </div>
+</section>

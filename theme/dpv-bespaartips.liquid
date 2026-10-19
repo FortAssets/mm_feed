@@ -1,0 +1,134 @@
+{%- comment -%}
+  Bespaartips (19 okt 2026). Pagina /pages/bespaartips: thema-filter bovenaan en
+  tipkaarten eronder. Elke tip is een blok in de theme-editor (thema, kop, wat
+  het scheelt, uitleg, knop en link), zodat je tips kunt toevoegen zonder code.
+  ?thema=energie opent de pagina met dat thema gefilterd (de homepage linkt zo).
+  Stijl: binnenpagina's "E" (zacht grijs, fijne lijnen), zelfde knoppen als de rest.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign themas = 'energie:Energie:&#9889;,abonnementen:Abonnementen:&#128241;,boodschappen:Boodschappen:&#128722;,vakantie:Vakantie en roaming:&#9992;&#65039;,auto:Auto en brandstof:&#9981;,zorg:Zorg en geld:&#127973;' | split: ','
+-%}
+<style>
+.bt{--ink:#0D1B2A;--zacht:#5B6676;--vlak:#F3F4F7;--lijn:#E6E9EF;--groen:#1F7A52;--groent:#DDF3E8;--geel:#F9C31F;--blauw:#2456D6;font-family:'Instrument Sans',system-ui,sans-serif;color:var(--ink);font-size:16px;line-height:1.5;background:#fff}
+.bt *{box-sizing:border-box}.bt a{color:inherit;text-decoration:none}
+.bt h1,.bt h2,.bt h3{font-family:'Instrument Sans',system-ui,sans-serif;font-weight:700;letter-spacing:-.025em;color:var(--ink);margin:0}
+.bt .w{max-width:1200px;margin:0 auto;padding:0 32px}
+.bt .sub{border-bottom:1px solid var(--lijn)}.bt .sub nav{display:flex;gap:28px;overflow-x:auto;scrollbar-width:none;padding:14px 0;font-size:15px;font-weight:500;white-space:nowrap}.bt .sub nav::-webkit-scrollbar{display:none}.bt .sub nav a.nu{font-weight:700;border-bottom:2px solid var(--ink)}
+.bt .hero{padding:40px 0 22px}.bt .label{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:600;color:var(--groen)}
+.bt h1{font-size:36px;line-height:1.1;margin-top:8px}.bt .hero p{color:var(--zacht);max-width:680px;margin:12px 0 0;font-size:16.5px}
+.bt .chips{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 24px}.bt .chip{padding:9px 14px;border-radius:999px;border:1px solid var(--lijn);font-size:14px;font-weight:600;background:#fff;cursor:pointer;font-family:inherit;color:var(--ink);display:inline-flex;align-items:center;gap:6px}.bt .chip.aan{background:var(--ink);color:#fff;border-color:var(--ink)}
+.bt .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.bt .tip{background:#fff;border:1px solid var(--lijn);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px}.bt .tip[hidden]{display:none}
+.bt .tip .top{display:flex;justify-content:space-between;align-items:center;gap:10px}.bt .tip .ico{width:40px;height:40px;border-radius:10px;background:var(--vlak);display:flex;align-items:center;justify-content:center;font-size:20px;flex:none}
+.bt .bes{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:var(--groent);color:var(--groen);font-size:13px;font-weight:700;white-space:nowrap}
+.bt .tip small.th{color:var(--zacht);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.bt .tip h2{font-size:17px;line-height:1.3}.bt .tip p{margin:0;color:var(--zacht);font-size:14.5px}.bt .tip .act{margin-top:auto;padding-top:6px}
+.bt .knop{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:9px 16px;background:var(--geel);border:1.5px solid var(--ink);border-radius:10px;box-shadow:3px 3px 0 var(--ink);font-weight:700;font-size:14.5px;white-space:nowrap}
+.bt .knop.licht{background:#fff;box-shadow:none;border-color:var(--lijn);font-weight:600}.bt .knop:hover{transform:translate(1px,1px)}
+.bt .leeg{display:none;color:var(--zacht);padding:24px 0}.bt .leeg.aan{display:block}
+.bt .fijn{font-size:13px;color:var(--zacht);margin:18px 0 48px;line-height:1.5}
+.bt .meer{margin:48px 0 0;padding:22px;border-radius:16px;background:var(--vlak);display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}.bt .meer b{font-size:18px;display:block}.bt .meer span{color:var(--zacht);font-size:14.5px}
+@media(max-width:900px){.bt .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:640px){.bt .w{padding:0 16px}.bt h1{font-size:28px}.bt .grid{grid-template-columns:1fr}.bt .hero{padding:28px 0 16px}}
+</style>
+
+<div class="bt" id="bt">
+  <div class="sub"><div class="w"><nav aria-label="Thema's">
+    <a href="/pages/bespaartips" class="nu">Bespaartips</a>
+    <a href="/pages/energie">Energie vergelijken</a>
+    <a href="/pages/sim-only">Sim only</a>
+    <a href="/pages/vpn-vergelijken">VPN</a>
+    <a href="/pages/internet-op-vakantie">eSIM op vakantie</a>
+    <a href="/pages/boodschappen">Boodschappen</a>
+    <a href="/pages/zorgverzekering">Zorgverzekering</a>
+    <a href="/pages/mijn-contracten">Mijn contracten</a>
+  </nav></div></div>
+
+  <div class="w">
+    <div class="hero">
+      <span class="label">&#9679; Bespaartips</span>
+      <h1 id="bt-h1" data-basis="{{ s.kop | escape }}">{{ s.kop }}</h1>
+      <p>{{ s.intro }}</p>
+    </div>
+
+    <div class="chips" role="group" aria-label="Filter op thema">
+      <button type="button" class="chip aan" data-thema="">Alles</button>
+      {%- for t in themas -%}{%- assign d = t | split: ':' -%}
+      <button type="button" class="chip" data-thema="{{ d[0] }}">{{ d[2] }} {{ d[1] }}</button>
+      {%- endfor -%}
+    </div>
+
+    <div class="grid" id="bt-grid">
+      {%- for b in section.blocks -%}
+        {%- assign naam = 'Tip' -%}{%- assign ico = '&#128161;' -%}
+        {%- for t in themas -%}{%- assign d = t | split: ':' -%}{%- if d[0] == b.settings.thema -%}{%- assign naam = d[1] -%}{%- assign ico = d[2] -%}{%- endif -%}{%- endfor -%}
+        <article class="tip" data-thema="{{ b.settings.thema }}" {{ b.shopify_attributes }}>
+          <div class="top"><span class="ico" aria-hidden="true">{%- if b.settings.icoon != blank -%}{{ b.settings.icoon }}{%- else -%}{{ ico }}{%- endif -%}</span>{%- if b.settings.besparing != blank -%}<span class="bes">{{ b.settings.besparing }}</span>{%- endif -%}</div>
+          <small class="th">{{ naam }}</small>
+          <h2>{{ b.settings.kop }}</h2>
+          <p>{{ b.settings.uitleg }}</p>
+          {%- if b.settings.link != blank -%}<div class="act"><a class="knop licht" href="{{ b.settings.link }}">{{ b.settings.knop | default: 'Lees meer' }} &rarr;</a></div>{%- endif -%}
+        </article>
+      {%- endfor -%}
+    </div>
+    <p class="leeg" id="bt-leeg">Voor dit thema staan nog geen tips klaar.</p>
+
+    <div class="meer">
+      <div><b>Mis geen bespaarmoment</b><span>Zet je contracten in Mijn contracten en krijg een seintje als je kunt opzeggen of overstappen.</span></div>
+      <a class="knop" href="/pages/mijn-contracten">Naar Mijn contracten</a>
+    </div>
+
+    <p class="fijn">{{ s.fijn }}</p>
+  </div>
+</div>
+
+<script>
+(function(){
+  var root=document.getElementById('bt'); if(!root) return;
+  var chips=root.querySelectorAll('.chip'), tips=root.querySelectorAll('.tip'), h1=document.getElementById('bt-h1'), leeg=document.getElementById('bt-leeg');
+  var namen={};
+  chips.forEach(function(c){ namen[c.getAttribute('data-thema')]=c.textContent.replace(/^[^A-Za-z]+/,'').trim(); });
+  function zet(k, push){
+    var n=0;
+    chips.forEach(function(c){ c.classList.toggle('aan', c.getAttribute('data-thema')===k); });
+    tips.forEach(function(t){ var z=!k||t.getAttribute('data-thema')===k; t.hidden=!z; if(z) n++; });
+    leeg.classList.toggle('aan', n===0);
+    h1.textContent = k ? 'Bespaartips: ' + namen[k].toLowerCase() : h1.getAttribute('data-basis');
+    if(push){ try{ var u=new URL(location.href); if(k) u.searchParams.set('thema',k); else u.searchParams.delete('thema'); history.replaceState(null,'',u); }catch(e){} }
+  }
+  chips.forEach(function(c){ c.addEventListener('click', function(){ zet(c.getAttribute('data-thema'), true); }); });
+  var m=location.search.match(/[?&]thema=([a-z]+)/); if(m && namen[m[1]]) zet(m[1], false);
+})();
+</script>
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"ItemList","name":{{ s.kop | json }},"itemListElement":[
+{%- for b in section.blocks -%}{"@type":"ListItem","position":{{ forloop.index }},"name":{{ b.settings.kop | json }}{%- if b.settings.link != blank -%},"url":{{ shop.url | append: b.settings.link | json }}{%- endif -%}}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}
+]}
+</script>
+
+{% schema %}
+{
+  "name": "Bespaartips",
+  "settings": [
+    {"type": "text", "id": "kop", "label": "Kop", "default": "Bespaartips: minder betalen voor hetzelfde"},
+    {"type": "textarea", "id": "intro", "label": "Intro", "default": "Geen tips als \"drink minder koffie\". Wel de dingen die echt tellen: energie, abonnementen, boodschappen, vakantie, auto en zorg. Per tip zie je wat het scheelt en hoe je het in vijf minuten regelt."},
+    {"type": "textarea", "id": "fijn", "label": "Kleine lettertjes", "default": "Bedragen zijn een indicatie voor een gemiddeld huishouden; wat jij bespaart hangt af van je situatie. Klik je door naar een aanbieder en sluit je iets af, dan ontvangen wij bij een deel van de aanbieders een vergoeding. Jij betaalt hetzelfde en het verandert niets aan onze volgorde. Wij vergelijken, we adviseren niet."}
+  ],
+  "blocks": [
+    {"type": "tip", "name": "Tip", "settings": [
+      {"type": "select", "id": "thema", "label": "Thema", "default": "energie", "options": [
+        {"value": "energie", "label": "Energie"}, {"value": "abonnementen", "label": "Abonnementen"}, {"value": "boodschappen", "label": "Boodschappen"},
+        {"value": "vakantie", "label": "Vakantie en roaming"}, {"value": "auto", "label": "Auto en brandstof"}, {"value": "zorg", "label": "Zorg en geld"}]},
+      {"type": "text", "id": "kop", "label": "Kop"},
+      {"type": "text", "id": "besparing", "label": "Wat het scheelt (bijv. tot €150 per jaar)"},
+      {"type": "textarea", "id": "uitleg", "label": "Uitleg (2 zinnen)"},
+      {"type": "text", "id": "knop", "label": "Knoptekst", "default": "Lees meer"},
+      {"type": "url", "id": "link", "label": "Link (vergelijker, tool of blog)"},
+      {"type": "text", "id": "icoon", "label": "Icoon (emoji, leeg = icoon van het thema)"}
+    ]}
+  ],
+  "presets": [{"name": "Bespaartips"}]
+}
+{% endschema %}

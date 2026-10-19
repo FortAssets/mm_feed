@@ -1,0 +1,171 @@
+{
+  "sections": {
+    "main": {
+      "type": "dpv-bespaartips",
+      "blocks": {
+        "tip-1": {
+          "type": "tip",
+          "settings": {
+            "thema": "energie",
+            "kop": "Elektrische deken in plaats van de kachel",
+            "besparing": "tot €150 per winter",
+            "uitleg": "Een deken kost 2 cent per uur, een elektrische kachel 60 cent. Wie de thermostaat een graad lager zet en de deken aanzet, merkt dat op de rekening.",
+            "knop": "Bekijk dekens",
+            "link": "/blogs/advies/elektrische-deken-kachel-kosten-per-uur",
+            "icoon": "🔌"
+          }
+        },
+        "tip-2": {
+          "type": "tip",
+          "settings": {
+            "thema": "energie",
+            "kop": "Energiecontract vergelijken voor de winter",
+            "besparing": "tot €300 per jaar",
+            "uitleg": "Vaste contracten uit 2024 zijn vaak duurder dan het aanbod van nu. Vergelijken kost vijf minuten.",
+            "knop": "Energie vergelijken",
+            "link": "/pages/energie",
+            "icoon": "⚡"
+          }
+        },
+        "tip-3": {
+          "type": "tip",
+          "settings": {
+            "thema": "abonnementen",
+            "kop": "Je VPN verlengt stilletjes vier keer zo duur",
+            "besparing": "€100 per jaar",
+            "uitleg": "De lage maandprijs geldt alleen de eerste periode. Zet de verlengdatum in je agenda of kies een vaste prijs.",
+            "knop": "VPN vergelijken",
+            "link": "/pages/vpn-vergelijken",
+            "icoon": "🔒"
+          }
+        },
+        "tip-4": {
+          "type": "tip",
+          "settings": {
+            "thema": "abonnementen",
+            "kop": "Sim only na je toestelabonnement",
+            "besparing": "tot €120 per jaar",
+            "uitleg": "Is je toestel afbetaald? Dan betaal je bij veel providers door voor niets. Sim only is dan goedkoper.",
+            "knop": "Sim only vergelijken",
+            "link": "/pages/sim-only",
+            "icoon": "📱"
+          }
+        },
+        "tip-5": {
+          "type": "tip",
+          "settings": {
+            "thema": "abonnementen",
+            "kop": "Abonnementen die je niet meer gebruikt",
+            "besparing": "gemiddeld €200 per jaar",
+            "uitleg": "Streaming, apps, sportschool: zet alles in Mijn contracten en krijg een seintje op het opzegmoment.",
+            "knop": "Naar Mijn contracten",
+            "link": "/pages/mijn-contracten",
+            "icoon": "📋"
+          }
+        },
+        "tip-6": {
+          "type": "tip",
+          "settings": {
+            "thema": "vakantie",
+            "kop": "eSIM in plaats van roaming buiten de EU",
+            "besparing": "€50 per reis",
+            "uitleg": "Turkije, Thailand of de VS: een eSIM kost een paar euro, roaming per MB loopt snel in de tientallen euro's.",
+            "knop": "eSIM per land",
+            "link": "/pages/internet-op-vakantie",
+            "icoon": "✈️"
+          }
+        },
+        "tip-7": {
+          "type": "tip",
+          "settings": {
+            "thema": "vakantie",
+            "kop": "Wintersport in Zwitserland of Andorra? Let op je bundel",
+            "besparing": "€40 per week",
+            "uitleg": "Die landen vallen buiten de EU-roaming. Een eSIM voor een week kost minder dan één dag roamen.",
+            "knop": "Lees de wintersporttip",
+            "link": "/blogs/advies/internet-wintersport-zwitserland-andorra",
+            "icoon": "🎿"
+          }
+        },
+        "tip-8": {
+          "type": "tip",
+          "settings": {
+            "thema": "boodschappen",
+            "kop": "A-merken alleen in de aanbieding kopen",
+            "besparing": "€20 per week",
+            "uitleg": "Elke week staat een ander A-merk ergens in de aanbieding. Koop dan twee weken vooruit.",
+            "knop": "Bekijk de aanbiedingen",
+            "link": "/pages/boodschappen",
+            "icoon": "🛒"
+          }
+        },
+        "tip-9": {
+          "type": "tip",
+          "settings": {
+            "thema": "auto",
+            "kop": "Nooit meer de adviesprijs betalen aan de pomp",
+            "besparing": "€150 per jaar",
+            "uitleg": "Onbemande stations en pompen buiten de snelweg zitten 10 tot 20 cent onder de adviesprijs.",
+            "knop": "Brandstofprijzen",
+            "link": "/pages/brandstofprijzen",
+            "icoon": "⛽"
+          }
+        },
+        "tip-10": {
+          "type": "tip",
+          "settings": {
+            "thema": "zorg",
+            "kop": "Zorgverzekering overstappen vóór 31 december",
+            "besparing": "tot €300 per jaar",
+            "uitleg": "De premies voor 2027 zijn vanaf 12 november bekend. Zelfde dekking, ander bedrag: dat loont bijna altijd.",
+            "knop": "Zorg vergelijken",
+            "link": "/pages/zorgverzekering",
+            "icoon": "🏥"
+          }
+        },
+        "tip-11": {
+          "type": "tip",
+          "settings": {
+            "thema": "zorg",
+            "kop": "Vrijwillig eigen risico: alleen als je het kunt missen",
+            "besparing": "tot €250 per jaar",
+            "uitleg": "Een hoger eigen risico geeft korting op je premie. Reken uit wat het je kost als je het wél gebruikt.",
+            "knop": "Lees meer",
+            "link": "/blogs/advies/eigen-risico-2027-400-euro",
+            "icoon": "💶"
+          }
+        },
+        "tip-12": {
+          "type": "tip",
+          "settings": {
+            "thema": "energie",
+            "kop": "Luchtontvochtiger in plaats van de verwarming hoger",
+            "besparing": "€60 per winter",
+            "uitleg": "Vochtige lucht voelt kouder. Een ontvochtiger van 30 watt vervangt soms een graad op de thermostaat.",
+            "knop": "Bekijk ontvochtigers",
+            "link": "/blogs/advies/luchtontvochtiger-kopen",
+            "icoon": "💧"
+          }
+        }
+      },
+      "block_order": [
+        "tip-1",
+        "tip-2",
+        "tip-3",
+        "tip-4",
+        "tip-5",
+        "tip-6",
+        "tip-7",
+        "tip-8",
+        "tip-9",
+        "tip-10",
+        "tip-11",
+        "tip-12"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "main"
+  ]
+}

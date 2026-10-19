@@ -664,6 +664,11 @@ html:not(#x) .dhd .gzp{display:flex;align-items:baseline;gap:8px;margin-top:8px}
 html:not(#x) .dhd .gzp strong{font-family:var(--kop);font-weight:800;font-size:26px;letter-spacing:-.03em}
 html:not(#x) .dhd .gzp s{color:#8A97A8;font-size:14px}
 html:not(#x) .dhd .gzw{font-size:12.5px;color:var(--zacht);margin:2px 0 12px}
+html:not(#x):not(#y) .dhd .gzc a.gzt,html:not(#x):not(#y) .dhd .gzc a.gzt:visited{display:block;color:inherit;text-decoration:none}
+html:not(#x):not(#y) .dhd .gzc a.gzt:hover b{text-decoration:underline}
+html:not(#x) .dhd .gzc .gzi{display:inline-block;font-size:12.5px;font-weight:700;color:#1F7A52;margin-top:4px}
+html:not(#x) .dhd .gzc .gzi::after{content:' \2192'}
+html:not(#x) .dhd .gzf{cursor:pointer}
 html:not(#x) .dhd .gzc .knop{margin-top:auto;width:100%;text-align:center;white-space:normal;line-height:1.2}
 html:not(#x) .dhd .bf-top{position:relative}
 @media (max-width:900px){
@@ -996,6 +1001,9 @@ html:not(#x) .dhd .regel a.volg{color:inherit;text-decoration:underline;text-und
     <p class="ook">Ook <a class="tl" href="/pages/gaming">gaming: consoles en games</a> en <a class="tl" href="/pages/boodschappen">boodschappen: aanbiedingen deze week</a></p>
   </div>
 </section>
+
+{%- comment -%} Bespaartips, 19 okt: zes thema's, zie snippets/dpv-bespaar-home.liquid {%- endcomment -%}
+{%- render 'dpv-bespaar-home' -%}
 
 <!-- ZORGVERZEKERING 2027 -->
 {%- if s.z_aan -%}
@@ -1972,10 +1980,13 @@ html:not(#x) .dhd .regel a.volg{color:inherit;text-decoration:underline;text-und
     if (keuze.length < 2) return;
     rij.innerHTML = keuze.map(function (x, n) {
       var go = shop + '/api/shop/go?i=' + encodeURIComponent(x.i) + '&cat=' + encodeURIComponent(x.c) + '&w=' + encodeURIComponent(x.w) + '&ref=home-gezakt&log=1';
+      // Foto en titel openen het product op onze eigen vergelijker (prijs per winkel,
+      // prijsverloop, specificaties-knop). De gele knop gaat rechtstreeks naar de winkel.
+      var info = '/pages/vergelijken?cat=' + encodeURIComponent(x.c) + '&p=' + encodeURIComponent(x.i);
       var naam = x.n.length > 70 ? x.n.slice(0, 68).replace(/[\s,-]+\S*$/, '') + '…' : x.n;
       return '<li class="gzc"><span class="gzb">&minus;' + eur(x.d) + ' · ' + x.k + '%</span>' +
-        '<a class="gzf" href="' + go + '" target="_blank" rel="sponsored nofollow noopener" data-pos="gz.' + (n + 1) + '" data-naam="' + esc(x.w) + '" data-tab="gezakt" data-product="' + esc(x.i) + '"><img src="' + esc(x.im) + '" alt="' + esc(naam) + '" loading="lazy" width="160" height="122"></a>' +
-        '<small>' + esc(NAAM[x.c] || '') + '</small><b>' + esc(naam) + '</b>' +
+        '<a class="gzf" href="' + info + '" data-pos="gz.' + (n + 1) + '.info" data-naam="' + esc(x.w) + '" data-tab="gezakt" data-product="' + esc(x.i) + '"><img src="' + esc(x.im) + '" alt="' + esc(naam) + '" loading="lazy" width="160" height="122"></a>' +
+        '<small>' + esc(NAAM[x.c] || '') + '</small><a class="gzt" href="' + info + '" data-pos="gz.' + (n + 1) + '.info" data-tab="gezakt" data-product="' + esc(x.i) + '"><b>' + esc(naam) + '</b><span class="gzi">Prijsverloop en alle winkels</span></a>' +
         '<p class="gzp"><strong>' + eur(x.p) + '</strong><s>' + eur(x.was) + '</s></p>' +
         '<p class="gzw">bij ' + esc(x.w) + (x.wd ? ' · was ' + eur(x.was) + ' op ' + dag(x.wd) : '') + '</p>' +
         '<a class="knop" href="' + go + '" target="_blank" rel="sponsored nofollow noopener" data-pos="gz.' + (n + 1) + '" data-naam="' + esc(x.w) + '" data-tab="gezakt" data-product="' + esc(x.i) + '">Bekijk bij ' + esc(x.w) + '</a></li>';

@@ -1,0 +1,41 @@
+name: Pokémon losse kaarten (TCGdex)
+
+# Duurste losse kaarten per set met de Cardmarket-trendprijs, één keer per dag.
+# Schrijft kaarten.json naar de branch tcg-data, naast de feeds van tcg-feeds.yml.
+# Zelfde concurrency-groep als tcg-feeds, zodat de twee niet tegelijk pushen.
+on:
+  schedule:
+    - cron: '37 4 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tcg-feeds
+  cancel-in-progress: false
+
+jobs:
+  kaarten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Kaarten ophalen
+        run: node pokemon-kaarten.mjs
+      - name: Naar de branch tcg-data
+        run: |
+          [ -f data/tcg/kaarten.json ] || { echo "geen kaarten.json"; exit 0; }
+          git config user.name "pokemon-kaarten"
+          git config user.email "actions@users.noreply.github.com"
+          git fetch -q origin tcg-data
+          git worktree add -q /tmp/td origin/tcg-data && git -C /tmp/td checkout -q -B tcg-data
+          cp data/tcg/kaarten.json /tmp/td/
+          cd /tmp/td
+          git add kaarten.json
+          git diff --cached --quiet && { echo "niets veranderd"; exit 0; }
+          git commit -q -m "Pokémon losse kaarten $(date -u +%F)"
+          git push -q origin tcg-data

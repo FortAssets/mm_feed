@@ -128,10 +128,23 @@ html:not(#x) .pk2 .kl a.sein{margin-top:auto;display:flex;justify-content:center
 html:not(#x) .pk2 .uitleg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 html:not(#x) .pk2 .uitleg div{background:var(--vlak);border-radius:14px;padding:18px}html:not(#x) .pk2 .uitleg h3{font-size:18px;margin:8px 0 4px}html:not(#x) .pk2 .uitleg p{margin:0;font-size:14.5px;color:#26384F}
 @media (max-width:760px){html:not(#x) .pk2 .kal{grid-template-columns:repeat(2,1fr);gap:10px}html:not(#x) .pk2 .kl{padding:12px}html:not(#x) .pk2 .kl h3{font-size:16px}html:not(#x) .pk2 .uitleg{grid-template-columns:1fr}}
+/* 19 okt: losse kaarten met Cardmarket-trendprijs uit TCGdex (data/tcg/kaarten.json op de branch tcg-data, dagelijks) */
+html:not(#x) .pk2 .lk-chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 0 14px;padding-bottom:2px}html:not(#x) .pk2 .lk-chips::-webkit-scrollbar{display:none}
+html:not(#x) .pk2 .lk-chips button{flex:none;font:600 14px 'Instrument Sans',sans-serif;padding:0 14px;min-height:38px;border:1.5px solid var(--lijn);border-radius:999px;background:#fff;color:var(--ink);cursor:pointer;margin:0;box-shadow:none}
+html:not(#x) .pk2 .lk-chips button[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+html:not(#x) .pk2 .lk-rij{display:grid;grid-auto-flow:column;grid-auto-columns:200px;gap:14px;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px;scrollbar-width:thin}
+html:not(#x) .pk2 .lk{scroll-snap-align:start;border:1px solid var(--lijn);border-radius:14px;padding:12px;background:#fff;display:flex;flex-direction:column;gap:6px}
+html:not(#x) .pk2 .lk .fk{aspect-ratio:63/88;border-radius:9px;overflow:hidden;background:var(--vlak)}html:not(#x) .pk2 .lk .fk img{width:100%;height:100%;object-fit:cover;display:block}
+html:not(#x) .pk2 .lk h3{font-size:15.5px;line-height:1.25;margin-top:4px}html:not(#x) .pk2 .lk .m{font-size:12.5px;color:var(--zacht)}
+html:not(#x) .pk2 .lk .pr{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}html:not(#x) .pk2 .lk .pr b{font-size:22px;letter-spacing:-.03em}
+html:not(#x) .pk2 .lk .ver{font-size:12px;font-weight:700;border-radius:99px;padding:2px 8px}html:not(#x) .pk2 .lk .ver.op{background:#E3F3EA;color:var(--groen)}html:not(#x) .pk2 .lk .ver.af{background:#FBE9E7;color:#B4382C}
+html:not(#x) .pk2 .lk .kn{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:auto}
+html:not(#x) .pk2 .lk .kn a{display:flex;align-items:center;justify-content:center;min-height:38px;border-radius:9px;border:1.5px solid var(--ink);font-weight:700;font-size:13px}html:not(#x) .pk2 .lk .kn a.e{background:var(--geel);box-shadow:2px 2px 0 var(--ink)}
+html:not(#x) .pk2 .lk-tip{background:#FFF6D6;border-radius:14px;padding:14px 18px;margin-top:10px;font-size:14.5px;line-height:1.5}html:not(#x) .pk2 .lk-fijn{font-size:12.5px;color:var(--zacht);margin:8px 0 0}
 </style>
 <div class="pk2" id="pkm" data-shop="{{ section.settings.shop | default: 'https://shop.deprijsvergelijker.com' }}">
  <div class="sub"><div class="w"><nav aria-label="Pokémonkaarten">
-  <a href="#voorraad">Nu op voorraad</a><a href="#kalender">Releasekalender</a><a href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=elite+trainer+box">Elite Trainer Box</a><a href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+box">Booster displays</a><a href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+pack">Boosters</a><a href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=japans">Japans</a><a href="#adviesprijs">Adviesprijzen</a>
+  <a href="#voorraad">Nu op voorraad</a><a href="#losse-kaarten">Losse kaarten</a><a href="#kalender">Releasekalender</a><a href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=elite+trainer+box">Elite Trainer Box</a><a href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+box">Booster displays</a><a href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+pack">Boosters</a><a href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=japans">Japans</a><a href="#adviesprijs">Adviesprijzen</a>
  </nav></div></div>
 
  <div class="w"><div class="boven">
@@ -154,6 +167,14 @@ html:not(#x) .pk2 .uitleg div{background:var(--vlak);border-radius:14px;padding:
  <div class="kop" id="voorraad"><h2>Nu op voorraad</h2><a class="pil" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon">Alle Pokémonkaarten →</a></div>
  <div class="pop" data-f="voorraad"><a class="kaart top" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=Pokemon%20TCG%20Super%20Premium%20Collection%20Charizard%20EX"><div class="ft"><img src="https://www.nedgame.nl/images/covers/6424464503.jpg" alt="" loading="lazy" style="max-width:88%;max-height:88%;object-fit:contain"></div><span class="m">bol.com en 1 meer</span><h3>Pokemon TCG Super Premium Collection Charizard EX</h3><div class="p"><b>€79,99</b><span class="w2">2 winkels</span></div><span class="knop" style="margin-top:14px">Vergelijk prijzen →</span></a><a class="kaart" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=Pokemon%20TCG%20Chaos%20Rising%20Booster%20Box%20(sealed)"><div class="ft"><img src="https://www.nedgame.nl/images/covers/9461160460.jpg" alt="" loading="lazy" style="max-width:88%;max-height:88%;object-fit:contain"></div><span class="m">bol.com en 1 meer</span><h3>Pokemon TCG Chaos Rising Booster Box (sealed)</h3><div class="p"><b>€215,64</b><span class="w2">2 winkels</span></div><span class="ap oranje">Iets boven adviesprijs</span></a><a class="kaart" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=Pokemon%20TCG%20Scarlet%20%26%20Violet%20Destined%20Rivals%20Booster%20Box%20(sealed)"><div class="ft"><img src="https://www.nedgame.nl/images/covers/3717768919.jpg" alt="" loading="lazy" style="max-width:88%;max-height:88%;object-fit:contain"></div><span class="m">bol.com partner en 1 meer</span><h3>Pokemon TCG Scarlet &amp; Violet Destined Rivals Booster Box (sealed)</h3><div class="p"><b>€420</b><span class="w2">2 winkels</span></div><span class="ap rood">Ruim boven adviesprijs</span></a><a class="kaart" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=Pokemon%20TCG%20League%20Battle%20Deck%20-%20Mega%20Lucario%20EX"><div class="ft"><img src="https://www.nedgame.nl/images/covers/5061998895.jpg" alt="" loading="lazy" style="max-width:88%;max-height:88%;object-fit:contain"></div><span class="m">Nedgame en 1 meer</span><h3>Pokemon TCG League Battle Deck - Mega Lucario EX</h3><div class="p"><b>€34,99</b><span class="w2">2 winkels</span></div></a><a class="kaart" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=Pokemon%20TCG%20Perfect%20Order%20Elite%20Trainer%20Box"><div class="ft"><img src="https://www.nedgame.nl/images/covers/3359026152.jpg" alt="" loading="lazy" style="max-width:88%;max-height:88%;object-fit:contain"></div><span class="m">bol.com partner en 1 meer</span><h3>Pokemon TCG Perfect Order Elite Trainer Box</h3><div class="p"><b>€105</b><span class="w2">2 winkels</span></div><span class="ap rood">Ruim boven adviesprijs</span></a><a class="kaart" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=Pokemon%20TCG%20Ascended%20Heroes%20Booster%20Bundle"><div class="ft"><img src="https://www.nedgame.nl/images/covers/4965747364.jpg" alt="" loading="lazy" style="max-width:88%;max-height:88%;object-fit:contain"></div><span class="m">bol.com partner en 1 meer</span><h3>Pokemon TCG Ascended Heroes Booster Bundle</h3><div class="p"><b>€20,95</b><span class="w2">2 winkels</span></div><span class="ap groen">Onder adviesprijs</span></a><a class="kaart" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=Pokemon%20TCG%20Scarlet%20%26%20Violet%20Booster%20Pack"><div class="ft"><img src="https://www.nedgame.nl/images/covers/9991743873.jpg" alt="" loading="lazy" style="max-width:88%;max-height:88%;object-fit:contain"></div><span class="m">bol.com partner en 1 meer</span><h3>Pokemon TCG Scarlet &amp; Violet Booster Pack</h3><div class="p"><b>€11,99</b><span class="w2">2 winkels</span></div></a></div>
 
+
+ <div id="losse-kaarten" data-lk hidden>
+  <div class="kop"><h2>Duurste losse kaarten</h2><span class="pil" style="background:transparent" data-lk-stand></span></div>
+  <div class="lk-chips" role="group" aria-label="Kies een set" data-lk-chips></div>
+  <div class="lk-rij" data-lk-rij></div>
+  <div class="lk-tip"><b>Los kopen of een booster openen?</b> <span data-lk-tip>Zoek je één bepaalde kaart, dan is los kopen bijna altijd goedkoper. De duurste kaarten zitten in minder dan 1 op de 100 boosters.</span></div>
+  <p class="lk-fijn">Trendprijs op Cardmarket in euro's, via TCGdex, dagelijks bijgewerkt. Werkelijke prijzen verschillen per staat van de kaart, taal en verkoper. Via de eBay-knop ontvangen wij mogelijk een vergoeding; jij betaalt hetzelfde.</p>
+ </div>
  <div class="kop"><h2>Waar wil je beginnen?</h2></div>
  <div class="moz">
   <a class="tg tf groot" style="--bg:#FFE7A3" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=elite+trainer+box"><img src="https://www.nedgame.nl/images/covers/3359026152.jpg" alt="Elite Trainer Box Perfect Order" loading="lazy" onerror="this.remove()"><span class="tt"><b>Elite Trainer Box</b><small>Prijzen vergelijken →</small></span></a><a class="tg tf hoog" style="--bg:#D6E4FF" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+box"><img src="https://www.nedgame.nl/images/covers/9461160460.jpg" alt="Booster box Chaos Rising" loading="lazy" onerror="this.remove()"><span class="tt"><b>Booster displays</b><small>Prijzen vergelijken →</small></span></a><a class="tg tf " style="--bg:#FFD8CF" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+pack"><img src="https://www.nedgame.nl/images/covers/7712031590.jpg" alt="Booster pack Chaos Rising" loading="lazy" onerror="this.remove()"><span class="tt"><b>Losse boosters</b><small>Prijzen vergelijken →</small></span></a><a class="tg tf " style="--bg:#E5DBFF" href="/pages/vergelijken?cat=kaarten&amp;type=pokemon&amp;q=collection"><img src="https://www.nedgame.nl/images/covers/6424464503.jpg" alt="Super Premium Collection Charizard ex" loading="lazy" onerror="this.remove()"><span class="tt"><b>Collection boxes</b><small>Prijzen vergelijken →</small></span></a>
@@ -249,6 +270,40 @@ function oordeel(p,a){if(!a||!p)return null;var r=p/a;
       .then(function () { knop.disabled = false; knop.textContent = oud; });
   });
 })();
+})();
+</script>
+<script>
+/* 19 okt: losse kaarten. Haalt kaarten.json (TCGdex, Cardmarket-trendprijzen) en tekent per set de duurste kaarten. */
+(function(){
+  var w=document.querySelector('[data-lk]');if(!w||!window.fetch)return;
+  var GO='https://go.deprijsvergelijker.com/api/go';
+  function eur(x){return '\u20ac'+(x>=100?Math.round(x).toLocaleString('nl-NL'):x.toLocaleString('nl-NL',{minimumFractionDigits:2,maximumFractionDigits:2}));}
+  function go(u,p){return GO+'?u='+encodeURIComponent(u)+'&cat=kaarten&p='+encodeURIComponent(p)+'&bron=pokemon-losse-kaarten';}
+  function kaart(c){
+    var q=c.naam+' '+c.nr+(c.van?'/'+c.van:'');
+    var cm='https://www.cardmarket.com/nl/Pokemon/Products/Search?searchString='+encodeURIComponent(c.naam+' '+c.setnaam);
+    var eb='https://www.ebay.nl/sch/i.html?_nkw='+encodeURIComponent('pokemon '+q)+'&_sacat=183454';
+    var v='';if(c.gem30){var d=Math.round((c.trend-c.gem30)/c.gem30*100);if(Math.abs(d)>=3)v='<span class="ver '+(d>0?'op':'af')+'">'+(d>0?'+':'')+d+'% in 30 dagen</span>';}
+    var a=document.createElement('article');a.className='lk';
+    a.innerHTML='<div class="fk"><img loading="lazy" alt="" width="245" height="342"></div><h3></h3><span class="m"></span><div class="pr"><b>'+eur(c.trend)+'</b>'+v+'</div><div class="kn"><a class="c" target="_blank" rel="nofollow noopener">Cardmarket</a><a class="e" target="_blank" rel="nofollow sponsored noopener">eBay</a></div>';
+    a.querySelector('img').src=c.img;a.querySelector('img').alt=c.naam+' '+c.setnaam;
+    a.querySelector('h3').textContent=c.naam;a.querySelector('.m').textContent=c.setnaam+' \u00b7 '+c.nr+(c.van?'/'+c.van:'')+(c.zeldzaam?' \u00b7 '+c.zeldzaam:'');
+    a.querySelector('a.c').href=go(cm,'Cardmarket '+c.naam);a.querySelector('a.e').href=go(eb,'eBay '+c.naam);
+    return a;
+  }
+  fetch('https://raw.githubusercontent.com/FortAssets/mm_feed/tcg-data/kaarten.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null;}).then(function(d){
+    if(!d||!d.top||!d.top.length)return;
+    var rij=w.querySelector('[data-lk-rij]'),chips=w.querySelector('[data-lk-chips]'),tip=w.querySelector('[data-lk-tip]');
+    var lijsten=[{n:'Alle sets',k:d.top}].concat(d.sets.map(function(s){return {n:s.naam,k:s.top};}));
+    function zet(i){
+      rij.textContent='';lijsten[i].k.forEach(function(c){rij.appendChild(kaart(c));});rij.scrollLeft=0;
+      chips.querySelectorAll('button').forEach(function(b,j){b.setAttribute('aria-pressed',j===i?'true':'false');});
+      var t=lijsten[i].k[0];if(t)tip.textContent='Los kost '+t.naam+' uit '+t.setnaam+' rond de '+eur(t.trend)+'. Dat is de prijs van tientallen boosters, en de kans dat je hem trekt is klein. Zoek je \u00e9\u00e9n bepaalde kaart, dan is los kopen bijna altijd goedkoper.';
+    }
+    lijsten.forEach(function(l,i){var b=document.createElement('button');b.type='button';b.textContent=l.n;b.addEventListener('click',function(){zet(i);});chips.appendChild(b);});
+    var dt=new Date(d.bijgewerkt);w.querySelector('[data-lk-stand]').textContent='Cardmarket-trend, '+dt.toLocaleDateString('nl-NL',{day:'numeric',month:'long'});
+    zet(0);w.hidden=false;
+  }).catch(function(){});
 })();
 </script>
 {% schema %}

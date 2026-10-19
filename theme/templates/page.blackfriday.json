@@ -279,10 +279,15 @@
         "more_url": "/blogs/advies",
         "melding_aan": false
       }
+    },
+    "dealcheck": {
+      "type": "dpv-dealcheck",
+      "settings": {}
     }
   },
   "order": [
     "bf",
+    "dealcheck",
     "rij_korting",
     "rij_console",
     "rij_tv",

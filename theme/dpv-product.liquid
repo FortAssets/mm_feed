@@ -210,6 +210,7 @@
 }
 </script>
 
+{%- render 'dpv-prijsgrafiek' -%}
 <script>
 (function () {
   var W = document.getElementById('dpp'); if (!W) return;
@@ -259,7 +260,9 @@
     return h;
   }
 
-  fetch(API + '/api/shop/product?i=' + encodeURIComponent(ID) + '&cat=' + encodeURIComponent(CAT))
+  // Met cat=alles vindt de worker het product wel, maar niet het prijslogboek (dat staat per echte categorie).
+  // Dan zoekt hij zelf de categorie op. Daardoor bleef het prijsverloop tot 19 okt op elke productpagina leeg.
+  fetch(API + '/api/shop/product?i=' + encodeURIComponent(ID) + (CAT && CAT !== 'alles' ? '&cat=' + encodeURIComponent(CAT) : ''))
     .then(function (r) { return r.json(); })
     .then(function (d) {
       if (!d || d.fout || !d.product || !d.product.o || !d.product.o.length) throw new Error('weg');
@@ -280,8 +283,11 @@
       document.getElementById('dpp-van').innerHTML = '<b>' + eur(pr.o[0].p) + '</b>' + (n > 1 ? 'laagste prijs bij ' + n + ' winkels' : 'bij ' + esc(pr.o[0].w));
       document.getElementById('dpp-peil').textContent = 'Prijzen van vannacht gemeten. De prijs bij de winkel is leidend.';
       document.getElementById('dpp-oordeel').innerHTML = oordeel(d.oordeel, pr.o[0]);
-      var g = graf((d.logboek || {})[pr.o[0].w] || []);
-      if (g) { document.getElementById('dpp-graf').innerHTML = g; document.getElementById('dpp-verloop').hidden = false; }
+      // Nieuwe grafiek (19 okt): laagste prijs over alle winkels, met oordeel en tegels. Oude graf() blijft als terugval.
+      var gr = document.getElementById('dpp-graf'), ok = false;
+      try { ok = !!(window.dpvPrijsgrafiek && window.dpvPrijsgrafiek(gr, d.logboek || {}, { nu: pr.o[0].p, winkel: pr.o[0].w, van: pr.o[0].v, kop: 'Laagste prijs per dag', hoogte: 230 })); } catch (e) { ok = false; }
+      if (!ok) { var g = graf((d.logboek || {})[pr.o[0].w] || []); if (g) gr.innerHTML = g; ok = !!g; }
+      if (ok) document.getElementById('dpp-verloop').hidden = false;
     })
     .catch(function () {
       var p = document.getElementById('dpp-peil');

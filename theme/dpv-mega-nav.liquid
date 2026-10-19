@@ -126,6 +126,14 @@ html:not(#x) .dmn-p a.r.lg{flex-wrap:nowrap !important;justify-content:flex-star
 .dmn-vis.twee{grid-template-columns:1fr 1fr}
 .dmn-vis.tel a{padding:8px 5px}
 .dmn-vis.tel img{width:100%;height:86px;border-radius:0}
+/* 19 okt: populairste booster box in het Gaming-menu, geladen bij het openen van het menu. */
+.dmn-pkm{display:flex;gap:10px;align-items:center;margin:12px 0;padding:8px;border:1px solid #E3E8F0;border-radius:10px;background:#fff;text-decoration:none;color:#0D1B2A}
+.dmn-pkm:hover{border-color:#0D1B2A}
+.dmn-pkm img{width:64px;height:64px;object-fit:contain;flex:0 0 auto}
+.dmn-pkm span{display:flex;flex-direction:column;gap:2px;font-size:12px;line-height:1.3;min-width:0}
+.dmn-pkm small{font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:#047857}
+.dmn-pkm b{font-size:12.5px;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dmn-pkm i{font-style:normal;font-weight:800}
 .dmn-vis-k{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:#4A5A70;margin:10px 0 -6px}
 .dmn-pro .kn{margin-top:auto}
 
@@ -209,6 +217,15 @@ html:not(#x) .dmn-p a.r.lg{flex-wrap:nowrap !important;justify-content:flex-star
     if (gedaan || window.innerWidth <= 1100) return; gedaan = true;
     var im = document.querySelectorAll('img.dmn-lg[data-src],img.dmn-vi[data-src]');
     for (var i = 0; i < im.length; i++) { im[i].src = im[i].getAttribute('data-src'); im[i].removeAttribute('data-src'); }
+    var pk = document.getElementById('dmn-pkm');
+    if (pk && window.fetch) fetch('https://shop.deprijsvergelijker.com/api/shop/lijst?cat=kaarten&type=pokemon&q=booster%20box&sort=populair').then(function(r){return r.json();}).then(function(d){
+      var x = (d.items || []).filter(function(i){ return i.im && i.p && /booster ?box|display/i.test(i.n) && !/elite trainer|etb|surprise|bundle|collection|tin\b/i.test(i.n); })[0];
+      if (!x) return;
+      var naam = String(x.n).replace(/^Pok[eé]mon (TCG |Kaarten - )?/i, '').replace(/\s*\(sealed\)/i, '');
+      pk.href = '/pages/vergelijken?cat=kaarten&type=pokemon&q=' + encodeURIComponent(x.n);
+      pk.innerHTML = '<img src="' + esc(x.im) + '" alt="" width="64" height="64" loading="lazy"><span><small>Populairste booster box</small><b>' + esc(naam) + '</b><i>vanaf \u20ac' + Number(x.p).toLocaleString('nl-NL', { minimumFractionDigits: x.p % 1 ? 2 : 0, maximumFractionDigits: 2 }) + '</i></span>';
+      pk.hidden = false;
+    }).catch(function(){});
     var vak = document.getElementById('dmn-tel');
     if (!vak || !window.fetch) return;
     fetch('https://go.deprijsvergelijker.com/api/cards/telefoon?limit=8').then(function(r){return r.json();}).then(function(d){
@@ -480,7 +497,9 @@ html:not(#x) .dmn-p a.r.lg{flex-wrap:nowrap !important;justify-content:flex-star
           <a class="r" href="{{ p }}pokemonkaarten#losse-kaarten">Losse kaarten<small>duurste kaarten per set, Cardmarket-prijs</small><span class="pl">&rsaquo;</span></a>
           <a class="r" href="{{ p }}pokemonkaarten#kalender">Releasekalender<span class="pl">&rsaquo;</span></a>
           <a class="r" href="{{ p }}vergelijken?cat=kaarten&amp;type=pokemon&amp;q=elite+trainer+box">Elite Trainer Boxen<span class="pl">&rsaquo;</span></a>
-          <a class="r" href="{{ p }}vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+box">Booster displays<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+box">Booster boxen<small>displays met 36 boosters</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+bundle">Booster bundles<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="https://boosterscout.com/pokemon/?sort=pb&amp;vr=1" target="_blank" rel="noopener">Goedkoopste per booster<small>op BoosterScout, ook Japans</small><span class="pl">&rsaquo;</span></a>
         </div>
         <div>
           <h5>Uitzoeken</h5>
@@ -491,6 +510,7 @@ html:not(#x) .dmn-p a.r.lg{flex-wrap:nowrap !important;justify-content:flex-star
           <div class="lb">Nieuw</div>
           <b>Pokémonkaarten</b>
           <span class="sp">Sealed per winkel vergeleken, en de duurste losse kaarten met de prijs op Cardmarket.</span>
+          <a class="dmn-pkm" id="dmn-pkm" href="{{ p }}pokemonkaarten" hidden></a>
           <a class="kn" href="{{ p }}pokemonkaarten">Naar Pokémon &rarr;</a>
         </div>
       </div>

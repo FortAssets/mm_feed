@@ -1,0 +1,150 @@
+{%- comment -%}
+  Dealcheck (19 okt 2026) voor de Black Friday-pagina. Zoek een product en zie meteen:
+  - de laagste prijs nu en het verloop (gedeelde grafiek uit snippets/dpv-prijsgrafiek),
+  - of de van-prijs van de winkel klopt met wat wij in de 30 dagen ervoor bij die winkel maten,
+  - deze week "echt gezakt" (gezakt.json uit de GitHub Action, zelfde lijst als de weekmail).
+  Een check is te delen met ?check=<product-id>. Alleen eigen metingen; we noemen niets "nep".
+{%- endcomment -%}
+{%- assign api = section.settings.api | default: 'https://shop.deprijsvergelijker.com' -%}
+<style>
+.dc{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#1F7A52;max-width:1180px;margin:0 auto;padding:44px 20px 18px;font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
+.dc h2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:clamp(26px,3.4vw,36px);letter-spacing:-.02em;line-height:1.1;margin:0 0 8px}
+.dc .dc-in{color:var(--soft);font-size:16px;line-height:1.55;max-width:720px;margin:0 0 18px}
+.dc-zoek{position:relative;max-width:640px}
+.dc-zoek input{width:100%;box-sizing:border-box;font:inherit;font-size:16px;padding:15px 16px;border:2px solid var(--ink);border-radius:12px;background:#fff;color:var(--ink)}
+.dc-lijst{position:absolute;left:0;right:0;top:calc(100% + 6px);background:#fff;border:1px solid var(--line);border-radius:12px;box-shadow:0 12px 30px rgba(13,27,42,.12);z-index:20;overflow:hidden}
+.dc-lijst button{display:flex;justify-content:space-between;gap:12px;width:100%;text-align:left;font:inherit;font-size:14.5px;padding:11px 14px;border:0;border-bottom:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.dc-lijst button:last-child{border-bottom:0}.dc-lijst button:hover,.dc-lijst button:focus{background:var(--vlak);outline:none}
+.dc-lijst small{color:var(--soft);white-space:nowrap}
+.dc-uit{margin-top:18px;border:1px solid var(--line);border-radius:16px;padding:18px;background:#fff}
+.dc-prod{display:grid;grid-template-columns:96px 1fr;gap:16px;align-items:center;margin-bottom:14px}
+.dc-prod img{width:96px;height:96px;object-fit:contain;background:var(--vlak);border-radius:12px;mix-blend-mode:multiply}
+.dc-prod h3{font-size:19px;line-height:1.3;margin:0 0 6px}
+.dc-w{display:flex;flex-wrap:wrap;gap:8px}
+.dc-w a{display:inline-flex;gap:8px;align-items:baseline;font-size:14px;text-decoration:none;color:var(--ink);border:1px solid var(--line);border-radius:10px;padding:7px 11px;background:var(--vlak)}
+.dc-w a b{font-size:15px}.dc-w a.beste{border-color:var(--groen);background:#E3F3EA}
+.dc-deel{margin-top:12px;font-size:13.5px;color:var(--soft)}.dc-deel button{font:inherit;font-weight:700;color:var(--ink);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer}
+.dc-kop{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:34px 0 12px;flex-wrap:wrap}
+.dc-kop h3{font-size:22px;margin:0;font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;letter-spacing:-.01em}
+.dc-kop a{font-size:14px;font-weight:700;color:var(--ink)}
+.dc-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.dc-k{display:flex;flex-direction:column;text-align:left;font:inherit;color:var(--ink);background:var(--vlak);border:0;border-radius:14px;padding:14px;cursor:pointer}
+.dc-k:hover{background:#EDF1F6}
+.dc-k .ft{height:120px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.dc-k img{max-width:86%;max-height:100%;object-fit:contain;mix-blend-mode:multiply}
+.dc-k b.n{font-size:14.5px;line-height:1.35;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-bottom:8px}
+.dc-k .p{margin-top:auto;font-size:20px;font-weight:800}
+.dc-k .z{font-size:13px;color:var(--soft);margin-top:2px}
+.dc-k .gz{display:inline-block;align-self:flex-start;background:#E3F3EA;color:var(--groen);font-weight:800;font-size:12.5px;border-radius:6px;padding:2px 8px;margin-bottom:8px}
+.dc-mail{margin-top:26px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:var(--ink);color:#fff;border-radius:16px;padding:18px 20px}
+.dc-mail p{margin:0;font-size:15.5px;line-height:1.5;max-width:640px}.dc-mail b{color:#F9C31F}
+.dc-mail a{background:#F9C31F;color:var(--ink);font-weight:800;text-decoration:none;border-radius:10px;padding:11px 16px;white-space:nowrap}
+.dc-voet{font-size:12.5px;color:var(--soft);margin:12px 0 0;line-height:1.5}
+@media (max-width:900px){.dc-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:560px){.dc{padding:32px 16px 10px}.dc-prod{grid-template-columns:72px 1fr}.dc-prod img{width:72px;height:72px}.dc-k .ft{height:96px}}
+</style>
+{%- render 'dpv-prijsgrafiek' -%}
+<section class="dc" id="dealcheck" data-api="{{ api | escape }}">
+  <h2>{{ section.settings.kop | default: 'Dealcheck: is deze korting echt?' }}</h2>
+  <p class="dc-in">{{ section.settings.intro | default: 'Zoek een product en zie wat het nu kost, hoe de prijs de afgelopen weken liep en of de van-prijs van de winkel klopt. Wij meten de prijzen elke nacht zelf, dus je ziet het verschil tussen een echte korting en een opgeblazen van-prijs.' }}</p>
+  <div class="dc-zoek">
+    <input id="dc-q" type="search" autocomplete="off" placeholder="Bijvoorbeeld: Nintendo Switch 2, Samsung QE65, Airfryer" aria-label="Zoek een product om te checken" aria-controls="dc-lijst">
+    <div class="dc-lijst" id="dc-lijst" role="listbox" hidden></div>
+  </div>
+  <div class="dc-uit" id="dc-uit" hidden></div>
+
+  <div class="dc-kop"><h3>Deze week echt gezakt</h3><a href="/pages/vergelijken?deals=1">Alle gezakte prijzen →</a></div>
+  <div class="dc-grid" id="dc-gezakt"></div>
+  <p class="dc-voet">Echt gezakt betekent: de prijs van nu ligt minstens 10% en €10 onder de laagste prijs die wij in de 30 dagen ervoor bij dezelfde winkel maten. Klik op een product voor de check.</p>
+
+  <div class="dc-mail"><p><b>Elke week de echte deals in je mail.</b> Tot Black Friday sturen we één mail per week met wat echt gezakt is. Geen lijst van honderd items, en afmelden kan altijd.</p><a href="#aanmelden" id="dc-mailknop">Zet de weekmail aan</a></div>
+</section>
+<script>
+(function () {
+  var W = document.getElementById('dealcheck'); if (!W || !window.fetch) return;
+  var API = W.getAttribute('data-api');
+  var GZ = 'https://raw.githubusercontent.com/FortAssets/mm_feed/main/data/shop/gezakt.json';
+  var q = document.getElementById('dc-q'), lijst = document.getElementById('dc-lijst'), uit = document.getElementById('dc-uit');
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function eur(n) { n = Number(n) || 0; return '€' + n.toLocaleString('nl-NL', { minimumFractionDigits: n % 1 ? 2 : 0, maximumFractionDigits: 2 }); }
+  function meet(n, x) { try { if (window.gtag) window.gtag('event', n, x || {}); } catch (e) {} }
+
+  // zoeken, met een kleine pauze zodat we niet bij elke letter vragen
+  var tm = null, laatste = '';
+  q.addEventListener('input', function () {
+    clearTimeout(tm); var v = q.value.trim();
+    if (v.length < 2) { lijst.hidden = true; return; }
+    tm = setTimeout(function () {
+      laatste = v;
+      fetch(API + '/api/shop/zoek?q=' + encodeURIComponent(v) + '&n=8').then(function (r) { return r.json(); }).then(function (d) {
+        if (v !== laatste) return;
+        var it = (d && d.items) || [];
+        lijst.innerHTML = it.length ? it.map(function (x) {
+          return '<button type="button" role="option" data-i="' + esc(x.i) + '"><span>' + esc(x.n) + '</span><small>' + eur(x.p) + (x.w > 1 ? ' · ' + x.w + ' winkels' : '') + '</small></button>';
+        }).join('') : '<button type="button" disabled><span>Niets gevonden. Probeer een kortere zoekterm.</span></button>';
+        lijst.hidden = false;
+      }).catch(function () {});
+    }, 220);
+  });
+  lijst.addEventListener('click', function (e) { var b = e.target.closest('button[data-i]'); if (!b) return; lijst.hidden = true; check(b.getAttribute('data-i'), 'zoek'); });
+  document.addEventListener('click', function (e) { if (!e.target.closest('.dc-zoek')) lijst.hidden = true; });
+  q.addEventListener('keydown', function (e) { if (e.key === 'Enter') { var b = lijst.querySelector('button[data-i]'); if (b) { e.preventDefault(); lijst.hidden = true; check(b.getAttribute('data-i'), 'zoek'); } } });
+
+  function check(id, bron) {
+    uit.hidden = false; uit.innerHTML = '<p style="margin:0;color:#5B6B80">Prijzen en prijsverloop ophalen…</p>';
+    meet('dealcheck', { bron: bron });
+    fetch(API + '/api/shop/product?i=' + encodeURIComponent(id)).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d || d.fout || !d.product || !d.product.o || !d.product.o.length) throw new Error('weg');
+      var pr = d.product, go = API + '/api/shop/go?i=' + encodeURIComponent(pr.i) + '&cat=' + encodeURIComponent(d.cat || '') + '&bron=dealcheck';
+      var h = '<div class="dc-prod">' + (pr.im ? '<img src="' + esc(pr.im) + '" alt="">' : '<span></span>') + '<div><h3>' + esc(pr.n) + '</h3><div class="dc-w">' +
+        pr.o.slice(0, 4).map(function (o, i) { return '<a class="' + (i ? '' : 'beste') + '" href="' + go + '&w=' + encodeURIComponent(o.w) + '" target="_blank" rel="sponsored noopener">' + esc(o.w) + ' <b>' + eur(o.p) + '</b></a>'; }).join('') +
+        '</div></div></div><div id="dc-graf"></div>' +
+        '<p class="dc-deel">Deze check delen? <button type="button" id="dc-deel">Kopieer de link</button></p>';
+      uit.innerHTML = h;
+      var ok = window.dpvPrijsgrafiek && window.dpvPrijsgrafiek(document.getElementById('dc-graf'), d.logboek || {}, { nu: pr.o[0].p, winkel: pr.o[0].w, van: pr.o[0].v, hoogte: 210 });
+      if (!ok) document.getElementById('dc-graf').innerHTML = '<p style="margin:0;color:#5B6B80">Dit product volgen wij nog te kort voor een prijsverloop. Zet een seintje aan of kom over een paar dagen terug.</p>';
+      var link = location.origin + location.pathname + '?check=' + encodeURIComponent(pr.i) + '#dealcheck';
+      try { history.replaceState(null, '', '?check=' + encodeURIComponent(pr.i) + '#dealcheck'); } catch (e) {}
+      document.getElementById('dc-deel').addEventListener('click', function () {
+        var b = this; (navigator.clipboard ? navigator.clipboard.writeText(link) : Promise.reject()).then(function () { b.textContent = 'Gekopieerd'; }, function () { prompt('Kopieer deze link', link); });
+      });
+      uit.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }).catch(function () { uit.innerHTML = '<p style="margin:0;color:#5B6B80">Dit product kon niet geladen worden. Probeer een ander product.</p>'; });
+  }
+
+  // echt gezakt
+  fetch(GZ).then(function (r) { return r.json(); }).then(function (d) {
+    // eerst wat in euro's het meest scheelt, en geen toners of shampoo bovenaan
+    var it = ((d && d.p) || []).filter(function (x) { return x.im && x.p >= 20 && !/kantoor|drogisterij|verzorging/.test(x.c || ''); })
+      .sort(function (a, b) { return b.d * Math.min(1, b.k / 20) - a.d * Math.min(1, a.k / 20); });
+    // niet acht keer dezelfde soort: per categorie hoogstens twee
+    var per = {}, keuze = [];
+    for (var i = 0; i < it.length && keuze.length < 8; i++) { var c = it[i].c || ''; if ((per[c] || 0) >= 2) continue; per[c] = (per[c] || 0) + 1; keuze.push(it[i]); }
+    if (!keuze.length) return;
+    document.getElementById('dc-gezakt').innerHTML = keuze.map(function (x) {
+      return '<button type="button" class="dc-k" data-i="' + esc(x.i) + '"><div class="ft"><img src="' + esc(x.im) + '" alt="" loading="lazy"></div><span class="gz">&minus;' + eur(Math.round(x.d)) + ' gezakt</span><b class="n">' + esc(x.n) + '</b><span class="p">' + eur(x.p) + '</span><span class="z">bij ' + esc(x.w) + ', was ' + eur(x.was) + '</span></button>';
+    }).join('');
+  }).catch(function () {});
+  document.getElementById('dc-gezakt').addEventListener('click', function (e) { var b = e.target.closest('[data-i]'); if (b) check(b.getAttribute('data-i'), 'gezakt'); });
+
+  // weekmail: naar het aanmeldformulier op deze pagina
+  document.getElementById('dc-mailknop').addEventListener('click', function (e) {
+    var f = document.querySelector('.pa, #bfr-aanmeld, [data-mailvorm]');
+    if (f) { e.preventDefault(); f.scrollIntoView({ behavior: 'smooth', block: 'center' }); var i = f.querySelector('input[type=email]'); if (i) setTimeout(function () { i.focus(); }, 500); }
+    meet('dealcheck_weekmail');
+  });
+
+  var m = /[?&]check=([^&#]+)/.exec(location.search); if (m) check(decodeURIComponent(m[1]), 'link');
+})();
+</script>
+{% schema %}
+{
+  "name": "Dealcheck",
+  "settings": [
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Dealcheck: is deze korting echt?" },
+    { "type": "textarea", "id": "intro", "label": "Intro" },
+    { "type": "text", "id": "api", "label": "Shop-worker", "default": "https://shop.deprijsvergelijker.com" }
+  ],
+  "presets": [{ "name": "Dealcheck" }]
+}
+{% endschema %}

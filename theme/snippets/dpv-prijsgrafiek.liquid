@@ -1,0 +1,266 @@
+{%- comment -%}
+  Prijsgrafiek (19 okt 2026), gedeeld door de productpagina (dpv-product) en de
+  productvergelijker (dpv-shop). Oordeel en vier tegels bovenaan, daaronder de
+  laagste prijs over alle winkels als traplijn met periodeknoppen, markeringen
+  voor laagste, hoogste en nu, en een tooltip met datum, prijs en winkel.
+
+  Gebruik: window.dpvPrijsgrafiek(element, logboek, { nu: 123.45, hoogte: 220 })
+  logboek = { "Coolblue": [{dag, prijs, gezien}], ... } zoals /api/shop/product
+  dat teruggeeft. Geeft false terug als er te weinig metingen zijn.
+
+  Een piek van een dag (meestal een winkel die een nacht uit de feed viel) wordt
+  eruit gefilterd met een mediaan over drie dagen, zodat hij de schaal niet
+  oprekt. "Laagste 30 dagen" is dezelfde maatstaf als de wettelijke van-prijs.
+{%- endcomment -%}
+<style>
+.dpg{--dpg-ink:#0D1B2A;--dpg-zacht:#5B6676;--dpg-lijn:#E6E9EF;--dpg-vlak:#F3F4F7;--dpg-groen:#1F7A52;--dpg-groenL:#E3F3EA;--dpg-geel:#8A5A00;--dpg-geelL:#FFF3D6;color:var(--dpg-ink);font-variant-numeric:tabular-nums}
+.dpg-oord{display:inline-flex;gap:7px;align-items:center;border-radius:12px;padding:6px 12px;font-size:14px;font-weight:700;line-height:1.3}
+.dpg-oord.goed{background:var(--dpg-groenL);color:var(--dpg-groen)}
+.dpg-oord.let{background:var(--dpg-geelL);color:var(--dpg-geel)}
+.dpg-oord.neu{background:var(--dpg-vlak);color:var(--dpg-zacht)}
+.dpg-van{margin:10px 0 0;font-size:14px;line-height:1.5;padding:9px 12px;border-radius:10px;background:var(--dpg-vlak)}.dpg-van b{font-weight:800}.dpg-van.goed b{color:var(--dpg-groen)}.dpg-van.let b{color:var(--dpg-geel)}.dpg-van small{display:block;color:var(--dpg-zacht);font-size:12px;margin-top:2px}
+.dpg-tegels{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 4px}
+.dpg-tegels div{background:var(--dpg-vlak);border-radius:10px;padding:9px 11px;min-width:0}
+.dpg-tegels small{display:block;font-size:12px;color:var(--dpg-zacht);line-height:1.3}
+.dpg-tegels b{display:block;font-size:18px;font-weight:800;margin-top:2px;white-space:nowrap}
+.dpg .dpg-uitleg{font-size:12.5px!important;color:var(--dpg-zacht);margin:6px 0 0!important;line-height:1.45!important}
+.dpg-kop{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:14px 0 6px;flex-wrap:wrap}
+.dpg-kop b{font-size:14px}
+.dpg-tabs{display:flex;gap:5px}
+.dpg-tabs button{font:inherit;font-size:12.5px;font-weight:700;padding:5px 11px;border:1px solid var(--dpg-lijn);border-radius:99px;background:#fff;color:var(--dpg-ink);cursor:pointer;min-height:30px}
+.dpg-tabs button[aria-pressed="true"]{background:var(--dpg-ink);color:#fff;border-color:var(--dpg-ink)}
+.dpg-vak{position:relative;touch-action:pan-y}
+.dpg{min-width:0;max-width:100%}.dpg-vak{width:100%;min-width:0}.dpg .dpg-vak svg{display:block;overflow:visible;position:absolute;left:0;top:0}
+.dpg-vak text{font-family:inherit}
+.dpg-tip{position:absolute;pointer-events:none;background:var(--dpg-ink);color:#fff;border-radius:8px;padding:7px 10px;font-size:12px;line-height:1.35;white-space:nowrap;transform:translate(-50%,-100%);margin-top:-12px;box-shadow:0 4px 14px rgba(13,27,42,.18)}
+.dpg-tip small{display:block;color:#C9D3E3;font-size:11.5px}
+.dpg-tip b{font-size:14px}
+.dpg-tabel{margin-top:8px;font-size:13px}
+.dpg-tabel summary{cursor:pointer;color:var(--dpg-zacht);font-weight:600}
+.dpg-tabel table{border-collapse:collapse;margin-top:6px;width:100%;max-width:420px}
+.dpg-tabel td,.dpg-tabel th{text-align:left;padding:4px 8px 4px 0;border-bottom:1px solid var(--dpg-lijn);font-weight:500}
+.dpg-tabel th{color:var(--dpg-zacht);font-weight:600}
+@media (max-width:560px){.dpg-tegels{grid-template-columns:repeat(2,minmax(0,1fr))}.dpg-tegels b{font-size:16px}}
+</style>
+<script>
+(function () {
+  if (window.dpvPrijsgrafiek) return;
+  var DAG = 864e5, NS = 'http://www.w3.org/2000/svg';
+  var MND = ['jan', 'feb', 'mrt', 'apr', 'mei', 'jun', 'jul', 'aug', 'sep', 'okt', 'nov', 'dec'];
+  var WD = ['zo', 'ma', 'di', 'wo', 'do', 'vr', 'za'];
+  function t(s) { return Date.parse(String(s).slice(0, 10) + 'T00:00:00Z'); }
+  function eur(n) { n = Number(n) || 0; var heel = Math.abs(n - Math.round(n)) < 0.005 || n >= 1000; return '€' + n.toLocaleString('nl-NL', { minimumFractionDigits: heel ? 0 : 2, maximumFractionDigits: heel ? 0 : 2 }); }
+  function kort(ms) { var d = new Date(ms); return d.getUTCDate() + ' ' + MND[d.getUTCMonth()]; }
+  function lang(ms) { var d = new Date(ms); return WD[d.getUTCDay()] + ' ' + d.getUTCDate() + ' ' + MND[d.getUTCMonth()] + ' ' + d.getUTCFullYear(); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  // Per dag de laagste prijs over alle winkels, met de winkel erbij.
+  function dagreeks(logboek) {
+    var vandaag = t(new Date().toISOString()), start = Infinity, iv = [];
+    Object.keys(logboek || {}).forEach(function (w) {
+      var r = (logboek[w] || []).slice().sort(function (a, b) { return t(a.dag) - t(b.dag); });
+      r.forEach(function (e, i) {
+        var a = t(e.dag), z = t(e.gezien || e.dag);
+        // twee metingen op een dag (de feed draait twee keer): beide gelden die dag
+        var volg = i + 1 < r.length ? Math.max(a, t(r[i + 1].dag) - DAG) : null;
+        // een nacht die mislukte telt niet als "weg uit de feed": tot twee dagen dichten
+        z = volg != null ? Math.min(volg, Math.max(z, Math.min(volg, z + 2 * DAG))) : (z >= vandaag - 2 * DAG ? vandaag : z);
+        if (!(e.prijs > 0) || isNaN(a) || isNaN(z) || z < a) return;
+        iv.push([a, z, e.prijs, w]);
+        if (a < start) start = a;
+      });
+    });
+    if (!iv.length) return null;
+    var n = Math.round((vandaag - start) / DAG) + 1, p = [], w = [];
+    for (var i = 0; i < n; i++) { p.push(null); w.push(''); }
+    iv.forEach(function (v) {
+      for (var d = v[0]; d <= v[1]; d += DAG) {
+        var j = Math.round((d - start) / DAG);
+        if (j >= 0 && j < n && (p[j] == null || v[2] < p[j])) { p[j] = v[2]; w[j] = v[3]; }
+      }
+    });
+    // mediaan van drie: haalt pieken van een dag weg, laat echte prijsstappen staan
+    var s = p.map(function (v, j) {
+      if (v == null) return null;
+      var a = p[j - 1], b = p[j + 1];
+      if (a == null || b == null) return v;
+      return [a, v, b].sort(function (x, y) { return x - y; })[1];
+    });
+    for (var k = 0; k < n; k++) if (s[k] != null && s[k] !== p[k]) {
+      // winkel bij de gefilterde prijs: die van de buurdag met die prijs
+      w[k] = (p[k - 1] === s[k] ? w[k - 1] : w[k + 1]) || w[k];
+    }
+    return { start: start, p: s, w: w };
+  }
+
+  function stap(bereik) {
+    var ruw = bereik / 3, m = Math.pow(10, Math.floor(Math.log10(ruw || 1)));
+    var f = ruw / m;
+    return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * m;
+  }
+
+  function teken(G) {
+    var r = G.r, W = Math.max(260, Math.floor(G.vak.getBoundingClientRect().width) || G.vak.clientWidth || 600), H = G.hoogte;
+    G.getekend = W;
+    var van = Math.max(0, r.p.length - G.periode), p = r.p.slice(van), w = r.w.slice(van), n = p.length;
+    var waarden = p.filter(function (v) { return v != null; });
+    var mn = Math.min.apply(null, waarden), mx = Math.max.apply(null, waarden);
+    var st = stap(Math.max(mx - mn, mx * 0.02, 1)), lo = Math.floor(mn / st) * st, hi = Math.ceil(mx / st) * st;
+    if (hi - lo < st) hi = lo + st;
+    if (mn - lo < st * 0.15) lo -= st; if (lo < 0) lo = 0;
+    var mobiel = W < 480, L = mobiel ? 52 : 62, R = mobiel ? 10 : 14, T = 22, B = 26;
+    function X(i) { return L + (W - L - R) * (n > 1 ? i / (n - 1) : 0.5); }
+    function Y(v) { return T + (H - T - B) * (1 - (v - lo) / (hi - lo)); }
+    var svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('width', W); svg.setAttribute('height', H); svg.style.width = W + 'px'; svg.style.height = H + 'px'; svg.style.maxWidth = 'none'; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    svg.setAttribute('role', 'img');
+    function el(nm, a, tx) { var e = document.createElementNS(NS, nm); for (var k in a) e.setAttribute(k, a[k]); if (tx != null) e.textContent = tx; svg.appendChild(e); return e; }
+    // raster en euro-as
+    for (var v = lo; v <= hi + st / 2; v += st) {
+      el('line', { x1: L, x2: W - R, y1: Y(v), y2: Y(v), stroke: '#E6E9EF', 'stroke-width': 1 });
+      el('text', { x: L - 8, y: Y(v) + 4, 'text-anchor': 'end', 'font-size': 11.5, fill: '#5B6676' }, eur(v));
+    }
+    // tijd-as: maanden bij lange reeksen, anders om de week
+    var vorigeX = -99;
+    for (var i = 0; i < n; i++) {
+      var ms = r.start + (van + i) * DAG, d = new Date(ms), lab = null;
+      if (n > 75) { if (d.getUTCDate() === 1) lab = MND[d.getUTCMonth()] + (d.getUTCMonth() === 0 ? ' ' + d.getUTCFullYear() : ''); }
+      else if (d.getUTCDay() === 1) lab = kort(ms);
+      if (lab && X(i) - vorigeX > (mobiel ? 46 : 54) && X(i) > L + 14 && X(i) < W - R - 14) { el('text', { x: X(i), y: H - 7, 'text-anchor': 'middle', 'font-size': 11.5, fill: '#5B6676' }, lab); vorigeX = X(i); }
+    }
+    // traplijn, onderbroken waar geen winkel een prijs had
+    var pad = '', vlak = '', open = false, segStart = 0;
+    for (i = 0; i < n; i++) {
+      if (p[i] == null) { if (open) { vlak += 'V' + (H - B) + 'H' + segStart + 'Z'; open = false; } continue; }
+      var xa = i === 0 ? X(0) : (X(i - 1) + X(i)) / 2, xb = i === n - 1 ? X(n - 1) : (X(i) + X(i + 1)) / 2;
+      if (!open) { pad += 'M' + xa.toFixed(1) + ' ' + Y(p[i]).toFixed(1); vlak += 'M' + xa.toFixed(1) + ' ' + Y(p[i]).toFixed(1); segStart = xa.toFixed(1); open = true; }
+      else { pad += 'V' + Y(p[i]).toFixed(1); vlak += 'V' + Y(p[i]).toFixed(1); }
+      pad += 'H' + xb.toFixed(1); vlak += 'H' + xb.toFixed(1);
+    }
+    if (open) vlak += 'V' + (H - B) + 'H' + segStart + 'Z';
+    el('path', { d: vlak, fill: '#1F7A52', opacity: 0.08 });
+    el('path', { d: pad, fill: 'none', stroke: '#1F7A52', 'stroke-width': 2.5, 'stroke-linejoin': 'round' });
+
+    // markeringen: laagste (de laatste keer), hoogste (de eerste keer), nu
+    var iMin = -1, iMax = -1, iNu = -1;
+    for (i = 0; i < n; i++) if (p[i] != null) { if (iMin < 0 || p[i] <= p[iMin]) iMin = i; if (iMax < 0 || p[i] > p[iMax]) iMax = i; iNu = i; }
+    function label(i, tekst, boven, kleur, vet) {
+      var x = X(i), anker = 'middle';
+      if (x > W - R - 70) { anker = 'end'; x += 4; } else if (x < L + 60) { anker = 'start'; x -= 4; }
+      var y = boven ? Math.max(12, Y(p[i]) - 10) : Math.min(H - B - 6, Y(p[i]) + 20);
+      el('text', { x: x, y: y, 'text-anchor': anker, 'font-size': 12, 'font-weight': vet ? 700 : 500, fill: kleur }, tekst);
+    }
+    var samen = iMin === iNu || (Math.abs(p[iMin] - p[iNu]) < 0.005 && X(iNu) - X(iMin) < 90);
+    if (iMax >= 0 && p[iMax] - p[iMin] >= 0.5) {
+      el('circle', { cx: X(iMax), cy: Y(p[iMax]), r: 4, fill: '#fff', stroke: '#5B6676', 'stroke-width': 2 });
+      label(iMax, 'Hoogste ' + eur(p[iMax]), true, '#3E4A5A', false);
+    }
+    if (!samen && p[iMax] - p[iMin] >= 0.5) {
+      el('circle', { cx: X(iMin), cy: Y(p[iMin]), r: 5, fill: '#1F7A52', stroke: '#fff', 'stroke-width': 2 });
+      label(iMin, 'Laagste ' + eur(p[iMin]), false, '#1F7A52', true);
+    }
+    el('circle', { cx: X(iNu), cy: Y(p[iNu]), r: 5.5, fill: '#0D1B2A', stroke: '#fff', 'stroke-width': 2 });
+    label(iNu, (samen && p[iMax] - p[iMin] >= 0.5 ? 'Nu, laagste ' : 'Nu ') + eur(p[iNu]), !(samen && p[iMax] - p[iMin] >= 0.5) && Y(p[iNu]) > T + 24, samen ? '#1F7A52' : '#0D1B2A', true);
+    svg.setAttribute('aria-label', 'Laagste prijs per dag, ' + kort(r.start + van * DAG) + ' tot nu: laagste ' + eur(p[iMin]) + ', hoogste ' + eur(p[iMax]) + ', nu ' + eur(p[iNu]) + '.');
+
+    // aanwijzen: verticale lijn, stip en tooltip
+    var lijn = el('line', { x1: 0, x2: 0, y1: T - 6, y2: H - B, stroke: '#0D1B2A', 'stroke-dasharray': '3 3', visibility: 'hidden' });
+    var stip = el('circle', { r: 5, fill: '#1F7A52', stroke: '#fff', 'stroke-width': 2, visibility: 'hidden' });
+    var vang = el('rect', { x: L, y: 0, width: W - L - R, height: H, fill: 'transparent' });
+    G.vak.innerHTML = ''; G.vak.style.height = H + 'px'; G.vak.appendChild(svg);
+    var tip = document.createElement('div'); tip.className = 'dpg-tip'; tip.hidden = true; G.vak.appendChild(tip);
+    function toon(ev) {
+      var b = svg.getBoundingClientRect(), x = (ev.clientX - b.left) * (W / b.width);
+      var i = Math.round((x - L) / (W - L - R) * (n - 1)); i = Math.max(0, Math.min(n - 1, i));
+      if (p[i] == null) { verberg(); return; }
+      lijn.setAttribute('x1', X(i)); lijn.setAttribute('x2', X(i)); lijn.setAttribute('visibility', 'visible');
+      stip.setAttribute('cx', X(i)); stip.setAttribute('cy', Y(p[i])); stip.setAttribute('visibility', 'visible');
+      tip.innerHTML = '<small>' + lang(r.start + (van + i) * DAG) + '</small><b>' + eur(p[i]) + '</b>' + (w[i] ? ' bij ' + esc(w[i]) : '');
+      tip.hidden = false;
+      var px = X(i) * (b.width / W), tw = tip.offsetWidth / 2;
+      tip.style.left = Math.max(tw, Math.min(b.width - tw, px)) + 'px';
+      tip.style.top = Math.max(T, Y(p[i])) * (b.height / H) + 'px';
+    }
+    function verberg() { lijn.setAttribute('visibility', 'hidden'); stip.setAttribute('visibility', 'hidden'); tip.hidden = true; }
+    vang.addEventListener('pointermove', toon); vang.addEventListener('pointerdown', toon); vang.addEventListener('pointerleave', verberg);
+  }
+
+  // Van-prijscheck (de 30-dagenregel): de van-prijs die de winkel noemt, tegenover de laagste prijs die wij
+  // bij diezelfde winkel maten in de 30 dagen voordat de huidige prijs inging. Alleen eigen metingen.
+  function vanCheck(r, winkel, van) {
+    r = (r || []).slice().sort(function (a, b) { return t(a.dag) - t(b.dag); });
+    if (!r.length || !(van > 0)) return null;
+    var nu = r[r.length - 1].prijs, j = r.length - 1;
+    while (j > 0 && Math.abs(r[j - 1].prijs - nu) < 0.005) j--;
+    var sinds = t(r[j].dag), van0 = sinds - 30 * DAG, laag = null, dagen = 0;
+    for (var i = 0; i < j; i++) {
+      var a = Math.max(t(r[i].dag), van0), z = Math.min(t(r[i].gezien || r[i].dag), sinds - DAG);
+      if (z < a) continue;
+      dagen += Math.round((z - a) / DAG) + 1;
+      if (laag == null || r[i].prijs < laag) laag = r[i].prijs;
+    }
+    if (laag == null || dagen < 5) return { kort: true, w: winkel, van: van };
+    return { w: winkel, van: van, laag: laag, sinds: sinds, klopt: laag >= van - 0.5 };
+  }
+  window.dpvVanCheck = vanCheck;
+
+  window.dpvPrijsgrafiek = function (doel, logboek, o) {
+    o = o || {};
+    if (!doel) return false;
+    var r = dagreeks(logboek);
+    if (!r) return false;
+    var p = r.p, n = p.length, metingen = p.filter(function (v) { return v != null; }).length;
+    if (metingen < 2) return false;
+    var nu = o.nu > 0 ? o.nu : p[n - 1];
+    function stuk(dagen) { return p.slice(Math.max(0, n - dagen)).filter(function (v) { return v != null; }); }
+    var sinds = 'sinds ' + kort(r.start);
+    var l30 = stuk(30), l90 = stuk(90);
+    var min30 = Math.min.apply(null, l30), min90 = Math.min.apply(null, l90), max90 = Math.max.apply(null, l90);
+    var gem90 = l90.reduce(function (a, b) { return a + b; }, 0) / l90.length;
+    var tot = n >= 90 ? 'afgelopen 90 dagen' : 'sinds wij meten';
+    var oordeel, soort;
+    if (n < 7) { soort = 'neu'; oordeel = 'Wij meten deze prijs ' + sinds + ', nog te kort voor een oordeel'; }
+    else if (nu <= min90 + 0.005) { soort = 'goed'; oordeel = '✓ Laagste prijs ' + (n >= 90 ? 'van de afgelopen 90 dagen' : 'sinds wij meten (' + kort(r.start) + ')'); }
+    else if (nu <= min90 * 1.03) { soort = 'goed'; oordeel = '✓ Goede prijs: ' + eur(nu - min90) + ' boven de laagste ' + tot; }
+    else if (nu < gem90) { soort = 'neu'; oordeel = 'Onder het gemiddelde, maar de laagste ' + tot + ' was ' + eur(min90); }
+    else { soort = 'let'; oordeel = '! Hoger dan gemiddeld: de laagste ' + tot + ' was ' + eur(min90); }
+    function vanHtml(o) {
+      // bij een bol-partner kan achter dezelfde naam een andere verkoper zitten: dan is het niet dezelfde winkel
+      if (!o.winkel || /partner/i.test(o.winkel) || !(o.van > 0) || !(o.van > nu)) return '';
+      var c = vanCheck((logboek || {})[o.winkel], o.winkel, o.van);
+      if (!c) return '';
+      if (c.kort) return '<p class="dpg-van"><b>Van-prijs ' + eur(c.van) + '</b> bij ' + esc(c.w) + ': wij meten daar nog te kort om die te controleren.</p>';
+      if (c.klopt) return '<p class="dpg-van goed"><b>\u2713 Van-prijs klopt</b> met onze metingen: ' + esc(c.w) + ' vroeg in de 30 dagen hiervoor minstens ' + eur(c.laag) + '.<small>Eigen metingen, elke nacht, uit de productfeed van de winkel.</small></p>';
+      return '<p class="dpg-van let"><b>! Let op de van-prijs.</b> ' + esc(c.w) + ' noemt ' + eur(c.van) + ' als van-prijs, maar de laagste prijs die wij daar in de 30 dagen hiervoor maten was ' + eur(c.laag) + '. De korting is dan kleiner dan hij lijkt.<small>Eigen metingen, elke nacht, uit de productfeed van de winkel. De winkel kan een prijs hebben gehad die wij niet zagen.</small></p>';
+    }
+    var h = '<span class="dpg-oord ' + soort + '">' + esc(oordeel) + '</span>' +
+      '<div class="dpg-tegels">' +
+      '<div><small>Nu</small><b>' + eur(nu) + '</b></div>' +
+      '<div><small>Laagste ' + (n >= 30 ? '30 dagen' : sinds) + '</small><b>' + eur(min30) + '</b></div>' +
+      '<div><small>Gemiddeld ' + (n >= 90 ? '90 dagen' : sinds) + '</small><b>' + eur(gem90) + '</b></div>' +
+      '<div><small>Hoogste ' + (n >= 90 ? '90 dagen' : sinds) + '</small><b>' + eur(max90) + '</b></div></div>' +
+      vanHtml(o) +
+      '<p class="dpg-uitleg">Laagste prijs over alle winkels die wij volgen, elke nacht gemeten. "Laagste 30 dagen" is dezelfde maatstaf als de wettelijke van-prijs bij een korting.</p>';
+    var perioden = [[30, '1 mnd'], [90, '3 mnd'], [365, '1 jaar']].filter(function (x) { return n > x[0] + 5; });
+    h += '<div class="dpg-kop"><b>' + esc(o.kop != null ? o.kop : 'Prijsverloop, laagste prijs') + '</b>' + (perioden.length ? '<div class="dpg-tabs">' +
+      perioden.map(function (x) { return '<button type="button" data-d="' + x[0] + '">' + x[1] + '</button>'; }).join('') +
+      '<button type="button" data-d="' + n + '">Alles</button></div>' : '') + '</div><div class="dpg-vak"></div>';
+    // dezelfde reeks als tabel, voor wie liever leest: alleen de dagen waarop de laagste prijs veranderde
+    var rijen = [];
+    for (var i = 0; i < n; i++) if (p[i] != null && (i === 0 || p[i] !== p[i - 1])) rijen.push('<tr><td>' + kort(r.start + i * DAG) + '</td><td>' + eur(p[i]) + '</td><td>' + esc(r.w[i]) + '</td></tr>');
+    h += '<details class="dpg-tabel"><summary>Bekijk als tabel</summary><table><tr><th>Vanaf</th><th>Laagste prijs</th><th>Winkel</th></tr>' + rijen.slice(-15).reverse().join('') + '</table></details>';
+    doel.classList.add('dpg');
+    doel.innerHTML = h;
+    var G = { r: r, vak: doel.querySelector('.dpg-vak'), hoogte: o.hoogte || 220, periode: n > 95 ? 90 : n };
+    function knoppen() { [].forEach.call(doel.querySelectorAll('.dpg-tabs button'), function (b) { b.setAttribute('aria-pressed', +b.getAttribute('data-d') === G.periode ? 'true' : 'false'); }); }
+    [].forEach.call(doel.querySelectorAll('.dpg-tabs button'), function (b) { b.addEventListener('click', function () { G.periode = +b.getAttribute('data-d'); knoppen(); teken(G); }); });
+    knoppen();
+    teken(G);
+    // opnieuw tekenen als de breedte verandert (draaien, venster, een overlay die nog openschuift)
+    function zo() { var b = Math.floor(G.vak.getBoundingClientRect().width); if (b > 0 && Math.abs(b - G.getekend) > 4) teken(G); }
+    if (window.ResizeObserver) new ResizeObserver(zo).observe(G.vak); else window.addEventListener('resize', zo);
+    setTimeout(zo, 350);
+    return true;
+  };
+})();
+</script>

@@ -395,7 +395,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     </button>
     <button class="ds-chip" type="button" data-f="voorraad" aria-pressed="false"><b>Op voorraad</b></button>
     <button class="ds-chip" type="button" data-f="refurbished" aria-pressed="false">
-      <b>Refurbished</b> <span class="n" data-n="refurbished"></span>
+      <b>Refurbished of tweedehands</b> <span class="n" data-n="refurbished"></span>
     </button>
   </div>
         </div>
@@ -509,6 +509,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
   </div>
 </div>
 
+{%- render 'dpv-prijsgrafiek' -%}
 <script>
 (function () {
   var wortel = document.getElementById('ds');
@@ -1339,9 +1340,13 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
         var reeks = (d.logboek || {})[besteW] || [];
         h += '<div class="ds-oordeel"><b>Wat wij van deze prijs weten</b>' +
           oordeelTekst(d.oordeel, { prijs: pr.o[0].p, v: pr.o[0].v }) + '</div>';
-        h += prijsGraf(reeks);
+        h += '<div class="ds-dpg" style="margin-top:12px"></div>';
         h += '</div></div>';
         el.ovlBody.innerHTML = h;
+        // Nieuwe grafiek (19 okt), gedeeld met de productpagina. Lukt hij niet, dan de oude.
+        var dpgEl = el.ovlBody.querySelector('.ds-dpg'), dpgOk = false;
+        try { dpgOk = !!(window.dpvPrijsgrafiek && window.dpvPrijsgrafiek(dpgEl, d.logboek || {}, { nu: pr.o[0].p, winkel: pr.o[0].w, van: pr.o[0].v, hoogte: 190 })); } catch (e) { dpgOk = false; }
+        if (!dpgOk && dpgEl) dpgEl.outerHTML = prijsGraf(reeks);
       })
       .catch(function () {
         el.ovlBody.innerHTML = '<p style="font-size:14px;color:#5B6B80;margin:0">Dit product kon niet geladen worden.</p>';

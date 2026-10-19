@@ -201,6 +201,19 @@ const EXPERT_PAD = [
 // (PS4, PS3, Xbox One, 3DS, Wii) en merchandise komen alleen mee als een andere
 // winkel hetzelfde EAN heeft; anders wordt Gaming een rommelzolder.
 const NEDGAME_HUIDIG = { 'PlayStation 5': 'PS5', 'Nintendo Switch 2': 'Nintendo Switch 2', 'Nintendo Switch': 'Nintendo Switch', 'Xbox Series X': 'Xbox Series X', 'PC Gaming': 'PC' }
+// 19 okt: oudere platforms doen nu wel mee, nieuw en tweedehands, zodat je in
+// de vergelijker per platform kunt filteren (PS1 tot en met PS4, oudere Xbox
+// en Nintendo). Het platform komt altijd achter de naam te staan en een
+// gebruikt exemplaar krijgt "(tweedehands)" in de naam en het label
+// Refurbished. Films, merchandise en gidsen blijven buiten de vergelijker.
+const NEDGAME_OUD = {
+  'PlayStation 4': 'PS4', 'PlayStation 3': 'PS3', 'PlayStation 2': 'PS2', 'PlayStation 1': 'PS1', 'Sony PSP': 'PSP', 'PS Vita': 'PS Vita',
+  'Xbox One': 'Xbox One', 'Xbox 360': 'Xbox 360', 'Xbox': 'Xbox (origineel)',
+  'Nintendo Wii U': 'Wii U', 'Nintendo Wii': 'Wii', 'Nintendo 3DS': '3DS', 'Nintendo DS': 'Nintendo DS', 'GameCube': 'GameCube',
+  'Nintendo 64': 'Nintendo 64', 'Super Nintendo': 'Super Nintendo', 'Nintendo (NES)': 'NES',
+  'GameBoy Advance': 'Game Boy Advance', 'Gameboy Color': 'Game Boy Color', 'Gameboy': 'Game Boy',
+  'Sega MegaDrive': 'Sega Mega Drive', 'Sega Master System': 'Sega Master System', 'Dreamcast': 'Dreamcast', 'Evercade': 'Evercade'
+}
 
 const MM_LOGO = 'https://hst.tradedoubler.com/file/262336/MM-logo.png'
 
@@ -1363,7 +1376,8 @@ function uitNedgame (r, basis) {
   if (ean.length === 11 || ean.length === 12) ean = ean.padStart(13, '0')
   const pad = String(r.categoryPath || '')
   const [top, sub = ''] = pad.split(' > ').map(s => s.trim())
-  const platform = NEDGAME_HUIDIG[top]
+  const platform = NEDGAME_HUIDIG[top] || NEDGAME_OUD[top]
+  const oud = !NEDGAME_HUIDIG[top] && !!NEDGAME_OUD[top]
   let cat
   const kaart = top === 'Trading Card Games'
   if (kaart) cat = 'kaarten'
@@ -1384,6 +1398,9 @@ function uitNedgame (r, basis) {
   // vindt hem niet. Dus erachter zetten, zoals de andere winkels doen.
   if (kaart) type = /accessoires/i.test(sub) ? 'kaartaccessoires' : kaartSoort(naam)
   if (type === 'games' && platform && !/\b(ps5|ps4|playstation|switch|xbox|pc)\b/i.test(naam)) naam += ' - ' + platform
+  // Oudere platforms: altijd het platform erbij, ook als de naam al "PlayStation"
+  // zegt, want "Gran Turismo - PlayStation" zegt niet of het PS2 of PS4 is.
+  else if (oud && platform && naam.toLowerCase().indexOf(platform.toLowerCase()) === -1) naam += ' - ' + platform
   let van = num(r.fromPrice)
   if (!(van > prijs * 1.01)) van = 0
   return {
@@ -2095,22 +2112,23 @@ async function main () {
     }
     for (const it of rauw) if (it.ean && it.staat !== 'refurbished' && !perEan.has(it.ean)) perEan.set(it.ean, it)
     let gebruikt = 0
+    let los = 0
     for (const r of th) {
       const top = String(r.categoryPath || '').split(' > ')[0].trim()
-      if (!NEDGAME_HUIDIG[top]) continue
+      if (!NEDGAME_HUIDIG[top] && !NEDGAME_OUD[top]) continue
       const e = /^\d{11,12}$/.test(r.EAN || '') ? r.EAN.padStart(13, '0') : r.EAN
       const basis = e ? perEan.get(e) : undefined
-      if (!basis) continue
       const it = uitNedgame(Object.assign({}, r, { condition: 'Nieuw', fromPrice: '' }), basis)
       if (!it) continue
-      // Duurder dan nieuw is geen aanbieding; dat komt bij oude voorraad voor.
-      if (it.prijs >= basis.prijs) continue
+      // Naast een nieuw exemplaar: alleen als het goedkoper is. Duurder dan
+      // nieuw is geen aanbieding; dat komt bij oude voorraad voor.
+      if (basis && it.prijs >= basis.prijs) continue
       it.staat = 'refurbished'
       it.gebruikt = 1
       rauw.push(it)
-      gebruikt++
+      if (basis) gebruikt++; else los++
     }
-    console.log('Nedgame tweedehands: ' + th.length + ' regels, ' + gebruikt + ' naast een nieuw exemplaar')
+    console.log('Nedgame tweedehands: ' + th.length + ' regels, ' + gebruikt + ' naast een nieuw exemplaar, ' + los + ' als los tweedehands product')
   }
 
   // bol breed: per categorie ophalen, vijftig tegelijk, met prijs erbij. Dit

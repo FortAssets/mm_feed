@@ -148,8 +148,30 @@ html:not(#x) .dhd .prod .winkel{font-size:14px;color:var(--zacht)}
 html:not(#x) .dhd .prod .meta{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--zacht);flex-wrap:wrap}
 html:not(#x) .dhd .sticker{display:inline-flex;align-items:center;min-height:26px;padding:0 10px;border-radius:999px;background:#DDF3E8;border:1.5px solid #0B5A35;color:#0B5A35;font-weight:700;font-size:13px}
 html:not(#x) .dhd .sticker.pre{background:var(--geel);border-color:var(--inkt);color:var(--inkt)}
-html:not(#x) .dhd .uit .pre-regel{font-size:14px;color:var(--zacht);margin:8px 0 0}
-html:not(#x) .dhd .uit .pre-regel a{color:var(--blauw);font-weight:600}
+/* 19 okt: uitgelichte gamingkaart als prijsbord (optie B): cover op grijs vlak, winkels als tegels met logo, knoppen op een regel */
+html:not(#x) .dhd .bord .boven{grid-template-columns:150px minmax(0,1fr);gap:22px;align-items:center;flex:0 0 auto}
+html:not(#x) .dhd .bord .foto{min-height:190px;height:190px;border-radius:14px}
+html:not(#x) .dhd .bord .foto img{max-height:160px;transform:none;filter:drop-shadow(0 10px 18px rgba(0,0,0,.25))}
+html:not(#x) .dhd .bord h3{font-size:24px;line-height:1.1;margin:8px 0 2px}
+html:not(#x) .dhd .bord .sub{color:var(--zacht);font-size:14.5px}
+html:not(#x) .dhd .bord .plat{display:flex;gap:6px;margin-top:10px}
+html:not(#x) .dhd .bord .plat a{border:1.5px solid var(--lijn);border-radius:999px;padding:5px 12px;font-size:13.5px;font-weight:600;color:var(--inkt)}
+html:not(#x) .dhd .bord .plat a[aria-pressed="true"]{border-color:var(--inkt);background:var(--inkt);color:#fff}
+html:not(#x) .dhd .bord .prijsrij .prijs{font-size:40px}
+html:not(#x) .dhd .bord .wtegels{list-style:none;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:18px 0 0}
+html:not(#x) .dhd .bord .wtegels li{border:1px solid var(--lijn);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+html:not(#x) .dhd .bord .wtegels li.eerste{border:1.5px solid var(--inkt);box-shadow:3px 3px 0 var(--groen)}
+html:not(#x) .dhd .bord .wtegels a{display:flex;flex-direction:column;gap:6px;align-items:flex-start;color:var(--inkt);width:100%}
+html:not(#x) .dhd .bord .wtegels .nm{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px}
+html:not(#x) .dhd .bord .wtegels .lg{width:26px;height:26px;border-radius:7px;border:1px solid var(--lijn);background:#fff;object-fit:contain;padding:3px}
+html:not(#x) .dhd .bord .wtegels .p{font-family:var(--kop);font-size:20px;font-weight:800;letter-spacing:-.03em}
+html:not(#x) .dhd .bord .wtegels small{font-size:12px;color:var(--zacht);font-weight:500}
+html:not(#x) .dhd .bord .wtegels li.eerste small{color:var(--groen);font-weight:700}
+html:not(#x) .dhd .bord .act{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:16px}
+html:not(#x) .dhd .bord .act .tl{margin-left:auto;font-size:14.5px}
+html:not(#x) .dhd .bord .act .bf{margin:0}
+html:not(#x) .dhd .bord .act .bf .dpvbf{min-height:46px;font-family:inherit}
+@media (max-width:900px){html:not(#x) .dhd .bord .sticker .lang{display:none}html:not(#x) .dhd .bord .boven{grid-template-columns:110px minmax(0,1fr);gap:14px}html:not(#x) .dhd .bord .foto{min-height:140px;height:140px}html:not(#x) .dhd .bord .foto img{max-height:120px}html:not(#x) .dhd .bord h3{font-size:19px}html:not(#x) .dhd .bord .prijsrij .prijs{font-size:34px}html:not(#x) .dhd .bord .wtegels{grid-template-columns:repeat(2,minmax(0,1fr))}html:not(#x) .dhd .bord .act .tl{margin-left:0}}
 /* 9 okt: inkt op het middengroen was slecht leesbaar. Nu lichtgroen vlak met donkergroene tekst en rand (contrast 7:1). */
 html:not(#x) .dhd .prod .meta{margin-bottom:16px}
 html:not(#x) .dhd .prod .knop{margin-top:auto;align-self:stretch;width:calc(100% - 3px);min-height:46px;padding:8px 10px;white-space:normal;text-align:center;line-height:1.2;font-size:14.5px}
@@ -1062,23 +1084,33 @@ html:not(#x) .dhd .regel a.volg{color:inherit;text-decoration:underline;text-und
       <p><a class="tl" href="/pages/gaming">Alles in gaming</a></p>
     </div>
     <div class="g2" data-blok="gaming">
-      <article class="uit kaartje" style="--vlak:#F9C31F" data-pp="e5026555439817" data-prod data-uit data-cat="gaming" data-naam="Grand Theft Auto VI (GTA 6) PS5"><div class="vlak" aria-hidden="true"></div>
+      <article class="uit bord kaartje" style="--vlak:#F9C31F" data-pp="e5026555439817" data-prod data-uit data-cat="gaming" data-naam="Grand Theft Auto VI (GTA 6) PS5" data-status="pre-order"><div class="vlak" aria-hidden="true"></div>
         <div class="label">
           <div class="boven">
             <div class="foto" data-pp-foto><img src="https://coolblue.bynder.com/transform/6c7c5bb0-ab4b-48e5-8adb-7870bea052b1/942773?io=transform:fit,height:800,width:800&amp;format=png" alt="Grand Theft Auto VI voor PS5" loading="lazy" width="150" height="150"></div>
             <div>
-              <p class="meta" style="margin:0 0 8px"><span class="sticker pre">Pre-order &middot; verschijnt 19 november</span></p>
-              <h3 data-pp-naam>Grand Theft Auto VI (GTA 6) PS5</h3>
+              <span class="sticker pre">Pre-order &middot; <span class="lang">verschijnt </span>19 november</span>
+              <h3 data-pp-naam>Grand Theft Auto VI (GTA 6)</h3>
+              <p class="sub">Code in the box &middot; <span data-f="aantal">4 winkels</span>, allemaal dezelfde prijs</p>
+              <div class="plat" role="group" aria-label="Platform">
+                <a href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box" data-plat="e5026555439817" data-plat-naam="Grand Theft Auto VI (GTA 6) PS5" data-plat-foto="https://coolblue.bynder.com/transform/6c7c5bb0-ab4b-48e5-8adb-7870bea052b1/942773?io=transform:fit,height:800,width:800&amp;format=png" data-plat-link="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box" aria-pressed="true">PS5</a>
+                <a href="/pages/product/grand-theft-auto-vi-gta-6-xbox-series-x-code-in-the-box" data-plat="e5026555370097" data-plat-naam="Grand Theft Auto VI (GTA 6) Xbox Series X" data-plat-foto="https://coolblue.bynder.com/transform/f460e2fa-0e88-473a-b391-4d0e8ac56c08/942774?io=transform:fit,height:800,width:800&amp;format=png" data-plat-link="/pages/product/grand-theft-auto-vi-gta-6-xbox-series-x-code-in-the-box" aria-pressed="false">Xbox Series X</a>
+              </div>
               <p class="prijsrij"><span class="prijs" data-f="prijs">&euro;79,99</span><span class="winkel" data-f="winkel">bij Coolblue</span></p>
-              <p class="meta" data-f="meta"><span data-f="aantal">4 winkels</span></p>
-              <p class="pre-regel">Ook voor <a href="/pages/product/grand-theft-auto-vi-gta-6-xbox-series-x-code-in-the-box">Xbox Series X</a> &middot; <a href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box">prijsverloop en alle winkels</a></p>
+              <p class="meta" data-f="meta" hidden></p>
             </div>
           </div>
-          <ol class="wrijen" aria-label="Prijs per winkel" data-f="rijen">
-            <li class="eerste"><span class="nr">1</span><span class="w">Coolblue</span><span class="waarom">laagste prijs</span><span class="p">&euro;79,99</span><a class="knop" href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box">Bekijk bij Coolblue</a></li>
-            <li><span class="nr open">2</span><span class="w">MediaMarkt</span><span class="p">&euro;79,99</span><a class="knop klein" href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box">Bekijk<span class="bij"> bij MediaMarkt</span></a></li>
-            <li><span class="nr open">3</span><span class="w">Nedgame</span><span class="p">&euro;79,99</span><a class="knop klein" href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box">Bekijk<span class="bij"> bij Nedgame</span></a></li>
+          <ol class="wtegels" aria-label="Prijs per winkel" data-f="tegels">
+            <li class="eerste"><a href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box"><span class="nm">Coolblue</span><span class="p">&euro;79,99</span><small>laagste prijs</small></a></li>
+            <li><a href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box"><span class="nm">MediaMarkt</span><span class="p">&euro;79,99</span><small>pre-order</small></a></li>
+            <li><a href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box"><span class="nm">Nedgame</span><span class="p">&euro;79,99</span><small>pre-order</small></a></li>
+            <li><a href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box"><span class="nm">bol.com</span><span class="p">&euro;79,99</span><small>pre-order</small></a></li>
           </ol>
+          <div class="act">
+            <a class="knop" data-f="knop" href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box">Bekijk bij Coolblue</a>
+            <div class="bf" data-f="bf"></div>
+            <a class="tl" data-f="pp-link" href="/pages/product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box">Prijsverloop</a>
+          </div>
         </div>
       </article>
       <ul class="stapel">
@@ -1785,7 +1817,7 @@ html:not(#x) .dhd .regel a.volg{color:inherit;text-decoration:underline;text-und
     var blok = (el.closest('[data-blok]') || wortel).getAttribute('data-blok') || 'producten';
     return json(SHOP + '/api/shop/product?i=' + encodeURIComponent(id) + '&cat=' + encodeURIComponent(cat)).then(function (j) {
       var o = ((j.product || {}).o || []).filter(function (x) { return parseFloat(x.p) > 0 && x.w; })
-        .map(function (x) { return { w: x.w, p: parseFloat(x.p) }; }).sort(function (a, b) { return a.p - b.p; });
+        .map(function (x) { return { w: x.w, p: parseFloat(x.p), vr: x.vr }; }).sort(function (a, b) { return a.p - b.p; });
       if (!o.length) return;
       zet(el, 'prijs', euro(o[0].p)); zet(el, 'winkel', 'bij ' + o[0].w);
       var isKaart = el.classList.contains('prod');
@@ -1828,6 +1860,25 @@ html:not(#x) .dhd .regel a.volg{color:inherit;text-decoration:underline;text-und
           li.appendChild(k); rijen.appendChild(li);
         });
       }
+      // 19 okt: prijsbord met winkeltegels (optie B op de homepage). Logo per winkel,
+      // laagste prijs vooraan, status uit data-status (pre-order) of voorraad.
+      var tegels = q(el, 'tegels');
+      if (tegels) {
+        tegels.textContent = '';
+        var status = el.getAttribute('data-status') || '';
+        o.slice(0, 4).forEach(function (x, n) {
+          var li = document.createElement('li'), k = document.createElement('a'), nm = document.createElement('span'), lg = document.createElement('img');
+          if (n === 0) li.className = 'eerste';
+          nm.className = 'nm'; lg.className = 'lg'; lg.alt = ''; lg.loading = 'lazy';
+          lg.src = 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://' + winkelDomein(x.w);
+          nm.appendChild(lg); nm.appendChild(document.createTextNode(x.w));
+          k.appendChild(nm); k.appendChild(span('p', euro(x.p)));
+          var st = n === 0 ? 'laagste prijs' : (status || (x.vr ? 'op voorraad' : ''));
+          if (st) { var sm = document.createElement('small'); sm.textContent = st; k.appendChild(sm); }
+          doorklik(k, shopgo(id, cat, x.w), n + 1, x.w, blok); k.setAttribute('data-product', naam);
+          li.appendChild(k); tegels.appendChild(li);
+        });
+      }
       // Laatste dag waarop de winkels voor dit product zijn nagelopen.
       var log = j.logboek || {}, laatst = '';
       Object.keys(log).forEach(function (w) { (log[w] || []).forEach(function (r) { if (r.gezien && r.gezien > laatst) laatst = r.gezien; }); });
@@ -1838,6 +1889,22 @@ html:not(#x) .dhd .regel a.volg{color:inherit;text-decoration:underline;text-und
       }
     }).catch(function () {});
   }
+  function winkelDomein(w) {
+    var m = { 'coolblue': 'coolblue.nl', 'mediamarkt': 'mediamarkt.nl', 'nedgame': 'nedgame.nl', 'bol.com': 'bol.com', 'bol.com partner': 'bol.com', 'ebay': 'ebay.nl', 'amazon': 'amazon.nl', 'expert': 'expert.nl', 'alternate': 'alternate.nl', 'belsimpel': 'belsimpel.nl', 'dutch-plaza': 'dutch-plaza.nl' };
+    var k = String(w || '').toLowerCase();
+    return m[k] || (k.replace(/[^a-z0-9.-]/g, '') + (k.indexOf('.') === -1 ? '.nl' : ''));
+  }
+  // Platformwissel op het prijsbord: zelfde kaart, ander product-id, opnieuw vullen.
+  wortel.addEventListener('click', function (e) {
+    var a = e.target.closest('.bord .plat a[data-plat]'); if (!a) return;
+    e.preventDefault();
+    var kaart = a.closest('[data-prod]'); if (!kaart) return;
+    kaart.setAttribute('data-pp', a.getAttribute('data-plat')); kaart.setAttribute('data-naam', a.getAttribute('data-plat-naam') || '');
+    var img = kaart.querySelector('[data-pp-foto] img'); if (img && a.getAttribute('data-plat-foto')) img.src = a.getAttribute('data-plat-foto');
+    var link = a.getAttribute('data-plat-link'); if (link) kaart.querySelectorAll('[data-f="pp-link"]').forEach(function (l) { l.href = link; });
+    kaart.querySelectorAll('.plat a').forEach(function (x) { x.setAttribute('aria-pressed', x === a ? 'true' : 'false'); });
+    vulProduct(kaart);
+  });
   var prods = wortel.querySelectorAll('[data-prod]');
   for (var i = 0; i < prods.length; i++) vulProduct(prods[i]);
 
@@ -2013,7 +2080,7 @@ html:not(#x) .dhd .regel a.volg{color:inherit;text-decoration:underline;text-und
     { "type": "text", "id": "sub", "label": "Ondertitel", "default": "Sim only, telefoon, internet, energie en zorg. Elke nacht gemeten, elke ochtend hier." },
     { "type": "text", "id": "logos_kop", "label": "Logo's: kopje", "default": "Wij vergelijken onder andere" },
     { "type": "text", "id": "logos", "label": "Logo's: domeinen", "info": "Gescheiden door komma's. Leeg = geen rij.", "default": "kpn.com,odido.nl,vodafone.nl,simyo.nl,ben.nl,youfone.nl,ziggo.nl,bol.com,coolblue.nl,mediamarkt.nl" },
-    { "type": "text", "id": "seintje_url", "label": "Link contract-seintje", "info": "Staat onder sim only, telefoon en internet. Leeg = niet tonen.", "default": "/pages/mijn-contracten" },
+    { "type": "text", "id": "seintje_url", "label": "Link contract-seintje", "info": "Staat onder sim only, telefoon en internet. Leeg = niet tonen.", "default": "/pages/bespaarmonitor" },
     { "type": "header", "content": "Kiezer: producten en gaming" },
     { "type": "textarea", "id": "groepen", "label": "Subkeuzes producten", "info": "naam|categorie voor de link 'alle'|bron. Bron is product-id:categorie met komma's ertussen, of lijst:categorie:type:minimumprijs.", "default": "Populair||e0045496337414:gaming,e8806097827481:telefoons,e0195950643589:telefoons\nTelefoons|telefoons|e0195950643589:telefoons,e8806097827481:telefoons,e0195950627442:telefoons\nLaptops|laptops|e0195950687408:laptops,e4711121778834:laptops,e4711636476805:laptops\nTv's|tv-beeld|e8806096360576:tv-beeld,e4548736183001:tv-beeld,e5901292530365:tv-beeld\nAudio|audio|lijst:audio::80" },
     { "type": "textarea", "id": "gaming_groepen", "label": "Subkeuzes gaming", "info": "Zelfde opbouw als hierboven.", "default": "Consoles|gaming|e0045496337414:gaming,e0045496453442:gaming,e0045496337544:gaming\nGames|gaming|lijst:gaming:games:25\nHeadsets|gaming|lijst:gaming:gaming headsets:40\nControllers|gaming|lijst:gaming:controllers:30" },

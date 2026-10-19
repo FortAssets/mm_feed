@@ -1,0 +1,577 @@
+{%- comment -%}
+  Zakelijke vergelijker: internet, sim only en telefoon met abonnement.
+
+  Waarom een eigen pagina en niet de knop zakelijk binnen de particuliere
+  vergelijker: een ondernemer die zoekt op "zakelijk sim only" wil niet eerst
+  door een particuliere pagina heen, en zakelijk vraagt om andere filters (vast
+  IP-adres, servicegarantie, 4G back-up) die particulier niets betekenen.
+  Daarom drie sjablonen die allemaal deze sectie gebruiken, met een instelling
+  voor het actieve tabblad. De tabbladen zijn gewone links, dus elke pagina is
+  los vindbaar.
+
+  Feed en handmatig door elkaar: Odido Zakelijk levert een feed, Ziggo Zakelijk
+  levert er geen en van KPN en Vodafone Zakelijk hebben we alleen mobiele
+  regels. Die pakketten staan hieronder handmatig, overgenomen van hun eigen
+  tarievenpagina's, met de peildatum erbij.
+
+  19 okt, nieuwe opzet:
+  - Sim only en internet: bovenaan drie keuzes (goedkoopst, meeste data of
+    snelheid voor je geld, onbeperkt of met vast IP), een teller voor het aantal
+    simkaarten en daaronder alles in een vergelijkingstabel.
+  - Met toestel: een kaart per telefoon met productfoto, de bundels als
+    keuzerijtjes en het totaal over de looptijd, met toestel en abonnement apart.
+  - De sim-onlyfeed van Odido Zakelijk bevat tabletabonnementen met toestel
+    (Lenovo Tab M10); die staan niet meer bij sim only.
+  - Toestelregels met een abonnementsdeel onder de 8 euro slaan we over: dat
+    klopt niet met de sim-onlyprijzen van dezelfde aanbieder (een onbeperkte
+    bundel voor 3,46 euro) en zette zulke regels bovenaan.
+
+  Alle bedragen exclusief btw, zoals bij zakelijk gebruikelijk.
+{%- endcomment -%}
+
+{%- assign tab = section.settings.tab | default: 'internet' -%}
+{%- assign peil = section.settings.peildatum -%}
+
+<div class="zkv" data-tab="{{ tab }}" data-worker="{{ section.settings.worker_url }}">
+
+  <header class="zkv-top">
+    <p class="zkv-eyebrow">{{ section.settings.eyebrow }}</p>
+    <h1>{{ section.settings.kop }}</h1>
+    <p class="zkv-sub">{{ section.settings.sub }}</p>
+  </header>
+
+  <nav class="zkv-tabs" aria-label="Kies wat je vergelijkt">
+    <a href="{{ section.settings.url_internet }}" class="zkv-tab{% if tab == 'internet' %} aan{% endif %}"{% if tab == 'internet' %} aria-current="page"{% endif %}>Internet</a>
+    <a href="{{ section.settings.url_simonly }}" class="zkv-tab{% if tab == 'simonly' %} aan{% endif %}"{% if tab == 'simonly' %} aria-current="page"{% endif %}>Sim only</a>
+    <a href="{{ section.settings.url_toestel }}" class="zkv-tab{% if tab == 'toestel' %} aan{% endif %}"{% if tab == 'toestel' %} aria-current="page"{% endif %}>Met toestel</a>
+  </nav>
+
+  {%- if tab == 'simonly' -%}
+  <div class="zkv-team">
+    <span>Hoeveel simkaarten?</span>
+    <span class="zkv-st"><button type="button" id="zkv-min" aria-label="Een simkaart minder">&minus;</button><b id="zkv-n" aria-live="polite">1</b><button type="button" id="zkv-plus" aria-label="Een simkaart meer">+</button></span>
+    <small>Bij meer dan een zie je ook het totaal voor je team.</small>
+  </div>
+  {%- endif -%}
+
+  <div class="zkv-filters" id="zkv-filters"></div>
+
+  <p class="zkv-telling" id="zkv-telling">Aanbiedingen ophalen&hellip;</p>
+  <div id="zkv-keuzes"></div>
+  <div class="zkv-lijst" id="zkv-lijst"></div>
+  <div class="zkv-meer" id="zkv-meer" hidden><button type="button" id="zkv-meer-knop">Meer tonen</button></div>
+  <p class="zkv-bronregel">Prijzen uit de feeds van de aanbieders, dagelijks bijgewerkt. Pakketten zonder feed houden wij met de hand bij, tarief van {{ peil }}.</p>
+
+  <section class="zkv-uitleg">
+    <h2>{{ section.settings.uitleg_kop }}</h2>
+    <div class="zkv-tekst">{{ section.settings.uitleg }}</div>
+  </section>
+
+  <p class="zkv-fijn">{{ section.settings.fijn }}</p>
+</div>
+
+<style>
+.zkv{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#10b981;--groenD:#0b7d5c;--groenL:#E3F3EA;--blauw:#1B3FA0;--geel:#F9C31F;
+ font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);max-width:1080px;margin:0 auto;padding:10px 16px 46px}
+.zkv *{box-sizing:border-box}
+.zkv :focus-visible{outline:3px solid var(--groen);outline-offset:2px}
+.zkv-eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--blauw);font-weight:800;margin:0 0 6px}
+.zkv h1{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:29px;line-height:1.08;letter-spacing:-.03em;font-weight:800;margin:0 0 8px}
+.zkv-sub{font-size:15.5px;line-height:1.6;color:var(--soft);margin:0 0 18px;max-width:64ch}
+.zkv-tabs{display:flex;gap:7px;margin:0 0 16px;flex-wrap:wrap}
+.zkv a.zkv-tab,.zkv a.zkv-tab:visited{display:inline-flex;align-items:center;min-height:42px;padding:0 18px;border-radius:11px;border:1px solid var(--line);background:#fff;color:var(--ink) !important;font-size:14.5px;font-weight:700;text-decoration:none !important}
+.zkv a.zkv-tab.aan{background:var(--blauw);border-color:var(--blauw);color:#fff !important}
+.zkv-team{display:flex;align-items:center;gap:12px;flex-wrap:wrap;background:var(--vlak);border-radius:14px;padding:11px 14px;margin:0 0 14px;font-weight:700;font-size:15px}
+.zkv-team small{color:var(--soft);font-weight:500;font-size:13px}
+.zkv-st{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;background:#fff;overflow:hidden}
+.zkv-st button{border:0;background:#fff;font:inherit;font-size:18px;font-weight:700;width:40px;height:38px;cursor:pointer;color:var(--ink)}
+.zkv-st b{min-width:38px;text-align:center;border-left:1px solid var(--line);border-right:1px solid var(--line);line-height:38px}
+.zkv-filters{display:flex;gap:7px;flex-wrap:wrap;margin:0 0 14px;align-items:center}
+.zkv-filterrij{flex-basis:100%;display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-top:3px}
+.zkv-fl{font-size:12px;font-weight:800;color:var(--soft);margin-right:2px}
+.zkv-select{border:1px solid var(--line);border-radius:11px;padding:9px 13px;font:inherit;font-size:13.5px;font-weight:600;color:var(--ink);background:#fff;max-width:100%}
+.zkv-chip{display:inline-flex;align-items:center;gap:7px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 13px;font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;min-height:36px}
+.zkv-chip.aan{border-color:var(--ink);background:var(--ink);color:#fff}
+.zkv-logo-chip{width:20px;height:20px;border:0;padding:0;border-radius:5px}
+.zkv-telling{font-size:14px;color:var(--soft);margin:0 0 12px}.zkv-telling b{color:var(--ink)}
+.zkv-logo{width:32px;height:32px;flex:none;object-fit:contain;border-radius:8px;background:#fff;border:1px solid var(--line);padding:3px}
+.zkv-logo-tekst{display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--blauw)}
+.zkv a.zkv-go,.zkv a.zkv-go:visited{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:0 14px;background:var(--geel);color:var(--ink) !important;border:1.5px solid var(--ink);border-radius:10px;font-size:14px;font-weight:800;text-decoration:none !important;white-space:nowrap}
+.zkv a.zkv-go:hover{background:#EDB50C}
+.zkv-tag{position:absolute;top:-11px;left:14px;background:var(--ink);color:#fff;font-size:12px;font-weight:800;border-radius:6px;padding:3px 9px}
+.zkv-tag.groen,.zkv-lab{background:var(--groen);color:#fff}
+.zkv-lab{display:inline-block;font-size:11px;font-weight:800;border-radius:6px;padding:2px 7px;margin-left:6px;vertical-align:2px}
+/* drie keuzes */
+.zkv-drie{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:6px 0 22px}
+.zkv-k{border:1px solid var(--line);border-radius:16px;padding:16px;position:relative;display:flex;flex-direction:column;background:#fff}
+.zkv-k.hl{border:2px solid var(--ink);box-shadow:5px 5px 0 var(--groen)}
+.zkv-kkop{display:flex;gap:10px;align-items:center;margin:4px 0 12px}.zkv-kkop b{display:block;font-size:14.5px}.zkv-kkop small{display:block;color:var(--soft);font-size:12.5px;line-height:1.3}
+.zkv-groot{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:34px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.zkv-groot small{font-size:14px;font-family:'Plus Jakarta Sans',sans-serif;color:var(--soft);font-weight:600;letter-spacing:0}
+.zkv-eig{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0 14px}.zkv-eig span{font-size:12px;font-weight:700;background:#EEF2FB;color:var(--blauw);border-radius:99px;padding:4px 9px}
+.zkv-kprijs{margin-top:auto;display:flex;justify-content:space-between;align-items:flex-end;gap:10px;border-top:1px solid var(--line);padding-top:12px}
+.zkv-kprijs b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.02em}
+.zkv-kprijs small{display:block;font-size:12px;color:var(--soft)}
+.zkv-teamp{font-size:13px;color:var(--groenD);font-weight:700;margin-top:2px}
+/* tabel */
+.zkv-tabel{width:100%;border-collapse:separate;border-spacing:0;font-size:14.5px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.zkv-tabel th{text-align:left;font-size:12px;color:var(--soft);font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:11px 12px;background:var(--vlak);border-bottom:1px solid var(--line)}
+.zkv-tabel td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+.zkv-tabel tr:last-child td{border-bottom:0}
+.zkv-tabel tr.top td{background:#F2FBF7}
+.zkv-aanb{display:flex;gap:10px;align-items:center}.zkv-aanb b{display:block;font-size:14.5px}.zkv-aanb small{display:block;color:var(--soft);font-size:12.5px;line-height:1.35}
+.zkv-gb{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.zkv-pr{text-align:right;white-space:nowrap}
+.zkv-pr b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;font-weight:800}
+.zkv-pr small{display:block;font-size:11.5px;color:var(--soft);font-weight:600}
+.zkv-pr .zkv-eenmalig{color:#B45309;font-weight:800}
+.zkv-pr .zkv-teamp{font-size:12px}
+@media(max-width:760px){
+ .zkv-drie{grid-template-columns:1fr}
+ .zkv-tabel thead{display:none}
+ .zkv-tabel,.zkv-tabel tbody{display:block}
+ .zkv-tabel tr{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:12px;border-bottom:1px solid var(--line)}
+ .zkv-tabel td{display:block;padding:0;border:0}
+ .zkv-tabel td.zkv-c1{grid-column:1/-1}
+ .zkv-tabel td.zkv-cgb,.zkv-tabel td.zkv-cmin,.zkv-tabel td.zkv-cm{display:inline;font-size:13.5px;color:var(--soft)}
+ .zkv-tabel td.zkv-cgb .zkv-gb{font-size:17px;color:var(--ink)}
+ .zkv-tabel td.zkv-cspec{grid-column:1/2;font-size:13px;color:var(--soft)}
+ .zkv-tabel td.zkv-cpr{grid-column:2/3;grid-row:2/4;align-self:center}
+ .zkv-tabel td.zkv-cgo{grid-column:1/-1}
+ .zkv-tabel td.zkv-cgo .zkv-go{width:100%}
+}
+/* toestelkaarten */
+.zkv-toe{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media(max-width:900px){.zkv-toe{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.zkv-toe{grid-template-columns:1fr}}
+.zkv-tk{border:1px solid var(--line);border-radius:16px;display:flex;flex-direction:column;position:relative;background:#fff}
+.zkv-tk.hl{border:2px solid var(--groen)}
+.zkv-tim{background:var(--vlak);height:170px;display:flex;align-items:center;justify-content:center;border-radius:15px 15px 0 0}
+.zkv-tim img{max-height:150px;max-width:72%;object-fit:contain;mix-blend-mode:multiply}
+.zkv-tin{padding:14px 16px 16px;display:flex;flex-direction:column;flex:1}
+.zkv-tk h3{font-size:17px;margin:0;line-height:1.25}
+.zkv-tsub{font-size:13px;color:var(--soft);margin:3px 0 10px}
+.zkv-bun{display:grid;gap:6px;margin-bottom:10px}
+.zkv-bun button{display:flex;justify-content:space-between;align-items:center;gap:8px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font:inherit;font-size:14px;background:#fff;color:var(--ink);cursor:pointer;text-align:left}
+.zkv-bun button[aria-pressed="true"]{border:2px solid var(--ink);padding:7px 9px}
+.zkv-bun b{font-weight:800}.zkv-bun small{color:var(--soft);font-size:12px}
+.zkv-split{font-size:12.5px;color:var(--soft);margin:0 0 12px;line-height:1.45}
+.zkv-ttot{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-top:auto}
+.zkv-ttot b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.02em}
+.zkv-ttot small{display:block;font-size:12px;color:var(--soft)}
+.zkv-leeg{border:1px dashed var(--line);border-radius:14px;padding:34px;text-align:center;color:var(--soft);font-size:14px}
+.zkv-meer{text-align:center;margin-top:16px}
+.zkv-meer button{border:2px solid var(--blauw);background:#fff;color:var(--blauw);border-radius:11px;padding:11px 30px;font:inherit;font-weight:800;cursor:pointer}
+.zkv-bronregel{font-size:12.5px;color:var(--soft);margin:14px 0 0}
+.zkv-uitleg{margin-top:34px;padding-top:22px;border-top:1px solid var(--line)}
+.zkv-uitleg h2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;letter-spacing:-.02em;font-weight:800;margin:0 0 10px}
+.zkv-tekst{font-size:15px;line-height:1.65}.zkv-tekst p{margin:0 0 12px}.zkv-tekst p:last-child{margin:0}
+.zkv-fijn{font-size:12px;color:var(--soft);line-height:1.55;margin:20px 0 0}
+/* het algemene "Mail deze deal" maakt elke regel twee keer zo hoog; hier niet */
+.zkv .dpvmb{display:none !important}
+</style>
+
+<script>
+(function () {
+  var wortel = document.querySelector('.zkv');
+  if (!wortel) return;
+  var TAB = wortel.getAttribute('data-tab') || 'internet';
+  var WORKER = wortel.getAttribute('data-worker') || 'https://awin.business-347.workers.dev';
+  var PEIL = {{ section.settings.peildatum | json }};
+
+  // Pakketten die niet in een feed zitten. Overgenomen van de tarievenpagina's
+  // van de aanbieders; bij het bijwerken ook de peildatum aanpassen.
+  var HAND = {
+    internet: [
+      { naam: 'Ziggo Zakelijk Internet Xtra 400',  prov: 'Ziggo Zakelijk', prijs: 44, mbit: 400, merk: [] },
+      { naam: 'Ziggo Zakelijk Internet Xtra 800',  prov: 'Ziggo Zakelijk', prijs: 50, mbit: 800, merk: [] },
+      { naam: 'Ziggo Zakelijk Internet Xtra 1.2G', prov: 'Ziggo Zakelijk', prijs: 52, mbit: 1200, merk: [] },
+      { naam: 'Ziggo Zakelijk Internet Xtra 2.2G', prov: 'Ziggo Zakelijk', prijs: 58, mbit: 2200, merk: [] },
+      { naam: 'Ziggo Zakelijk Start Pro',    prov: 'Ziggo Zakelijk', prijs: 60, mbit: 200, detail: '200/40 Mbit/s', merk: ['Vast IP'] },
+      { naam: 'Ziggo Zakelijk Complete Pro', prov: 'Ziggo Zakelijk', prijs: 70, mbit: 600, detail: '600/60 Mbit/s', merk: ['Vast IP'] },
+      { naam: 'Ziggo Zakelijk Giga Pro',     prov: 'Ziggo Zakelijk', prijs: 75, mbit: 1000, detail: '1000/100 Mbit/s', merk: ['Vast IP'] },
+      { naam: 'KPN Kleinzakelijk Internet',  prov: 'KPN Zakelijk',   prijs: 35, mbit: 50, detail: 'vanaf 50 Mbit/s', merk: [] },
+      { naam: 'KPN EEN MKB Internet',        prov: 'KPN Zakelijk',   prijs: 0,  detail: 'glasvezel of DSL', merk: ['Vast IP', 'SLA', '4G back-up'], aanvraag: true },
+      { naam: 'Vodafone Business Internet',  prov: 'Vodafone Zakelijk', prijs: 0, detail: 'met MKB Business Connect', merk: ['SLA'], aanvraag: true,
+        notitie: 'Met Business Mobile erbij 5% korting op de vaste kosten' }
+    ],
+    simonly: [
+      { naam: 'Vodafone Zakelijk 5 GB',  prov: 'Vodafone Zakelijk', prijs: 16.5, gb: 5,  min: 'Onbeperkt bellen', m: 24, net: 'Vodafone', merk: ['5G'] },
+      { naam: 'Vodafone Zakelijk 20 GB', prov: 'Vodafone Zakelijk', prijs: 22,   gb: 20, min: 'Onbeperkt bellen', m: 24, net: 'Vodafone', merk: ['5G'] },
+      { naam: 'Vodafone Zakelijk 40 GB', prov: 'Vodafone Zakelijk', prijs: 27,   gb: 40, min: 'Onbeperkt bellen', m: 24, net: 'Vodafone', merk: ['5G'] },
+      { naam: 'Vodafone Zakelijk Unlimited Start', prov: 'Vodafone Zakelijk', prijs: 30, gb: 999, min: '150 minuten', m: 24, net: 'Vodafone', merk: ['5G'],
+        notitie: 'Let op: geen onbeperkt bellen, alleen 150 minuten' },
+      { naam: 'Vodafone Zakelijk Unlimited Plus',  prov: 'Vodafone Zakelijk', prijs: 35, gb: 999, min: 'Onbeperkt bellen', m: 24, net: 'Vodafone', merk: ['5G'] },
+      { naam: 'Vodafone Zakelijk Unlimited Max',   prov: 'Vodafone Zakelijk', prijs: 40, gb: 999, min: 'Onbeperkt bellen', m: 24, net: 'Vodafone', merk: ['5G'], notitie: '125 GB in de EU' }
+    ],
+    toestel: []
+  };
+
+  var LINK = {
+    'Ziggo Zakelijk':    {{ section.settings.link_ziggo | json }},
+    'KPN Zakelijk':      {{ section.settings.link_kpn | json }},
+    'Vodafone Zakelijk': {{ section.settings.link_vodafone | json }}
+  };
+
+  var EIND = { internet: '/api/feed/internet', simonly: '/api/feed/simonly', toestel: '/api/feed/telefoon' };
+  var ALLES = [], TOON = TAB === 'toestel' ? 12 : 15, FILTER = '', MERKF = '', MODELF = '', DATAF = 0, MNDF = 0, TEAM = 1;
+  try { TEAM = Math.max(1, Math.min(50, parseInt(localStorage.getItem('zkvTeam'), 10) || 1)); } catch (e) {}
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function euro(v) {
+    if (!v && v !== 0) return '';
+    var r = Math.round(v * 100) / 100;
+    return '€' + (r % 1 === 0 ? r.toFixed(0) : r.toFixed(2).replace('.', ','));
+  }
+  function gbTekst(g) { return g >= 999 ? 'Onbeperkt' : g + ' GB'; }
+  function isZakelijk(d) {
+    if (d.isZakelijk === true) return true;
+    var h = ((d.merchantName || '') + ' ' + (d.name || '')).toLowerCase();
+    return h.indexOf('zakelijk') > -1 || h.indexOf('business') > -1 || h.indexOf('b2b') > -1;
+  }
+  var GEEN_TELEFOON = /tablet|\btab\b|\bpad\b|ipad|watch|smartwatch|hotspot|mifi|wi-?fi|router|modem|data ?sim|\bbook\b|laptop|dongle/;
+
+  var MERKEN = [['Apple', /iphone|apple/], ['Samsung', /samsung|galaxy/], ['Google', /pixel/], ['OnePlus', /oneplus|one plus/],
+    ['Xiaomi', /xiaomi|redmi|poco/], ['Motorola', /motorola|moto /], ['Nokia', /nokia/], ['Fairphone', /fairphone/], ['Honor', /honor/], ['OPPO', /oppo/]];
+  function merkVan(naam) {
+    var n = (naam || '').toLowerCase();
+    for (var i = 0; i < MERKEN.length; i++) if (MERKEN[i][1].test(n)) return MERKEN[i][0];
+    return '';
+  }
+  function heeftToestel(d) {
+    var n = (d.name || '').toLowerCase();
+    if (/sim only|sim-only/.test(n) || GEEN_TELEFOON.test(n)) return false;
+    if (!merkVan(n)) return false;
+    return parseFloat(d.deviceTotalPrice) > 0 || parseFloat(d.deviceMonthlyCost) > 0 || /iphone|galaxy|pixel|xiaomi|redmi|oppo|oneplus|motorola|nokia|fairphone|honor/.test(n);
+  }
+  // Model zonder bundel en kleur, met opslag: "iPhone 17 256 GB".
+  function modelVan(d) {
+    var n = String(d.model || d.name || '');
+    n = n.replace(/\b(zwart|wit|blauw|groen|grijs|zilver|goud|paars|roze|rood|oranje|titanium|black|white|blue|green|grey|gray|silver|gold|purple|pink|red)\b/ig, '');
+    var op = /(\d{2,4})\s?(GB|TB)/i.exec(n);
+    var kern = n.replace(/\b\d{2,4}\s?(GB|TB)\b.*$/i, '').replace(/\s{2,}/g, ' ').trim();
+    return { kern: kern, opslag: op ? op[1] + ' ' + op[2].toUpperCase() : (d.storage || '') };
+  }
+
+  // Odido Zakelijk levert elke toesteldeal in drie varianten (termijnen, deels
+  // vooruit, toestel ineens). Bij "toestel ineens" zet de feed de aanbetaling op
+  // 0 terwijl je de hele toestelprijs vooraf betaalt. De toestelbedragen in de
+  // feed zijn inclusief btw, de maandprijzen exclusief; wij tonen alles excl. btw.
+  function eenmaligExBtw(d, prijs) {
+    var btw = (parseFloat(d.deviceTotalPrice) > 0 && parseFloat(d.deviceTotalExBtw) > 0) ? parseFloat(d.deviceTotalPrice) / parseFloat(d.deviceTotalExBtw) : 1.21;
+    if (!(btw > 1 && btw < 1.3)) btw = 1.21;
+    var vooruit = parseFloat(d.deviceDownPayment) || parseFloat(d.initialCost) || 0;
+    var toestel = parseFloat(d.deviceTotalPrice) || 0;
+    var perMaand = parseFloat(d.deviceMonthlyCost) || 0;
+    var basis = parseFloat(d.baseMonthlyCost);
+    if (toestel > 0 && basis === 0 && prijs < perMaand) vooruit = toestel;
+    return vooruit > 0 ? Math.round(vooruit / btw * 100) / 100 : 0;
+  }
+
+  function planVan(naam, prov) {
+    var p = String(naam || '');
+    var merk = String(prov || '').replace(/\s*Zakelijk$/i, '');
+    p = p.replace(new RegExp('^' + merk + '\\s+', 'i'), '').replace(/sim[ -]?only/ig, '').replace(/@work basic/i, '')
+      .replace(/\b\d+(,\d+)?\s*GB\b.*$/i, '').replace(/\s{2,}/g, ' ').trim();
+    return p || 'Zakelijk';
+  }
+
+  function uitFeed(d) {
+    var naam = (d.name || '').trim();
+    var mnd = d.contractMonths || 24;
+    var prijs = parseFloat(d.price) || 0;
+    var eenmalig = TAB === 'toestel' ? eenmaligExBtw(d, prijs) : 0;
+    var totaal = eenmalig + prijs * mnd;
+    var mv = modelVan(d);
+    return {
+      naam: naam, prov: (d.merchantName || '').trim(), plan: planVan(naam, d.merchantName), prijs: prijs, eenmalig: eenmalig,
+      totaal: totaal, gemiddeld: totaal / mnd, maanden: mnd, m: d.contractMonths || 0,
+      gb: d.dataGB || 0, mbit: d.speedMbit || 0, min: d.minutesLabel || '', net: d.network || '',
+      abo: parseFloat(d.baseMonthlyCost) || 0, tm: parseFloat(d.deviceMonthlyCost) || 0,
+      img: d.image || '', merknaam: merkVan(naam), model: mv.kern, opslag: mv.opslag,
+      merk: [], url: d.affiliateUrl, live: true
+    };
+  }
+  function uitHand(h) {
+    return {
+      naam: h.naam, prov: h.prov, plan: planVan(h.naam, h.prov), prijs: h.prijs, eenmalig: 0, totaal: 0, gemiddeld: h.prijs,
+      maanden: h.m || 24, m: h.m || 0, gb: h.gb || 0, mbit: h.mbit || 0, min: h.min || h.detail || '', net: h.net || '',
+      merk: h.merk || [], notitie: h.notitie || '', aanvraag: !!h.aanvraag, url: LINK[h.prov] || '#', live: false
+    };
+  }
+
+  var DOMEIN = { 'KPN Zakelijk': 'kpn.com', 'Odido Zakelijk': 'odido.nl', 'Vodafone Zakelijk': 'vodafone.nl', 'Ziggo Zakelijk': 'ziggo.nl' };
+  function logo(prov) {
+    var dom = DOMEIN[prov], p = String(prov || '').toLowerCase();
+    if (!dom) dom = p.indexOf('kpn') > -1 ? 'kpn.com' : p.indexOf('odido') > -1 ? 'odido.nl' : p.indexOf('vodafone') > -1 ? 'vodafone.nl' : p.indexOf('ziggo') > -1 ? 'ziggo.nl' : '';
+    if (!dom) return '<span class="zkv-logo zkv-logo-tekst">' + esc(String(prov || '?').charAt(0)) + '</span>';
+    var g = 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://' + dom;
+    var d = 'https://icons.duckduckgo.com/ip3/' + dom + '.ico';
+    return '<img class="zkv-logo" src="' + g + '" alt="" loading="lazy" onerror="if(this.dataset.fb){this.style.visibility=\'hidden\'}else{this.dataset.fb=1;this.src=\'' + d + '\'}">';
+  }
+  function go(r, tekst) {
+    return '<a class="zkv-go" href="' + esc(r.url) + '" target="_blank" rel="nofollow sponsored noopener">' + (tekst || 'Bekijk') + '</a>';
+  }
+
+  // ---------------------------------------------------------------- filters
+  function chip(tekst, aan, klik, html) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'zkv-chip' + (aan ? ' aan' : '');
+    b.innerHTML = (html || '') + '<span>' + esc(tekst) + '</span>';
+    b.onclick = klik;
+    return b;
+  }
+  function rij(label) {
+    var r = document.createElement('div'); r.className = 'zkv-filterrij';
+    if (label) { var l = document.createElement('span'); l.className = 'zkv-fl'; l.textContent = label; r.appendChild(l); }
+    return r;
+  }
+  function tekenFilters() {
+    var vak = document.getElementById('zkv-filters');
+    if (!vak) return;
+    vak.innerHTML = '';
+    var prov = {}; ALLES.forEach(function (r) { prov[r.prov] = 1; });
+    var r1 = rij('');
+    [''].concat(Object.keys(prov).sort()).forEach(function (p) {
+      r1.appendChild(chip(p || 'Alle aanbieders', FILTER === p, function () { FILTER = p; reset(); }, p ? logo(p).replace('zkv-logo', 'zkv-logo zkv-logo-chip') : ''));
+    });
+    vak.appendChild(r1);
+
+    if (TAB === 'simonly') {
+      var r2 = rij('Data');
+      [[0, 'Alles'], [5, '5 GB+'], [10, '10 GB+'], [20, '20 GB+'], [999, 'Onbeperkt']].forEach(function (x) {
+        r2.appendChild(chip(x[1], DATAF === x[0], function () { DATAF = x[0]; reset(); }));
+      });
+      var mnden = {}; ALLES.forEach(function (r) { if (r.m) mnden[r.m] = 1; });
+      var lijst = Object.keys(mnden).map(Number).sort(function (a, b) { return a - b; });
+      if (lijst.length > 1) {
+        var l = document.createElement('span'); l.className = 'zkv-fl'; l.style.marginLeft = '10px'; l.textContent = 'Looptijd'; r2.appendChild(l);
+        [0].concat(lijst).forEach(function (m) {
+          r2.appendChild(chip(m ? (m === 1 ? '1 maand' : m === 12 ? '1 jaar' : m === 24 ? '2 jaar' : m === 36 ? '3 jaar' : m + ' mnd') : 'Alle', MNDF === m, function () { MNDF = m; reset(); }));
+        });
+      }
+      vak.appendChild(r2);
+    }
+
+    if (TAB === 'toestel') {
+      var merken = {}; ALLES.forEach(function (r) { if (r.merknaam && (!FILTER || r.prov === FILTER)) merken[r.merknaam] = 1; });
+      var m = Object.keys(merken).sort();
+      if (m.length) {
+        var r3 = rij('');
+        [''].concat(m).forEach(function (x) { r3.appendChild(chip(x || 'Alle merken', MERKF === x, function () { MERKF = x; MODELF = ''; reset(); })); });
+        vak.appendChild(r3);
+      }
+    }
+  }
+  function reset() { TOON = TAB === 'toestel' ? 12 : 15; teken(); }
+
+  function opPrijs(a, b) {
+    if (a.aanvraag !== b.aanvraag) return a.aanvraag ? 1 : -1;
+    return (a.gemiddeld || a.prijs) - (b.gemiddeld || b.prijs);
+  }
+  function gefilterd() {
+    return ALLES.filter(function (r) {
+      if (FILTER && r.prov !== FILTER) return false;
+      if (MERKF && r.merknaam !== MERKF) return false;
+      if (MODELF && r.model !== MODELF) return false;
+      if (DATAF && !(r.gb >= DATAF)) return false;
+      if (MNDF && r.m !== MNDF) return false;
+      return true;
+    });
+  }
+
+  // ------------------------------------------------- sim only en internet
+  function teamRegel(prijs) { return TEAM > 1 ? '<div class="zkv-teamp">' + euro(prijs * TEAM) + ' per maand voor ' + TEAM + ' simkaarten</div>' : ''; }
+  function keuzes(rijen) {
+    var echt = rijen.filter(function (r) { return !r.aanvraag && r.prijs > 0; });
+    if (echt.length < 3) return '';
+    var lijst = [], gezien = [];
+    function zet(tag, r, hl) { if (r && gezien.indexOf(r) < 0) { gezien.push(r); lijst.push([tag, r, hl]); } }
+    zet('Goedkoopst', echt[0]);
+    if (TAB === 'simonly') {
+      var perGb = echt.filter(function (r) { return r.gb >= 10 && r.gb < 999; }).sort(function (a, b) { return a.gemiddeld / a.gb - b.gemiddeld / b.gb; });
+      zet('Meeste data voor je geld', perGb[0], true);
+      zet('Onbeperkt data', echt.filter(function (r) { return r.gb >= 999; })[0]);
+    } else {
+      var perMbit = echt.filter(function (r) { return r.mbit >= 400; }).sort(function (a, b) { return a.gemiddeld / a.mbit - b.gemiddeld / b.mbit; });
+      zet('Snelheid voor je geld', perMbit[0], true);
+      zet('Met vast IP-adres', echt.filter(function (r) { return r.merk.indexOf('Vast IP') > -1; })[0]);
+    }
+    if (lijst.length < 2) return '';
+    return '<div class="zkv-drie">' + lijst.map(function (k) {
+      var r = k[1], groen = k[0] === 'Goedkoopst';
+      var groot = TAB === 'simonly' ? gbTekst(r.gb) + (r.gb < 999 ? ' <small>data</small>' : '') : (r.mbit ? r.mbit + ' <small>Mbit/s</small>' : esc(r.plan));
+      var eig = [];
+      if (r.min) eig.push(r.min);
+      if (r.m) eig.push(r.m + (r.m === 1 ? ' maand' : ' maanden'));
+      if (r.net) eig.push('netwerk ' + r.net);
+      r.merk.forEach(function (x) { if (eig.indexOf(x) < 0) eig.push(x); });
+      return '<div class="zkv-k' + (k[2] ? ' hl' : '') + '"><span class="zkv-tag' + (groen ? ' groen' : '') + '">' + k[0] + '</span>' +
+        '<div class="zkv-kkop">' + logo(r.prov) + '<div><b>' + esc(r.prov) + '</b><small>' + esc(r.plan) + '</small></div></div>' +
+        '<div class="zkv-groot">' + groot + '</div>' +
+        '<div class="zkv-eig">' + eig.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + '</div>' +
+        '<div class="zkv-kprijs"><div><b>' + euro(r.prijs) + '</b><small>per maand' + (TAB === 'simonly' ? ' per sim' : '') + ', excl. btw</small>' +
+        (r.eenmalig ? '<small class="zkv-eenmalig">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '') + (TAB === 'simonly' ? teamRegel(r.prijs) : '') + '</div>' + go(r) + '</div></div>';
+    }).join('') + '</div>';
+  }
+  function tabel(rijen) {
+    var kop = TAB === 'simonly'
+      ? '<tr><th>Aanbieder en bundel</th><th>Data</th><th>Bellen</th><th>Looptijd</th><th style="text-align:right">Per maand</th><th></th></tr>'
+      : '<tr><th>Aanbieder en pakket</th><th>Snelheid</th><th>Extra</th><th>Looptijd</th><th style="text-align:right">Per maand</th><th></th></tr>';
+    var laagste = rijen.filter(function (r) { return !r.aanvraag; })[0];
+    var body = rijen.slice(0, TOON).map(function (r) {
+      var top = r === laagste;
+      var sub = esc(r.plan) + (r.net ? ' · netwerk ' + esc(r.net) : '') + (r.live ? '' : ' · handmatig, tarief van ' + esc(PEIL)) + (r.notitie ? '<br>' + esc(r.notitie) : '');
+      var c2 = TAB === 'simonly' ? '<span class="zkv-gb">' + (r.gb ? gbTekst(r.gb) : '—') + '</span>' : '<span class="zkv-gb">' + (r.mbit ? r.mbit + ' Mbit/s' : '—') + '</span>';
+      var c3 = TAB === 'simonly' ? esc(r.min || '—') : esc(r.merk.join(', ') || (r.min && !r.mbit ? r.min : '') || '—');
+      var prijs = r.aanvraag ? '<b style="font-size:15px">Op aanvraag</b>'
+        : '<b>' + euro(r.prijs) + '</b><small>excl. btw</small>' + (r.eenmalig ? '<small class="zkv-eenmalig">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '') + (TAB === 'simonly' ? teamRegel(r.prijs) : '');
+      return '<tr class="' + (top ? 'top' : '') + '">' +
+        '<td class="zkv-c1"><div class="zkv-aanb">' + logo(r.prov) + '<div><b>' + esc(r.prov) + (top ? '<span class="zkv-lab">Goedkoopst</span>' : '') + '</b><small>' + sub + '</small></div></div></td>' +
+        '<td class="zkv-cgb">' + c2 + '</td><td class="zkv-cmin">' + (TAB === 'simonly' ? ' · ' : '') + c3 + '</td>' +
+        '<td class="zkv-cm">' + (r.m ? ' · ' + r.m + ' mnd' : '') + '</td>' +
+        '<td class="zkv-pr zkv-cpr">' + prijs + '</td><td class="zkv-cgo">' + go(r) + '</td></tr>';
+    }).join('');
+    return '<table class="zkv-tabel"><thead>' + kop + '</thead><tbody>' + body + '</tbody></table>';
+  }
+
+  // ------------------------------------------------------------- met toestel
+  function toestelGroepen(rijen) {
+    var g = {}, volg = [];
+    rijen.forEach(function (r) {
+      var k = r.prov + '|' + r.model + '|' + r.opslag;
+      if (!g[k]) { g[k] = { prov: r.prov, model: r.model, opslag: r.opslag, img: r.img, merk: r.merknaam, rijen: [] }; volg.push(g[k]); }
+      if (!g[k].img && r.img) g[k].img = r.img;
+      g[k].rijen.push(r);
+    });
+    volg.forEach(function (x) {
+      // per databundel de goedkoopste over de looptijd, hoogstens drie
+      var per = {};
+      x.rijen.forEach(function (r) { var k = r.gb + '|' + r.maanden; if (!per[k] || r.totaal < per[k].totaal) per[k] = r; });
+      x.opties = Object.keys(per).map(function (k) { return per[k]; }).sort(function (a, b) { return a.totaal - b.totaal; }).slice(0, 3);
+      x.beste = x.opties[0];
+    });
+    return volg.filter(function (x) { return x.beste; }).sort(function (a, b) { return a.beste.totaal - b.beste.totaal; });
+  }
+  function toestelKaart(x, i, goedkoopst) {
+    var kies = x.keuze || 0, r = x.opties[kies];
+    var split = (r.tm || r.abo) && !r.eenmalig ? 'Per maand ' + euro(r.tm) + ' voor het toestel en ' + euro(r.abo) + ' voor het abonnement.'
+      : r.eenmalig ? euro(r.eenmalig) + ' eenmalig voor het toestel, daarna ' + euro(r.prijs) + ' per maand.' : '';
+    return '<article class="zkv-tk' + (goedkoopst ? ' hl' : '') + '" data-i="' + i + '">' + (goedkoopst ? '<span class="zkv-tag groen">Goedkoopst</span>' : '') +
+      '<div class="zkv-tim">' + (x.img ? '<img src="' + esc(x.img) + '" alt="' + esc(x.model) + '" loading="lazy">' : logo(x.prov)) + '</div>' +
+      '<div class="zkv-tin"><h3>' + esc(x.model) + '</h3><div class="zkv-tsub">' + esc(x.opslag) + (x.opslag ? ' · ' : '') + esc(x.prov) + '</div>' +
+      '<div class="zkv-bun" role="group" aria-label="Kies een bundel">' + x.opties.map(function (o, j) {
+        return '<button type="button" data-j="' + j + '" aria-pressed="' + (j === kies) + '"><span><b>' + (o.gb ? gbTekst(o.gb) : 'Bundel') + '</b> <small>' + o.maanden + ' mnd</small></span><span>' + euro(o.prijs) + ' p/m</span></button>';
+      }).join('') + '</div>' +
+      (split ? '<p class="zkv-split">' + split + '</p>' : '') +
+      '<div class="zkv-ttot"><div><small>Totaal over ' + r.maanden + ' maanden</small><b>' + euro(r.totaal) + '</b><small>excl. btw</small></div>' + go(r) + '</div></div></article>';
+  }
+
+  var GROEPEN = [];
+  function teken() {
+    var rijen = gefilterd().sort(opPrijs);
+    var lijst = document.getElementById('zkv-lijst'), kz = document.getElementById('zkv-keuzes');
+    tekenFilters();
+    if (!rijen.length) {
+      kz.innerHTML = '';
+      lijst.innerHTML = '<div class="zkv-leeg">Geen aanbiedingen gevonden met deze keuze.</div>';
+      document.getElementById('zkv-meer').hidden = true;
+      document.getElementById('zkv-telling').innerHTML = '<b>0</b> zakelijke aanbiedingen';
+      return;
+    }
+    if (TAB === 'toestel') {
+      GROEPEN = toestelGroepen(rijen);
+      document.getElementById('zkv-telling').innerHTML = '<b>' + GROEPEN.length + '</b> toestellen, <b>' + rijen.length + '</b> aanbiedingen';
+      kz.innerHTML = '';
+      lijst.innerHTML = '<div class="zkv-toe">' + GROEPEN.slice(0, TOON).map(function (x, i) { return toestelKaart(x, i, i === 0); }).join('') + '</div>';
+      document.getElementById('zkv-meer').hidden = GROEPEN.length <= TOON;
+      return;
+    }
+    document.getElementById('zkv-telling').innerHTML = '<b>' + rijen.length + '</b> zakelijke aanbiedingen';
+    kz.innerHTML = keuzes(rijen);
+    lijst.innerHTML = tabel(rijen);
+    document.getElementById('zkv-meer').hidden = rijen.length <= TOON;
+  }
+
+  document.getElementById('zkv-lijst').addEventListener('click', function (e) {
+    var b = e.target.closest('.zkv-bun button'); if (!b) return;
+    var k = b.closest('.zkv-tk'), i = +k.getAttribute('data-i'), x = GROEPEN[i]; if (!x) return;
+    x.keuze = +b.getAttribute('data-j');
+    var tmp = document.createElement('div'); tmp.innerHTML = toestelKaart(x, i, i === 0);
+    k.parentNode.replaceChild(tmp.firstChild, k);
+  });
+  document.getElementById('zkv-meer-knop').addEventListener('click', function () { TOON += TAB === 'toestel' ? 12 : 15; teken(); });
+  function zetTeam(n) {
+    TEAM = Math.max(1, Math.min(50, n));
+    var el = document.getElementById('zkv-n'); if (el) el.textContent = TEAM;
+    try { localStorage.setItem('zkvTeam', String(TEAM)); } catch (e) {}
+    teken();
+  }
+  var mn = document.getElementById('zkv-min'), pl = document.getElementById('zkv-plus');
+  if (mn) mn.addEventListener('click', function () { zetTeam(TEAM - 1); });
+  if (pl) pl.addEventListener('click', function () { zetTeam(TEAM + 1); });
+  if (document.getElementById('zkv-n')) document.getElementById('zkv-n').textContent = TEAM;
+
+  // Handmatige regels staan er meteen; de feed komt erbij zodra hij binnen is.
+  ALLES = (HAND[TAB] || []).map(uitHand);
+  teken();
+
+  fetch(WORKER + EIND[TAB])
+    .then(function (r) { return r.json(); })
+    .then(function (j) {
+      var d = (j && j.data) || [];
+      var uit = [], gezien = {};
+      d.forEach(function (x) {
+        if (!isZakelijk(x)) return;
+        var naam = (x.name || '').toLowerCase();
+        if (TAB === 'toestel' && !heeftToestel(x)) return;
+        // sim only: geen regels met een toestel erbij (tabletabonnementen van Odido)
+        if (TAB === 'simonly' && (parseFloat(x.deviceTotalPrice) > 0 || parseFloat(x.deviceMonthlyCost) > 0 || GEEN_TELEFOON.test(naam))) return;
+        // toestel: een abonnementsdeel onder de 8 euro klopt niet met de sim-onlyprijzen
+        var basis = parseFloat(x.baseMonthlyCost) || 0;
+        if (TAB === 'toestel' && basis > 0 && basis < 8) return;
+        var p = parseFloat(x.price) || 0;
+        if (!p) return;
+        var r = uitFeed(x);
+        // bundels waarvan de feed de data niet kent (0 GB) laten we bij sim only weg
+        if (TAB === 'simonly' && !(r.gb > 0)) return;
+        var sleutel = (x.merchantName || '') + '|' + (x.name || '') + '|' + (x.dataGB || 0) + '|' + (x.contractMonths || 0);
+        if (gezien[sleutel] && gezien[sleutel].gemiddeld <= r.gemiddeld) return;
+        if (gezien[sleutel]) uit.splice(uit.indexOf(gezien[sleutel]), 1);
+        gezien[sleutel] = r;
+        uit.push(r);
+      });
+      ALLES = (HAND[TAB] || []).map(uitHand).concat(uit);
+      teken();
+    })
+    .catch(function () { teken(); });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Zakelijk vergelijken",
+  "settings": [
+    { "type": "select", "id": "tab", "label": "Actief tabblad", "default": "internet",
+      "options": [ { "value": "internet", "label": "Internet" }, { "value": "simonly", "label": "Sim only" }, { "value": "toestel", "label": "Met toestel" } ] },
+    { "type": "text", "id": "eyebrow", "label": "Bovenregel", "default": "Zakelijk · zzp en mkb" },
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Zakelijk internet vergelijken" },
+    { "type": "textarea", "id": "sub", "label": "Inleiding", "default": "Alle zakelijke aanbieders naast elkaar, exclusief btw. Wij tonen erbij of een prijs live uit de feed komt of handmatig is bijgehouden." },
+    { "type": "text", "id": "peildatum", "label": "Peildatum handmatige tarieven", "default": "18 september 2026" },
+    { "type": "header", "content": "Tabbladen" },
+    { "type": "text", "id": "url_internet", "label": "Link internet", "default": "/pages/zakelijk-internet" },
+    { "type": "text", "id": "url_simonly", "label": "Link sim only", "default": "/pages/zakelijk-sim-only" },
+    { "type": "text", "id": "url_toestel", "label": "Link met toestel", "default": "/pages/zakelijk-telefoon" },
+    { "type": "header", "content": "Links per aanbieder" },
+    { "type": "text", "id": "worker_url", "label": "Worker", "default": "https://awin.business-347.workers.dev" },
+    { "type": "textarea", "id": "link_ziggo", "label": "Ziggo Zakelijk", "default": "https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8470%26awinaffid%3D1528789%26clickref%3Dzakelijk-internet%26ued%3Dhttps%253A%252F%252Fwww.ziggo.nl%252Fzakelijk%252Finternet&cat=internet-zakelijk&p=Ziggo%20Zakelijk" },
+    { "type": "textarea", "id": "link_kpn", "label": "KPN Zakelijk", "default": "https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fglp8.net%2Fc%2F%3Fsi%3D19863%26li%3D1855892%26wi%3D394405%26ws%3Dzakelijk-internet&cat=internet-zakelijk&p=KPN%20Zakelijk" },
+    { "type": "textarea", "id": "link_vodafone", "label": "Vodafone Zakelijk", "default": "https://awin.business-347.workers.dev/api/go?u=https%3A%2F%2Fwww.awin1.com%2Fcread.php%3Fawinmid%3D8411%26awinaffid%3D1528789%26clickref%3Dzakelijk-simonly%26ued%3Dhttps%253A%252F%252Fwww.vodafone.nl%252Fzakelijk%252Fkleinzakelijk%252Fmobiel&cat=simonly-zakelijk&p=Vodafone%20Zakelijk" },
+    { "type": "header", "content": "Uitleg onder de lijst" },
+    { "type": "text", "id": "uitleg_kop", "label": "Kop", "default": "Waar je op let bij zakelijk internet" },
+    { "type": "richtext", "id": "uitleg", "label": "Tekst", "default": "<p>Bij zakelijk gaat het zelden om de snelheid alleen. Let op het vaste IP-adres, de servicegarantie en de hersteltijd bij storing: dat is waar het prijsverschil vandaan komt.</p>" },
+    { "type": "textarea", "id": "fijn", "label": "Kleine letters", "default": "Alle bedragen zijn exclusief btw. Wij vergelijken op feitelijke productkenmerken en geven geen advies. Klik je door en sluit je iets af, dan ontvangen wij een vergoeding; jij betaalt hetzelfde." }
+  ],
+  "presets": [ { "name": "Zakelijk vergelijken" } ]
+}
+{% endschema %}

@@ -114,7 +114,7 @@
 .zkv-kprijs small{display:block;font-size:12px;color:var(--soft)}
 .zkv-teamp{font-size:13px;color:var(--groenD);font-weight:700;margin-top:2px}
 /* tabel */
-.zkv-tabel{width:100%;border-collapse:separate;border-spacing:0;font-size:14.5px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.zkv-tabel{display:table !important;width:100% !important;table-layout:auto;border-collapse:separate;border-spacing:0;font-size:14.5px;border:1px solid var(--line);border-radius:14px;overflow:hidden}
 .zkv-tabel th{text-align:left;font-size:12px;color:var(--soft);font-weight:800;text-transform:uppercase;letter-spacing:.05em;padding:11px 12px;background:var(--vlak);border-bottom:1px solid var(--line)}
 .zkv-tabel td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
 .zkv-tabel tr:last-child td{border-bottom:0}
@@ -126,10 +126,12 @@
 .zkv-pr small{display:block;font-size:11.5px;color:var(--soft);font-weight:600}
 .zkv-pr .zkv-eenmalig{color:#B45309;font-weight:800}
 .zkv-pr .zkv-teamp{font-size:12px}
+.zkv-ook{display:block;font-size:11.5px;color:var(--soft);margin-top:2px}
 @media(max-width:760px){
  .zkv-drie{grid-template-columns:1fr}
  .zkv-tabel thead{display:none}
- .zkv-tabel,.zkv-tabel tbody{display:block}
+ .zkv-tabel,.zkv-tabel tbody{display:block !important}
+ .zkv-tabel td.zkv-cmin::before,.zkv-tabel td.zkv-cm::before{content:' \00b7  '}
  .zkv-tabel tr{display:grid;grid-template-columns:1fr auto;gap:6px 10px;padding:12px;border-bottom:1px solid var(--line)}
  .zkv-tabel td{display:block;padding:0;border:0}
  .zkv-tabel td.zkv-c1{grid-column:1/-1}
@@ -354,6 +356,13 @@
     }
 
     if (TAB === 'toestel') {
+      var tm = {}; ALLES.forEach(function (r) { if (r.m) tm[r.m] = 1; });
+      var tl = Object.keys(tm).map(Number).sort(function (a, b) { return a - b; });
+      if (tl.length > 1) {
+        var r4 = rij('Looptijd');
+        [0].concat(tl).forEach(function (m) { r4.appendChild(chip(m ? m + ' maanden' : 'Alle', MNDF === m, function () { MNDF = m; reset(); })); });
+        vak.appendChild(r4);
+      }
       var merken = {}; ALLES.forEach(function (r) { if (r.merknaam && (!FILTER || r.prov === FILTER)) merken[r.merknaam] = 1; });
       var m = Object.keys(merken).sort();
       if (m.length) {
@@ -414,7 +423,21 @@
         (r.eenmalig ? '<small class="zkv-eenmalig">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '') + (TAB === 'simonly' ? teamRegel(r.prijs) : '') + '</div>' + go(r) + '</div></div>';
     }).join('') + '</div>';
   }
+  // Zonder gekozen looptijd staat dezelfde bundel er anders vier keer (1, 12, 24
+  // en 36 maanden). Dan een regel: de goedkoopste, met de andere looptijden erbij.
+  function samen(rijen) {
+    if (MNDF) return rijen;
+    var g = {}, uit = [];
+    rijen.forEach(function (r) {
+      var k = r.prov + '|' + r.plan + '|' + r.gb + '|' + r.mbit + '|' + r.min;
+      if (!g[k]) { g[k] = r; r.ook = []; uit.push(r); }
+      else if (r.m && g[k].ook.indexOf(r.m) < 0 && r.m !== g[k].m) g[k].ook.push(r.m);
+    });
+    uit.forEach(function (r) { r.ook.sort(function (a, b) { return a - b; }); });
+    return uit;
+  }
   function tabel(rijen) {
+    rijen = samen(rijen);
     var kop = TAB === 'simonly'
       ? '<tr><th>Aanbieder en bundel</th><th>Data</th><th>Bellen</th><th>Looptijd</th><th style="text-align:right">Per maand</th><th></th></tr>'
       : '<tr><th>Aanbieder en pakket</th><th>Snelheid</th><th>Extra</th><th>Looptijd</th><th style="text-align:right">Per maand</th><th></th></tr>';
@@ -428,8 +451,8 @@
         : '<b>' + euro(r.prijs) + '</b><small>excl. btw</small>' + (r.eenmalig ? '<small class="zkv-eenmalig">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '') + (TAB === 'simonly' ? teamRegel(r.prijs) : '');
       return '<tr class="' + (top ? 'top' : '') + '">' +
         '<td class="zkv-c1"><div class="zkv-aanb">' + logo(r.prov) + '<div><b>' + esc(r.prov) + (top ? '<span class="zkv-lab">Goedkoopst</span>' : '') + '</b><small>' + sub + '</small></div></div></td>' +
-        '<td class="zkv-cgb">' + c2 + '</td><td class="zkv-cmin">' + (TAB === 'simonly' ? ' · ' : '') + c3 + '</td>' +
-        '<td class="zkv-cm">' + (r.m ? ' · ' + r.m + ' mnd' : '') + '</td>' +
+        '<td class="zkv-cgb">' + c2 + '</td><td class="zkv-cmin">' + c3 + '</td>' +
+        '<td class="zkv-cm">' + (r.m ? r.m + ' mnd' : '') + (r.ook && r.ook.length ? '<small class="zkv-ook">ook ' + r.ook.join(', ') + ' mnd</small>' : '') + '</td>' +
         '<td class="zkv-pr zkv-cpr">' + prijs + '</td><td class="zkv-cgo">' + go(r) + '</td></tr>';
     }).join('');
     return '<table class="zkv-tabel"><thead>' + kop + '</thead><tbody>' + body + '</tbody></table>';
@@ -464,7 +487,7 @@
         return '<button type="button" data-j="' + j + '" aria-pressed="' + (j === kies) + '"><span><b>' + (o.gb ? gbTekst(o.gb) : 'Bundel') + '</b> <small>' + o.maanden + ' mnd</small></span><span>' + euro(o.prijs) + ' p/m</span></button>';
       }).join('') + '</div>' +
       (split ? '<p class="zkv-split">' + split + '</p>' : '') +
-      '<div class="zkv-ttot"><div><small>Totaal over ' + r.maanden + ' maanden</small><b>' + euro(r.totaal) + '</b><small>excl. btw</small></div>' + go(r) + '</div></div></article>';
+      '<div class="zkv-ttot"><div><small>Totaal over ' + r.maanden + ' maanden, toestel en abonnement</small><b>' + euro(r.totaal) + '</b><small>excl. btw</small></div>' + go(r) + '</div></div></article>';
   }
 
   var GROEPEN = [];
@@ -534,7 +557,7 @@
         if (!p) return;
         var r = uitFeed(x);
         // bundels waarvan de feed de data niet kent (0 GB) laten we bij sim only weg
-        if (TAB === 'simonly' && !(r.gb > 0)) return;
+        if ((TAB === 'simonly' || TAB === 'toestel') && !(r.gb > 0)) return;
         var sleutel = (x.merchantName || '') + '|' + (x.name || '') + '|' + (x.dataGB || 0) + '|' + (x.contractMonths || 0);
         if (gezien[sleutel] && gezien[sleutel].gemiddeld <= r.gemiddeld) return;
         if (gezien[sleutel]) uit.splice(uit.indexOf(gezien[sleutel]), 1);
@@ -542,6 +565,9 @@
         uit.push(r);
       });
       ALLES = (HAND[TAB] || []).map(uitHand).concat(uit);
+      // Met toestel vergelijk je alleen eerlijk bij dezelfde looptijd: een totaal
+      // over 12 maanden is altijd lager dan over 24. Standaard dus 24 maanden.
+      if (TAB === 'toestel' && !MNDF && uit.some(function (r) { return r.m === 24; })) MNDF = 24;
       teken();
     })
     .catch(function () { teken(); });

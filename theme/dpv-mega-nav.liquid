@@ -231,6 +231,24 @@ html:not(#x) .dmn-p a.r.lg{flex-wrap:nowrap !important;justify-content:flex-star
 })();
 </script>
 
+<script>
+/* 19 okt: Pokémonkaarten als eigen regel in het mobiele menu, direct onder Gaming. */
+(function(){
+  function zet(){
+    var pn=document.querySelector('.pvnav-mobile'); if(!pn||pn.querySelector('.pvm-pokemon'))return;
+    var g=pn.querySelector('a[href="/pages/gaming"]'); if(!g)return;
+    var a=g.cloneNode(true); a.classList.add('pvm-pokemon'); a.href='/pages/pokemonkaarten';
+    var ic=a.querySelector('.pvico,svg'); var t=null;
+    for(var i=a.childNodes.length-1;i>=0;i--){var n=a.childNodes[i]; if(n.nodeType===3&&n.nodeValue.trim()){t=n;break;}}
+    if(t)t.nodeValue=' Pok\u00e9monkaarten'; else a.appendChild(document.createTextNode('Pok\u00e9monkaarten'));
+    var sv=a.querySelector('svg'); if(sv){sv.setAttribute('viewBox','0 0 24 24');sv.innerHTML='<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h5.5M15 12h5.5"/><circle cx="12" cy="12" r="2.6"/>';}
+    g.parentNode.insertBefore(a,g.nextSibling);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',zet);else zet();
+  setTimeout(zet,600);setTimeout(zet,1600);
+})();
+</script>
+
 <nav class="dmn" aria-label="Hoofdmenu">
   <div class="dmn-in">
 
@@ -441,7 +459,42 @@ html:not(#x) .dmn-p a.r.lg{flex-wrap:nowrap !important;justify-content:flex-star
         </div>
       </div>
     </div>
-    <div class="dmn-i plat"><a href="{{ p }}gaming">Gaming</a></div>
+    {%- comment -%} 19 okt: Gaming wordt een uitklapmenu, met Pokémonkaarten als eigen kolom. Een los menu-item
+      "Pokémon" of het label "Gaming & Pokémon" zou de balk te breed maken (op 1440px loopt de rij al over) (zie de opmerking over 1340px in dpv-breedte); hier staat het waar
+      verzamelaars en gamers het zoeken. Op mobiel voegt het script onderaan een eigen regel toe. {%- endcomment -%}
+    <div class="dmn-i">
+      <a href="{{ p }}gaming">Gaming <svg class="ch" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></a>
+      <div class="dmn-p">
+        <div>
+          <h5>Gaming</h5>
+          <a class="r" href="{{ p }}gaming">Alles over gaming<small>consoles, games en accessoires</small><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}vergelijken?cat=gaming&amp;platform=PS5"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://playstation.com" alt="" width="26" height="26"><span class="tx">PlayStation 5</span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}vergelijken?cat=gaming&amp;platform=Switch%202"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://nintendo.com" alt="" width="26" height="26"><span class="tx">Nintendo Switch 2</span><span class="pl">&rsaquo;</span></a>
+          <a class="r lg" href="{{ p }}vergelijken?cat=gaming&amp;platform=Xbox%20Series%20X"><img class="dmn-lg" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-src="https://t3.gstatic.com/faviconV2?client=SOCIAL&amp;type=FAVICON&amp;fallback_opts=TYPE,SIZE,URL&amp;size=128&amp;url=https://xbox.com" alt="" width="26" height="26"><span class="tx">Xbox Series X</span><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}vergelijken?cat=gaming&amp;staat=refurbished">Retro en tweedehands<small>PS1 tot PS4, Wii, DS en meer</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}product/grand-theft-auto-vi-gta-6-ps5-code-in-the-box">GTA VI pre-order<small>verschijnt 19 november</small><span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Pokémonkaarten</h5>
+          <a class="r" href="{{ p }}pokemonkaarten">Pokémon vergelijken<small>voorraad en prijs per winkel</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}pokemonkaarten#losse-kaarten">Losse kaarten<small>duurste kaarten per set, Cardmarket-prijs</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}pokemonkaarten#kalender">Releasekalender<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}vergelijken?cat=kaarten&amp;type=pokemon&amp;q=elite+trainer+box">Elite Trainer Boxen<span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ p }}vergelijken?cat=kaarten&amp;type=pokemon&amp;q=booster+box">Booster displays<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div>
+          <h5>Uitzoeken</h5>
+          <a class="r" href="{{ p }}pokemonkaarten#adviesprijs">Woekerprijs herkennen<small>adviesprijs per producttype</small><span class="pl">&rsaquo;</span></a>
+          <a class="r" href="{{ a }}nintendo-switch-2-prijs-vergelijken">Switch 2: prijs vergelijken<span class="pl">&rsaquo;</span></a>
+        </div>
+        <div class="dmn-pro">
+          <div class="lb">Nieuw</div>
+          <b>Pokémonkaarten</b>
+          <span class="sp">Sealed per winkel vergeleken, en de duurste losse kaarten met de prijs op Cardmarket.</span>
+          <a class="kn" href="{{ p }}pokemonkaarten">Naar Pokémon &rarr;</a>
+        </div>
+      </div>
+    </div>
     <div class="dmn-i plat"><a href="{{ p }}vergelijken">Producten</a></div>
 
     {%- comment -%}

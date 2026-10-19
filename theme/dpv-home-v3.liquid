@@ -773,7 +773,9 @@ html:not(#x) .dhd .regel a.volg{color:inherit;text-decoration:underline;text-und
     <div class="hero-tekst">
 
       <p class="eb"><i aria-hidden="true"></i><span data-meting="lang">Prijzen elke nacht gemeten</span></p>
-      <h1 id="dhd-h1">{{ s.kop }}<span class="sr"> {{ s.kop_sr }}</span></h1>
+      {%- comment -%} 19 okt: kop in Plus Jakarta Sans (het menulettertype), "goedkoopst" in het logogroen, iets donkerder voor leesbaarheid. {%- endcomment -%}
+      <style>html:not(#x) .dhd .hero h1#dhd-h1{font-family:'Plus Jakarta Sans',system-ui,sans-serif !important;font-weight:800 !important;letter-spacing:-.035em !important;font-variation-settings:normal !important}html:not(#x) .dhd .hero h1#dhd-h1 em{font-style:normal;color:#2E9C69}</style>
+      <h1 id="dhd-h1">{{ s.kop | replace: 'goedkoopst', '<em>goedkoopst</em>' }}<span class="sr"> {{ s.kop_sr }}</span></h1>
       <p class="sub">{{ s.sub }}</p>
       {%- comment -%}
         De kiezer (6 okt): acht hoofdknoppen, daaronder de subkeuzes van de gekozen categorie. De logica komt uit

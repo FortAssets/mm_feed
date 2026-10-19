@@ -106,6 +106,15 @@ html:not(#x):not(#y) .pvs{display:none !important}
       {%- endif -%}
     </div>
 
+    {%- comment -%}
+      19 okt: Boodschappen uit de bovenste menubalk (staat nu hier in de footer
+      en als tegel op de homepage), en geen "NIEUW"-labels meer in de balk. De
+      menubalk wordt opgebouwd door scripts in dpv-cover-fix (Boodschappen op de
+      plek van eSIM) en dpv-energie-menu (het label); die laten we staan en we
+      verbergen hier alleen het resultaat. Op mobiel blijft Boodschappen in het
+      uitklapmenu, daar is ruimte genoeg. Terugzetten: deze twee regels weg.
+    {%- endcomment -%}
+    <style>.dmn-i.dmn-bood{display:none !important}.dmn-i .dmn-nieuw{display:none !important}</style>
     <nav class="dpf-snel" aria-label="Snel naar">
       <a href="/pages/sim-only">Sim only</a>
       <a href="/pages/telefoonabonnement">Telefoon</a>
@@ -125,6 +134,7 @@ html:not(#x):not(#y) .pvs{display:none !important}
           <li><a href="/pages/energie">Energie (stroom &amp; gas)</a></li>
           <li><a href="/pages/zorgverzekering">Zorgverzekering</a></li>
           <li><a href="/pages/vergelijken">Productvergelijker</a></li>
+          <li><a href="/pages/boodschappen">Boodschappen-aanbiedingen</a></li>
           <li><a href="/pages/gaming">Gaming</a></li>
           <li><a href="/pages/pokemonkaarten">Pokémonkaarten</a></li>
           <li><a href="/pages/vpn-vergelijken">VPN vergelijken</a></li>

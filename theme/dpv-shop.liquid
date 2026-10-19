@@ -225,6 +225,12 @@ body:has(#ds-dok:not([hidden])) .dpvai-fab{bottom:calc(var(--dsdok,62px) + 12px)
 .ds-pv-w-k,.ds-pv-w-k:visited{display:flex;align-items:center;justify-content:center;min-height:36px;padding:0 13px;
  background:var(--gr);color:#fff !important;border-radius:9px;font-size:13px;font-weight:800;text-decoration:none !important;
  white-space:nowrap}
+.ds-pv-specs,.ds-pv-specs:visited{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:10px;padding:12px 14px;
+ border:1.5px solid var(--rd);border-radius:12px;background:#fff;color:var(--ink) !important;text-decoration:none !important}
+.ds-pv-specs:hover{border-color:var(--gr)}
+.ds-pv-specs b{display:block;font-size:14px;font-weight:800}
+.ds-pv-specs small{display:block;font-size:12px;color:var(--mut);font-weight:600;margin-top:1px}
+.ds-pv-specs em{font-style:normal;font-weight:800;color:var(--gr);font-size:17px}
 .ds-oordeel{margin-top:14px;background:var(--pa2);border:1px solid var(--rd);border-radius:12px;padding:13px}
 .ds-oordeel b{display:block;font-size:13.5px;font-weight:800;margin-bottom:5px}
 .ds-oordeel p{margin:0 0 7px;font-size:13.5px;line-height:1.55;color:var(--ink)}
@@ -394,6 +400,11 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
   </div>
         </div>
         <div class="ds-zg" hidden>
+          <h4>Platform</h4>
+          <div class="ds-chips" id="ds-platforms" aria-label="Platforms" hidden></div>
+          <button type="button" class="ds-zij-meer" data-meer="Alle platforms" data-minder="Minder platforms" hidden>Alle platforms</button>
+        </div>
+        <div class="ds-zg" hidden>
           <h4>Soort</h4>
           <div class="ds-chips" id="ds-types" aria-label="Soorten" hidden></div>
           <button type="button" class="ds-zij-meer" data-meer="Alle soorten" data-minder="Minder soorten" hidden>Alle soorten</button>
@@ -543,6 +554,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     q: '',
     merk: [],
     type: [],
+    platform: [],
     filters: {},
     min: '',
     max: '',
@@ -564,6 +576,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     filters: document.getElementById('ds-filters'),
     merken: document.getElementById('ds-merken'),
     types: document.getElementById('ds-types'),
+    platforms: document.getElementById('ds-platforms'),
     raster: document.getElementById('ds-raster'),
     laden: document.getElementById('ds-laden'),
     leeg: document.getElementById('ds-leeg'),
@@ -611,6 +624,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     if (st.q) p.set('q', st.q);
     if (st.merk.length) p.set('merk', st.merk.join(','));
     if (st.type.length) p.set('type', st.type.join(','));
+    if (st.platform.length) p.set('platform', st.platform.join(','));
     Object.keys(st.filters).forEach(function (k) { if (st.filters[k]) p.set(k, '1'); });
     if (st.min !== '') p.set('min', st.min);
     if (st.max !== '') p.set('max', st.max);
@@ -630,6 +644,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     st.q = p.get('q') || '';
     st.merk = (p.get('merk') || '').split(',').filter(Boolean);
     st.type = (p.get('type') || '').split(',').filter(Boolean);
+    st.platform = (p.get('platform') || '').split(',').filter(Boolean);
     st.filters = {};
     ['echt', 'deal', 'multi', 'voorraad', 'refurbished'].forEach(function (k) {
       if (p.get(k) === '1') st.filters[k] = true;
@@ -689,6 +704,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     if (st.q) p.set('q', st.q);
     if (st.merk.length) p.set('merk', st.merk.join(','));
     if (st.type.length) p.set('type', st.type.join(','));
+    if (st.platform.length) p.set('platform', st.platform.join(','));
     if (st.filters.echt) p.set('echt', '1');
     if (st.filters.deal) p.set('deal', '1');
     if (st.filters.multi) p.set('multi', '1');
@@ -934,9 +950,30 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
       h + '</div>' + kaarten;
   }
 
+  // 19 okt: aangevinkte filters bovenaan de lijst, zodat je ziet wat aanstaat
+  // zonder te scrollen. Staat een keuze buiten de top van de facet (bijvoorbeeld
+  // een klein merk), dan blijft hij toch zichtbaar.
+  function metGekozenEerst(lijst, gekozen) {
+    var aan = [], uit = [];
+    lijst.forEach(function (r) { (gekozen.indexOf(r[0]) !== -1 ? aan : uit).push(r); });
+    gekozen.forEach(function (k) { if (!aan.some(function (r) { return r[0] === k; })) aan.push([k, 0]); });
+    return aan.concat(uit);
+  }
+
   function tekenFacetten(f) {
+    // platforms (alleen gaming)
+    var pl = f.platforms || [];
+    if (pl.length > 1) {
+      el.platforms.hidden = false;
+      el.platforms.innerHTML = metGekozenEerst(pl, st.platform).slice(0, 20).map(function (r) {
+        var aan = st.platform.indexOf(r[0]) !== -1;
+        return '<button class="ds-chip" type="button" data-platform="' + esc(r[0]) + '" aria-pressed="' +
+          (aan ? 'true' : 'false') + '"><b>' + esc(r[0]) + '</b> <span class="n">' + r[1] + '</span></button>';
+      }).join('');
+    } else el.platforms.hidden = true;
+
     // merken
-    var m = f.merken || [];
+    var m = metGekozenEerst(f.merken || [], st.merk);
     if (m.length > 1) {
       el.merken.hidden = false;
       el.merken.innerHTML = m.slice(0, 22).map(function (r) {
@@ -947,7 +984,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     } else el.merken.hidden = true;
 
     // soorten binnen de categorie (product_type uit de feed)
-    var t = f.types || [];
+    var t = metGekozenEerst(f.types || [], st.type);
     if (t.length > 1) {
       el.types.hidden = false;
       el.types.innerHTML = t.slice(0, 20).map(function (r) {
@@ -1266,6 +1303,16 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
         });
         h += '</div>';
 
+        /* Specificaties hebben wij niet: de feeds geven alleen naam, prijs en foto.
+           Daarom een duidelijke knop naar de productpagina van de goedkoopste winkel,
+           waar de volledige specificaties staan. */
+        if (pr.o && pr.o[0]) {
+          h += '<a class="ds-pv-specs" href="' + API + '/api/shop/go?i=' + encodeURIComponent(pr.i) +
+            '&w=' + encodeURIComponent(pr.o[0].w) + '&cat=' + encodeURIComponent(d.cat) + '&ref=specs' +
+            '" target="_blank" rel="sponsored noopener"><span><b>Specificaties en details</b><small>op de productpagina van ' +
+            esc(pr.o[0].w) + '</small></span><em aria-hidden="true">&rarr;</em></a>';
+        }
+
         /* Amazon. Hun prijs komt niet uit een feed of koppeling: die krijg je
            pas bij tien verkopen in dertig dagen. Wat hier kan staan is een
            prijs die met de hand is afgelezen, met de dag erbij. Die doet niet
@@ -1305,6 +1352,12 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     el.ovl.hidden = true;
     document.body.style.overflow = '';
     dokBij();
+    // Kwam je binnen via een link met ?p=, dan gaat die er bij sluiten af,
+    // zodat verversen niet opnieuw hetzelfde product opent.
+    try {
+      var u = new URL(location.href);
+      if (u.searchParams.has('p')) { u.searchParams.delete('p'); history.replaceState(null, '', u.pathname + (u.search || '')); }
+    } catch (e) {}
   }
 
   // ---------------------------------------------------------------- gebeurtenissen
@@ -1336,6 +1389,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     st.cat = nieuw;
     st.merk = [];
     st.type = [];
+    st.platform = [];
     vernieuw(true);
   });
 
@@ -1346,7 +1400,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
       st.filters = {};
       if (st.sort === 'populair') st.sort = 'beste';
     } else if (st.sort === 'beste') st.sort = 'populair';
-    st.merk = []; st.type = [];
+    st.merk = []; st.type = []; st.platform = [];
     zetDealKnop();
     vernieuw(true);
   });
@@ -1368,6 +1422,15 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     var m = b.getAttribute('data-merk');
     var i = st.merk.indexOf(m);
     if (i === -1) st.merk.push(m); else st.merk.splice(i, 1);
+    vernieuw(false);
+  });
+
+  el.platforms.addEventListener('click', function (e) {
+    var b = e.target.closest('button[data-platform]');
+    if (!b) return;
+    var t = b.getAttribute('data-platform');
+    var i = st.platform.indexOf(t);
+    if (i === -1) st.platform.push(t); else st.platform.splice(i, 1);
     vernieuw(false);
   });
 
@@ -1442,7 +1505,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
 
   function wisFilters(ookZoek) {
     if (ookZoek) { st.q = ''; el.q.value = ''; el.wis.hidden = true; }
-    st.merk = []; st.type = []; st.filters = {}; st.min = ''; st.max = '';
+    st.merk = []; st.type = []; st.platform = []; st.filters = {}; st.min = ''; st.max = '';
     el.min.value = ''; el.max.value = '';
     el.filters.querySelectorAll('[aria-pressed]').forEach(function (b) { b.setAttribute('aria-pressed', 'false'); });
     zetDealKnop();
@@ -1478,7 +1541,7 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
     function bij() {
       // Kop en "alle"-knop alleen tonen als de lijst er is en lang genoeg is.
       [].forEach.call(zij.querySelectorAll('.ds-zg'), function (g) {
-        var lijst = g.querySelector('#ds-types,#ds-merken'); if (!lijst) return;
+        var lijst = g.querySelector('#ds-types,#ds-merken,#ds-platforms'); if (!lijst) return;
         zetVerborgen(g, lijst.hidden);
         zetVerborgen(g.querySelector('.ds-zij-meer'), lijst.children.length <= 7);
       });
@@ -1540,6 +1603,12 @@ html:not(#x):not(#y) .ds .ds-tip-x{flex:none;width:30px;height:30px;border:0;bac
   });
 
   zetDealKnop();
+
+  // Link van buiten met ?p=<id>, bijvoorbeeld een kaart onder "Vandaag echt
+  // gezakt" op de homepage: meteen het productvenster openen.
+  var startProduct = new URLSearchParams(location.search).get('p');
+  if (startProduct && /^[\w.-]{3,80}$/.test(startProduct)) openProduct(startProduct);
+
   haalIndex().then(function () {
     // het aantal deals op de knop, zonder de pagina op te houden
     if (DEALS && !st.deals) setTimeout(function () { haalDeals().then(function () {}, function () {}); }, 1500);

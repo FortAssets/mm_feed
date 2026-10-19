@@ -1,0 +1,101 @@
+{%- comment -%}
+  Herkomst van de bezoeker vasthouden en meegeven aan de affiliatelinks.
+
+  In de clickref stond tot nu toe alleen de plek waar geklikt werd. Je zag dus
+  wel dat een verkoop van een artikel kwam, maar niet of die bezoeker via
+  Google, via Instagram of via een mail binnenkwam: zodra iemand op de site is,
+  is de verwijzer je eigen domein.
+
+  Bij de eerste pagina bepalen we de bron en bewaren die dertig dagen in een
+  cookie. Eerste aanraking telt. Bij elke klik op een uitgaande link gaat er &b=
+  met een letter mee; de awin-worker (12.27+, voor bol 12.43+) en de
+  shop-worker (19 okt) plakken die achter de clickref of subid, zodat Awin,
+  Daisycon en bol hem terugrapporteren bij de verkoop.
+
+  19 okt: de letter ging alleen mee met links die /api/go bevatten. Sinds
+  21 september zet dpv-cover-fix die links om naar /go/deal, en de links van de
+  productvergelijker lopen via /api/shop/go. Die kregen dus geen letter. Nu
+  alle drie.
+
+  Letters: g zoekverkeer, s social, m mail, d direct. Geen persoonsgegevens,
+  alleen die ene letter in een cookie die dpv_bron heet.
+{%- endcomment -%}
+
+<script>
+(function () {
+  var NAAM = 'dpv_bron';
+  var DAGEN = 30;
+
+  function lees() {
+    var m = document.cookie.match(/(?:^|;\s*)dpv_bron=([gsmd])/);
+    return m ? m[1] : '';
+  }
+
+  function schrijf(letter) {
+    try {
+      document.cookie = NAAM + '=' + letter + ';path=/;max-age=' + (DAGEN * 86400) + ';samesite=lax';
+    } catch (e) {}
+  }
+
+  function bepaal() {
+    var p = new URLSearchParams(location.search);
+
+    // Onze eigen mails zetten ?van=mail... op de link; dat is het zekerst.
+    var van = (p.get('van') || '').toLowerCase();
+    if (van.indexOf('mail') === 0) return 'm';
+
+    var bron = (p.get('utm_source') || '').toLowerCase();
+    var medium = (p.get('utm_medium') || '').toLowerCase();
+    if (medium.indexOf('email') > -1 || bron.indexOf('mail') > -1 || bron === 'resend') return 'm';
+    if (medium.indexOf('cpc') > -1 || medium.indexOf('paid') > -1) return 's';
+    if (/instagram|facebook|meta|tiktok|linkedin|twitter|pinterest|youtube/.test(bron)) return 's';
+    if (/google|bing|duckduckgo|ecosia|yahoo|startpage/.test(bron)) return 'g';
+
+    var ref = document.referrer || '';
+    if (ref) {
+      var h = '';
+      try { h = new URL(ref).hostname.toLowerCase(); } catch (e) {}
+      // Verwijzingen vanaf onze eigen site zeggen niets over de herkomst.
+      if (h && h.indexOf('deprijsvergelijker.com') < 0) {
+        if (/google|bing|duckduckgo|ecosia|yahoo|startpage|search/.test(h)) return 'g';
+        if (/instagram|facebook|fb\.|t\.co|twitter|x\.com|linkedin|tiktok|pinterest|youtube|whatsapp/.test(h)) return 's';
+        return 'd';
+      }
+      if (h) return '';   // interne verwijzing: bestaande waarde behouden
+    }
+    return 'd';
+  }
+
+  var huidig = lees();
+  if (!huidig) {
+    var nieuw = bepaal();
+    if (nieuw) { schrijf(nieuw); huidig = nieuw; }
+  }
+  if (!huidig) return;
+
+  // Links die langs onze telling lopen: de awin-worker (/api/go), dezelfde via
+  // ons eigen domein (/go/deal) en de productvergelijker (/api/shop/go).
+  var UIT = /\/api\/go\?|\/go\/deal\?|\/api\/shop\/go\?/;
+
+  // Bij het klikken en niet vooraf, zodat links die later op de pagina
+  // verschijnen (vergelijker, kaarten) ook meelopen.
+  document.addEventListener('click', function (e) {
+    var a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
+    if (!a) return;
+    var h = a.getAttribute('href') || '';
+    if (!UIT.test(h)) return;
+    if (/[?&]b=[gsmd](&|$)/.test(h)) return;
+    a.setAttribute('href', h + (h.indexOf('?') > -1 ? '&' : '?') + 'b=' + huidig);
+  }, true);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Herkomst bij links",
+  "settings": [
+    { "type": "paragraph", "content": "Onthoudt dertig dagen waar een bezoeker vandaan kwam (zoekverkeer, social, mail of direct) en geeft dat mee aan elke affiliatelink. In Awin, Daisycon en bol zie je dat terug achter de clickref of subid, bijvoorbeeld productpagina-g." }
+  ],
+  "presets": [ { "name": "Herkomst bij links" } ]
+}
+{% endschema %}

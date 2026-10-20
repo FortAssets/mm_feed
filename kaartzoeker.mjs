@@ -57,13 +57,13 @@ console.log('sets opgehaald:', teHalen.length, 'in cache:', Object.keys(cache.se
 
 // 2. Kaartdetails (zeldzaamheid, Cardmarket-product, prijzen van TCGdex als reserve)
 const alleKaarten = Object.values(cache.sets).flatMap(s => s.kaarten.map(k => ({ id: k[0], set: s.id, datum: s.datum })))
-const nodig = alleKaarten.filter(k => { const c = cache.kaarten[k.id]; return !c || (recent(k.datum) && c.g !== vandaag) || (Date.now() - Date.parse(c.g || 0)) > 30 * 864e5 })
+const nodig = alleKaarten.filter(k => { const c = cache.kaarten[k.id]; return !c || c.dex === undefined || (recent(k.datum) && c.g !== vandaag) || (Date.now() - Date.parse(c.g || 0)) > 30 * 864e5 })
 console.log('kaarten totaal:', alleKaarten.length, 'details nodig:', nodig.length)
 let n = 0
 await inStukken(nodig, 8, async k => {
   const d = await haal(API + '/en/cards/' + encodeURIComponent(k.id)); if (!d) return
   const cm = d.pricing?.cardmarket || {}
-  cache.kaarten[k.id] = { r: d.rarity || '', cm: cm.idProduct || null, cat: d.category || '', p: cm.trend != null || cm['trend-holo'] != null ? [cm.trend ?? null, cm.low ?? null, cm.avg1 ?? null, cm.avg7 ?? null, cm.avg30 ?? null, cm['trend-holo'] ?? null] : null, usd: d.pricing?.tcgplayer ? (d.pricing.tcgplayer.holofoil?.marketPrice ?? d.pricing.tcgplayer.normal?.marketPrice ?? d.pricing.tcgplayer['reverse-holofoil']?.marketPrice ?? null) : null, g: vandaag }
+  cache.kaarten[k.id] = { dex: (d.dexId || [])[0] || 0, r: d.rarity || '', cm: cm.idProduct || null, cat: d.category || '', p: cm.trend != null || cm['trend-holo'] != null ? [cm.trend ?? null, cm.low ?? null, cm.avg1 ?? null, cm.avg7 ?? null, cm.avg30 ?? null, cm['trend-holo'] ?? null] : null, usd: d.pricing?.tcgplayer ? (d.pricing.tcgplayer.holofoil?.marketPrice ?? d.pricing.tcgplayer.normal?.marketPrice ?? d.pricing.tcgplayer['reverse-holofoil']?.marketPrice ?? null) : null, g: vandaag }
   if (++n % 1000 === 0) { console.log('details', n, Math.round((Date.now() - start) / 60000) + ' min'); fs.writeFileSync(CACHE, JSON.stringify(cache)) }
 })
 console.log('details opgehaald:', n)
@@ -83,6 +83,39 @@ for (const t of TALEN) {
 }
 fs.writeFileSync(CACHE, JSON.stringify(cache))
 
+// 3b. Japanse en Koreaanse sets (20 okt). Eigen id's (jp-m2a, kr-sv4k) zodat ze niet botsen met de Engelse.
+// Namen: de Pokémon via het Pokédex-nummer naar het Engels (Ludicolo in plaats van ルンパッパ), met ex/V/GX erachter;
+// trainers en energie houden hun eigen naam. Setnamen in het Engels uit onze catalogus, anders de eigen naam.
+const dexNaam = new Map()
+for (const s2 of Object.values(cache.sets)) for (const [id, , naam] of s2.kaarten) { const c = cache.kaarten[id]; if (c?.dex && !dexNaam.has(c.dex) && !/\b(ex|EX|GX|V|VMAX|VSTAR|BREAK|LV\.X|Prism|δ)\b|'s /.test(naam)) dexNaam.set(c.dex, naam) }
+const JPNAMEN = fs.existsSync('data/jp-setnamen.json') ? JSON.parse(fs.readFileSync('data/jp-setnamen.json', 'utf8')) : {}
+const SERIE = { M: 'Mega Evolution', SV: 'Scarlet & Violet', S: 'Sword & Shield', SM: 'Sun & Moon', XY: 'XY', BW: 'Black & White' }
+cache.azie ||= { sets: {}, kaarten: {} }
+for (const [t, pre, label] of [['ja', 'jp', 'Japan'], ['ko', 'kr', 'Korea']]) {
+  if (tijdOp()) break
+  const tl = await haal(API + '/' + t + '/sets') || []
+  const nieuw = tl.filter(s2 => { const c = cache.azie.sets[pre + ':' + s2.id]; return !c || recent(c.datum) || (Date.now() - Date.parse(c.gehaald || 0)) > 30 * 864e5 })
+  await inStukken(nieuw, 6, async s2 => {
+    const d = await haal(API + '/' + t + '/sets/' + encodeURIComponent(s2.id)); if (!d) return
+    cache.azie.sets[pre + ':' + s2.id] = { id: (pre + '-' + s2.id).toLowerCase(), code: s2.id, taal: t, label, eigen: d.name, naam: JPNAMEN[String(s2.id).toUpperCase()] || null, serie: d.serie?.id || '', datum: d.releaseDate || '', officieel: d.cardCount?.official || null, totaal: d.cardCount?.total || null, kaarten: (d.cards || []).map(c => [c.id, c.localId, c.name, c.image || '']), gehaald: new Date().toISOString() }
+  })
+  const kn = Object.values(cache.azie.sets).filter(s2 => s2.taal === t).flatMap(s2 => s2.kaarten.map(k => ({ id: k[0], datum: s2.datum })))
+  const kNodig = kn.filter(k => { const c = cache.azie.kaarten[t + ':' + k.id]; return !c || (recent(k.datum) && c.g !== vandaag) || (Date.now() - Date.parse(c.g || 0)) > 30 * 864e5 })
+  console.log(label, 'sets', tl.length, 'kaarten', kn.length, 'details nodig', kNodig.length)
+  await inStukken(kNodig, 8, async k => {
+    const d = await haal(API + '/' + t + '/cards/' + encodeURIComponent(k.id)); if (!d) return
+    const cm = d.pricing?.cardmarket || {}
+    cache.azie.kaarten[t + ':' + k.id] = { dex: (d.dexId || [])[0] || 0, r: d.rarity || '', cm: cm.idProduct || null, p: cm.trend != null ? [cm.trend ?? null, cm.low ?? null, cm.avg1 ?? null, cm.avg7 ?? null, cm.avg30 ?? null, cm['trend-holo'] ?? null] : null, g: vandaag }
+  })
+  fs.writeFileSync(CACHE, JSON.stringify(cache))
+}
+const engelsVan = (naam, dex) => {
+  const en = dex && dexNaam.get(dex); if (!en) return naam
+  const suf = (String(naam).match(/\b(ex|EX|GX|VMAX|VSTAR|V|BREAK)\b\s*$/) || [])[1]
+  const mega = /^(メガ|MEGA|メガシンカ|M)\s?/i.test(naam) || /メガ/.test(naam)
+  return (mega ? 'Mega ' : '') + en + (suf ? ' ' + suf : '')
+}
+
 // 4. Prijzen: de prijsgids van Cardmarket
 let gids = null
 try {
@@ -96,6 +129,12 @@ const r2 = v => v == null || !(v > 0) ? null : Math.round(v * 100) / 100
 const uitSets = Object.values(cache.sets).filter(s => s.kaarten.length).sort((a, b) => (b.datum || '').localeCompare(a.datum || ''))
   .map(s => [s.id, s.naam, s.serie, s.datum, s.logo, s.symbool, s.officieel, s.totaal, Object.fromEntries(TALEN.map(t => [t, typeof cache.namen[t]?.['_' + s.id] === 'string' ? cache.namen[t]['_' + s.id] : null]).filter(x => x[1]))])
 let metPrijs = 0
+for (const s2 of Object.values(cache.azie?.sets || {})) {
+  if (!s2.kaarten.length) continue
+  const naam = s2.naam ? s2.naam + ' (' + s2.label + ')' : s2.label + ' ' + s2.code + ' · ' + s2.eigen
+  uitSets.push([s2.id, naam, s2.label + ' · ' + (SERIE[String(s2.serie).replace(/[^A-Z]/gi, '').toUpperCase()] || s2.serie || 'Pokémon'), s2.datum, '', '', s2.officieel, s2.totaal, { [s2.taal]: s2.eigen }])
+}
+uitSets.sort((a, b) => (b[3] || '').localeCompare(a[3] || ''))
 // Sommige kaarten wijzen bij TCGdex naar hetzelfde Cardmarket-product (vaak promo's): dan klopt de prijs
 // niet voor allemaal. Die prijzen laten we weg, net als een hoge trend zonder enige aanbieding op dit moment.
 const telCm = new Map(); for (const s2 of Object.values(cache.sets)) for (const [id] of s2.kaarten) { const cm = cache.kaarten[id]?.cm; if (cm) telCm.set(cm, (telCm.get(cm) || 0) + 1) }
@@ -112,6 +151,17 @@ for (const s of Object.values(cache.sets)) {
     if (p.some(x => x != null)) metPrijs++
     const namen = Object.fromEntries(TALEN.map(t => [t, cache.namen[t]?.[id]]).filter(x => x[1] && x[1] !== naam))
     uitKaarten.push([id, s.id, nr, naam, c.r || '', img, c.cm || null, ...(p.length ? p : [null, null, null, null, null, null]), r2(c.usd), Object.keys(namen).length ? namen : 0])
+  }
+}
+for (const s2 of Object.values(cache.azie?.sets || {})) {
+  for (const [id, nr, naam, img] of s2.kaarten) {
+    const c = cache.azie.kaarten[s2.taal + ':' + id] || {}
+    const g = c.cm && gids ? gids.get(c.cm) : null
+    let p = g ? [g.trend, g.low, g.avg1, g.avg7, g.avg30, g['trend-holo']].map(r2) : (c.p || []).map(r2)
+    if (!p.length) p = [null, null, null, null, null, null]
+    if (c.cm && telCm.get(c.cm) > 1) p.fill(null)
+    if (p.some(x => x != null)) metPrijs++
+    uitKaarten.push([(s2.id + '-' + nr).toLowerCase(), s2.id, nr, engelsVan(naam, c.dex), c.r || '', img, c.cm || null, ...p, null, { [s2.taal]: naam }])
   }
 }
 const uit = { bijgewerkt: new Date().toISOString(), bron: gids ? 'cardmarket-prijsgids' : 'tcgdex', velden: ['id', 'set', 'nr', 'naam', 'zeldzaam', 'img', 'cm', 'trend', 'laag', 'gem1', 'gem7', 'gem30', 'trendHolo', 'usd', 'namen'], sets: uitSets, kaarten: uitKaarten }

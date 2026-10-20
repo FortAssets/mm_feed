@@ -190,7 +190,7 @@
 .zkv-an b{display:block;font-size:14px}.zkv-an small{display:block;font-size:12px;color:var(--soft);line-height:1.35}
 .zkv-ap{text-align:right;white-space:nowrap}.zkv-ap b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;font-weight:800;display:block;letter-spacing:-.02em;line-height:1.1}
 .zkv-ap b i{font-style:normal;font-size:12px;font-weight:700;color:var(--soft);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0}
-.zkv-ap small{display:block;font-size:11px;color:var(--soft)}.zkv-ap .zkv-em{color:#B45309;font-weight:700}.zkv-ap .zkv-g0{color:var(--groenD);font-weight:700}
+.zkv-ap small{display:block;font-size:11px;color:var(--soft)}.zkv-ap .zkv-em{color:#B45309;font-weight:700}.zkv .zkv-act{color:#B45309;font-weight:700}.zkv .zkv-los{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:15px;color:var(--ink)}.zkv-vt a{color:inherit;text-decoration:underline}.zkv-ap .zkv-g0{color:var(--groenD);font-weight:700}
 .zkv-ar .zkv-go{min-height:36px;padding:0 11px;font-size:13px}
 @media(max-width:760px){.zkv-filterrij{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}.zkv-filterrij::-webkit-scrollbar{display:none}.zkv-filterrij .zkv-chip{flex:none}}
 .zkv-ookl{font-size:12px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 6px}
@@ -326,8 +326,25 @@
       gb: d.dataGB || 0, mbit: d.speedMbit || 0, min: d.minutesLabel || '', net: d.network || '',
       abo: parseFloat(d.baseMonthlyCost) || 0, tm: parseFloat(d.deviceMonthlyCost) || 0,
       img: d.image || '', merknaam: merkVan(naam), model: mv.kern, opslag: mv.opslag,
-      merk: [], url: d.affiliateUrl, live: true, los: los
+      merk: [], url: d.affiliateUrl, live: true, los: los, toestel: parseFloat(d.deviceTotalPrice) || 0
     };
+  }
+  // 21 okt: tijdelijke actieprijzen (Mobiel.nl en kleinere aanbieders). De toestelfeed noemt alleen de actieprijs
+  // van het abonnement; de sim-onlyfeed van dezelfde aanbieder kent de duur en de prijs daarna. Die koppelen we
+  // op aanbieder, netwerk, data en actieprijs, en rekenen het totaal over de looptijd daarmee uit.
+  var ACTIE = {}, LOSTOESTEL = {};
+  function provKey(p) { return String(p || '').toLowerCase().replace(/\s+nl$/, '').trim(); }
+  function actieSleutel(prov, net, gb, cent) { return provKey(prov) + '|' + String(net || '').toLowerCase() + '|' + gb + '|' + cent; }
+  function pasActieToe(r, x) {
+    var ap = parseFloat(x.actiePrijs) || 0, am = parseInt(x.actieMaanden, 10) || 0, na = parseFloat(x.prijsNaActie) || 0, abo = r.abo || r.prijs - r.tm;
+    var a = null;
+    if (ap > 0 && am > 0 && na > ap) a = { prijs: ap, maanden: am, na: na };
+    else a = ACTIE[actieSleutel(r.prov, r.net, r.gb, Math.round(abo * 100))] || null;
+    if (!a || !(a.maanden < r.maanden)) return;
+    var dur = a.maanden, mnd = r.maanden;
+    r.actie = { maanden: dur, na: Math.round((a.na + r.tm) * 100) / 100 };
+    r.totaal = r.eenmalig + r.tm * mnd + a.prijs * dur + a.na * (mnd - dur);
+    r.gemiddeld = r.totaal / mnd;
   }
   function uitHand(h) {
     return {
@@ -540,11 +557,19 @@
     });
     return volg.filter(function (x) { return x.beste && (!TIERF || x.tiers[TIERF] || (x.los.length && !Object.keys(x.tiers).length)); }).sort(function (a, b) { return (a.beste.los - b.beste.los) || (a.beste.totaal - b.beste.totaal); });
   }
+  // Wat het toestel los kost: bij MediaMarkt als die hem heeft, anders de toestelprijs die aanbieders rekenen bij betalen in termijnen.
+  function losRegel(x) {
+    var m = LOSTOESTEL[toestelSleutel(x.rijen[0])];
+    if (m) return '<small class="zkv-vt">Los toestel: <a href="' + esc(m.url) + '" target="_blank" rel="nofollow sponsored noopener"><b class="zkv-los">' + euro(m.prijs) + '</b> bij MediaMarkt</a></small>';
+    var p = x.rijen.filter(function (r) { return r.tm > 0 && r.toestel > 0; }).map(function (r) { return r.toestel; }).sort(function (a, b) { return a - b; });
+    if (!p.length) return '';
+    return '<small class="zkv-vt">Toestelprijs los: ongeveer <b class="zkv-los">' + euro(p[Math.floor(p.length / 2)]) + '</b>' + (ZAK ? ' excl. btw' : '') + '</small>';
+  }
   function aanbodRij(r, top) {
     var sub = [r.gb ? gbTekst(r.gb) : '', r.net && provNaam(r.prov).toLowerCase().indexOf(r.net.toLowerCase()) < 0 ? 'netwerk ' + r.net : '', r.m ? r.m + ' mnd' : ''].filter(Boolean).join(' · ');
     if (r.los) sub = 'Toestel op afbetaling, het abonnement kies je bij ' + esc(provNaam(r.prov).replace(/\s*Zakelijk$/i, ''));
     var prijs = r.los ? '<b>' + euro(r.prijs) + '</b><small>p/m voor het toestel</small>'
-      : '<b>' + euro(r.prijs) + '<i> p/m</i></b>' + (r.eenmalig ? '<small class="zkv-em">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '<small class="zkv-g0">geen eenmalige kosten</small>') + '<small>totaal ' + r.maanden + ' mnd: ' + euro(r.totaal) + '</small>';
+      : '<b>' + euro(r.prijs) + '<i> p/m</i></b>' + (r.actie ? '<small class="zkv-act">eerste ' + r.actie.maanden + ' mnd, daarna ' + euro(r.actie.na) + ' p/m</small>' : '') + (r.eenmalig ? '<small class="zkv-em">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '<small class="zkv-g0">geen eenmalige kosten</small>') + '<small>totaal ' + r.maanden + ' mnd: ' + euro(r.totaal) + '</small>';
     return '<li class="zkv-ar' + (top ? ' top' : '') + '">' + logo(r.prov) + '<div class="zkv-an"><b>' + esc(provNaam(r.prov)) + (top ? '<span class="zkv-lab">Goedkoopst</span>' : '') + '</b><small>' + sub + '</small></div><div class="zkv-ap">' + prijs + '</div>' + go(r) + '</li>';
   }
   function toestelKaart(x, i, goedkoopst) {
@@ -556,7 +581,7 @@
     return '<article class="zkv-tk zkv-tk2' + (goedkoopst ? ' hl' : '') + '" data-i="' + i + '">' + (goedkoopst ? '<span class="zkv-tag groen">Goedkoopst</span>' : '') +
       '<div class="zkv-tkop"><div class="zkv-tim">' + (x.img ? '<img src="' + esc(x.img) + '" alt="' + esc(x.model) + '" loading="lazy">' : '') + '</div>' +
       '<div><h3>' + esc(x.model) + '</h3><div class="zkv-tsub">' + esc(x.opslag) + (x.opslag ? ' · ' : '') + x.aanbieders + (x.aanbieders === 1 ? ' aanbieder' : ' aanbieders') + '</div>' +
-      (x.beste && !x.beste.los ? '<div class="zkv-vanaf"><b>' + euro(x.beste.prijs) + ' p/m</b>' + (x.beste.eenmalig ? ' <small>+ ' + euro(x.beste.eenmalig) + ' eenmalig</small>' : '') + '<small class="zkv-vt">laagste totaal over ' + x.beste.maanden + ' mnd: ' + euro(x.beste.totaal) + ', ' + BTWT + '</small></div>' : '') + '</div></div>' +
+      (x.beste && !x.beste.los ? '<div class="zkv-vanaf"><b>' + euro(x.beste.prijs) + ' p/m</b>' + (x.beste.eenmalig ? ' <small>+ ' + euro(x.beste.eenmalig) + ' eenmalig</small>' : '') + (x.beste.actie ? '<small class="zkv-vt zkv-act">eerste ' + x.beste.actie.maanden + ' mnd, daarna ' + euro(x.beste.actie.na) + ' p/m</small>' : '') + losRegel(x) + '</div>' : '') + '</div></div>' +
       '<div class="zkv-bun2" role="group" aria-label="Kies een bundel">' + knoppen + '</div>' +
       (lijst.length ? '<ul class="zkv-al">' + lijst.slice(0, open ? 99 : max).map(function (r, j) { return aanbodRij(r, j === 0 && lijst.length > 1); }).join('') + '</ul>' : '') +
       (x.los.length ? '<p class="zkv-ookl">' + (lijst.length ? 'Ook te koop, abonnement naar keuze' : 'Abonnement naar keuze') + '</p><ul class="zkv-al">' + x.los.map(function (r) { return aanbodRij(r, false); }).join('') + '</ul>' : '') +
@@ -616,10 +641,21 @@
   ALLES = ((ZAK && HAND[TAB]) || []).map(uitHand);
   teken();
 
-  fetch(WORKER + EIND[TAB])
-    .then(function (r) { return r.json(); })
-    .then(function (j) {
+  var EXTRA = TAB === 'toestel' ? fetch(WORKER + EIND.simonly).then(function (r) { return r.json(); }).catch(function () { return null; }) : Promise.resolve(null);
+  Promise.all([fetch(WORKER + EIND[TAB]).then(function (r) { return r.json(); }), EXTRA])
+    .then(function (jj) {
+      var j = jj[0], so = (jj[1] && jj[1].data) || [];
+      so.forEach(function (x) {
+        var ap = parseFloat(x.actiePrijs) || 0, am = parseInt(x.actieMaanden, 10) || 0, na = parseFloat(x.prijsNaActie) || 0;
+        if (ap > 0 && am > 0 && na > ap) ACTIE[actieSleutel(x.merchantName, x.network, x.dataGB || 0, Math.round(ap * 100))] = { prijs: ap, maanden: am, na: na };
+      });
       var d = (j && j.data) || [];
+      // Losse toestellen (MediaMarkt): niet in de lijst, wel als losse toestelprijs bovenaan de kaart.
+      if (TAB === 'toestel' && !ZAK) d.forEach(function (x) {
+        if (!/mediamarkt/i.test(x.merchantName || '') || !heeftToestel(x)) return;
+        var rr = uitFeed(x), k = toestelSleutel(rr), p = parseFloat(x.price) || 0;
+        if (p > 30 && (!LOSTOESTEL[k] || p < LOSTOESTEL[k].prijs)) LOSTOESTEL[k] = { prijs: p, url: x.affiliateUrl };
+      });
       var uit = [], gezien = {};
       d.forEach(function (x) {
         if (ZAK ? !isZakelijk(x) : isZakelijk(x)) return;
@@ -637,6 +673,7 @@
         // KPN Zakelijk (uit onze eigen meting) kent alleen het toestel per maand: die tonen we apart.
         if ((TAB === 'simonly' || TAB === 'toestel') && !(r.gb > 0) && !r.los) return;
         if (r.los) { r.m = 24; r.maanden = 24; r.totaal = r.prijs * 24; r.gemiddeld = r.prijs; }
+        if (TAB === 'toestel' && !r.los) pasActieToe(r, x);
         var sleutel = (x.merchantName || '') + '|' + (x.name || '') + '|' + (x.dataGB || 0) + '|' + (x.contractMonths || 0);
         if (gezien[sleutel] && gezien[sleutel].gemiddeld <= r.gemiddeld) return;
         if (gezien[sleutel]) uit.splice(uit.indexOf(gezien[sleutel]), 1);

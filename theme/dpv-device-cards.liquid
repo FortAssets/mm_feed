@@ -58,6 +58,27 @@
 @keyframes dtcp{from{opacity:.55}to{opacity:1}}
 @media(max-width:1000px){.dtc-strip{grid-template-columns:repeat(3,1fr)}.dtc-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:620px){.dtc-strip{grid-template-columns:repeat(2,1fr)}.dtc-grid{grid-template-columns:1fr}}
+/* 21 okt: compacter. Desktop 3 x 2, mobiel 2 x 3, kleinere foto's en zonder "Mail deze deal". */
+.dtc-card .dpvmb{display:none !important}
+.dtc-img{height:130px;padding:12px}
+.dtc-body{padding:12px 14px 14px}
+.dtc-name{font-size:15px;margin-bottom:6px}
+.dtc-specs{margin-bottom:8px}
+.dtc-price .p{font-size:22px}
+.dtc-cta{padding:9px;font-size:13.5px;margin-top:10px}
+@media(max-width:620px){
+ .dtc-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .dtc-card{border-radius:14px}
+ .dtc-img{height:96px;padding:8px}
+ .dtc-tag{top:8px;left:8px;font-size:9px;padding:2px 7px}
+ .dtc-card .dpv-save{top:8px;right:8px;width:28px;height:28px}
+ .dtc-body{padding:9px 10px 11px}
+ .dtc-name{font-size:13.5px}
+ .dtc-specs{gap:5px;min-height:0}.dtc-gb{font-size:12.5px}.dtc-min{font-size:11px}.dtc-logo{width:20px;height:20px;flex-basis:20px}
+ .dtc-price{padding-top:8px}.dtc-price .p{font-size:19px}.dtc-price .per{font-size:11px}
+ .dtc-een{font-size:11px}.dtc-price .dtc-tot{font-size:10.5px}
+ .dtc-cta{padding:8px;font-size:12.5px;border-radius:10px}
+}
 </style>
 
 <div class="dtc" id="dtc-{{ section.id }}">

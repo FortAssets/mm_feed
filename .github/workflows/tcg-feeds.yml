@@ -34,6 +34,7 @@ jobs:
           if git fetch -q origin tcg-data; then
             git show origin/tcg-data:feeds.json > data/tcg/feeds.json 2>/dev/null || true
             git show origin/tcg-data:awin.json > data/tcg/awin.json 2>/dev/null || true
+            git show origin/tcg-data:awin-extra.json > data/tcg/awin-extra.json 2>/dev/null || true
             git show origin/tcg-data:ebay.json > data/tcg/ebay.json 2>/dev/null || true
           fi
       - name: Pokémon uit de feeds

@@ -1,3 +1,4 @@
+import { Readable } from 'node:stream'
 // Pokémon-producten uit de partnerfeeds voor BoosterScout.
 // Draait via .github/workflows/tcg-feeds.yml, elk kwartier. Schrijft data/tcg/feeds.json (de workflow zet die op de branch tcg-data),
 // dat de voorraadworker van BoosterScout elke 5 minuten leest.
@@ -101,7 +102,57 @@ async function awin () {
   return uit
 }
 
-const items = [...await mediamarkt(), ...await awin(), ...await ebayTcg()]
+// Extra Awin-programma's alleen voor BoosterScout (buitenlandse winkels zoals Fnac, Thalia, Otto).
+// Lijst in tcg-awin.json: [{ "fid": 12345, "land": "FR" }]. Feed-ID's zijn niet geheim; de sleutel blijft AWIN_KEY.
+// Losse aanvraag met taal "any", zodat Franse en Duitse feeds niet wegvallen. Hooguit elke 2 uur.
+const AWIN_EXTRA_CACHE = 'data/tcg/awin-extra.json'
+async function awinExtra () {
+  let lijst = []
+  try { lijst = JSON.parse(fs.readFileSync('tcg-awin.json', 'utf8')).filter(x => x && x.fid) } catch (e) {}
+  if (!lijst.length) return []
+  try { const c = JSON.parse(fs.readFileSync(AWIN_EXTRA_CACHE, 'utf8')); if (c.fids === lijst.map(x => x.fid).join(',') && Date.now() - Date.parse(c.gemaakt) < 2 * 3600e3) { console.log('Awin extra: uit cache,', c.items.length); return c.items } } catch (e) {}
+  if (!AWIN_KEY) { console.log('Awin extra: geen AWIN_KEY'); return [] }
+  const land = new Map(lijst.map(x => [String(x.fid), String(x.land || 'NL').toUpperCase()]))
+  const kol = 'aw_deep_link,product_name,merchant_name,data_feed_id,search_price,currency,in_stock,ean,merchant_image_url,delivery_cost,merchant_category,product_type'
+  const url = 'https://productdata.awin.com/datafeed/download/apikey/' + AWIN_KEY + '/language/any/fid/' + lijst.map(x => x.fid).join(',') + '/rid/0/hasEnhancedFeeds/0/columns/' + kol + '/format/csv/delimiter/%2C/compression/gzip/adultcontent/1/'
+  const r = await fetch(url, { headers: { 'User-Agent': 'dpv-feed-bot/1.0' } })
+  if (!r.ok) { console.log('Awin extra HTTP', r.status); return [] }
+  // Als stroom lezen: feeds als die van Fnac (met boeken) zijn veel te groot om in het geheugen te laden.
+  const uit = []; let h = null; let k = null
+  const verwerk = v => {
+    if (!h) { h = v; k = n => h.indexOf(n); return }
+    const naam = (v[k('product_name')] || '').trim()
+    // Ruimer dan IS_TCG: ook Franse, Duitse, Spaanse en Italiaanse namen. De worker herkent daarna set en soort.
+    if (!IS_TCG(naam) && !(/pok[eé]mon/i.test(naam) && /coffret|dresseur|[ée]lite|caja|sobres?\b|bustin[ae]|buste|top.?trainer|sammelkoffer|booster|display|\betb\b/i.test(naam) && !/sleeve|h[üu]lle|classeur|album|binder|figur|peluche|pl[üu]sch|t-shirt|mug|tasse|puzzle|livre|buch|jeu vid[ée]o|switch|nintendo/i.test(naam))) return
+    if ((v[k('currency')] || 'EUR').toUpperCase() !== 'EUR') return
+    const prijs = num(v[k('search_price')]); if (!(prijs > 0)) return
+    if (/second.?chance|tweede.?kans|refurb|occasion|gebraucht|reconditionn/i.test((v[k('product_type')] || '') + ' ' + (v[k('merchant_category')] || ''))) return
+    const ean = (v[k('ean')] || '').trim()
+    uit.push({ w: (v[k('merchant_name')] || '').trim(), land: land.get(String(v[k('data_feed_id')] || '').trim()) || 'NL', id: /^\d{8,14}$/.test(ean) ? ean : 'aw:' + (v[k('aw_deep_link')] || naam).slice(-40), naam, prijs, voorraad: /^(1|true|yes|ja|in stock|oui|si|sì)$/i.test(v[k('in_stock')] || '') ? 1 : 0, url: (v[k('aw_deep_link')] || '').trim(), im: (v[k('merchant_image_url')] || '').trim(), verzend: num(v[k('delivery_cost')]) || null })
+  }
+  // CSV-regels uit de gzip-stroom; aanhalingstekens kunnen over regels heen lopen.
+  let f = ''; let row = []; let q = false
+  const gz = zlib.createGunzip()
+  const bron = Readable.fromWeb(r.body).pipe(gz)
+  for await (const stuk of bron) {
+    const t = stuk.toString('utf8')
+    for (let x = 0; x < t.length; x++) {
+      const c = t[x]
+      if (q) { if (c === '"') { if (t[x + 1] === '"') { f += '"'; x++ } else q = false } else f += c }
+      else if (c === '"') q = true
+      else if (c === ',') { row.push(f); f = '' }
+      else if (c === '\n') { row.push(f); verwerk(row); row = []; f = '' }
+      else if (c !== '\r') f += c
+    }
+  }
+  if (f || row.length) { row.push(f); verwerk(row) }
+  fs.mkdirSync('data/tcg', { recursive: true })
+  fs.writeFileSync(AWIN_EXTRA_CACHE, JSON.stringify({ gemaakt: new Date().toISOString(), fids: lijst.map(x => x.fid).join(','), items: uit }))
+  console.log('Awin extra:', uit.length, 'Pokémon-producten bij', [...new Set(uit.map(x => x.w))].join(', '))
+  return uit
+}
+
+const items = [...await mediamarkt(), ...await awin(), ...await awinExtra().catch(e => { console.log('Awin extra fout', e.message); return [] }), ...await ebayTcg()]
 fs.mkdirSync('data/tcg', { recursive: true })
 // Alleen wegschrijven als er iets veranderd is aan de producten, zodat niet elke run een commit wordt.
 let oud = null; try { oud = JSON.parse(fs.readFileSync(UIT, 'utf8')) } catch (e) {}

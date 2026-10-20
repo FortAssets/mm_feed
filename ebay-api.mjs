@@ -14,8 +14,12 @@
 const ID = process.env.EBAY_CLIENT_ID || ''
 const GEHEIM = process.env.EBAY_CLIENT_SECRET || ''
 // 20 okt: de Impact-link stuurde door naar app.partner.ebay.com, een domein zonder DNS: elke klik liep dood.
-// Zonder EBAY_IMPACT_LINK linken we rechtstreeks naar eBay (werkt, maar zonder vergoeding).
-const LINK = process.env.EBAY_IMPACT_LINK || ''
+// Nu de klassieke parameters van eBay Partner Network (campagne 5339222386, uit de linkgenerator), per site.
+// eBay NL, BE en PL doen niet mee in het partnerprogramma: een artikel daar openen we op eBay DE (zelfde
+// artikelnummer, dezelfde aanbieding).
+const EPN_CAMP = process.env.EBAY_CAMPID || '5339222386'
+const EPN_SITE = { 'www.ebay.de': ['707-53477-19255-0', 77], 'www.ebay.com': ['711-53200-19255-0', 0], 'www.ebay.co.uk': ['710-53481-19255-0', 3], 'www.ebay.fr': ['709-53476-19255-0', 71], 'www.ebay.es': ['1185-53479-19255-0', 186], 'www.ebay.it': ['724-53478-19255-0', 101], 'www.ebay.ie': ['5282-53468-19255-0', 205], 'www.ebay.ca': ['706-53473-19255-0', 2], 'www.ebay.com.au': ['705-53470-19255-0', 15] }
+const NAAR_DE = new Set(['www.ebay.nl', 'www.ebay.be', 'www.befr.ebay.be', 'www.benl.ebay.be', 'www.ebay.pl', 'www.ebay.at', 'www.ebay.ch'])
 
 export const ebayKlaar = () => !!(ID && GEHEIM)
 
@@ -76,10 +80,15 @@ export async function ebayZoek (param, markt = 'EBAY_NL') {
 
 // De pagina op eBay zonder de trackingrommel erachter, als partnerlink.
 export function ebayLink (itemUrl, sub) {
-  let schoon = String(itemUrl || '')
-  try { const u = new URL(schoon); schoon = u.origin + u.pathname } catch (e) {}
-  if (!LINK) return schoon
-  return LINK + '?u=' + encodeURIComponent(schoon) + (sub ? '&subId1=' + encodeURIComponent(sub) : '')
+  let u
+  try { u = new URL(String(itemUrl || '')) } catch (e) { return String(itemUrl || '') }
+  // Zonder de trackingrommel die eBay er zelf aan hangt; zoekpagina's houden hun zoekterm.
+  const zoek = u.pathname.startsWith('/sch/') ? u.search : ''
+  if (NAAR_DE.has(u.hostname)) u = new URL('https://www.ebay.de' + u.pathname + zoek)
+  else u = new URL(u.origin + u.pathname + zoek)
+  const r = EPN_SITE[u.hostname]; if (!r) return u.toString()
+  for (const [k, v] of [['mkcid', '1'], ['mkrid', r[0]], ['siteid', String(r[1])], ['campid', EPN_CAMP], ['customid', sub || ''], ['toolid', '10001'], ['mkevt', '1']]) u.searchParams.set(k, v)
+  return u.toString()
 }
 
 // Een aanbieding uit het zoekresultaat, of null als hij niet bruikbaar is:

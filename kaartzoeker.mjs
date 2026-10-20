@@ -131,6 +131,7 @@ const uitSets = Object.values(cache.sets).filter(s => s.kaarten.length).sort((a,
 let metPrijs = 0
 for (const s2 of Object.values(cache.azie?.sets || {})) {
   if (!s2.kaarten.length) continue
+  s2.naam = JPNAMEN[String(s2.code).toUpperCase()] || s2.naam
   const naam = s2.naam ? s2.naam + ' (' + s2.label + ')' : s2.label + ' ' + s2.code + ' · ' + s2.eigen
   uitSets.push([s2.id, naam, s2.label + ' · ' + (SERIE[String(s2.serie).replace(/[^A-Z]/gi, '').toUpperCase()] || s2.serie || 'Pokémon'), s2.datum, '', '', s2.officieel, s2.totaal, { [s2.taal]: s2.eigen }])
 }

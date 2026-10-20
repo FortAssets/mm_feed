@@ -179,7 +179,7 @@
 .zkv-tkop{display:flex;gap:14px;align-items:center;margin-bottom:12px}
 .zkv-tk2 .zkv-tim{width:92px;height:110px;flex:none;border-radius:12px}
 .zkv-tk2 .zkv-tim img{max-height:96px;max-width:80%}
-.zkv-vanaf{font-size:13px;color:var(--soft)}.zkv-vanaf b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:22px;color:var(--ink);font-weight:800}
+.zkv-vanaf{font-size:13px;color:var(--soft);margin-top:4px}.zkv-vanaf b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:24px;color:var(--ink);font-weight:800;letter-spacing:-.02em}.zkv-vanaf .zkv-vt{display:block;font-size:12px;margin-top:2px}
 .zkv-bun2{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
 .zkv-bun2 button{display:flex;flex-direction:column;align-items:flex-start;border:1px solid var(--line);border-radius:10px;padding:6px 10px;background:#fff;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
 .zkv-bun2 button b{font-size:13.5px;font-weight:800}.zkv-bun2 button small{font-size:11.5px;color:var(--soft)}
@@ -188,13 +188,16 @@
 .zkv-ar{display:grid;grid-template-columns:32px minmax(0,1fr) auto auto;gap:10px;align-items:center;padding:9px 10px;border-bottom:1px solid var(--line)}
 .zkv-ar:last-child{border-bottom:0}.zkv-ar.top{background:#F2FBF7}
 .zkv-an b{display:block;font-size:14px}.zkv-an small{display:block;font-size:12px;color:var(--soft);line-height:1.35}
-.zkv-ap{text-align:right;white-space:nowrap}.zkv-ap b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:800;display:block}
-.zkv-ap small{display:block;font-size:11px;color:var(--soft)}
+.zkv-ap{text-align:right;white-space:nowrap}.zkv-ap b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;font-weight:800;display:block;letter-spacing:-.02em;line-height:1.1}
+.zkv-ap b i{font-style:normal;font-size:12px;font-weight:700;color:var(--soft);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0}
+.zkv-ap small{display:block;font-size:11px;color:var(--soft)}.zkv-ap .zkv-em{color:#B45309;font-weight:700}
 .zkv-ar .zkv-go{min-height:36px;padding:0 11px;font-size:13px}
 @media(max-width:760px){.zkv-filterrij{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}.zkv-filterrij::-webkit-scrollbar{display:none}.zkv-filterrij .zkv-chip{flex:none}}
 .zkv-ookl{font-size:12px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 6px}
 .zkv-alle{margin-top:8px;border:0;background:none;color:var(--blauw);font:inherit;font-weight:800;font-size:13.5px;cursor:pointer;padding:4px 0}
-@media(max-width:480px){.zkv-ar{grid-template-columns:28px minmax(0,1fr) auto}.zkv-ar .zkv-go{grid-column:1/-1;width:100%}}
+@media(max-width:560px){.zkv-ar{grid-template-columns:30px minmax(0,1fr) auto;grid-template-areas:"l n p" "l n k";gap:4px 10px;padding:10px}
+ .zkv-ar>.zkv-logo{grid-area:l;align-self:start}.zkv-ar .zkv-an{grid-area:n}.zkv-ar .zkv-ap{grid-area:p}.zkv-ar .zkv-go{grid-area:k;justify-self:end;min-height:32px;padding:0 12px;font-size:12.5px;box-shadow:none}
+ .zkv-an .zkv-lab{display:inline-block;margin:3px 0 0}}
 /* het algemene "Mail deze deal" maakt elke regel twee keer zo hoog; hier niet */
 .zkv .dpvmb{display:none !important}
 </style>
@@ -541,7 +544,7 @@
     var sub = [r.gb ? gbTekst(r.gb) : '', r.net && provNaam(r.prov).toLowerCase().indexOf(r.net.toLowerCase()) < 0 ? 'netwerk ' + r.net : '', r.m ? r.m + ' mnd' : ''].filter(Boolean).join(' · ');
     if (r.los) sub = 'Toestel op afbetaling, het abonnement kies je bij ' + esc(provNaam(r.prov).replace(/\s*Zakelijk$/i, ''));
     var prijs = r.los ? '<b>' + euro(r.prijs) + '</b><small>p/m voor het toestel</small>'
-      : '<b>' + euro(r.totaal) + '</b><small>totaal ' + r.maanden + ' mnd</small><small>' + euro(r.prijs) + ' p/m' + (r.eenmalig ? ' + ' + euro(r.eenmalig) + ' eenmalig' : '') + '</small>';
+      : '<b>' + euro(r.prijs) + '<i> p/m</i></b>' + (r.eenmalig ? '<small class="zkv-em">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '<small class="zkv-em">geen eenmalige kosten</small>') + '<small>totaal ' + r.maanden + ' mnd: ' + euro(r.totaal) + '</small>';
     return '<li class="zkv-ar' + (top ? ' top' : '') + '">' + logo(r.prov) + '<div class="zkv-an"><b>' + esc(provNaam(r.prov)) + (top ? '<span class="zkv-lab">Goedkoopst</span>' : '') + '</b><small>' + sub + '</small></div><div class="zkv-ap">' + prijs + '</div>' + go(r) + '</li>';
   }
   function toestelKaart(x, i, goedkoopst) {
@@ -553,7 +556,7 @@
     return '<article class="zkv-tk zkv-tk2' + (goedkoopst ? ' hl' : '') + '" data-i="' + i + '">' + (goedkoopst ? '<span class="zkv-tag groen">Goedkoopst</span>' : '') +
       '<div class="zkv-tkop"><div class="zkv-tim">' + (x.img ? '<img src="' + esc(x.img) + '" alt="' + esc(x.model) + '" loading="lazy">' : '') + '</div>' +
       '<div><h3>' + esc(x.model) + '</h3><div class="zkv-tsub">' + esc(x.opslag) + (x.opslag ? ' · ' : '') + x.aanbieders + (x.aanbieders === 1 ? ' aanbieder' : ' aanbieders') + '</div>' +
-      (x.beste && !x.beste.los ? '<div class="zkv-vanaf"><small>vanaf</small> <b>' + euro(x.beste.totaal) + '</b> <small>totaal ' + x.beste.maanden + ' mnd, ' + BTWT + '</small></div>' : '') + '</div></div>' +
+      (x.beste && !x.beste.los ? '<div class="zkv-vanaf"><b>' + euro(x.beste.prijs) + ' p/m</b>' + (x.beste.eenmalig ? ' <small>+ ' + euro(x.beste.eenmalig) + ' eenmalig</small>' : '') + '<small class="zkv-vt">laagste totaal over ' + x.beste.maanden + ' mnd: ' + euro(x.beste.totaal) + ', ' + BTWT + '</small></div>' : '') + '</div></div>' +
       '<div class="zkv-bun2" role="group" aria-label="Kies een bundel">' + knoppen + '</div>' +
       (lijst.length ? '<ul class="zkv-al">' + lijst.slice(0, open ? 99 : max).map(function (r, j) { return aanbodRij(r, j === 0 && lijst.length > 1); }).join('') + '</ul>' : '') +
       (x.los.length ? '<p class="zkv-ookl">' + (lijst.length ? 'Ook te koop, abonnement naar keuze' : 'Abonnement naar keuze') + '</p><ul class="zkv-al">' + x.los.map(function (r) { return aanbodRij(r, false); }).join('') + '</ul>' : '') +

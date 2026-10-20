@@ -1,0 +1,48 @@
+== app.partner.ebay.com
+geen DNS
+eerste 000 -> 
+eind 000 https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test (0 stappen)
+== partner.ebay.com
+104.18.171.94   wlapp-cflare.impact.com.cdn.cloudflare.net partner.ebay.com partner.ebay.com.whitelabel.impact.com
+104.18.172.94   wlapp-cflare.impact.com.cdn.cloudflare.net partner.ebay.com partner.ebay.com.whitelabel.impact.com
+104.18.169.94   wlapp-cflare.impact.com.cdn.cloudflare.net partner.ebay.com partner.ebay.com.whitelabel.impact.com
+104.18.168.94   wlapp-cflare.impact.com.cdn.cloudflare.net partner.ebay.com partner.ebay.com.whitelabel.impact.com
+104.18.170.94   wlapp-cflare.impact.com.cdn.cloudflare.net partner.ebay.com partner.ebay.com.whitelabel.impact.com
+eerste 404 -> 
+eind 404 https://partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test (0 stappen)
+== ebay.pxf.io
+34.149.133.51   ebay.pxf.io
+eerste 302 -> https://www.ojrq.net/p/?return=https%3A%2F%2Fapp.partner.ebay.com%2Fc%2F7966591%2F627505%2F9356%3Fu%3Dhttps%253A%252F%252Fwww.ebay.nl%252Fsch%252Fi.html%253F_nkw%253Dpokemon%252520pikachu%2526_sacat%253D183454%26subId1%3Ddpv-test%26level%3D1&cid=9356&tpsync=yes&auth=5b2be84d826a2e2f
+eind 302 https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test&level=1&brwsr=1a754b38-cc8f-11f1-9fdc-7530f0408c5f&brwsrsig=wNSwXS2GC1rWUQD3YeThh0PqQAw2gA (2 stappen)
+== ebay.sjv.io
+35.227.211.136  ebay.sjv.io
+eerste 302 -> https://www.ojrq.net/p/?return=https%3A%2F%2Fapp.partner.ebay.com%2Fc%2F7966591%2F627505%2F9356%3Fu%3Dhttps%253A%252F%252Fwww.ebay.nl%252Fsch%252Fi.html%253F_nkw%253Dpokemon%252520pikachu%2526_sacat%253D183454%26subId1%3Ddpv-test%26level%3D1&cid=9356&tpsync=yes&auth=5b2be84d826a2e2f
+eind 302 https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test&level=1&brwsr=1aa31106-cc8f-11f1-9fdc-7530f0408c5f&brwsrsig=UC0WC-VsIzqL1AZwA60I%3Aw6lU8rxNH (2 stappen)
+== ebay.prf.hn
+5.150.170.4     tracking.prf.hn ebay.prf.hn
+5.150.170.5     tracking.prf.hn ebay.prf.hn
+5.150.170.6     tracking.prf.hn ebay.prf.hn
+eerste 403 -> 
+eind 403 https://ebay.prf.hn/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test (0 stappen)
+== ebay.vzck.net
+204.236.154.40  ebay.vzck.net
+54.219.220.2    ebay.vzck.net
+eerste 302 -> https://www.ojrq.net/p/?return=https%3A%2F%2Fapp.partner.ebay.com%2Fc%2F7966591%2F627505%2F9356%3Fu%3Dhttps%253A%252F%252Fwww.ebay.nl%252Fsch%252Fi.html%253F_nkw%253Dpokemon%252520pikachu%2526_sacat%253D183454%26subId1%3Ddpv-test%26level%3D1&cid=9356&tpsync=yes&auth=5b2be84d826a2e2f
+eind 302 https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test&level=1&brwsr=1bd15824-cc8f-11f1-9fdc-7530f0408c5f&brwsrsig=RRyTAYTgpRRjQC0QNi199y-E3C1197 (2 stappen)
+== ebay.i3f2.net
+52.9.145.75     ebay.i3f2.net
+54.183.231.219  ebay.i3f2.net
+eerste 302 -> https://www.ojrq.net/p/?return=https%3A%2F%2Fapp.partner.ebay.com%2Fc%2F7966591%2F627505%2F9356%3Fu%3Dhttps%253A%252F%252Fwww.ebay.nl%252Fsch%252Fi.html%253F_nkw%253Dpokemon%252520pikachu%2526_sacat%253D183454%26subId1%3Ddpv-test%26level%3D1&cid=9356&tpsync=yes&auth=5b2be84d826a2e2f
+eind 302 https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test&level=1&brwsr=1c304125-cc8f-11f1-9fdc-7530f0408c5f&brwsrsig=Qv3yiH16NwE3xMTVvnUqKwRoXDX39s (2 stappen)
+== ebay.7eer.net
+35.186.240.205  ebay.7eer.net
+eerste 302 -> https://www.ojrq.net/p/?return=https%3A%2F%2Fapp.partner.ebay.com%2Fc%2F7966591%2F627505%2F9356%3Fu%3Dhttps%253A%252F%252Fwww.ebay.nl%252Fsch%252Fi.html%253F_nkw%253Dpokemon%252520pikachu%2526_sacat%253D183454%26subId1%3Ddpv-test%26level%3D1&cid=9356&tpsync=yes&auth=5b2be84d826a2e2f
+eind 302 https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test&level=1&brwsr=1c82f520-cc8f-11f1-9fdc-7530f0408c5f&brwsrsig=zP52TYycQU7p2QDxUoxrUSGHUez0GR (2 stappen)
+== ebay.evyy.net
+34.98.83.30     geodef.evyy.net ebay.evyy.net
+eerste 302 -> https://www.ojrq.net/p/?return=https%3A%2F%2Fapp.partner.ebay.com%2Fc%2F7966591%2F627505%2F9356%3Fu%3Dhttps%253A%252F%252Fwww.ebay.nl%252Fsch%252Fi.html%253F_nkw%253Dpokemon%252520pikachu%2526_sacat%253D183454%26subId1%3Ddpv-test%26level%3D1&cid=9356&tpsync=yes&auth=5b2be84d826a2e2f
+eind 302 https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test&level=1&brwsr=1cc5f1a3-cc8f-11f1-9fdc-7530f0408c5f&brwsrsig=w6XwHx2%3ASR1GSDE2xLSkNxKdQ2VzXq (2 stappen)
+== imp.pxf.io
+34.149.133.51   imp.pxf.io
+eerste 302 -> https://www.ojrq.net/p/?return=https%3A%2F%2Fapp.partner.ebay.com%2Fc%2F7966591%2F627505%2F9356%3Fu%3Dhttps%253A%252F%252Fwww.ebay.nl%252Fsch%252Fi.html%253F_nkw%253Dpokemon%252520pikachu%2526_sacat%253D183454%26subId1%3Ddpv-test%26level%3D1&cid=9356&tpsync=yes&auth=5b2be84d826a2e2f
+eind 302 https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test&level=1&brwsr=1cf9d2f5-cc8f-11f1-9fdc-7530f0408c5f&brwsrsig=0IqUfZ3vy3U5Vtr0qERFBUrDzJ02z5 (2 stappen)

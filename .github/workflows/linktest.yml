@@ -5,6 +5,7 @@ jobs:
   t:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: |
           U='https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test'
           A='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'

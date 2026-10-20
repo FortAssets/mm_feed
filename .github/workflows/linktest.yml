@@ -1,0 +1,16 @@
+name: Linktest (eenmalig)
+on: { workflow_dispatch: {} }
+permissions: { contents: write }
+jobs:
+  t:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          U='https://app.partner.ebay.com/c/7966591/627505/9356?u=https%3A%2F%2Fwww.ebay.nl%2Fsch%2Fi.html%3F_nkw%3Dpokemon%2520pikachu%26_sacat%3D183454&subId1=dpv-test'
+          A='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Safari/537.36'
+          { echo "== kop"; curl -s -m 30 -A "$A" -D - -o body1.html "$U" | head -30
+            echo "== keten"; curl -s -m 40 -A "$A" -L -o body2.html -w "eind %{http_code} %{url_effective} redirects %{num_redirects}\n" "$U"
+            echo "== titel"; grep -o '<title>[^<]*' body2.html | head -3
+            echo "== body1 begin"; head -c 1500 body1.html; } > uit.txt 2>&1
+          git config user.name linktest; git config user.email actions@users.noreply.github.com
+          git checkout -q --orphan linktest && git rm -rqf . && cp uit.txt resultaat.txt && git add resultaat.txt && git commit -qm linktest && git push -qf origin linktest

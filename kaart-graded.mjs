@@ -11,14 +11,17 @@ import { ebayKlaar, ebayZoek, Limiet } from './ebay-api.mjs'
 
 const MAP = 'data/kz'
 const CACHE = MAP + '/graded-cache.json'
-const AANTAL = Number(process.env.GRADED_AANTAL || 300)
+// 20 okt: elke dag de kaarten die het langst niet gemeten zijn (uit de 2000 duurste), zodat na een paar dagen
+// alle kaarten van 15 euro of meer graded prijzen hebben. Uitkomsten blijven 21 dagen staan.
+const AANTAL = Number(process.env.GRADED_AANTAL || 450)
+const POOL = Number(process.env.GRADED_POOL || 2000)
 const MARKTEN = [['EBAY_US', 'USD'], ['EBAY_DE', 'EUR']]
 if (!ebayKlaar()) { console.log('geen eBay-sleutels, overgeslagen'); process.exit(0) }
 const kz = JSON.parse(fs.readFileSync(MAP + '/kaarten.json', 'utf8'))
 const ix = Object.fromEntries(kz.velden.map((v, i) => [v, i]))
 const setVan = new Map(kz.sets.map(s => [s[0], s]))
 const cache = fs.existsSync(CACHE) ? JSON.parse(fs.readFileSync(CACHE, 'utf8')) : { items: {}, verkocht: {} }
-cache.items ||= {}; cache.verkocht ||= {}
+cache.items ||= {}; cache.verkocht ||= {}; cache.gemeten ||= {}; cache.res ||= {}
 const vandaag = new Date().toISOString().slice(0, 10)
 
 // Koers USD -> EUR (ECB). Lukt dat niet: 0,92.
@@ -31,7 +34,8 @@ console.log('koers 1 USD =', usdEur.toFixed(4), 'EUR')
 
 const GRADER = /\b(PSA|BGS|BECKETT|CGC|SGC|ACE|TAG)\b[\s-]*(?:GEM[\s-]*MINT|GEM MT|MINT|PRISTINE|NM[\s-]*MT|PERFECT)?[\s-]*(10|9\.5|9|8\.5|8|7)\b/i
 const WEG = /\b(lot|bundle|proxy|custom|reprint|fake|orica|digital|ungraded|not graded|raw|ready to grade|choose|pick|you pick|multiple|set of|sealed|booster|empty|case only|slab only|label only|sticker|playmat|sleeve|binder|metal)\b/i
-const kaarten = kz.kaarten.filter(k => (k[ix.trend] || 0) >= 15).sort((a, b) => b[ix.trend] - a[ix.trend]).slice(0, AANTAL)
+const pool = kz.kaarten.filter(k => (k[ix.trend] || 0) >= 15).sort((a, b) => b[ix.trend] - a[ix.trend]).slice(0, POOL)
+const kaarten = pool.slice().sort((a, b) => String(cache.gemeten[a[ix.id]] || '').localeCompare(String(cache.gemeten[b[ix.id]] || '')) || b[ix.trend] - a[ix.trend]).slice(0, AANTAL)
 console.log('kaarten om te meten:', kaarten.length)
 
 const AI = process.env.ANTHROPIC_API_KEY || ''
@@ -47,6 +51,10 @@ async function aiCheck (naam, nummer, set, kand) {
   return new Set((JSON.parse(m[0]).ok || []).map(Number))
 }
 const med = a => { const s = a.slice().sort((x, y) => x - y); const n = s.length; return n ? (n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2) : null }
+// Vraagprijzen hebben uitschieters (een verkoper die 'm voor de gein op een ton zet). Weg wat ver boven de mediaan ligt,
+// en de geschatte prijs is het 25e percentiel: daar wordt in de praktijk gekocht.
+const schoon = a => { if (a.length < 4) return a; const m = med(a); return a.filter(x => x <= m * 2.5) }
+const p25 = a => { const s = a.slice().sort((x, y) => x - y); if (!s.length) return null; const i = (s.length - 1) * 0.25, l = Math.floor(i), h = Math.ceil(i); return s[l] + (s[h] - s[l]) * (i - l) }
 const r2 = v => Math.round(v * 100) / 100
 const uit = {}
 let calls = 0, gestopt = false
@@ -101,12 +109,16 @@ for (const k of kaarten) {
   for (const g of Object.keys(cache.verkocht[id] || {})) cache.verkocht[id][g] = cache.verkocht[id][g].filter(x => x[1] >= grens)
   const res = {}
   for (const g of new Set([...Object.keys(nu), ...Object.keys(cache.verkocht[id] || {})])) {
-    const v = (nu[g] || []).map(x => x[0]), vk = ((cache.verkocht[id] || {})[g] || []).map(x => x[0])
-    if (v.length < 2 && vk.length < 2) continue
-    res[g] = { vraag: v.length >= 2 ? r2(med(v)) : null, n: v.length, laag: v.length ? r2(Math.min(...v)) : null, verkocht: vk.length >= 2 ? r2(med(vk)) : null, nv: vk.length }
+    const v = schoon((nu[g] || []).map(x => x[0])), vk = schoon(((cache.verkocht[id] || {})[g] || []).map(x => x[0]))
+    if (!v.length && vk.length < 2) continue
+    res[g] = { vraag: v.length >= 2 ? r2(med(v)) : null, n: v.length, laag: v.length ? r2(Math.min(...v)) : null, schat: v.length >= 2 ? r2(p25(v)) : v.length ? r2(v[0]) : null, verkocht: vk.length >= 2 ? r2(med(vk)) : null, nv: vk.length }
   }
-  if (Object.keys(res).length) uit[id] = res
+  cache.gemeten[id] = vandaag
+  if (Object.keys(res).length) cache.res[id] = { d: vandaag, r: res }; else delete cache.res[id]
 }
+// Alles wat de afgelopen 21 dagen gemeten is, gaat mee naar de site.
+const oudGrens = new Date(Date.now() - 21 * 864e5).toISOString().slice(0, 10)
+for (const [id, x] of Object.entries(cache.res)) if (x.d >= oudGrens) uit[id] = x.r; else delete cache.res[id]
 fs.writeFileSync(CACHE, JSON.stringify(cache))
 fs.writeFileSync(MAP + '/graded.json', JSON.stringify({ bijgewerkt: new Date().toISOString(), koers: usdEur, bron: 'eigen meting eBay (Nu kopen, eBay.com en eBay.de)', kaarten: uit }))
 console.log('klaar:', Object.keys(uit).length, 'kaarten met graded prijzen,', calls, 'zoekopdrachten,', aiN, 'keer nagekeken met Claude')

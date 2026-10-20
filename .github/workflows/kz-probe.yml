@@ -1,0 +1,16 @@
+name: Kaartzoeker probe (eenmalig)
+on: { workflow_dispatch: {} }
+permissions: { contents: write }
+concurrency: { group: tcg-feeds, cancel-in-progress: false }
+jobs:
+  p:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: '22' }
+      - run: node kz-probe.mjs
+      - run: |
+          git config user.name probe; git config user.email actions@users.noreply.github.com
+          git fetch -q origin tcg-data; git worktree add -q /tmp/td origin/tcg-data && git -C /tmp/td checkout -q -B tcg-data
+          mkdir -p /tmp/td/kaartzoeker && cp data/kz/probe.json /tmp/td/kaartzoeker/ && cd /tmp/td && git add kaartzoeker && git commit -q -m probe && git push -q origin tcg-data

@@ -29,9 +29,15 @@ jobs:
           mkdir -p data/kz
           git fetch -q origin tcg-data || true
           git show origin/tcg-data:kaartzoeker/cache.json > data/kz/cache.json 2>/dev/null || rm -f data/kz/cache.json
+          git show origin/tcg-data:kaartzoeker/graded-cache.json > data/kz/graded-cache.json 2>/dev/null || rm -f data/kz/graded-cache.json
           ls -la data/kz
       - name: Kaarten ophalen
         run: node kaartzoeker.mjs
+      - name: Graded prijzen meten (eBay)
+        env:
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+        run: node kaart-graded.mjs || echo "graded mislukt, kaarten gaan wel door"
       - name: Naar de branch tcg-data
         run: |
           [ -f data/kz/kaarten.json ] || { echo "geen kaarten.json"; exit 0; }
@@ -40,6 +46,7 @@ jobs:
           git worktree add -q /tmp/td origin/tcg-data && git -C /tmp/td checkout -q -B tcg-data
           mkdir -p /tmp/td/kaartzoeker
           cp data/kz/kaarten.json data/kz/cache.json /tmp/td/kaartzoeker/
+          cp data/kz/graded.json data/kz/graded-cache.json /tmp/td/kaartzoeker/ 2>/dev/null || true
           cd /tmp/td
           git add kaartzoeker
           git diff --cached --quiet && { echo "niets veranderd"; exit 0; }

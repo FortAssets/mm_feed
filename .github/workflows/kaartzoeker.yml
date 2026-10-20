@@ -34,7 +34,7 @@ jobs:
           git show origin/tcg-data:kaartzoeker/aanvul-cache.json > data/kz/aanvul-cache.json 2>/dev/null || rm -f data/kz/aanvul-cache.json
           ls -la data/kz
       - name: Kaarten ophalen
-        run: node kaartzoeker.mjs
+        run: node kaartzoeker.mjs 2>&1 | tee -a data/kz/run.log
       - name: Namen en afbeeldingen aanvullen (pokemontcg.io, Cardmarket, eBay)
         env:
           EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
@@ -46,7 +46,8 @@ jobs:
           CM_ACCESS_SECRET: ${{ secrets.CM_ACCESS_SECRET }}
         run: |
           cp data/kz/kaarten.json data/kz/kaarten-voor.json
-          node kaart-aanvul.mjs || { echo "aanvullen mislukt, kaarten gaan zonder door"; cp data/kz/kaarten-voor.json data/kz/kaarten.json; }
+          set -o pipefail
+          node kaart-aanvul.mjs 2>&1 | tee -a data/kz/run.log || { echo "aanvullen mislukt, kaarten gaan zonder door" | tee -a data/kz/run.log; cp data/kz/kaarten-voor.json data/kz/kaarten.json; }
       - name: Tussendoor bewaren (kaarten, namen, beelden)
         run: ./kz-push.sh kaarten
       - name: Graded prijzen meten (eBay)
@@ -54,14 +55,18 @@ jobs:
           EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
           EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node kaart-graded.mjs || echo "graded mislukt, kaarten gaan wel door"
+        run: |
+          set -o pipefail
+          node kaart-graded.mjs 2>&1 | tail -c 20000 | tee -a data/kz/run.log || echo "graded mislukt, kaarten gaan wel door" | tee -a data/kz/run.log
       - name: Tussendoor bewaren (graded)
         run: ./kz-push.sh graded
       - name: SEO-teksten schrijven (Claude)
         timeout-minutes: 60
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node kaart-teksten.mjs || echo "teksten mislukt, de rest gaat door"
+        run: |
+          set -o pipefail
+          node kaart-teksten.mjs 2>&1 | tail -c 20000 | tee -a data/kz/run.log || echo "teksten mislukt, de rest gaat door" | tee -a data/kz/run.log
       - name: Naar de branch tcg-data
         if: always()
         run: ./kz-push.sh teksten

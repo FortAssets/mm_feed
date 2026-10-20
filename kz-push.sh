@@ -10,7 +10,7 @@ for poging in 1 2 3 4 5; do
   git fetch -q origin tcg-data
   git worktree add -q /tmp/td origin/tcg-data && git -C /tmp/td checkout -q -B tcg-data
   mkdir -p /tmp/td/kaartzoeker
-  for f in kaarten.json cache.json graded.json graded-cache.json teksten.json aanvul-cache.json; do
+  for f in kaarten.json cache.json graded.json graded-cache.json teksten.json aanvul-cache.json run.log; do
     [ -f data/kz/$f ] && cp data/kz/$f /tmp/td/kaartzoeker/
   done
   ( cd /tmp/td && git add kaartzoeker && { git diff --cached --quiet && { echo "niets veranderd"; exit 0; }; git commit -q -m "Kaartzoeker $(date -u +%FT%TZ) ${1:-}" && git push -q origin tcg-data; } ) && { echo "bewaard (${1:-})"; exit 0; }

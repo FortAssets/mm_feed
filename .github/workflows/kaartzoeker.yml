@@ -1,0 +1,47 @@
+name: Kaartzoeker BoosterScout (TCGdex + Cardmarket)
+
+# Alle Pokémon-kaarten met Cardmarket-prijzen, één keer per dag, voor de kaartzoeker van BoosterScout.
+# De eerste keer duurt lang (ruim 23.000 kaartdetails); daarna alleen nieuwe sets en de prijsgids.
+# Schrijft kaartzoeker/kaarten.json en kaartzoeker/cache.json naar de branch tcg-data.
+on:
+  schedule:
+    - cron: '7 5 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tcg-feeds
+  cancel-in-progress: false
+
+jobs:
+  kaarten:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Cache van de vorige keer
+        run: |
+          mkdir -p data/kz
+          git fetch -q origin tcg-data || true
+          git show origin/tcg-data:kaartzoeker/cache.json > data/kz/cache.json 2>/dev/null || rm -f data/kz/cache.json
+          ls -la data/kz
+      - name: Kaarten ophalen
+        run: node kaartzoeker.mjs
+      - name: Naar de branch tcg-data
+        run: |
+          [ -f data/kz/kaarten.json ] || { echo "geen kaarten.json"; exit 0; }
+          git config user.name "kaartzoeker"
+          git config user.email "actions@users.noreply.github.com"
+          git worktree add -q /tmp/td origin/tcg-data && git -C /tmp/td checkout -q -B tcg-data
+          mkdir -p /tmp/td/kaartzoeker
+          cp data/kz/kaarten.json data/kz/cache.json /tmp/td/kaartzoeker/
+          cd /tmp/td
+          git add kaartzoeker
+          git diff --cached --quiet && { echo "niets veranderd"; exit 0; }
+          git commit -q -m "Kaartzoeker $(date -u +%F)"
+          git push -q origin tcg-data

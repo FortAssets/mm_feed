@@ -12,13 +12,13 @@ permissions:
   contents: write
 
 concurrency:
-  group: tcg-feeds
+  group: kaartzoeker
   cancel-in-progress: false
 
 jobs:
   kaarten:
     runs-on: ubuntu-latest
-    timeout-minutes: 300
+    timeout-minutes: 340
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -47,29 +47,21 @@ jobs:
         run: |
           cp data/kz/kaarten.json data/kz/kaarten-voor.json
           node kaart-aanvul.mjs || { echo "aanvullen mislukt, kaarten gaan zonder door"; cp data/kz/kaarten-voor.json data/kz/kaarten.json; }
+      - name: Tussendoor bewaren (kaarten, namen, beelden)
+        run: ./kz-push.sh kaarten
       - name: Graded prijzen meten (eBay)
         env:
           EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
           EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node kaart-graded.mjs || echo "graded mislukt, kaarten gaan wel door"
+      - name: Tussendoor bewaren (graded)
+        run: ./kz-push.sh graded
       - name: SEO-teksten schrijven (Claude)
+        timeout-minutes: 60
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node kaart-teksten.mjs || echo "teksten mislukt, de rest gaat door"
       - name: Naar de branch tcg-data
-        run: |
-          [ -f data/kz/kaarten.json ] || { echo "geen kaarten.json"; exit 0; }
-          git config user.name "kaartzoeker"
-          git config user.email "actions@users.noreply.github.com"
-          git worktree add -q /tmp/td origin/tcg-data && git -C /tmp/td checkout -q -B tcg-data
-          mkdir -p /tmp/td/kaartzoeker
-          cp data/kz/kaarten.json data/kz/cache.json /tmp/td/kaartzoeker/
-          cp data/kz/graded.json data/kz/graded-cache.json /tmp/td/kaartzoeker/ 2>/dev/null || true
-          cp data/kz/teksten.json /tmp/td/kaartzoeker/ 2>/dev/null || true
-          cp data/kz/aanvul-cache.json /tmp/td/kaartzoeker/ 2>/dev/null || true
-          cd /tmp/td
-          git add kaartzoeker
-          git diff --cached --quiet && { echo "niets veranderd"; exit 0; }
-          git commit -q -m "Kaartzoeker $(date -u +%F)"
-          git push -q origin tcg-data
+        if: always()
+        run: ./kz-push.sh teksten

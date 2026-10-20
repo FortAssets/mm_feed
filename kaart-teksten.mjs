@@ -73,9 +73,15 @@ for (const k of top) {
 }
 console.log('model', MODEL, 'taken', taken.length, 'maximaal', MAX)
 
-let n = 0, fout = 0, inT = 0, uitT = 0
-for (const [soort, id, k] of taken) {
-  if (n >= MAX) break
+// 20 okt: parallel (een paar tegelijk) en met een tijdslimiet. Eén voor één duurde 300 teksten ruim 5 uur, de
+// workflow liep in de time-out en dan werd er niets bewaard.
+const TEGELIJK = Number(process.env.KZ_TEKST_TEGELIJK || 4)
+const MAX_MIN = Number(process.env.KZ_TEKST_MIN || 50)
+const start = Date.now(), op = () => (Date.now() - start) / 60000 > MAX_MIN
+let n = 0, fout = 0, inT = 0, uitT = 0, stop = false
+const rij = taken.slice(0, MAX); let volgende = 0
+async function werker () { while (!stop && !op() && volgende < rij.length) { const [soort, id, k] = rij[volgende++]; await doe(soort, id, k) } }
+async function doe (soort, id, k) {
   try {
     let feiten
     if (soort === 'set') {
@@ -93,7 +99,9 @@ for (const [soort, id, k] of taken) {
     else oud.kaarten[id] = { d: nu, p: k[ix.trend], t: uit }
     n++
     if (n % 25 === 0) { fs.writeFileSync(BESTAND, JSON.stringify(oud)); console.log(n, 'klaar, tokens in/uit', inT, uitT) }
-  } catch (e) { fout++; console.log('fout', soort, id, e.message); if (/HTTP 40[13]|credit|billing/i.test(e.message)) break }
+  } catch (e) { fout++; console.log('fout', soort, id, e.message); if (/HTTP 40[13]|credit|billing/i.test(e.message)) stop = true }
 }
+await Promise.all(Array.from({ length: TEGELIJK }, werker))
+if (op()) console.log('tijd op na', MAX_MIN, 'minuten, de rest volgende keer')
 fs.writeFileSync(BESTAND, JSON.stringify(oud))
 console.log('teksten geschreven:', n, 'fouten:', fout, 'tokens in/uit:', inT, uitT, 'totaal sets', Object.keys(oud.sets).length, 'kaarten', Object.keys(oud.kaarten).length)

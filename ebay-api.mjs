@@ -13,7 +13,9 @@
 
 const ID = process.env.EBAY_CLIENT_ID || ''
 const GEHEIM = process.env.EBAY_CLIENT_SECRET || ''
-const LINK = process.env.EBAY_IMPACT_LINK || 'https://app.partner.ebay.com/c/7966591/627505/9356'
+// 20 okt: de Impact-link stuurde door naar app.partner.ebay.com, een domein zonder DNS: elke klik liep dood.
+// Zonder EBAY_IMPACT_LINK linken we rechtstreeks naar eBay (werkt, maar zonder vergoeding).
+const LINK = process.env.EBAY_IMPACT_LINK || ''
 
 export const ebayKlaar = () => !!(ID && GEHEIM)
 
@@ -76,6 +78,7 @@ export async function ebayZoek (param, markt = 'EBAY_NL') {
 export function ebayLink (itemUrl, sub) {
   let schoon = String(itemUrl || '')
   try { const u = new URL(schoon); schoon = u.origin + u.pathname } catch (e) {}
+  if (!LINK) return schoon
   return LINK + '?u=' + encodeURIComponent(schoon) + (sub ? '&subId1=' + encodeURIComponent(sub) : '')
 }
 

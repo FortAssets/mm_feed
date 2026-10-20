@@ -1,0 +1,1284 @@
+{
+ "ja": {
+  "n": 184,
+  "laatste": [
+   [
+    "SV2a",
+    "ポケモンカード151",
+    {
+     "total": 210,
+     "official": 165
+    }
+   ],
+   [
+    "SV5M",
+    "サイバージャッジ",
+    {
+     "total": 100,
+     "official": 71
+    }
+   ],
+   [
+    "SV10",
+    "ロケット団の栄光",
+    {
+     "total": 132,
+     "official": 98
+    }
+   ],
+   [
+    "SV8",
+    "超電ブレイカー",
+    {
+     "total": 138,
+     "official": 106
+    }
+   ],
+   [
+    "SV7a",
+    "楽園ドラゴーナ",
+    {
+     "total": 94,
+     "official": 64
+    }
+   ],
+   [
+    "SV1S",
+    "スカーレットex",
+    {
+     "total": 108,
+     "official": 78
+    }
+   ],
+   [
+    "SV4K",
+    "古代の咆哮",
+    {
+     "total": 95,
+     "official": 66
+    }
+   ],
+   [
+    "SV11W",
+    "ホワイトフレア",
+    {
+     "total": 174,
+     "official": 86
+    }
+   ],
+   [
+    "SV2D",
+    "クレイバースト",
+    {
+     "total": 99,
+     "official": 71
+    }
+   ],
+   [
+    "SV5K",
+    "ワイルドフォース",
+    {
+     "total": 100,
+     "official": 71
+    }
+   ],
+   [
+    "SM2p",
+    "新たなる試練の向こう",
+    {
+     "total": 65,
+     "official": 49
+    }
+   ],
+   [
+    "SM3p",
+    "ひかる伝説",
+    {
+     "total": 82,
+     "official": 72
+    }
+   ],
+   [
+    "SM1p",
+    "サン＆ムーン",
+    {
+     "total": 68,
+     "official": 51
+    }
+   ],
+   [
+    "SM5p",
+    "ウルトラフォース",
+    {
+     "total": 63,
+     "official": 50
+    }
+   ],
+   [
+    "SM4p",
+    "GXバトルブースト",
+    {
+     "total": 125,
+     "official": 114
+    }
+   ],
+   [
+    "M1L",
+    "メガブレイブ",
+    {
+     "total": 92,
+     "official": 63
+    }
+   ],
+   [
+    "M2a",
+    "MEGAドリームex",
+    {
+     "total": 250,
+     "official": 193
+    }
+   ],
+   [
+    "M3",
+    "ムニキスゼロ",
+    {
+     "total": 117,
+     "official": 80
+    }
+   ],
+   [
+    "M6",
+    "ストームエメラルダ",
+    {
+     "total": 113,
+     "official": 76
+    }
+   ],
+   [
+    "M5",
+    "アビスアイ",
+    {
+     "total": 118,
+     "official": 81
+    }
+   ],
+   [
+    "MC",
+    "スタートデッキ100 バトルコレクション",
+    {
+     "total": 774,
+     "official": 742
+    }
+   ],
+   [
+    "M-P",
+    "メガ プロモカード",
+    {
+     "total": 132,
+     "official": 0
+    }
+   ],
+   [
+    "M2",
+    "インフェルノX",
+    {
+     "total": 116,
+     "official": 80
+    }
+   ],
+   [
+    "M1S",
+    "メガシンフォニア",
+    {
+     "total": 92,
+     "official": 63
+    }
+   ],
+   [
+    "M4",
+    "ニンジャスピナー",
+    {
+     "total": 120,
+     "official": 83
+    }
+   ]
+  ],
+  "set": {
+   "id": "M2",
+   "name": "インフェルノX",
+   "serie": {
+    "id": "M",
+    "name": "ポケモンカードゲーム MEGA"
+   },
+   "releaseDate": "2025-09-26",
+   "n": 116,
+   "eerste": [
+    {
+     "id": "M2-001",
+     "localId": "001",
+     "name": "ナゾノクサ"
+    },
+    {
+     "id": "M2-002",
+     "localId": "002",
+     "name": "クサイハナ"
+    },
+    {
+     "id": "M2-003",
+     "localId": "003",
+     "name": "ラフレシア"
+    }
+   ]
+  },
+  "kaart": {
+   "category": "Pokemon",
+   "id": "M2-081",
+   "illustrator": "Jerky",
+   "localId": "081",
+   "name": "ルンパッパ",
+   "rarity": "Illustration rare",
+   "set": {
+    "cardCount": {
+     "official": 80,
+     "total": 116
+    },
+    "id": "M2",
+    "name": "インフェルノX"
+   },
+   "variants": {
+    "firstEdition": false,
+    "holo": true,
+    "normal": false,
+    "reverse": false,
+    "wPromo": false
+   },
+   "variants_detailed": [
+    {
+     "type": "holo",
+     "size": "standard",
+     "variantId": "jr7oetx1mqug9"
+    }
+   ],
+   "dexId": [
+    272
+   ],
+   "hp": 160,
+   "types": [
+    "Grass"
+   ],
+   "evolveFrom": "ハスブレロ",
+   "description": "陽気な リズムの 音波を 受けると エネルギーを 作りだす 仕組みを 全身に 持っている。",
+   "stage": "Stage2",
+   "abilities": [
+    {
+     "type": "Ability",
+     "name": "エキサイトヒール",
+     "effect": "自分の場にタイプの「メガシンカex」がいるなら、自分の番に1回使える。自分のポケモン1匹のHPを「60」回復する。"
+    }
+   ],
+   "attacks": [
+    {
+     "cost": [
+      "Grass",
+      "Colorless"
+     ],
+     "name": "つきたおし",
+     "damage": 120
+    }
+   ],
+   "weaknesses": [
+    {
+     "type": "Fire",
+     "value": "x2"
+    }
+   ],
+   "resistances": [],
+   "retreat": 2,
+   "regulationMark": "I",
+   "legal": {
+    "standard": true,
+    "expanded": false
+   },
+   "updated": "2026-09-16T22:51:27.364Z",
+   "thirdParty": {
+    "cardmarket": 850589,
+    "tcgplayer": 655860
+   },
+   "pricing": {
+    "cardmarket": {
+     "updated": "2026-10-19T22:54:33.379Z",
+     "unit": "EUR",
+     "idProduct": 850589,
+     "avg": 1.53,
+     "low": 0.6,
+     "trend": 1.36,
+     "avg1": 1.39,
+     "avg7": 1.25,
+     "avg30": 1.54,
+     "avg-holo": null,
+     "low-holo": null,
+     "trend-holo": 0,
+     "avg1-holo": null,
+     "avg7-holo": null,
+     "avg30-holo": null
+    },
+    "tcgplayer": null
+   }
+  }
+ },
+ "ko": {
+  "n": 95,
+  "laatste": [
+   [
+    "S7R",
+    "창공의스트림",
+    {
+     "total": 67,
+     "official": 67
+    }
+   ],
+   [
+    "S9",
+    "스타버스",
+    {
+     "total": 100,
+     "official": 100
+    }
+   ],
+   [
+    "S5R",
+    "연격마스터",
+    {
+     "total": 70,
+     "official": 70
+    }
+   ],
+   [
+    "S2a",
+    "폭염워커",
+    {
+     "total": 70,
+     "official": 70
+    }
+   ],
+   [
+    "S7D",
+    "마천퍼펙트",
+    {
+     "total": 67,
+     "official": 67
+    }
+   ],
+   [
+    "S4",
+    "앙천의 볼트태클",
+    {
+     "total": 100,
+     "official": 100
+    }
+   ],
+   [
+    "S6a",
+    "이브이 히어로즈",
+    {
+     "total": 69,
+     "official": 69
+    }
+   ],
+   [
+    "S8",
+    "퓨전아츠",
+    {
+     "total": 100,
+     "official": 100
+    }
+   ],
+   [
+    "S12",
+    "패러다임트리거",
+    {
+     "total": 98,
+     "official": 98
+    }
+   ],
+   [
+    "S10P",
+    "스페이스저글러",
+    {
+     "total": 67,
+     "official": 67
+    }
+   ],
+   [
+    "SV1V",
+    "바이올렛ex",
+    {
+     "total": 78,
+     "official": 78
+    }
+   ],
+   [
+    "SV4M",
+    "미래의 일섬",
+    {
+     "total": 95,
+     "official": 66
+    }
+   ],
+   [
+    "SV4a",
+    "샤이니트레저 ex",
+    {
+     "total": 190,
+     "official": 190
+    }
+   ],
+   [
+    "SV6",
+    "변환의 가면",
+    {
+     "total": 101,
+     "official": 101
+    }
+   ],
+   [
+    "SV3a",
+    "레이징서프",
+    {
+     "total": 62,
+     "official": 62
+    }
+   ],
+   [
+    "SV3",
+    "흑염의 지배자",
+    {
+     "total": 108,
+     "official": 108
+    }
+   ],
+   [
+    "SV5a",
+    "크림슨헤이즈",
+    {
+     "total": 66,
+     "official": 66
+    }
+   ],
+   [
+    "SV1a",
+    "트리플렛비트",
+    {
+     "total": 73,
+     "official": 73
+    }
+   ],
+   [
+    "SV2P",
+    "스노해저드",
+    {
+     "total": 71,
+     "official": 71
+    }
+   ],
+   [
+    "SV2a",
+    "포켓몬 카드 151",
+    {
+     "total": 165,
+     "official": 165
+    }
+   ],
+   [
+    "SV5M",
+    "사이버저지",
+    {
+     "total": 71,
+     "official": 71
+    }
+   ],
+   [
+    "SV1S",
+    "스칼렛ex",
+    {
+     "total": 78,
+     "official": 78
+    }
+   ],
+   [
+    "SV4K",
+    "고대의 포효",
+    {
+     "total": 95,
+     "official": 66
+    }
+   ],
+   [
+    "SV2D",
+    "클레이버스트",
+    {
+     "total": 71,
+     "official": 71
+    }
+   ],
+   [
+    "SV5K",
+    "와일드포스",
+    {
+     "total": 71,
+     "official": 71
+    }
+   ]
+  ],
+  "set": {
+   "id": "SV4K",
+   "name": "고대의 포효",
+   "serie": {
+    "id": "SV",
+    "name": "스칼렛・바이올렛"
+   },
+   "releaseDate": "2023-10-27",
+   "n": 95,
+   "eerste": [
+    {
+     "id": "SV4K-001",
+     "localId": "001",
+     "name": "야나프"
+    },
+    {
+     "id": "SV4K-002",
+     "localId": "002",
+     "name": "야나키"
+    },
+    {
+     "id": "SV4K-003",
+     "localId": "003",
+     "name": "마라카치"
+    }
+   ]
+  },
+  "kaart": {
+   "category": "Pokemon",
+   "id": "SV4K-081",
+   "illustrator": "N-DESIGN Inc.",
+   "localId": "081",
+   "name": "갑주무사 ex",
+   "set": {
+    "cardCount": {
+     "official": 66,
+     "total": 95
+    },
+    "id": "SV4K",
+    "name": "고대의 포효"
+   },
+   "variants": {
+    "firstEdition": false,
+    "holo": true,
+    "normal": false,
+    "reverse": false,
+    "wPromo": false
+   },
+   "variants_detailed": [
+    {
+     "type": "holo",
+     "size": "standard",
+     "thirdParty": {
+      "cardmarket": 741498,
+      "tcgplayer": 565836
+     },
+     "variantId": "jr7oetx1mqug9",
+     "pricing": {
+      "cardmarket": {
+       "updated": "2026-10-19T22:54:33.398Z",
+       "unit": "EUR",
+       "idProduct": 741498,
+       "avg": 1.31,
+       "low": 0.75,
+       "trend": 1.42,
+       "avg1": 1.5,
+       "avg7": 1.48,
+       "avg30": 1.66,
+       "avg-holo": null,
+       "low-holo": null,
+       "trend-holo": 0,
+       "avg1-holo": null,
+       "avg7-holo": null,
+       "avg30-holo": null
+      },
+      "tcgplayer": null
+     }
+    }
+   ],
+   "hp": 270,
+   "types": [
+    "Water"
+   ],
+   "stage": "Stage1",
+   "suffix": "EX",
+   "attacks": [
+    {
+     "cost": [
+      "Colorless",
+      "Colorless"
+     ],
+     "name": "아쿠아 블레이드",
+     "damage": 70
+    },
+    {
+     "cost": [
+      "Water",
+      "Colorless",
+      "Colorless"
+     ],
+     "name": "일도이탈",
+     "damage": 170
+    }
+   ],
+   "weaknesses": [
+    {
+     "type": "Lightning",
+     "value": "×2"
+    }
+   ],
+   "retreat": 3,
+   "regulationMark": "G",
+   "legal": {
+    "standard": false,
+    "expanded": false
+   },
+   "updated": "2026-09-16T22:51:49.091Z",
+   "pricing": {
+    "cardmarket": {
+     "updated": "2026-10-19T22:54:33.398Z",
+     "unit": "EUR",
+     "idProduct": 741498,
+     "avg": 1.31,
+     "low": 0.75,
+     "trend": 1.42,
+     "avg1": 1.5,
+     "avg7": 1.48,
+     "avg30": 1.66,
+     "avg-holo": null,
+     "low-holo": null,
+     "trend-holo": 0,
+     "avg1-holo": null,
+     "avg7-holo": null,
+     "avg30-holo": null
+    },
+    "tcgplayer": null
+   }
+  }
+ },
+ "zh-tw": {
+  "n": 98,
+  "laatste": [
+   [
+    "SV9a",
+    "熱風競技場",
+    {
+     "total": 92,
+     "official": 63
+    }
+   ],
+   [
+    "SV3",
+    "黯焰支配者",
+    {
+     "total": 138,
+     "official": 108
+    }
+   ],
+   [
+    "SV5a",
+    "緋紅薄霧",
+    {
+     "total": 66,
+     "official": 66
+    }
+   ],
+   [
+    "SV8a",
+    "太晶慶典ex",
+    {
+     "total": 237,
+     "official": 187
+    }
+   ],
+   [
+    "SV1a",
+    "三連音爆",
+    {
+     "total": 73,
+     "official": 73
+    }
+   ],
+   [
+    "SV2P",
+    "冰雪險境",
+    {
+     "total": 71,
+     "official": 71
+    }
+   ],
+   [
+    "SV7",
+    "星晶奇跡",
+    {
+     "total": 132,
+     "official": 102
+    }
+   ],
+   [
+    "SV2a",
+    "寶可夢卡牌151",
+    {
+     "total": 207,
+     "official": 165
+    }
+   ],
+   [
+    "SV5M",
+    "異度審判",
+    {
+     "total": 97,
+     "official": 71
+    }
+   ],
+   [
+    "SV10",
+    "火箭隊的榮耀",
+    {
+     "total": 98,
+     "official": 98
+    }
+   ],
+   [
+    "SVP1",
+    "ex特別組合",
+    {
+     "total": 7,
+     "official": 7
+    }
+   ],
+   [
+    "SV8",
+    "超電突圍",
+    {
+     "total": 106,
+     "official": 106
+    }
+   ],
+   [
+    "SVHK",
+    "未來密勒頓ex",
+    {
+     "total": 24,
+     "official": 22
+    }
+   ],
+   [
+    "SVC",
+    "皮卡丘特別組合",
+    {
+     "total": 22,
+     "official": 21
+    }
+   ],
+   [
+    "SVB",
+    "頂級訓練家收藏箱ex",
+    {
+     "total": 36,
+     "official": 28
+    }
+   ],
+   [
+    "SVD",
+    "ex初階牌組",
+    {
+     "total": 147,
+     "official": 139
+    }
+   ],
+   [
+    "SV7a",
+    "樂園騰龍",
+    {
+     "total": 64,
+     "official": 64
+    }
+   ],
+   [
+    "SVAW",
+    "起始組合ex 潤水鴨&謎擬Ｑ ex",
+    {
+     "total": 25,
+     "official": 23
+    }
+   ],
+   [
+    "SVEL",
+    "骨紋巨聲鱷ex",
+    {
+     "total": 21,
+     "official": 20
+    }
+   ],
+   [
+    "SVAL",
+    "起始組合ex 呆火鱷&電龍 ex",
+    {
+     "total": 23,
+     "official": 21
+    }
+   ],
+   [
+    "SV1S",
+    "朱ex",
+    {
+     "total": 78,
+     "official": 78
+    }
+   ],
+   [
+    "SV4K",
+    "古代咆哮",
+    {
+     "total": 66,
+     "official": 66
+    }
+   ],
+   [
+    "SVF",
+    "黯焰支配者",
+    {
+     "total": 46,
+     "official": 38
+    }
+   ],
+   [
+    "SV2D",
+    "碟旋暴擊",
+    {
+     "total": 71,
+     "official": 71
+    }
+   ],
+   [
+    "SV5K",
+    "狂野之力",
+    {
+     "total": 71,
+     "official": 71
+    }
+   ]
+  ],
+  "set": {
+   "id": "SVF",
+   "name": "黯焰支配者",
+   "serie": {
+    "id": "SV",
+    "name": "朱&紫系列"
+   },
+   "releaseDate": "2023-08-11",
+   "n": 46,
+   "eerste": [
+    {
+     "id": "SVF-001",
+     "image": "https://assets.tcgdex.net/zh-tw/SV/SVF/001",
+     "localId": "001",
+     "name": "光輝噴火龍"
+    },
+    {
+     "id": "SVF-002",
+     "image": "https://assets.tcgdex.net/zh-tw/SV/SVF/002",
+     "localId": "002",
+     "name": "霓虹魚V"
+    },
+    {
+     "id": "SVF-003",
+     "image": "https://assets.tcgdex.net/zh-tw/SV/SVF/003",
+     "localId": "003",
+     "name": "瑪納霏"
+    }
+   ]
+  },
+  "kaart": {
+   "category": "Energy",
+   "id": "SVF-DAR",
+   "localId": "DAR",
+   "name": "基本【惡】能量",
+   "set": {
+    "cardCount": {
+     "official": 38,
+     "total": 46
+    },
+    "id": "SVF",
+    "name": "黯焰支配者"
+   },
+   "variants": {
+    "firstEdition": false,
+    "holo": false,
+    "normal": true,
+    "reverse": false,
+    "wPromo": false
+   },
+   "variants_detailed": [
+    {
+     "type": "normal",
+     "size": "standard",
+     "variantId": "generated"
+    }
+   ],
+   "energyType": "Normal",
+   "regulationMark": "G",
+   "legal": {
+    "standard": true,
+    "expanded": true
+   },
+   "updated": "2026-09-16T22:52:07.475Z",
+   "pricing": {
+    "cardmarket": null,
+    "tcgplayer": null
+   }
+  }
+ },
+ "zh-cn": {
+  "n": 57,
+  "laatste": [
+   [
+    "CS6bC",
+    "碧海暗影 逐",
+    {
+     "total": 131,
+     "official": 131
+    }
+   ],
+   [
+    "CS6aC",
+    "碧海暗影 啸",
+    {
+     "total": 131,
+     "official": 131
+    }
+   ],
+   [
+    "CS6.5C",
+    "胜象星引",
+    {
+     "total": 72,
+     "official": 72
+    }
+   ],
+   [
+    "CSV1C",
+    "亘古开来",
+    {
+     "total": 127,
+     "official": 127
+    }
+   ],
+   [
+    "CSV1C",
+    "宝石包 第一卷",
+    {
+     "total": 9,
+     "official": 9
+    }
+   ],
+   [
+    "CSV2C",
+    "奇迹启程",
+    {
+     "total": 128,
+     "official": 128
+    }
+   ],
+   [
+    "CBB2C",
+    "宝石包Vol.2",
+    {
+     "total": 15,
+     "official": 15
+    }
+   ],
+   [
+    "CSV3C",
+    "无畏太晶",
+    {
+     "total": 130,
+     "official": 130
+    }
+   ],
+   [
+    "CSV4C",
+    "嘉奖回合",
+    {
+     "total": 129,
+     "official": 129
+    }
+   ],
+   [
+    "CSV5C",
+    "黑晶炽诚",
+    {
+     "total": 129,
+     "official": 129
+    }
+   ],
+   [
+    "CBB3C",
+    "宝石包Vol.3",
+    {
+     "total": 7,
+     "official": 7
+    }
+   ],
+   [
+    "CSV6C",
+    "真实玄虚",
+    {
+     "total": 128,
+     "official": 128
+    }
+   ],
+   [
+    "CSV7C",
+    "利刃猛醒",
+    {
+     "total": 204,
+     "official": 204
+    }
+   ],
+   [
+    "CBB4C",
+    "宝石包 Vol.4",
+    {
+     "total": 7,
+     "official": 7
+    }
+   ],
+   [
+    "CSV8C",
+    "璀璨诡幻",
+    {
+     "total": 207,
+     "official": 207
+    }
+   ],
+   [
+    "CBB5C",
+    "宝石包 Vol.5",
+    {
+     "total": 7,
+     "official": 7
+    }
+   ],
+   [
+    "CSV9C",
+    "星彩晶璃",
+    {
+     "total": 208,
+     "official": 208
+    }
+   ],
+   [
+    "CSV9.5C",
+    "太晶盛聚",
+    {
+     "total": 208,
+     "official": 208
+    }
+   ],
+   [
+    "SV9",
+    "對戰搭檔",
+    {
+     "total": 100,
+     "official": 100
+    }
+   ],
+   [
+    "SV9a",
+    "熱風競技場",
+    {
+     "total": 92,
+     "official": 63
+    }
+   ],
+   [
+    "SV8a",
+    "太晶慶典ex",
+    {
+     "total": 237,
+     "official": 187
+    }
+   ],
+   [
+    "SV7",
+    "星晶奇跡",
+    {
+     "total": 132,
+     "official": 102
+    }
+   ],
+   [
+    "SV10",
+    "火箭隊的榮耀",
+    {
+     "total": 98,
+     "official": 98
+    }
+   ],
+   [
+    "SV8",
+    "超電突圍",
+    {
+     "total": 106,
+     "official": 106
+    }
+   ],
+   [
+    "SV7a",
+    "樂園騰龍",
+    {
+     "total": 64,
+     "official": 64
+    }
+   ]
+  ],
+  "set": {
+   "id": "SV10",
+   "name": "火箭隊的榮耀",
+   "serie": {
+    "id": "SV",
+    "name": "朱&紫"
+   },
+   "releaseDate": "2025-05-02",
+   "n": 98,
+   "eerste": [
+    {
+     "id": "SV10-001",
+     "localId": "001",
+     "name": "榛果球"
+    },
+    {
+     "id": "SV10-002",
+     "localId": "002",
+     "name": "蘑蘑菇"
+    },
+    {
+     "id": "SV10-003",
+     "localId": "003",
+     "name": "斗笠菇"
+    }
+   ]
+  },
+  "kaart": {
+   "category": "Pokemon",
+   "id": "SV10-081",
+   "illustrator": "Oswaldo KATO",
+   "localId": "081",
+   "name": "<火箭隊的>多邊獸",
+   "rarity": "Common",
+   "set": {
+    "cardCount": {
+     "official": 98,
+     "total": 98
+    },
+    "id": "SV10",
+    "name": "火箭隊的榮耀"
+   },
+   "variants": {
+    "firstEdition": false,
+    "holo": false,
+    "normal": true,
+    "reverse": false,
+    "wPromo": false
+   },
+   "variants_detailed": [
+    {
+     "type": "normal",
+     "size": "standard",
+     "thirdParty": {
+      "cardmarket": 821913,
+      "tcgplayer": 628722
+     },
+     "variantId": "endfynwn4n10gzq",
+     "pricing": {
+      "cardmarket": {
+       "updated": "2026-10-19T22:54:33.379Z",
+       "unit": "EUR",
+       "idProduct": 821913,
+       "avg": 0.02,
+       "low": 0.02,
+       "trend": 0.02,
+       "avg1": 0.02,
+       "avg7": 0.02,
+       "avg30": 0.02,
+       "avg-holo": null,
+       "low-holo": null,
+       "trend-holo": 0,
+       "avg1-holo": null,
+       "avg7-holo": null,
+       "avg30-holo": null
+      },
+      "tcgplayer": null
+     }
+    }
+   ],
+   "dexId": [
+    137
+   ],
+   "hp": 60,
+   "types": [
+    "Colorless"
+   ],
+   "description": "人工創造的寶可夢。 沒有呼吸，因此被期待在 任何地方都能大展身手。",
+   "stage": "Basic",
+   "attacks": [
+    {
+     "cost": [
+      "Colorless"
+     ],
+     "name": "駭客攻擊",
+     "effect": "選擇1張自己的手牌，將其丟棄。然後，對手選擇1張對手自己的手牌，將其丟棄。"
+    }
+   ],
+   "weaknesses": [
+    {
+     "type": "Fighting",
+     "value": "x2"
+    }
+   ],
+   "resistances": [],
+   "retreat": 1,
+   "regulationMark": "I",
+   "legal": {
+    "standard": true,
+    "expanded": false
+   },
+   "updated": "2026-09-16T22:52:30.204Z",
+   "pricing": {
+    "cardmarket": {
+     "updated": "2026-10-19T22:54:33.379Z",
+     "unit": "EUR",
+     "idProduct": 821913,
+     "avg": 0.02,
+     "low": 0.02,
+     "trend": 0.02,
+     "avg1": 0.02,
+     "avg7": 0.02,
+     "avg30": 0.02,
+     "avg-holo": null,
+     "low-holo": null,
+     "trend-holo": 0,
+     "avg1-holo": null,
+     "avg7-holo": null,
+     "avg30-holo": null
+    },
+    "tcgplayer": null
+   }
+  }
+ }
+}

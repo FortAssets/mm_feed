@@ -40,13 +40,13 @@ async function claude (feiten) {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'x-api-key': SLEUTEL, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-      body: JSON.stringify({ model: MODEL, max_tokens: 2400, system: REGELS, messages: [{ role: 'user', content: 'Facts (JSON):\n' + JSON.stringify(feiten) + '\n\nWrite the texts. Languages: ' + JSON.stringify(TALEN) }] })
+      body: JSON.stringify({ model: MODEL, max_tokens: 6000, system: REGELS, messages: [{ role: 'user', content: 'Facts (JSON):\n' + JSON.stringify(feiten) + '\n\nWrite the texts. Languages: ' + JSON.stringify(TALEN) }] })
     })
     if (r.status === 429 || r.status >= 500) { await new Promise(z => setTimeout(z, 4000 * poging)); continue }
     const d = await r.json().catch(() => ({}))
     if (!r.ok) throw new Error('Anthropic HTTP ' + r.status + ' ' + JSON.stringify(d.error || d).slice(0, 200))
     const t = (d.content || []).map(c => c.text || '').join('')
-    const m = t.match(/\{[\s\S]*\}/); if (!m) throw new Error('geen JSON')
+    const m = t.match(/\{[\s\S]*\}/); if (!m) throw new Error('geen JSON (' + d.stop_reason + ', ' + ((d.usage || {}).output_tokens || 0) + ' tokens): ' + t.slice(0, 120).replace(/\s+/g, ' '))
     const j = JSON.parse(m[0])
     const uit = {}
     for (const k of Object.keys(TALEN)) { if (typeof j[k] !== 'string' || j[k].length < 40) throw new Error('taal ontbreekt: ' + k); uit[k] = j[k].replace(/\s*[—–]\s*/g, ', ').replace(/\s+/g, ' ').trim() }
@@ -78,7 +78,7 @@ console.log('model', MODEL, 'taken', taken.length, 'maximaal', MAX)
 const TEGELIJK = Number(process.env.KZ_TEKST_TEGELIJK || 4)
 const MAX_MIN = Number(process.env.KZ_TEKST_MIN || 50)
 const start = Date.now(), op = () => (Date.now() - start) / 60000 > MAX_MIN
-let n = 0, fout = 0, inT = 0, uitT = 0, stop = false
+let n = 0, fout = 0, inT = 0, uitT = 0, stop = false, achter = 0
 const rij = taken.slice(0, MAX); let volgende = 0
 async function werker () { while (!stop && !op() && volgende < rij.length) { const [soort, id, k] = rij[volgende++]; await doe(soort, id, k) } }
 async function doe (soort, id, k) {
@@ -97,9 +97,9 @@ async function doe (soort, id, k) {
     inT += tokens.input_tokens || 0; uitT += tokens.output_tokens || 0
     if (soort === 'set') oud.sets[id] = { d: nu, t: uit }
     else oud.kaarten[id] = { d: nu, p: k[ix.trend], t: uit }
-    n++
+    n++; achter = 0
     if (n % 25 === 0) { fs.writeFileSync(BESTAND, JSON.stringify(oud)); console.log(n, 'klaar, tokens in/uit', inT, uitT) }
-  } catch (e) { fout++; console.log('fout', soort, id, e.message); if (/HTTP 40[13]|credit|billing/i.test(e.message)) stop = true }
+  } catch (e) { fout++; achter++; console.log('fout', soort, id, e.message); if (/HTTP 40[13]|credit|billing/i.test(e.message) || achter >= 5) { stop = true; if (achter >= 5) console.log('5 keer achter elkaar mis: gestopt om geen tegoed te verspillen') } }
 }
 await Promise.all(Array.from({ length: TEGELIJK }, werker))
 if (op()) console.log('tijd op na', MAX_MIN, 'minuten, de rest volgende keer')

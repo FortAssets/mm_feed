@@ -31,12 +31,21 @@ const setVan = new Map(kz.sets.map(s => [s[0], s]))
 const azie = id => /^(jp|kr)-/.test(id)
 const VREEMD = /[぀-ヿ㐀-鿿가-힯]/
 
+async function claudeTekst (vraag, max, system) {
+  for (let p = 1; p <= 3; p++) {
+    const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': AI, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: JSON.stringify({ model: MODEL, max_tokens: max, system, messages: [{ role: 'user', content: vraag }] }) })
+    if (r.status === 429 || r.status >= 500) { await new Promise(z => setTimeout(z, 5000 * p)); continue }
+    if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + (await r.text()).slice(0, 150))
+    const d = await r.json()
+    return { t: (d.content || []).map(c => c.text || '').join(''), stop: d.stop_reason }
+  }
+  throw new Error('HTTP 429/5xx te vaak')
+}
 async function claude (vraag, max = 4000) {
-  const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': AI, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: MODEL, max_tokens: max, system: 'You help a Pokémon TCG price site. Reply with one JSON object only, no explanation, no code fences.', messages: [{ role: 'user', content: vraag }] }) })
-  if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + (await r.text()).slice(0, 150))
-  const d = await r.json(); const t = (d.content || []).map(c => c.text || '').join(''); const m = t.match(/\{[\s\S]*\}/)
-  if (!m) throw new Error('geen JSON')
+  const { t, stop } = await claudeTekst(vraag, max, 'You help a Pokémon TCG price site. Reply with one JSON object only, no explanation, no code fences.')
+  const m = t.match(/\{[\s\S]*\}/)
+  if (!m) throw new Error('geen JSON (' + stop + '): ' + t.slice(0, 160).replace(/\s+/g, ' '))
   return JSON.parse(m[0])
 }
 
@@ -45,12 +54,21 @@ if (AI) {
   const open = [...new Set(kz.kaarten.filter(k => azie(k[ix.id]) && VREEMD.test(k[ix.naam])).map(k => k[ix.naam]))].filter(n => !(n in cache.vertaal))
   console.log('namen te vertalen:', open.length)
   let ok = 0
-  for (let i = 0; i < open.length && i < 3000; i += 120) {
-    const deel = open.slice(i, i + 120)
+  // 20 okt: regels 'nummer<TAB>naam' in plaats van JSON (JSON liep vaak mis), in stukken van 60.
+  let mis = 0
+  for (let i = 0; i < open.length && i < 4000; i += 60) {
+    const deel = open.slice(i, i + 60)
     try {
-      const j = await claude('Translate these Japanese or Korean Pokémon TCG card names into the official English card name as printed on the English release (for example リーリエ -> Lillie, ふしぎなアメ -> Rare Candy, 基本炎エネルギー -> Basic Fire Energy, ピカチュウ&ゼクロムGX -> Pikachu & Zekrom-GX). If a card was never released in English, give the usual English fan translation. Keep ex, GX, V, VMAX, VSTAR suffixes.\nReturn {"0":"English", "1":"English", ...}.\n\n' + deel.map((n, j2) => j2 + ': ' + n).join('\n'), 6000)
-      deel.forEach((n, j2) => { const e = j[String(j2)]; if (typeof e === 'string' && e.trim() && !VREEMD.test(e)) { cache.vertaal[n] = e.trim(); ok++ } })
-    } catch (e) { console.log('vertalen', e.message); if (/HTTP 4/.test(e.message)) break }
+      const { t, stop } = await claudeTekst('Translate these Japanese or Korean Pokémon TCG card names into the official English card name as printed on the English release (for example リーリエ -> Lillie, ふしぎなアメ -> Rare Candy, 基本炎エネルギー -> Basic Fire Energy, ピカチュウ&ゼクロムGX -> Pikachu & Zekrom-GX). If a card was never released in English, give the usual English fan translation. Keep ex, GX, V, VMAX, VSTAR suffixes.\nAnswer with exactly one line per name: the number, a TAB, the English name. Nothing else.\n\n' + deel.map((n, j2) => j2 + '\t' + n).join('\n'), 4000, 'You translate Pokémon TCG card names. Output only the requested lines.')
+      let gelukt = 0
+      for (const regel of t.split('\n')) {
+        const m = regel.match(/^\s*(\d+)\s*[\t:|.-]\s*(.+?)\s*$/); if (!m) continue
+        const n = deel[Number(m[1])], e = m[2].replace(/^["']|["']$/g, '')
+        if (n && e && !VREEMD.test(e) && e.length < 80) { cache.vertaal[n] = e; ok++; gelukt++ }
+      }
+      if (!gelukt) { mis++; console.log('vertalen leeg (' + stop + '):', t.slice(0, 160).replace(/\s+/g, ' ')) }
+    } catch (e) { console.log('vertalen', e.message); mis++; if (/HTTP 4/.test(e.message)) break }
+    if (mis > 6) break
   }
   console.log('vertaald:', ok)
 }

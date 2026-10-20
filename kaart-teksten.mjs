@@ -35,14 +35,18 @@ const REGELS = `You write short SEO texts for BoosterScout, a European Pokémon 
 - Never use em dashes or en dashes. Use commas or full stops instead.
 Return ONLY a JSON object with the keys nl, en, de, fr, es, it, pt, pl.`
 
+// 20 okt: denktokens tellen als uitvoer en kosten geld; voor deze teksten is nadenken niet nodig.
+let ZUINIG = true
 async function claude (feiten) {
   for (let poging = 1; poging <= 3; poging++) {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: { 'x-api-key': SLEUTEL, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-      body: JSON.stringify({ model: MODEL, max_tokens: 6000, system: REGELS, messages: [{ role: 'user', content: 'Facts (JSON):\n' + JSON.stringify(feiten) + '\n\nWrite the texts. Languages: ' + JSON.stringify(TALEN) }] })
+      body: JSON.stringify({ model: MODEL, max_tokens: 6000, ...(ZUINIG ? { thinking: { type: 'between_tools' }, output_config: { effort: 'low' } } : {}), system: REGELS, messages: [{ role: 'user', content: 'Facts (JSON):\n' + JSON.stringify(feiten) + '\n\nWrite the texts. Languages: ' + JSON.stringify(TALEN) }] })
     })
     if (r.status === 429 || r.status >= 500) { await new Promise(z => setTimeout(z, 4000 * poging)); continue }
+    // Weigert het model de denk-instelling (400), dan zonder verder.
+    if (r.status === 400 && ZUINIG) { const tx = await r.text(); if (/thinking|effort|output_config/i.test(tx)) { ZUINIG = false; console.log('denk-instelling geweigerd, zonder verder:', tx.slice(0, 160)); poging--; continue } throw new Error('Anthropic HTTP 400 ' + tx.slice(0, 200)) }
     const d = await r.json().catch(() => ({}))
     if (!r.ok) throw new Error('Anthropic HTTP ' + r.status + ' ' + JSON.stringify(d.error || d).slice(0, 200))
     const t = (d.content || []).map(c => c.text || '').join('')

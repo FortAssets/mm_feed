@@ -34,7 +34,7 @@ const VREEMD = /[぀-ヿ㐀-鿿가-힯]/
 async function claudeTekst (vraag, max, system) {
   for (let p = 1; p <= 3; p++) {
     const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': AI, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-      body: JSON.stringify({ model: MODEL, max_tokens: max, system, messages: [{ role: 'user', content: vraag }] }) })
+      body: JSON.stringify({ model: MODEL, max_tokens: max, thinking: { type: 'disabled' }, output_config: { effort: 'low' }, system, messages: [{ role: 'user', content: vraag }] }) })
     if (r.status === 429 || r.status >= 500) { await new Promise(z => setTimeout(z, 5000 * p)); continue }
     if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + (await r.text()).slice(0, 150))
     const d = await r.json()

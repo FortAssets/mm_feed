@@ -44,7 +44,7 @@ let aiN = 0
 async function aiCheck (naam, nummer, set, kand) {
   const lijst = kand.slice(0, 80).map((x, j) => j + ': ' + x.t).join('\n')
   const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': AI, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-    body: JSON.stringify({ model: AI_MODEL, max_tokens: 1200, thinking: { type: 'disabled' }, output_config: { effort: 'low' },  system: 'You check eBay listing titles for a Pokémon card price tracker. Answer with JSON only.', messages: [{ role: 'user', content: `Card: ${naam}, number ${nummer}, set ${set}.\nWhich of these listing titles are a single graded copy of exactly this card (same Pokémon, same number, same set; any language is fine)? Exclude other cards, lots, bundles, reprints, proxies, custom or fake slabs, and listings where the grade in the title is unclear.\nReturn {"ok":[indices]}.\n\n${lijst}` }] }) })
+    body: JSON.stringify({ model: AI_MODEL, max_tokens: 1200,  system: 'You check eBay listing titles for a Pokémon card price tracker. Answer with JSON only.', messages: [{ role: 'user', content: `Card: ${naam}, number ${nummer}, set ${set}.\nWhich of these listing titles are a single graded copy of exactly this card (same Pokémon, same number, same set; any language is fine)? Exclude other cards, lots, bundles, reprints, proxies, custom or fake slabs, and listings where the grade in the title is unclear.\nReturn {"ok":[indices]}.\n\n${lijst}` }] }) })
   if (!r.ok) throw new Error('HTTP ' + r.status)
   const d = await r.json(); const t = (d.content || []).map(c => c.text || '').join(''); const m = t.match(/\{[\s\S]*\}/)
   if (!m) return null

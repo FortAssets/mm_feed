@@ -31,10 +31,10 @@ const setVan = new Map(kz.sets.map(s => [s[0], s]))
 const azie = id => /^(jp|kr)-/.test(id)
 const VREEMD = /[぀-ヿ㐀-鿿가-힯]/
 
-async function claudeTekst (vraag, max, system) {
+async function claudeTekst (vraag, max, system, denk = true) {
   for (let p = 1; p <= 3; p++) {
     const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': AI, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
-      body: JSON.stringify({ model: MODEL, max_tokens: max, thinking: { type: 'disabled' }, output_config: { effort: 'low' }, system, messages: [{ role: 'user', content: vraag }] }) })
+      body: JSON.stringify({ model: MODEL, max_tokens: max, ...(denk ? {} : { thinking: { type: 'disabled' }, output_config: { effort: 'low' } }), system, messages: [{ role: 'user', content: vraag }] }) })
     if (r.status === 429 || r.status >= 500) { await new Promise(z => setTimeout(z, 5000 * p)); continue }
     if (!r.ok) throw new Error('HTTP ' + r.status + ' ' + (await r.text()).slice(0, 150))
     const d = await r.json()
@@ -59,7 +59,7 @@ if (AI) {
   for (let i = 0; i < open.length && i < 4000; i += 60) {
     const deel = open.slice(i, i + 60)
     try {
-      const { t, stop } = await claudeTekst('Translate these Japanese or Korean Pokémon TCG card names into the official English card name as printed on the English release (for example リーリエ -> Lillie, ふしぎなアメ -> Rare Candy, 基本炎エネルギー -> Basic Fire Energy, ピカチュウ&ゼクロムGX -> Pikachu & Zekrom-GX). If a card was never released in English, give the usual English fan translation. Keep ex, GX, V, VMAX, VSTAR suffixes.\nAnswer with exactly one line per name: the number, a TAB, the English name. Nothing else.\n\n' + deel.map((n, j2) => j2 + '\t' + n).join('\n'), 4000, 'You translate Pokémon TCG card names. Output only the requested lines.')
+      const { t, stop } = await claudeTekst('Translate these Japanese or Korean Pokémon TCG card names into the official English card name as printed on the English release (for example リーリエ -> Lillie, ふしぎなアメ -> Rare Candy, 基本炎エネルギー -> Basic Fire Energy, ピカチュウ&ゼクロムGX -> Pikachu & Zekrom-GX). If a card was never released in English, give the usual English fan translation. Keep ex, GX, V, VMAX, VSTAR suffixes.\nAnswer with exactly one line per name: the number, a TAB, the English name. Nothing else.\n\n' + deel.map((n, j2) => j2 + '\t' + n).join('\n'), 4000, 'You translate Pokémon TCG card names. Output only the requested lines.', false)
       let gelukt = 0
       for (const regel of t.split('\n')) {
         const m = regel.match(/^\s*(\d+)\s*[\t:|.-]\s*(.+?)\s*$/); if (!m) continue

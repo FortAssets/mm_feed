@@ -139,7 +139,7 @@ html:not(#x) .pk2 .lk .fk{aspect-ratio:63/88;border-radius:9px;overflow:hidden;b
 html:not(#x) .pk2 .lk h3{font-size:15.5px;line-height:1.25;margin-top:4px}html:not(#x) .pk2 .lk .m{font-size:12.5px;color:var(--zacht)}
 html:not(#x) .pk2 .lk .pr{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}html:not(#x) .pk2 .lk .pr b{font-size:22px;letter-spacing:-.03em}
 html:not(#x) .pk2 .lk .ver{font-size:12px;font-weight:700;border-radius:99px;padding:2px 8px}html:not(#x) .pk2 .lk .ver.op{background:#E3F3EA;color:var(--groen)}html:not(#x) .pk2 .lk .ver.af{background:#FBE9E7;color:#B4382C}
-html:not(#x) .pk2 .lk .kn{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:auto}
+html:not(#x) .pk2 .lk .kn{display:grid;grid-template-columns:1fr;gap:6px;margin-top:auto}
 html:not(#x) .pk2 .lk .kn a{display:flex;align-items:center;justify-content:center;min-height:38px;border-radius:9px;border:1.5px solid var(--ink);font-weight:700;font-size:13px}html:not(#x) .pk2 .lk .kn a.e{background:var(--geel);box-shadow:2px 2px 0 var(--ink)}
 html:not(#x) .pk2 .lk-tip{background:#FFF6D6;border-radius:14px;padding:14px 18px;margin-top:10px;font-size:14.5px;line-height:1.5}html:not(#x) .pk2 .lk-fijn{font-size:12.5px;color:var(--zacht);margin:8px 0 0}
 </style>
@@ -317,14 +317,13 @@ function oordeel(p,a){if(!a||!p)return null;var r=p/a;
   function go(u,p){return GO+'?u='+encodeURIComponent(u)+'&cat=kaarten&p='+encodeURIComponent(p)+'&bron=pokemon-losse-kaarten';}
   function kaart(c){
     var q=c.naam+' '+c.nr+(c.van?'/'+c.van:'');
-    var cm='https://www.cardmarket.com/nl/Pokemon/Products/Search?searchString='+encodeURIComponent(c.naam+' '+c.setnaam);
     var eb='https://app.partner.ebay.com/c/7966591/627505/9356?u='+encodeURIComponent('https://www.ebay.nl/sch/i.html?_nkw='+encodeURIComponent('pokemon '+q)+'&_sacat=183454')+'&subId1=dpv-pokemon-losse-kaarten';
     var v='';if(c.gem30){var d=Math.round((c.trend-c.gem30)/c.gem30*100);if(Math.abs(d)>=3)v='<span class="ver '+(d>0?'op':'af')+'">'+(d>0?'+':'')+d+'% in 30 dagen</span>';}
     var a=document.createElement('article');a.className='lk';
-    a.innerHTML='<div class="fk"><img loading="lazy" alt="" width="245" height="342"></div><h3></h3><span class="m"></span><div class="pr"><b>'+eur(c.trend)+'</b>'+v+'</div><div class="kn"><a class="c" target="_blank" rel="nofollow noopener">Cardmarket</a><a class="e" target="_blank" rel="nofollow sponsored noopener">eBay</a></div>';
+    a.innerHTML='<div class="fk"><img loading="lazy" alt="" width="245" height="342"></div><h3></h3><span class="m"></span><div class="pr"><b>'+eur(c.trend)+'</b>'+v+'</div><div class="kn"><a class="e" target="_blank" rel="nofollow sponsored noopener">Bekijk op eBay</a></div>';
     a.querySelector('img').src=c.img;a.querySelector('img').alt=c.naam+' '+c.setnaam;
     a.querySelector('h3').textContent=c.naam;a.querySelector('.m').textContent=c.setnaam+' \u00b7 '+c.nr+(c.van?'/'+c.van:'')+(c.zeldzaam?' \u00b7 '+c.zeldzaam:'');
-    a.querySelector('a.c').href=go(cm,'Cardmarket '+c.naam);a.querySelector('a.e').href=go(eb,'eBay '+c.naam);
+    a.querySelector('a.e').href=go(eb,'eBay '+c.naam);
     return a;
   }
   fetch('https://raw.githubusercontent.com/FortAssets/mm_feed/tcg-data/kaarten.json',{cache:'no-cache'}).then(function(r){return r.ok?r.json():null;}).then(function(d){

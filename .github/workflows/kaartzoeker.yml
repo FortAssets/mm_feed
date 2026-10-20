@@ -31,9 +31,22 @@ jobs:
           git show origin/tcg-data:kaartzoeker/cache.json > data/kz/cache.json 2>/dev/null || rm -f data/kz/cache.json
           git show origin/tcg-data:kaartzoeker/graded-cache.json > data/kz/graded-cache.json 2>/dev/null || rm -f data/kz/graded-cache.json
           git show origin/tcg-data:kaartzoeker/teksten.json > data/kz/teksten.json 2>/dev/null || rm -f data/kz/teksten.json
+          git show origin/tcg-data:kaartzoeker/aanvul-cache.json > data/kz/aanvul-cache.json 2>/dev/null || rm -f data/kz/aanvul-cache.json
           ls -la data/kz
       - name: Kaarten ophalen
         run: node kaartzoeker.mjs
+      - name: Namen en afbeeldingen aanvullen (pokemontcg.io, Cardmarket, eBay)
+        env:
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CM_APP_TOKEN: ${{ secrets.CM_APP_TOKEN }}
+          CM_APP_SECRET: ${{ secrets.CM_APP_SECRET }}
+          CM_ACCESS_TOKEN: ${{ secrets.CM_ACCESS_TOKEN }}
+          CM_ACCESS_SECRET: ${{ secrets.CM_ACCESS_SECRET }}
+        run: |
+          cp data/kz/kaarten.json data/kz/kaarten-voor.json
+          node kaart-aanvul.mjs || { echo "aanvullen mislukt, kaarten gaan zonder door"; cp data/kz/kaarten-voor.json data/kz/kaarten.json; }
       - name: Graded prijzen meten (eBay)
         env:
           EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
@@ -54,6 +67,7 @@ jobs:
           cp data/kz/kaarten.json data/kz/cache.json /tmp/td/kaartzoeker/
           cp data/kz/graded.json data/kz/graded-cache.json /tmp/td/kaartzoeker/ 2>/dev/null || true
           cp data/kz/teksten.json /tmp/td/kaartzoeker/ 2>/dev/null || true
+          cp data/kz/aanvul-cache.json /tmp/td/kaartzoeker/ 2>/dev/null || true
           cd /tmp/td
           git add kaartzoeker
           git diff --cached --quiet && { echo "niets veranderd"; exit 0; }

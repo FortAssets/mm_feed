@@ -56,7 +56,9 @@ await inStukken(teHalen, 6, async s => {
 console.log('sets opgehaald:', teHalen.length, 'in cache:', Object.keys(cache.sets).length)
 
 // 2. Kaartdetails (zeldzaamheid, Cardmarket-product, prijzen van TCGdex als reserve)
-const alleKaarten = Object.values(cache.sets).flatMap(s => s.kaarten.map(k => ({ id: k[0], set: s.id, datum: s.datum })))
+// TCG Pocket is de app (digitale kaarten): niet ophalen en niet tonen.
+const isPocket = s => s.serieId === 'tcgp' || /pocket/i.test(s.serie || '')
+const alleKaarten = Object.values(cache.sets).filter(s => !isPocket(s)).flatMap(s => s.kaarten.map(k => ({ id: k[0], set: s.id, datum: s.datum })))
 const nodig = alleKaarten.filter(k => { const c = cache.kaarten[k.id]; return !c || c.dex === undefined || (recent(k.datum) && c.g !== vandaag) || (Date.now() - Date.parse(c.g || 0)) > 30 * 864e5 })
 console.log('kaarten totaal:', alleKaarten.length, 'details nodig:', nodig.length)
 let n = 0
@@ -126,7 +128,7 @@ try {
 const r2 = v => v == null || !(v > 0) ? null : Math.round(v * 100) / 100
 
 // 5. Uitvoer: compact, één rij per kaart
-const uitSets = Object.values(cache.sets).filter(s => s.kaarten.length).sort((a, b) => (b.datum || '').localeCompare(a.datum || ''))
+const uitSets = Object.values(cache.sets).filter(s => s.kaarten.length && !isPocket(s)).sort((a, b) => (b.datum || '').localeCompare(a.datum || ''))
   .map(s => [s.id, s.naam, s.serie, s.datum, s.logo, s.symbool, s.officieel, s.totaal, Object.fromEntries(TALEN.map(t => [t, typeof cache.namen[t]?.['_' + s.id] === 'string' ? cache.namen[t]['_' + s.id] : null]).filter(x => x[1]))])
 let metPrijs = 0
 for (const s2 of Object.values(cache.azie?.sets || {})) {
@@ -142,6 +144,7 @@ const telCm = new Map(); for (const s2 of Object.values(cache.sets)) for (const 
 let weg = 0
 const uitKaarten = []
 for (const s of Object.values(cache.sets)) {
+  if (isPocket(s)) continue
   for (const [id, nr, naam, img] of s.kaarten) {
     const c = cache.kaarten[id] || {}
     const g = c.cm && gids ? gids.get(c.cm) : null
@@ -151,7 +154,7 @@ for (const s of Object.values(cache.sets)) {
     else if (p[0] > 300 && p[1] == null) { p.fill(null); weg++ }
     if (p.some(x => x != null)) metPrijs++
     const namen = Object.fromEntries(TALEN.map(t => [t, cache.namen[t]?.[id]]).filter(x => x[1] && x[1] !== naam))
-    uitKaarten.push([id, s.id, nr, naam, c.r || '', img, c.cm || null, ...(p.length ? p : [null, null, null, null, null, null]), r2(c.usd), Object.keys(namen).length ? namen : 0])
+    uitKaarten.push([id, s.id, nr, naam, c.r || '', img, c.cm || null, ...(p.length ? p : [null, null, null, null, null, null]), r2(c.usd), Object.keys(namen).length ? namen : 0, c.dex || 0, c.cat || ''])
   }
 }
 for (const s2 of Object.values(cache.azie?.sets || {})) {
@@ -162,10 +165,18 @@ for (const s2 of Object.values(cache.azie?.sets || {})) {
     if (!p.length) p = [null, null, null, null, null, null]
     if (c.cm && telCm.get(c.cm) > 1) p.fill(null)
     if (p.some(x => x != null)) metPrijs++
-    uitKaarten.push([(s2.id + '-' + nr).toLowerCase(), s2.id, nr, engelsVan(naam, c.dex), c.r || '', img, c.cm || null, ...p, null, { [s2.taal]: naam }])
+    uitKaarten.push([(s2.id + '-' + nr).toLowerCase(), s2.id, nr, engelsVan(naam, c.dex), c.r || '', img, c.cm || null, ...p, null, { [s2.taal]: naam }, c.dex || 0, c.dex ? 'Pokemon' : ''])
   }
 }
-const uit = { bijgewerkt: new Date().toISOString(), bron: gids ? 'cardmarket-prijsgids' : 'tcgdex', velden: ['id', 'set', 'nr', 'naam', 'zeldzaam', 'img', 'cm', 'trend', 'laag', 'gem1', 'gem7', 'gem30', 'trendHolo', 'usd', 'namen'], sets: uitSets, kaarten: uitKaarten }
+// Pokémon-pagina's (20 okt): per Pokédex-nummer de gewone naam in het Engels en in de andere talen.
+const dexId = new Map()
+for (const s2 of Object.values(cache.sets)) { if (isPocket(s2)) continue; for (const [id, , naam] of s2.kaarten) { const c = cache.kaarten[id]; if (c?.dex && dexNaam.get(c.dex) === naam && !dexId.has(c.dex)) dexId.set(c.dex, id) } }
+const pokemon = [...dexNaam.entries()].sort((a, b) => a[0] - b[0]).map(([dex, en]) => {
+  const id = dexId.get(dex)
+  const namen = id ? Object.fromEntries(TALEN.map(t => [t, cache.namen[t]?.[id]]).filter(x => x[1] && x[1] !== en)) : {}
+  return [dex, en, namen]
+})
+const uit = { bijgewerkt: new Date().toISOString(), bron: gids ? 'cardmarket-prijsgids' : 'tcgdex', velden: ['id', 'set', 'nr', 'naam', 'zeldzaam', 'img', 'cm', 'trend', 'laag', 'gem1', 'gem7', 'gem30', 'trendHolo', 'usd', 'namen', 'dex', 'cat'], sets: uitSets, kaarten: uitKaarten, pokemon }
 fs.writeFileSync(MAP + '/kaarten.json', JSON.stringify(uit))
 console.log('prijs weggelaten (onbetrouwbaar):', weg)
 console.log('klaar:', uitSets.length, 'sets,', uitKaarten.length, 'kaarten,', metPrijs, 'met prijs,', (fs.statSync(MAP + '/kaarten.json').size / 1048576).toFixed(1) + ' MB,', Math.round((Date.now() - start) / 60000) + ' min', tijdOp() ? '(tijd op, volgende keer verder)' : '')

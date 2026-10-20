@@ -54,6 +54,10 @@ for (const k of kaarten) {
       if (WEG.test(t)) continue
       // Het kaartnummer moet erin staan (161 of 161/131), anders is het waarschijnlijk een andere kaart.
       if (!new RegExp('(^|\\D)0*' + nr + '(\\D|$)').test(t)) continue
+      // Nummer met het setaantal (149/147) of de setnaam moet erin staan; alleen het nummer is te los.
+      const setWoord = String(s[1] || '').toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/).filter(w => w.length > 3)
+      const metVan = van && new RegExp('(^|\\D)0*' + nr + '\\s*/\\s*0*' + van + '(\\D|$)').test(t)
+      if (!metVan && !(setWoord.length && setWoord.every(w => t.toLowerCase().includes(w)))) continue
       if (!t.toLowerCase().includes(String(k[ix.naam]).toLowerCase().split(' ')[0])) continue
       const m = t.match(GRADER); if (!m) continue
       const g = (m[1].toUpperCase() === 'BECKETT' ? 'BGS' : m[1].toUpperCase()) + ' ' + m[2]

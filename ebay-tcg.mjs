@@ -183,6 +183,8 @@ async function haal () {
 export async function ebayTcg () {
   let oud = null
   try { oud = JSON.parse(fs.readFileSync(CACHE, 'utf8')) } catch (e) {}
+  // 20 okt: links uit een eerdere run opnieuw opbouwen, zodat een nieuwe partnerlink meteen overal geldt.
+  if (oud && oud.items) oud.items = oud.items.map(x => ({ ...x, url: ebayLink(x.url, 'boosterscout') }))
   if (!ebayKlaar()) {
     // Zonder sleutels: de vorige uitkomst zolang die niet te oud is.
     const vers = oud && Date.now() - Date.parse(oud.gemaakt) < 6 * 3600e3

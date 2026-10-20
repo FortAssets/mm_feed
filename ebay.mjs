@@ -62,6 +62,8 @@ async function main () {
   if (!ebayKlaar()) { console.log('eBay: geen EBAY_CLIENT_ID/EBAY_CLIENT_SECRET, overgeslagen'); return }
   const data = lees()
   data.prijs = data.prijs || {}
+  // 20 okt: bestaande links opnieuw opbouwen (nieuwe partnerlink geldt dan meteen voor alles).
+  for (const x of Object.values(data.prijs)) if (x && x.u) x.u = ebayLink(x.u, 'dpv-shop')
   data.gezien = data.gezien || {}
 
   const lijst = producten()

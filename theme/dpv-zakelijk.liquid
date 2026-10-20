@@ -190,7 +190,7 @@
 .zkv-an b{display:block;font-size:14px}.zkv-an small{display:block;font-size:12px;color:var(--soft);line-height:1.35}
 .zkv-ap{text-align:right;white-space:nowrap}.zkv-ap b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:21px;font-weight:800;display:block;letter-spacing:-.02em;line-height:1.1}
 .zkv-ap b i{font-style:normal;font-size:12px;font-weight:700;color:var(--soft);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:0}
-.zkv-ap small{display:block;font-size:11px;color:var(--soft)}.zkv-ap .zkv-em{color:#B45309;font-weight:700}
+.zkv-ap small{display:block;font-size:11px;color:var(--soft)}.zkv-ap .zkv-em{color:#B45309;font-weight:700}.zkv-ap .zkv-g0{color:var(--groenD);font-weight:700}
 .zkv-ar .zkv-go{min-height:36px;padding:0 11px;font-size:13px}
 @media(max-width:760px){.zkv-filterrij{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}.zkv-filterrij::-webkit-scrollbar{display:none}.zkv-filterrij .zkv-chip{flex:none}}
 .zkv-ookl{font-size:12px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 6px}
@@ -544,7 +544,7 @@
     var sub = [r.gb ? gbTekst(r.gb) : '', r.net && provNaam(r.prov).toLowerCase().indexOf(r.net.toLowerCase()) < 0 ? 'netwerk ' + r.net : '', r.m ? r.m + ' mnd' : ''].filter(Boolean).join(' · ');
     if (r.los) sub = 'Toestel op afbetaling, het abonnement kies je bij ' + esc(provNaam(r.prov).replace(/\s*Zakelijk$/i, ''));
     var prijs = r.los ? '<b>' + euro(r.prijs) + '</b><small>p/m voor het toestel</small>'
-      : '<b>' + euro(r.prijs) + '<i> p/m</i></b>' + (r.eenmalig ? '<small class="zkv-em">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '<small class="zkv-em">geen eenmalige kosten</small>') + '<small>totaal ' + r.maanden + ' mnd: ' + euro(r.totaal) + '</small>';
+      : '<b>' + euro(r.prijs) + '<i> p/m</i></b>' + (r.eenmalig ? '<small class="zkv-em">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '<small class="zkv-g0">geen eenmalige kosten</small>') + '<small>totaal ' + r.maanden + ' mnd: ' + euro(r.totaal) + '</small>';
     return '<li class="zkv-ar' + (top ? ' top' : '') + '">' + logo(r.prov) + '<div class="zkv-an"><b>' + esc(provNaam(r.prov)) + (top ? '<span class="zkv-lab">Goedkoopst</span>' : '') + '</b><small>' + sub + '</small></div><div class="zkv-ap">' + prijs + '</div>' + go(r) + '</li>';
   }
   function toestelKaart(x, i, goedkoopst) {

@@ -96,6 +96,10 @@ const r2 = v => v == null || !(v > 0) ? null : Math.round(v * 100) / 100
 const uitSets = Object.values(cache.sets).filter(s => s.kaarten.length).sort((a, b) => (b.datum || '').localeCompare(a.datum || ''))
   .map(s => [s.id, s.naam, s.serie, s.datum, s.logo, s.symbool, s.officieel, s.totaal, Object.fromEntries(TALEN.map(t => [t, typeof cache.namen[t]?.['_' + s.id] === 'string' ? cache.namen[t]['_' + s.id] : null]).filter(x => x[1]))])
 let metPrijs = 0
+// Sommige kaarten wijzen bij TCGdex naar hetzelfde Cardmarket-product (vaak promo's): dan klopt de prijs
+// niet voor allemaal. Die prijzen laten we weg, net als een hoge trend zonder enige aanbieding op dit moment.
+const telCm = new Map(); for (const s2 of Object.values(cache.sets)) for (const [id] of s2.kaarten) { const cm = cache.kaarten[id]?.cm; if (cm) telCm.set(cm, (telCm.get(cm) || 0) + 1) }
+let weg = 0
 const uitKaarten = []
 for (const s of Object.values(cache.sets)) {
   for (const [id, nr, naam, img] of s.kaarten) {
@@ -103,6 +107,8 @@ for (const s of Object.values(cache.sets)) {
     const g = c.cm && gids ? gids.get(c.cm) : null
     // [trend, laag, gem1, gem7, gem30, trendHolo]
     const p = g ? [g.trend, g.low, g.avg1, g.avg7, g.avg30, g['trend-holo']].map(r2) : (c.p || []).map(r2)
+    if (c.cm && telCm.get(c.cm) > 1) { p.fill(null); weg++ }
+    else if (p[0] > 300 && p[1] == null) { p.fill(null); weg++ }
     if (p.some(x => x != null)) metPrijs++
     const namen = Object.fromEntries(TALEN.map(t => [t, cache.namen[t]?.[id]]).filter(x => x[1] && x[1] !== naam))
     uitKaarten.push([id, s.id, nr, naam, c.r || '', img, c.cm || null, ...(p.length ? p : [null, null, null, null, null, null]), r2(c.usd), Object.keys(namen).length ? namen : 0])
@@ -110,4 +116,5 @@ for (const s of Object.values(cache.sets)) {
 }
 const uit = { bijgewerkt: new Date().toISOString(), bron: gids ? 'cardmarket-prijsgids' : 'tcgdex', velden: ['id', 'set', 'nr', 'naam', 'zeldzaam', 'img', 'cm', 'trend', 'laag', 'gem1', 'gem7', 'gem30', 'trendHolo', 'usd', 'namen'], sets: uitSets, kaarten: uitKaarten }
 fs.writeFileSync(MAP + '/kaarten.json', JSON.stringify(uit))
+console.log('prijs weggelaten (onbetrouwbaar):', weg)
 console.log('klaar:', uitSets.length, 'sets,', uitKaarten.length, 'kaarten,', metPrijs, 'met prijs,', (fs.statSync(MAP + '/kaarten.json').size / 1048576).toFixed(1) + ' MB,', Math.round((Date.now() - start) / 60000) + ' min', tijdOp() ? '(tijd op, volgende keer verder)' : '')

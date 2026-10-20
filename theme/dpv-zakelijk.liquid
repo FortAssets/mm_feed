@@ -195,8 +195,9 @@
 @media(max-width:760px){.zkv-filterrij{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch;padding-bottom:2px}.zkv-filterrij::-webkit-scrollbar{display:none}.zkv-filterrij .zkv-chip{flex:none}}
 .zkv-ookl{font-size:12px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.05em;margin:12px 0 6px}
 .zkv-alle{margin-top:8px;border:0;background:none;color:var(--blauw);font:inherit;font-weight:800;font-size:13.5px;cursor:pointer;padding:4px 0}
-@media(max-width:560px){.zkv-ar{grid-template-columns:30px minmax(0,1fr) auto;grid-template-areas:"l n p" "l n k";gap:4px 10px;padding:10px}
- .zkv-ar>.zkv-logo{grid-area:l;align-self:start}.zkv-ar .zkv-an{grid-area:n}.zkv-ar .zkv-ap{grid-area:p}.zkv-ar .zkv-go{grid-area:k;justify-self:end;min-height:32px;padding:0 12px;font-size:12.5px;box-shadow:none}
+@media(max-width:560px){.zkv-ar{grid-template-columns:30px minmax(0,1fr) auto;grid-template-areas:"l n k" "l p p";gap:6px 10px;padding:10px}
+ .zkv-ar>.zkv-logo{grid-area:l;align-self:start}.zkv-ar .zkv-an{grid-area:n}.zkv-ar .zkv-ap{grid-area:p;text-align:left;white-space:normal}.zkv-ar .zkv-go{grid-area:k;align-self:start;justify-self:end;min-height:32px;padding:0 12px;font-size:12.5px;box-shadow:none}
+ .zkv-ar .zkv-ap b{display:inline-block;margin-right:6px}.zkv-ar .zkv-ap small{display:inline}.zkv-ar .zkv-ap small+small:before{content:' · '}
  .zkv-an .zkv-lab{display:inline-block;margin:3px 0 0}}
 /* het algemene "Mail deze deal" maakt elke regel twee keer zo hoog; hier niet */
 .zkv .dpvmb{display:none !important}

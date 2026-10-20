@@ -34,6 +34,18 @@ const WEG = /\b(lot|bundle|proxy|custom|reprint|fake|orica|digital|ungraded|not 
 const kaarten = kz.kaarten.filter(k => (k[ix.trend] || 0) >= 15).sort((a, b) => b[ix.trend] - a[ix.trend]).slice(0, AANTAL)
 console.log('kaarten om te meten:', kaarten.length)
 
+const AI = process.env.ANTHROPIC_API_KEY || ''
+const AI_MODEL = process.env.GRADED_MODEL || 'claude-haiku-5-5'
+let aiN = 0
+async function aiCheck (naam, nummer, set, kand) {
+  const lijst = kand.slice(0, 80).map((x, j) => j + ': ' + x.t).join('\n')
+  const r = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'x-api-key': AI, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+    body: JSON.stringify({ model: AI_MODEL, max_tokens: 400, system: 'You check eBay listing titles for a Pokémon card price tracker. Answer with JSON only.', messages: [{ role: 'user', content: `Card: ${naam}, number ${nummer}, set ${set}.\nWhich of these listing titles are a single graded copy of exactly this card (same Pokémon, same number, same set; any language is fine)? Exclude other cards, lots, bundles, reprints, proxies, custom or fake slabs, and listings where the grade in the title is unclear.\nReturn {"ok":[indices]}.\n\n${lijst}` }] }) })
+  if (!r.ok) throw new Error('HTTP ' + r.status)
+  const d = await r.json(); const t = (d.content || []).map(c => c.text || '').join(''); const m = t.match(/\{[\s\S]*\}/)
+  if (!m) return null
+  return new Set((JSON.parse(m[0]).ok || []).map(Number))
+}
 const med = a => { const s = a.slice().sort((x, y) => x - y); const n = s.length; return n ? (n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2) : null }
 const r2 = v => Math.round(v * 100) / 100
 const uit = {}
@@ -43,6 +55,7 @@ for (const k of kaarten) {
   const id = k[ix.id], s = setVan.get(k[ix.set]) || []
   const nr = String(k[ix.nr]).replace(/^0+/, ''), van = s[6]
   const nu = {}   // grade -> [[prijsEUR, itemId]]
+  const kand = []
   for (const [markt, munt] of MARKTEN) {
     let d
     try {
@@ -64,9 +77,16 @@ for (const k of kaarten) {
       if (!i.price || !(Number(i.price.value) > 0)) continue
       const eur = i.price.currency === 'EUR' ? Number(i.price.value) : i.price.currency === 'USD' ? Number(i.price.value) * usdEur : null
       if (!eur) continue
-      ;(nu[g] ||= []).push([r2(eur), String(i.itemId)])
+      kand.push({ t, g, eur: r2(eur), iid: String(i.itemId) })
     }
   }
+  // 20 okt: met Claude (Haiku) nakijken welke titels echt deze kaart in dit cijfer zijn (geen andere kaart,
+  // geen lot, geen reprint). Zonder sleutel of bij een fout: de regels hierboven blijven gelden.
+  let goed = kand
+  if (AI && kand.length) {
+    try { const ok = await aiCheck(k[ix.naam], nr + (van ? '/' + van : ''), s[1] || '', kand); if (ok) { goed = kand.filter((x, j) => ok.has(j)); aiN++ } } catch (e) { console.log('ai', e.message) }
+  }
+  for (const x of goed) (nu[x.g] ||= []).push([x.eur, x.iid])
   // Verdwenen aanbiedingen sinds de vorige meting: waarschijnlijk verkocht.
   const oud = cache.items[id] || {}, nieuw = {}
   for (const [g, lijst] of Object.entries(nu)) for (const [p, iid] of lijst) nieuw[iid] = [g, p, (oud[iid] && oud[iid][2]) || vandaag]
@@ -89,4 +109,4 @@ for (const k of kaarten) {
 }
 fs.writeFileSync(CACHE, JSON.stringify(cache))
 fs.writeFileSync(MAP + '/graded.json', JSON.stringify({ bijgewerkt: new Date().toISOString(), koers: usdEur, bron: 'eigen meting eBay (Nu kopen, eBay.com en eBay.de)', kaarten: uit }))
-console.log('klaar:', Object.keys(uit).length, 'kaarten met graded prijzen,', calls, 'zoekopdrachten')
+console.log('klaar:', Object.keys(uit).length, 'kaarten met graded prijzen,', calls, 'zoekopdrachten,', aiN, 'keer nagekeken met Claude')

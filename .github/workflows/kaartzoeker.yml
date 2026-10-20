@@ -38,6 +38,7 @@ jobs:
         env:
           EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
           EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: node kaart-graded.mjs || echo "graded mislukt, kaarten gaan wel door"
       - name: SEO-teksten schrijven (Claude)
         env:

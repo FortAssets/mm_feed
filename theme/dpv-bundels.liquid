@@ -116,6 +116,8 @@
 .bvg-sheet :focus-visible{outline:3px solid #10b981;outline-offset:2px}
 .bvg-sheet[hidden]{display:none}
 .bvg-bd{position:absolute;inset:0;background:rgba(13,27,42,.45)}
+/* het thema verbergt lege div's (div:empty), dus expliciet tonen */
+.bvg-sheet .bvg-bd,.bvg-sheet .bvg-grip{display:block}
 .bvg-pan{position:absolute;left:0;right:0;bottom:0;max-height:86vh;display:flex;flex-direction:column;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -8px 30px rgba(13,27,42,.18);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
 .bvg-grip{width:40px;height:4px;border-radius:4px;background:var(--line);margin:10px auto 0}
 .bvg-pk{display:flex;align-items:center;justify-content:space-between;padding:6px 16px 4px}

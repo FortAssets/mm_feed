@@ -1,26 +1,19 @@
 sets bij TCGdex: 220
 sets opgehaald: 3 in cache: 220
-kaarten totaal: 21256 details nodig: 0
-details opgehaald: 0
+kaarten totaal: 21256 details nodig: 308
+details opgehaald: 308
 namen fr 3 sets
 namen de 3 sets
 namen it 3 sets
 namen es 3 sets
 namen pt 3 sets
-Japan sets 184 kaarten 12781 details nodig 0
+Japan sets 184 kaarten 12781 details nodig 113
 Korea sets 95 kaarten 239 details nodig 0
-prijsgids 79804 producten 2026-10-20T02:44:49+0200
+prijsgids 80013 producten 2026-10-21T02:48:17+0200
 prijs weggelaten (onbetrouwbaar): 1875
 klaar: 320 sets, 34276 kaarten, 28558 met prijs, 5.7 MB, 0 min 
-namen te vertalen: 1035
-vertalen leeg (max_tokens): 
-vertalen leeg (max_tokens): 
-vertalen leeg (max_tokens): 
-vertalen leeg (max_tokens): 
-vertalen leeg (max_tokens): 
-vertalen leeg (max_tokens): 
-vertalen leeg (max_tokens): 
-vertaald: 338
+namen te vertalen: 697
+vertaald: 647
 ptcg geen set voor miscp Miscellaneous Promos
 ptcg geen set voor ex5.5 Poké Card Creator Pack
 ptcg geen set voor exu Unseen Forces Unown Collection
@@ -49,36 +42,24 @@ ptcg geen set voor mep MEP Black Star Promos
 beelden via pokemontcg.io: 846
 beelden via Cardmarket: 0 ( 0 verzoeken)
 eBay: zonder beeld 9882 nu maximaal 1500
-eBay: te veel verzoeken (429)
-eBay: zoekopdrachten 0 foto gevonden 0 afgekeurd door Haiku 0
-klaar: namen vertaald 1277 | beelden pokemontcg.io 846 Cardmarket 0 eBay 0 | nog zonder beeld 9882 van 34276
-koers 1 USD = 0.8917 EUR
-kaarten om te meten: 450
-eBay: te veel verzoeken (429)
-klaar: 0 kaarten met graded prijzen, 0 zoekopdrachten, 0 keer nagekeken met Claude
-model claude-sonnet-5-5 taken 1815 maximaal 300
-fout set 30th geen JSON (max_tokens, 6000 tokens): {"nl":"30th Celebration is een set uit de Mega Evolution serie van de Pokémon TCG en verschijnt op 16 september 2026. De
-25 klaar, tokens in/uit 23613 96732
-50 klaar, tokens in/uit 44970 183305
-75 klaar, tokens in/uit 67052 277452
-100 klaar, tokens in/uit 89710 371511
-125 klaar, tokens in/uit 113085 469016
-150 klaar, tokens in/uit 134951 555860
-fout set tk-xy-p geen JSON (max_tokens, 6000 tokens): {"nl":"XY trainer Kit (Pikachu Libre) hoort bij de serie Trainer kits en verscheen op 27 april 2016. De set bestaat uit 
-fout set tk-xy-su geen JSON (max_tokens, 6000 tokens): {"nl":"XY trainer Kit (Suicune) is een set uit de serie Trainer kits van de Pokémon TCG, uitgebracht op 27 april 2016. D
-175 klaar, tokens in/uit 156286 653242
-fout set tk-xy-b geen JSON (max_tokens, 6000 tokens): {"nl":"XY trainer Kit (Bisharp) is een Pokémon TCG set uit de serie Trainer kits en verscheen op 1 november 2014. De set
-fout set tk-xy-w geen JSON (max_tokens, 6000 tokens): 
-200 klaar, tokens in/uit 177057 753926
-fout set tk-hs-g geen JSON (max_tokens, 6000 tokens): {"nl":"HS trainer Kit (Gyarados) is een set uit de serie Trainer kits en verscheen op 1 mei 2010. De set bestaat uit 30 
-225 klaar, tokens in/uit 197381 856565
-fout set tk-dp-m geen JSON (max_tokens, 6000 tokens): {"nl":"DP trainer Kit (Manaphy) is een set uit de serie Trainer kits van de Pokémon TCG, uitgebracht in september 2007. 
-fout set jp-pcg9 geen JSON (max_tokens, 6000 tokens): {"nl":"Clash at the Summit (Japan) is een Japanse set uit de PCG-serie die op 29 juni 2006 uitkwam, met de Japanse naam 
-250 klaar, tokens in/uit 216984 955161
-fout set jp-pcg6 geen JSON (max_tokens, 6000 tokens): {"nl":"Holon Research Tower (Japan) is een Japanse Pokémon TCG set uit de PCG serie, uitgebracht op 28 oktober 2005. In 
-fout set jp-pcg1 geen JSON (max_tokens, 6000 tokens): ```json { "nl": "Flight of Legends (Japan) is een Japanse
-275 klaar, tokens in/uit 235287 1052205
-fout set jp-e5 geen JSON (max_tokens, 6000 tokens): {"nl":"Mysterious Mountains (Japan), in het Japans 神秘なる山, is een set uit de Japanse e-serie en verscheen op 4 oktober 20
-fout set jp-vs1 geen JSON (max_tokens, 6000 tokens): {"nl":"Pokémon Card VS, in Japan geschreven als ポケモンカード★VS, is een Japanse set uit de VS-serie. De set verscheen op 19 j
-fout set jp-neo3 geen JSON (max_tokens, 6000 tokens): {"nl":"Awakening Legends (Japan), in Japan bekend als めざめる伝説, hoort bij de serie Japan neo. De set verscheen op 23 novem
-teksten geschreven: 287 fouten: 13 tokens in/uit: 242966 1104099 totaal sets 292 kaarten 0
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+nakijken geen JSON (max_tokens): 
+eBay: zoekopdrachten 1500 foto gevonden 1125 afgekeurd door Haiku 0
+klaar: namen vertaald 2880 | beelden pokemontcg.io 846 Cardmarket 0 eBay 1125 | nog zonder beeld 8757 van 34276

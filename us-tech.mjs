@@ -26,7 +26,7 @@ const PRODUCTEN = [
   { id: 'sony-wh-1000xm6', rubriek: /headphone|headset/i, naam: 'Sony WH-1000XM6', cat: 'Audio', q: 'Sony WH-1000XM6', moet: /1000xm6/i, msrp: 449 },
   { id: 'bose-qc-ultra-2', rubriek: /headphone|headset/i, naam: 'Bose QuietComfort Ultra Headphones (2nd Gen)', cat: 'Audio', q: 'Bose QuietComfort Ultra Headphones 2nd Gen', moet: /quietcomfort ultra/i, niet: /earbuds/i, msrp: 449 },
   { id: 'switch-2', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Nintendo Switch 2', cat: 'Gaming', q: 'Nintendo Switch 2 console', moet: /switch 2/i, niet: /\bgame only\b|controller only|pro controller|joy-?con (pair|only)|\bcase\b|dock only|amiibo/i, msrp: 449 },
-  { id: 'ps5-pro', rubriek: /video game consoles|mixed lots/i, naam: 'PlayStation 5 Pro', cat: 'Gaming', q: 'PlayStation 5 Pro console', moet: /ps5 pro|playstation 5 pro/i, niet: /controller only|stand only|disc drive only|cover|faceplate/i, msrp: 749 },
+  { id: 'ps5-pro', rubriek: /video game consoles|mixed lots/i, naam: 'PlayStation 5 Pro', cat: 'Gaming', q: 'PlayStation 5 Pro console', moet: /ps5 pro|playstation 5 pro/i, niet: /controller|stand only|disc drive|cover|faceplate|plates|thrustmaster|ps4|ps3|wheel|\brw\b|bundle of|lot/i, msrp: 749 },
   { id: 'xbox-series-x', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Xbox Series X', cat: 'Gaming', q: 'Xbox Series X console 1TB', moet: /series x/i, niet: /controller only|stand only|series s\b|x\/s|x \/ s|x or s/i, msrp: 599 },
   { id: 'steam-deck-oled', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Steam Deck OLED', cat: 'Gaming', q: 'Steam Deck OLED 512GB', moet: /steam deck oled/i, msrp: 549 },
   { id: 'meta-quest-3s', rubriek: /virtual reality|vr /i, naam: 'Meta Quest 3S', cat: 'Gaming', q: 'Meta Quest 3S 128GB', moet: /quest 3s/i, msrp: 299 },
@@ -40,7 +40,7 @@ const PRODUCTEN = [
   { id: 'galaxy-s25-ultra', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Samsung Galaxy S25 Ultra (unlocked)', cat: 'Phones', q: 'Samsung Galaxy S25 Ultra unlocked 256GB', moet: /s25 ultra/i, niet: /case|screen|protector/i, msrp: 1299 },
   { id: 'gopro-hero13', rubriek: /camera|camcorder/i, naam: 'GoPro HERO13 Black', cat: 'Cameras', q: 'GoPro HERO13 Black', moet: /hero ?13/i, niet: /battery only|mount only|housing/i, msrp: 399 },
   { id: 'dji-mini-4-pro', rubriek: /drone/i, naam: 'DJI Mini 4 Pro', cat: 'Cameras', q: 'DJI Mini 4 Pro', moet: /mini 4 pro/i, niet: /battery only|propeller|controller|remote|\brc[ -]?(2|n\d)|goggles|charging hub|for (dji )?mini/i, msrp: 759 },
-  { id: 'airtag-4-pack', naam: 'Apple AirTag (4-pack)', cat: 'Accessories', q: 'Apple AirTag 4 pack', moet: /airtag/i, niet: /holder|case|keychain|cover|1 pack|single|2 pack|loop|wallet/i, msrp: 99 }
+  { id: 'airtag-4-pack', naam: 'Apple AirTag (4-pack)', cat: 'Accessories', q: 'Apple AirTag 4 pack', moet: /airtag/i, niet: /holder|case|keychain|cover|1 pack|single|2 pack|loop|wallet|\bjapan\b|lunar|year of|engrav|limited/i, msrp: 99 }
 ]
 
 // Wat als nieuw te koop staat maar het niet is, of geen los product.

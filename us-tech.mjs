@@ -21,13 +21,13 @@ const UIT = process.env.US_UIT || 'out/us/tech.json'
 // q: zoekterm. moet: titel moet hierop passen. niet: titel mag hier niet op passen.
 // msrp: adviesprijs in dollars, voor de plausibiliteit (0,6x tot 1,5x) en "was".
 const PRODUCTEN = [
-  { id: 'airpods-pro-3', rubriek: /headphone|headset/i, naam: 'AirPods Pro 3', cat: 'Audio', q: 'Apple AirPods Pro 3', moet: /airpods pro 3|airpods pro \(3rd|airpods pro 3rd/i, niet: /pro 2|2nd gen/i, msrp: 249 },
+  { id: 'airpods-pro-3', rubriek: /headphone|headset/i, naam: 'AirPods Pro 3', cat: 'Audio', q: 'Apple AirPods Pro 3rd generation', moet: /airpods pro 3|airpods pro \(3rd|airpods pro 3rd/i, niet: /pro 2|2nd gen/i, msrp: 249 },
   { id: 'airpods-4-anc', rubriek: /headphone|headset/i, naam: 'AirPods 4 with ANC', cat: 'Audio', q: 'Apple AirPods 4 Active Noise Cancellation', moet: /airpods 4/i, niet: /pro/i, msrp: 179 },
   { id: 'sony-wh-1000xm6', rubriek: /headphone|headset/i, naam: 'Sony WH-1000XM6', cat: 'Audio', q: 'Sony WH-1000XM6', moet: /1000xm6/i, msrp: 449 },
   { id: 'bose-qc-ultra-2', rubriek: /headphone|headset/i, naam: 'Bose QuietComfort Ultra Headphones (2nd Gen)', cat: 'Audio', q: 'Bose QuietComfort Ultra Headphones 2nd Gen', moet: /quietcomfort ultra/i, niet: /earbuds/i, msrp: 449 },
   { id: 'switch-2', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Nintendo Switch 2', cat: 'Gaming', q: 'Nintendo Switch 2 console', moet: /switch 2/i, niet: /\bgame only\b|controller only|pro controller|joy-?con (pair|only)|\bcase\b|dock only|amiibo/i, msrp: 449 },
-  { id: 'ps5-pro', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'PlayStation 5 Pro', cat: 'Gaming', q: 'PlayStation 5 Pro console', moet: /ps5 pro|playstation 5 pro/i, niet: /controller only|stand only|disc drive only|cover|faceplate/i, msrp: 749 },
-  { id: 'xbox-series-x', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Xbox Series X', cat: 'Gaming', q: 'Xbox Series X console 1TB', moet: /series x/i, niet: /controller only|stand only|series s/i, msrp: 599 },
+  { id: 'ps5-pro', rubriek: /video game consoles|mixed lots/i, naam: 'PlayStation 5 Pro', cat: 'Gaming', q: 'PlayStation 5 Pro console', moet: /ps5 pro|playstation 5 pro/i, niet: /controller only|stand only|disc drive only|cover|faceplate/i, msrp: 749 },
+  { id: 'xbox-series-x', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Xbox Series X', cat: 'Gaming', q: 'Xbox Series X console 1TB', moet: /series x/i, niet: /controller only|stand only|series s\b|x\/s|x \/ s|x or s/i, msrp: 599 },
   { id: 'steam-deck-oled', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Steam Deck OLED', cat: 'Gaming', q: 'Steam Deck OLED 512GB', moet: /steam deck oled/i, msrp: 549 },
   { id: 'meta-quest-3s', rubriek: /virtual reality|vr /i, naam: 'Meta Quest 3S', cat: 'Gaming', q: 'Meta Quest 3S 128GB', moet: /quest 3s/i, msrp: 299 },
   { id: 'apple-watch-11', rubriek: /smart ?watch/i, naam: 'Apple Watch Series 11', cat: 'Wearables', q: 'Apple Watch Series 11 GPS', moet: /series 11/i, niet: /band only|strap only/i, msrp: 399 },
@@ -40,11 +40,11 @@ const PRODUCTEN = [
   { id: 'galaxy-s25-ultra', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Samsung Galaxy S25 Ultra (unlocked)', cat: 'Phones', q: 'Samsung Galaxy S25 Ultra unlocked 256GB', moet: /s25 ultra/i, niet: /case|screen|protector/i, msrp: 1299 },
   { id: 'gopro-hero13', rubriek: /camera|camcorder/i, naam: 'GoPro HERO13 Black', cat: 'Cameras', q: 'GoPro HERO13 Black', moet: /hero ?13/i, niet: /battery only|mount only|housing/i, msrp: 399 },
   { id: 'dji-mini-4-pro', rubriek: /drone/i, naam: 'DJI Mini 4 Pro', cat: 'Cameras', q: 'DJI Mini 4 Pro', moet: /mini 4 pro/i, niet: /battery only|propeller|controller|remote|\brc[ -]?(2|n\d)|goggles|charging hub|for (dji )?mini/i, msrp: 759 },
-  { id: 'samsung-t7-shield-2tb', rubriek: /drive|ssd|storage/i, naam: 'Samsung T7 Shield 2TB SSD', cat: 'Storage', q: 'Samsung T7 Shield 2TB', moet: /t7 shield/i, niet: /1tb|4tb/i, msrp: 199 }
+  { id: 'airtag-4-pack', naam: 'Apple AirTag (4-pack)', cat: 'Accessories', q: 'Apple AirTag 4 pack', moet: /airtag/i, niet: /holder|case|keychain|cover|1 pack|single|2 pack|loop|wallet/i, msrp: 99 }
 ]
 
 // Wat als nieuw te koop staat maar het niet is, of geen los product.
-const WEG = /refurb|renewed|\bused\b|pre-?owned|open box|for parts|not working|read description|box only|empty box|\bdemo\b|display model|replacement|compatible|\bcase only\b|\bskin\b|screen protector|\bdecal\b|\blot of\b|\b\d+ ?x |\bcharging case only\b|\bleft\b.*\bonly\b|\bright\b.*\bonly\b|\bsticker\b|\bcopy\b|\bclone\b|\breplica\b|\bdummy\b|\bmanual only\b|\bbox and\b|\bshell\b|\bwheel\b|expansion card|goggles|headset only|no controllers?|very good|\bgood\b|excellent|\bfair\b|grade [abc]|\bstand\b|faceplate|\bcharger\b|\bcable\b|\bfor ps5\b|\bfor xbox\b|\bfor switch\b|condition|battery health|\d+% ?batt|unlocked.*\bgood\b/i
+const WEG = /refurb|renewed|\bused\b|pre-?owned|open box|for parts|not working|read description|box only|empty box|\bdemo\b|display model|replacement|compatible|\bcase only\b|\bskin\b|screen protector|\bdecal\b|\blot of\b|\b\d+ ?x |\bcharging case only\b|\bleft\b.*\bonly\b|\bright\b.*\bonly\b|\bsticker\b|\bcopy\b|\bclone\b|\breplica\b|\bdummy\b|\bmanual only\b|\bbox and\b|\bshell\b|\bwheel\b|expansion card|goggles|headset only|no controllers?|very good|\bgood\b|excellent|\bfair\b|grade [abc]|\bstand\b|faceplate|\bcharger\b|\bcable\b|\bfor ps5\b|\bfor xbox\b|\bfor switch\b|japanese|japan (version|only)|\bjp\b|chinese version|hk version|asia version|condition|battery health|\d+% ?batt|unlocked.*\bgood\b/i
 
 const vandaag = () => new Date().toISOString().slice(0, 10)
 
@@ -64,7 +64,7 @@ async function zoek (q, prijsVan, prijsTot, cid) {
   const param = new URLSearchParams({
     ...(cid ? { category_ids: cid } : {}),
     q,
-    limit: '50',
+    limit: '200',
     sort: 'price',
     filter: 'buyingOptions:{FIXED_PRICE},conditions:{NEW},deliveryCountry:US,itemLocationCountry:US,priceCurrency:USD,price:[' + prijsVan + '..' + prijsTot + ']'
   })

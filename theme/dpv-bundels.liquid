@@ -17,111 +17,111 @@
     ("6 maanden 34,95 p.m.") tonen we als actie; de prijs daarna staat dan niet in de feed.
   Alle bedragen inclusief btw. Wij vergelijken op feitelijke kenmerken en geven geen advies.
 {%- endcomment -%}
-<div class="dpb" id="vergelijker" data-id="{{ section.id }}" data-soort="{{ section.settings.soort }}" data-worker="{{ section.settings.worker_url }}">
-  <div class="dpb-kop">
+<div class="bvg" id="vergelijker" data-id="{{ section.id }}" data-soort="{{ section.settings.soort }}" data-worker="{{ section.settings.worker_url }}">
+  <div class="bvg-kop">
     <div>
-      {%- if section.settings.eyebrow != blank -%}<p class="dpb-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
-      <h2 class="dpb-h">{{ section.settings.kop }}</h2>
-      {%- if section.settings.sub != blank -%}<p class="dpb-sub">{{ section.settings.sub }}</p>{%- endif -%}
+      {%- if section.settings.eyebrow != blank -%}<p class="bvg-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="bvg-h">{{ section.settings.kop }}</h2>
+      {%- if section.settings.sub != blank -%}<p class="bvg-sub">{{ section.settings.sub }}</p>{%- endif -%}
     </div>
-    {%- if section.settings.zakelijk_url != blank -%}<a class="dpb-zak" href="{{ section.settings.zakelijk_url }}">{{ section.settings.zakelijk_label }}</a>{%- endif -%}
+    {%- if section.settings.zakelijk_url != blank -%}<a class="bvg-zak" href="{{ section.settings.zakelijk_url }}">{{ section.settings.zakelijk_label }}</a>{%- endif -%}
   </div>
-  <div class="dpb-tabs" role="group" aria-label="{% if section.settings.soort == 'internet' %}Snelheid{% else %}Datategoed{% endif %}"></div>
-  <div class="dpb-fil"></div>
-  <p class="dpb-tel" aria-live="polite">Prijzen laden…</p>
-  <ul class="dpb-lijst"></ul>
-  <div class="dpb-meer"></div>
+  <div class="bvg-tabs" role="group" aria-label="{% if section.settings.soort == 'internet' %}Snelheid{% else %}Datategoed{% endif %}"></div>
+  <div class="bvg-fil"></div>
+  <p class="bvg-tel" aria-live="polite">Prijzen laden…</p>
+  <ul class="bvg-lijst"></ul>
+  <div class="bvg-meer"></div>
   {%- if section.settings.uitleg != blank -%}
-  <div class="dpb-uitleg">
+  <div class="bvg-uitleg">
     {%- if section.settings.uitleg_kop != blank -%}<h3>{{ section.settings.uitleg_kop }}</h3>{%- endif -%}
     {{ section.settings.uitleg }}
   </div>
   {%- endif -%}
-  {%- if section.settings.fijn != blank -%}<p class="dpb-fijn">{{ section.settings.fijn }}</p>{%- endif -%}
+  {%- if section.settings.fijn != blank -%}<p class="bvg-fijn">{{ section.settings.fijn }}</p>{%- endif -%}
 </div>
 
 <style>
-.dpb{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#10b981;--groenD:#0b7d5c;--groenL:#E3F3EA;--blauw:#1B3FA0;--blauwL:#EEF2FB;--geel:#F9C31F;--oranje:#B45309;--oranjeL:#FFF8DD;
+.bvg{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#10b981;--groenD:#0b7d5c;--groenL:#E3F3EA;--blauw:#1B3FA0;--blauwL:#EEF2FB;--geel:#F9C31F;--oranje:#B45309;--oranjeL:#FFF8DD;
  font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);max-width:1080px;margin:0 auto;padding:10px 16px 46px}
-.dpb *{box-sizing:border-box}
-.dpb :focus-visible{outline:3px solid var(--groen);outline-offset:2px}
-.dpb-kop{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:0 0 18px}
-.dpb-eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--blauw);font-weight:800;margin:0 0 6px}
-.dpb .dpb-h{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:29px;line-height:1.08;letter-spacing:-.03em;font-weight:800;margin:0 0 8px}
-.dpb-sub{font-size:15.5px;line-height:1.6;color:var(--soft);margin:0;max-width:64ch}
-.dpb a.dpb-zak,.dpb a.dpb-zak:visited{font-size:14px;font-weight:700;color:var(--blauw) !important;text-decoration:underline}
-.dpb-tabs{display:grid;grid-template-columns:repeat(var(--n,5),minmax(0,1fr));gap:8px;margin:0 0 12px}
-.dpb-tabs button{min-height:58px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:8px 10px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center}
-.dpb-tabs button b{font-size:15px;font-weight:700;line-height:1.2}
-.dpb-tabs button small{font-size:12px;color:var(--soft)}
-.dpb-tabs button[aria-pressed="true"]{border:2px solid var(--blauw);background:var(--blauw);color:#fff}
-.dpb-tabs button[aria-pressed="true"] small{color:#fff;opacity:.85}
-.dpb-tabs button:disabled{opacity:.45;cursor:default}
-.dpb-fil{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px}
-.dpb-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 13px;font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;min-height:36px;white-space:nowrap}
-.dpb-chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
-.dpb-sp{flex-grow:1}
-.dpb-fl{font-size:13px;color:var(--soft);display:flex;align-items:center;gap:8px}
-.dpb-sel{min-height:36px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:13px;font-weight:600;color:var(--ink);background:#fff;max-width:100%}
-.dpb-tel{font-size:14px;color:var(--soft);margin:0 0 12px}.dpb-tel b{color:var(--ink)}
-.dpb-lijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
-.dpb-r{display:grid;grid-template-columns:44px minmax(0,1fr) 200px 130px 104px;grid-template-areas:"l n p t k";gap:16px;align-items:center;padding:14px 18px;border:1px solid var(--line);border-radius:14px;background:#fff}
-.dpb-r.top{border:2px solid var(--groen);padding:13px 17px}
-.dpb-logo{grid-area:l;width:44px;height:44px;object-fit:contain;border-radius:11px;background:#fff;border:1px solid var(--line);padding:5px}
-.dpb-logo-tekst{display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--blauw);background:var(--blauwL);border:0}
-.dpb-n{grid-area:n;min-width:0;display:flex;flex-direction:column;gap:6px}
-.dpb-nt{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
-.dpb-gb{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;line-height:1.1}
-.dpb-pv{font-size:15px;font-weight:600}
-.dpb-c{display:flex;gap:6px;flex-wrap:wrap}
-.dpb-c span{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--vlak);color:var(--soft)}
-.dpb-c span.tv{background:var(--blauwL);color:var(--blauw);font-weight:700}
-.dpb-p{grid-area:p;display:flex;flex-direction:column;gap:3px;align-items:flex-end;text-align:right}
-.dpb-pm{display:flex;align-items:baseline;gap:4px}
-.dpb-pm b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;line-height:1}
-.dpb-pm i{font-style:normal;font-size:13px;color:var(--soft)}
-.dpb-act{font-size:11px;font-weight:800;padding:2px 7px;border-radius:99px;background:var(--oranjeL);color:var(--oranje);align-self:center}
-.dpb-p small{font-size:12px;color:var(--soft);line-height:1.35}
-.dpb-p small.al{color:var(--oranje);font-weight:700}
-.dpb-p small.g0{color:var(--groenD);font-weight:700}
-.dpb-t{grid-area:t;display:flex;flex-direction:column;gap:3px;align-items:flex-end;text-align:right}
-.dpb-t small{font-size:12px;color:var(--soft)}
-.dpb-t b{font-size:16px;font-weight:700}
-.dpb-lab{font-size:11px;font-weight:800;padding:2px 7px;border-radius:99px;background:var(--groenL);color:var(--groenD)}
-.dpb a.dpb-go,.dpb a.dpb-go:visited{grid-area:k;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;background:var(--geel);color:var(--ink) !important;border:1.5px solid var(--ink);border-radius:10px;font-size:14px;font-weight:800;text-decoration:none !important;white-space:nowrap}
-.dpb a.dpb-go:hover{background:#EDB50C}
-.dpb-meer{display:flex;justify-content:center;margin:14px 0 0}
-.dpb-meer button{min-height:44px;padding:0 20px;border-radius:10px;border:1.5px solid var(--blauw);background:#fff;color:var(--blauw);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
-.dpb-leeg{border:1px dashed var(--line);border-radius:14px;padding:34px;text-align:center;color:var(--soft);font-size:14px}
-.dpb-leeg button{margin-top:10px}
-.dpb-uitleg{margin:26px 0 0;background:var(--vlak);border-radius:14px;padding:18px 20px;font-size:14.5px;line-height:1.6}
-.dpb-uitleg h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:18px;margin:0 0 6px}
-.dpb-uitleg p{margin:0 0 8px}.dpb-uitleg p:last-child{margin:0}
-.dpb-fijn{font-size:12px;color:var(--soft);margin:14px 0 0;line-height:1.5}
-.dpb .dpvmb{display:none !important}
+.bvg *{box-sizing:border-box}
+.bvg :focus-visible{outline:3px solid var(--groen);outline-offset:2px}
+.bvg-kop{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:0 0 18px}
+.bvg-eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--blauw);font-weight:800;margin:0 0 6px}
+.bvg .bvg-h{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:29px;line-height:1.08;letter-spacing:-.03em;font-weight:800;margin:0 0 8px}
+.bvg-sub{font-size:15.5px;line-height:1.6;color:var(--soft);margin:0;max-width:64ch}
+.bvg a.bvg-zak,.bvg a.bvg-zak:visited{font-size:14px;font-weight:700;color:var(--blauw) !important;text-decoration:underline}
+.bvg-tabs{display:grid;grid-template-columns:repeat(var(--n,5),minmax(0,1fr));gap:8px;margin:0 0 12px}
+.bvg-tabs button{min-height:58px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:8px 10px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center}
+.bvg-tabs button b{font-size:15px;font-weight:700;line-height:1.2}
+.bvg-tabs button small{font-size:12px;color:var(--soft)}
+.bvg-tabs button[aria-pressed="true"]{border:2px solid var(--blauw);background:var(--blauw);color:#fff}
+.bvg-tabs button[aria-pressed="true"] small{color:#fff;opacity:.85}
+.bvg-tabs button:disabled{opacity:.45;cursor:default}
+.bvg-fil{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.bvg-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 13px;font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;min-height:36px;white-space:nowrap}
+.bvg-chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
+.bvg-sp{flex-grow:1}
+.bvg-fl{font-size:13px;color:var(--soft);display:flex;align-items:center;gap:8px}
+.bvg-sel{min-height:36px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:13px;font-weight:600;color:var(--ink);background:#fff;max-width:100%}
+.bvg-tel{font-size:14px;color:var(--soft);margin:0 0 12px}.bvg-tel b{color:var(--ink)}
+.bvg-lijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.bvg-r{display:grid;grid-template-columns:44px minmax(0,1fr) 200px 130px 104px;grid-template-areas:"l n p t k";gap:16px;align-items:center;padding:14px 18px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.bvg-r.top{border:2px solid var(--groen);padding:13px 17px}
+.bvg-logo{grid-area:l;width:44px;height:44px;object-fit:contain;border-radius:11px;background:#fff;border:1px solid var(--line);padding:5px}
+.bvg-logo-tekst{display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--blauw);background:var(--blauwL);border:0}
+.bvg-n{grid-area:n;min-width:0;display:flex;flex-direction:column;gap:6px}
+.bvg-nt{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.bvg-gb{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;line-height:1.1}
+.bvg-pv{font-size:15px;font-weight:600}
+.bvg-c{display:flex;gap:6px;flex-wrap:wrap}
+.bvg-c span{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--vlak);color:var(--soft)}
+.bvg-c span.tv{background:var(--blauwL);color:var(--blauw);font-weight:700}
+.bvg-p{grid-area:p;display:flex;flex-direction:column;gap:3px;align-items:flex-end;text-align:right}
+.bvg-pm{display:flex;align-items:baseline;gap:4px}
+.bvg-pm b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;line-height:1}
+.bvg-pm i{font-style:normal;font-size:13px;color:var(--soft)}
+.bvg-act{font-size:11px;font-weight:800;padding:2px 7px;border-radius:99px;background:var(--oranjeL);color:var(--oranje);align-self:center}
+.bvg-p small{font-size:12px;color:var(--soft);line-height:1.35}
+.bvg-p small.al{color:var(--oranje);font-weight:700}
+.bvg-p small.g0{color:var(--groenD);font-weight:700}
+.bvg-t{grid-area:t;display:flex;flex-direction:column;gap:3px;align-items:flex-end;text-align:right}
+.bvg-t small{font-size:12px;color:var(--soft)}
+.bvg-t b{font-size:16px;font-weight:700}
+.bvg-lab{font-size:11px;font-weight:800;padding:2px 7px;border-radius:99px;background:var(--groenL);color:var(--groenD)}
+.bvg a.bvg-go,.bvg a.bvg-go:visited{grid-area:k;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;background:var(--geel);color:var(--ink) !important;border:1.5px solid var(--ink);border-radius:10px;font-size:14px;font-weight:800;text-decoration:none !important;white-space:nowrap}
+.bvg a.bvg-go:hover{background:#EDB50C}
+.bvg-meer{display:flex;justify-content:center;margin:14px 0 0}
+.bvg-meer button{min-height:44px;padding:0 20px;border-radius:10px;border:1.5px solid var(--blauw);background:#fff;color:var(--blauw);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.bvg-leeg{border:1px dashed var(--line);border-radius:14px;padding:34px;text-align:center;color:var(--soft);font-size:14px}
+.bvg-leeg button{margin-top:10px}
+.bvg-uitleg{margin:26px 0 0;background:var(--vlak);border-radius:14px;padding:18px 20px;font-size:14.5px;line-height:1.6}
+.bvg-uitleg h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:18px;margin:0 0 6px}
+.bvg-uitleg p{margin:0 0 8px}.bvg-uitleg p:last-child{margin:0}
+.bvg-fijn{font-size:12px;color:var(--soft);margin:14px 0 0;line-height:1.5}
+.bvg .dpvmb{display:none !important}
 @media(max-width:900px){
- .dpb-tabs{display:flex;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
- .dpb-tabs::-webkit-scrollbar{display:none}
- .dpb-tabs button{flex:none;min-height:52px;padding:6px 14px}
- .dpb-fil{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
- .dpb-fil::-webkit-scrollbar{display:none}
- .dpb-sp{display:none}
- .dpb-r{grid-template-columns:40px minmax(0,1fr) auto;grid-template-areas:"l n k" "p p t";column-gap:12px;row-gap:10px;padding:14px}
- .dpb-c{gap:4px}.dpb-c span{font-size:11px;padding:2px 6px}
- .dpb-nt{gap:6px}
- .dpb-r.top{padding:13px}
- .dpb-logo{width:40px;height:40px}
- .dpb-p{align-items:flex-start;text-align:left;border-top:1px solid var(--line);padding-top:10px}
- .dpb-t{border-top:1px solid var(--line);padding-top:10px;align-self:stretch;justify-content:flex-start}
- .dpb-pm b{font-size:26px}
- .dpb-gb{font-size:18px}
- .dpb a.dpb-go{min-width:84px}
+ .bvg-tabs{display:flex;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
+ .bvg-tabs::-webkit-scrollbar{display:none}
+ .bvg-tabs button{flex:none;min-height:52px;padding:6px 14px}
+ .bvg-fil{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
+ .bvg-fil::-webkit-scrollbar{display:none}
+ .bvg-sp{display:none}
+ .bvg-r{grid-template-columns:40px minmax(0,1fr) auto;grid-template-areas:"l n k" "p p t";column-gap:12px;row-gap:10px;padding:14px}
+ .bvg-c{gap:4px}.bvg-c span{font-size:11px;padding:2px 6px}
+ .bvg-nt{gap:6px}
+ .bvg-r.top{padding:13px}
+ .bvg-logo{width:40px;height:40px}
+ .bvg-p{align-items:flex-start;text-align:left;border-top:1px solid var(--line);padding-top:10px}
+ .bvg-t{border-top:1px solid var(--line);padding-top:10px;align-self:stretch;justify-content:flex-start}
+ .bvg-pm b{font-size:26px}
+ .bvg-gb{font-size:18px}
+ .bvg a.bvg-go{min-width:84px}
 }
 </style>
 
 <script>
 (function () {
-  var w = document.querySelector('.dpb[data-id="{{ section.id }}"]');
+  var w = document.querySelector('.bvg[data-id="{{ section.id }}"]');
   if (!w) return;
   var SOORT = w.getAttribute('data-soort') === 'internet' ? 'internet' : 'simonly';
   var SIM = SOORT === 'simonly';
@@ -152,10 +152,10 @@
   function logo(prov) {
     var p = String(prov || '').toLowerCase(), dom = '';
     for (var i = 0; i < DOM.length; i++) if (DOM[i][0] === 'ben' ? /^ben\b/.test(p) : p.indexOf(DOM[i][0]) > -1) { dom = DOM[i][1]; break; }
-    if (!dom) return '<span class="dpb-logo dpb-logo-tekst" aria-hidden="true">' + esc(String(prov || '?').charAt(0).toUpperCase()) + '</span>';
+    if (!dom) return '<span class="bvg-logo bvg-logo-tekst" aria-hidden="true">' + esc(String(prov || '?').charAt(0).toUpperCase()) + '</span>';
     var g = 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://' + dom;
     var d = 'https://icons.duckduckgo.com/ip3/' + dom + '.ico';
-    return '<img class="dpb-logo" src="' + g + '" alt="" loading="lazy" width="44" height="44" onerror="if(this.dataset.fb){this.style.visibility=\'hidden\'}else{this.dataset.fb=1;this.src=\'' + d + '\'}">';
+    return '<img class="bvg-logo" src="' + g + '" alt="" loading="lazy" width="44" height="44" onerror="if(this.dataset.fb){this.style.visibility=\'hidden\'}else{this.dataset.fb=1;this.src=\'' + d + '\'}">';
   }
   function looptijd(m) { return m === 1 ? 'maandelijks opzegbaar' : m === 12 ? '1 jaar' : m === 24 ? '2 jaar' : m === 36 ? '3 jaar' : ''; }
   function isZakelijk(d) {
@@ -253,20 +253,20 @@
   }
   function knop(tekst, aan, klik) {
     var b = document.createElement('button');
-    b.type = 'button'; b.className = 'dpb-chip'; b.setAttribute('aria-pressed', aan ? 'true' : 'false'); b.textContent = tekst;
+    b.type = 'button'; b.className = 'bvg-chip'; b.setAttribute('aria-pressed', aan ? 'true' : 'false'); b.textContent = tekst;
     b.addEventListener('click', klik);
     return b;
   }
   function select(label, opties, waarde, kies) {
-    var l = document.createElement('label'); l.className = 'dpb-fl'; l.appendChild(document.createTextNode(label));
-    var s = document.createElement('select'); s.className = 'dpb-sel';
+    var l = document.createElement('label'); l.className = 'bvg-fl'; l.appendChild(document.createTextNode(label));
+    var s = document.createElement('select'); s.className = 'bvg-sel';
     opties.forEach(function (o) { var e = document.createElement('option'); e.value = o[0]; e.textContent = o[1]; if (String(o[0]) === String(waarde)) e.selected = true; s.appendChild(e); });
     s.addEventListener('change', function () { kies(s.value); });
     l.appendChild(s); return l;
   }
   function opnieuw() { TOON = STAP; teken(); }
   function tekenTabs() {
-    var el = w.querySelector('.dpb-tabs'); el.innerHTML = ''; el.style.setProperty('--n', TIERS.length);
+    var el = w.querySelector('.bvg-tabs'); el.innerHTML = ''; el.style.setProperty('--n', TIERS.length);
     TIERS.forEach(function (t) {
       var rijen = ALLES.filter(function (r) { return r.tier === t[0] && (SIM || !F.tv || (F.tv === 'met') === r.tv); });
       var b = document.createElement('button'); b.type = 'button';
@@ -279,7 +279,7 @@
     });
   }
   function tekenFilters() {
-    var el = w.querySelector('.dpb-fil'); el.innerHTML = '';
+    var el = w.querySelector('.bvg-fil'); el.innerHTML = '';
     var hier = ALLES.filter(inTier);
     if (SIM) {
       el.appendChild(knop('Onbeperkt bellen', F.bellen, function () { F.bellen = !F.bellen; opnieuw(); }));
@@ -297,7 +297,7 @@
     var ml = Object.keys(mnden).map(Number).sort(function (a, b) { return a - b; });
     if (ml.length > 1) el.appendChild(select('Looptijd', [[0, 'Alle']].concat(ml.map(function (m) { return [m, looptijd(m)]; })), F.mnd, function (v) { F.mnd = Number(v); opnieuw(); }));
     if (F.max) el.appendChild(knop('Tot ' + euro(F.max) + ' p/m  ×', true, function () { F.max = 0; opnieuw(); }));
-    var sp = document.createElement('span'); sp.className = 'dpb-sp'; el.appendChild(sp);
+    var sp = document.createElement('span'); sp.className = 'bvg-sp'; el.appendChild(sp);
     el.appendChild(select('Sorteer', [['totaal', SIM ? 'Laagste totaal 24 mnd' : 'Laagste eerste jaar'], ['maand', 'Laagste maandprijs'], ['meer', SIM ? 'Meeste data' : 'Snelste']], SORT, function (v) { SORT = v; opnieuw(); }));
   }
   function rij(r, top) {
@@ -307,27 +307,27 @@
     else { if (r.type) c.push(r.vijfg ? '5G, tot ' + spTekst(r.sp) : r.type); if (r.net) c.push(r.net); if (r.bellen) c.push('met bellen'); }
     if (looptijd(r.m)) c.push(looptijd(r.m));
     var chips = c.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + (!SIM && r.tv ? '<span class="tv">+ tv</span>' : '');
-    var prijs = '<div class="dpb-pm">' + (r.a ? '<span class="dpb-act">Actie</span>' : '') + '<b>' + euro(r.nu) + '</b><i>p/m</i></div>';
+    var prijs = '<div class="bvg-pm">' + (r.a ? '<span class="bvg-act">Actie</span>' : '') + '<b>' + euro(r.nu) + '</b><i>p/m</i></div>';
     if (r.a) prijs += '<small class="al">' + (r.a.na ? 'eerste ' + r.a.m + ' mnd, daarna ' + euro(r.a.na) + ' p/m' : 'eerste ' + r.a.m + ' mnd, prijs daarna bij de aanbieder') + '</small>';
     else if (SIM) prijs += '<small>vaste prijs</small>';
     if (!SIM || r.een) prijs += r.een ? '<small>+ ' + euro(r.een) + ' eenmalig</small>' : '<small class="g0">geen eenmalige kosten</small>';
     var totaal = SIM ? '<small>Totaal 24 mnd</small><b>' + euro(r.tot) + '</b>'
       : '<small>Eerste jaar</small><b>' + (r.jaar != null ? euro(r.jaar) : 'zie aanbieder') + '</b>';
-    if (top) totaal += '<span class="dpb-lab">' + (SIM ? 'Laagste totaal' : 'Laagste eerste jaar') + '</span>';
-    return '<li class="dpb-r' + (top ? ' top' : '') + '">' + logo(r.prov) +
-      '<div class="dpb-n"><div class="dpb-nt"><span class="dpb-gb">' + esc(titel) + '</span><span class="dpb-pv">' + esc(r.prov) + '</span></div><div class="dpb-c">' + chips + '</div></div>' +
-      '<div class="dpb-p">' + prijs + '</div><div class="dpb-t">' + totaal + '</div>' +
-      '<a class="dpb-go" href="' + esc(r.url) + '" target="_blank" rel="nofollow sponsored noopener" aria-label="Bekijk ' + esc(titel + ' bij ' + r.prov) + '">Bekijk</a></li>';
+    if (top) totaal += '<span class="bvg-lab">' + (SIM ? 'Laagste totaal' : 'Laagste eerste jaar') + '</span>';
+    return '<li class="bvg-r' + (top ? ' top' : '') + '">' + logo(r.prov) +
+      '<div class="bvg-n"><div class="bvg-nt"><span class="bvg-gb">' + esc(titel) + '</span><span class="bvg-pv">' + esc(r.prov) + '</span></div><div class="bvg-c">' + chips + '</div></div>' +
+      '<div class="bvg-p">' + prijs + '</div><div class="bvg-t">' + totaal + '</div>' +
+      '<a class="bvg-go" href="' + esc(r.url) + '" target="_blank" rel="nofollow sponsored noopener" aria-label="Bekijk ' + esc(titel + ' bij ' + r.prov) + '">Bekijk</a></li>';
   }
   function teken() {
     tekenTabs(); tekenFilters();
-    var lijst = w.querySelector('.dpb-lijst'), tel = w.querySelector('.dpb-tel'), meer = w.querySelector('.dpb-meer');
+    var lijst = w.querySelector('.bvg-lijst'), tel = w.querySelector('.bvg-tel'), meer = w.querySelector('.bvg-meer');
     if (!ALLES.length) { lijst.innerHTML = ''; meer.innerHTML = ''; return; }
     var rijen = gefilterd(), naam = '';
     TIERS.forEach(function (t) { if (t[0] === TIER) naam = t[1]; });
     tel.innerHTML = '<b>' + rijen.length + '</b> ' + (SIM ? (rijen.length === 1 ? 'bundel' : 'bundels') : (rijen.length === 1 ? 'abonnement' : 'abonnementen')) + ' in ' + esc(naam === 'Onbeperkt' ? 'onbeperkt data' : naam.charAt(0).toLowerCase() + naam.slice(1));
     if (!rijen.length) {
-      lijst.innerHTML = '<li class="dpb-leeg">Geen aanbod met deze filters.<br></li>';
+      lijst.innerHTML = '<li class="bvg-leeg">Geen aanbod met deze filters.<br></li>';
       lijst.firstChild.appendChild(knop('Filters wissen', false, function () { F = { bellen: false, net: '', mnd: 0, vast: false, tv: '', type: '', max: 0 }; opnieuw(); }));
       meer.innerHTML = ''; return;
     }
@@ -368,7 +368,7 @@
     }
     teken();
   }).catch(function () {
-    w.querySelector('.dpb-tel').textContent = 'De prijzen konden niet geladen worden. Probeer het later opnieuw.';
+    w.querySelector('.bvg-tel').textContent = 'De prijzen konden niet geladen worden. Probeer het later opnieuw.';
   });
 })();
 </script>

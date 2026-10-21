@@ -39,8 +39,8 @@ const PRODUCTEN = [
   { id: 'pixel-11-pro', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Google Pixel 11 Pro (unlocked)', cat: 'Phones', q: 'Google Pixel 11 Pro unlocked 256GB', moet: /pixel 11 pro/i, niet: /xl|fold|case|screen/i, msrp: 1099 },
   { id: 'galaxy-s26-ultra', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Samsung Galaxy S26 Ultra (unlocked)', cat: 'Phones', q: 'Samsung Galaxy S26 Ultra unlocked 256GB', moet: /s26 ultra/i, niet: /case|screen|protector/i, msrp: 1399.99 },
   { id: 'gopro-hero13', rubriek: /camera|camcorder/i, naam: 'GoPro HERO13 Black', cat: 'Cameras', q: 'GoPro HERO13 Black', moet: /hero ?13/i, niet: /battery only|mount only|housing/i, msrp: 399.99 },
-  { id: 'dji-mini-4-pro', rubriek: /drone/i, naam: 'DJI Mini 4 Pro', cat: 'Cameras', q: 'DJI Mini 4 Pro', moet: /mini 4 pro/i, niet: /battery only|propeller|controller|remote|\brc[ -]?(2|n\d)|goggles|charging hub|for (dji )?mini/i, msrp: 759 },
-  { id: 'airtag-4-pack', naam: 'Apple AirTag 2nd gen (4-pack)', cat: 'Accessories', q: 'Apple AirTag 2nd generation 4 pack', moet: /airtag/i, niet: /holder|case|keychain|cover|1 pack|single|2 pack|loop|wallet|\bjapan\b|lunar|year of|engrav|limited/i, msrp: 99 }
+  { id: 'dji-mini-4-pro', rubriek: /drone/i, naam: 'DJI Mini 4 Pro', cat: 'Cameras', q: 'DJI Mini 4 Pro', moet: /mini 4 pro/i, niet: /battery only|propeller|controller|remote|\brc[ -]?(2|n\d)|goggles|charging hub|for (dji )?mini|combo|fly more/i, msrp: 759 },
+  { id: 'airtag-4-pack', naam: 'Apple AirTag 2nd gen (4-pack)', cat: 'Accessories', q: 'Apple AirTag 2nd generation 4 pack', moet: /airtag.*(4[- ]?pack|4pk|pack of 4|4 count)|(4[- ]?pack|4pk|pack of 4).*airtag/i, niet: /holder|case|keychain|cover|\b1[- ]?pack|\b2[- ]?pack|single|loop|wallet|\bjapan\b|lunar|year of|engrav|limited/i, msrp: 99 }
 ]
 
 // Wat als nieuw te koop staat maar het niet is, of geen los product.
@@ -97,6 +97,9 @@ async function zoek (q, prijsVan, prijsTot, cid) {
 function aanbod (i, p, waarom = {}) {
   const titel = String(i.title || '')
   const nee = r => { waarom[r] = (waarom[r] || 0) + 1; return null }
+  // Alleen echt nieuw (conditie 1000), en geen variatie-advertenties: daar hoort de prijs bij de goedkoopste variant, niet bij dit product.
+  if (String(i.conditionId || '') !== '1000') return nee('conditie')
+  if (i.itemGroupType || i.itemGroupHref) return nee('variaties')
   const rub = (i.categories || []).map(c => c.categoryName || '').join(' | ')
   if (p.rubriek && !p.rubriek.test(rub)) return nee('rubriek')
   if (!p.moet.test(titel) || (p.niet && p.niet.test(titel))) return nee('titel')

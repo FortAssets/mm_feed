@@ -1,0 +1,57 @@
+name: US tech prices (The Price Pickr)
+
+# eBay US-prijzen voor thepricepickr.com (us-tech.mjs).
+# Vier keer per dag, op :23 om de drukte op het hele uur te ontwijken.
+# Uitvoer: us/tech.json op de branch us-data. Die branch bevat alleen dat
+# bestand en wordt elke run vervangen; de prijsgeschiedenis zit in het bestand zelf.
+on:
+  schedule:
+    - cron: '23 1,7,13,19 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: us-tech
+  cancel-in-progress: false
+
+jobs:
+  prijzen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Vorige data ophalen
+        run: |
+          git fetch --depth 1 origin us-data 2>/dev/null && git show origin/us-data:us/tech.json > /tmp/tech-vorig.json || echo '{}' > /tmp/tech-vorig.json
+          wc -c /tmp/tech-vorig.json
+
+      - name: eBay US-prijzen
+        env:
+          EBAY_CLIENT_ID: ${{ secrets.EBAY_CLIENT_ID }}
+          EBAY_CLIENT_SECRET: ${{ secrets.EBAY_CLIENT_SECRET }}
+        run: node us-tech.mjs | tee us-tech.log
+
+      - name: Samenvatting
+        if: always()
+        run: |
+          echo '### eBay US-prijzen' >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          cat us-tech.log >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Naar us-data
+        run: |
+          cd out
+          git init -q -b us-data
+          git config user.name "us-tech bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add us/tech.json
+          git commit -qm "US tech prices $(date -u +%Y-%m-%dT%H:%MZ)"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" us-data

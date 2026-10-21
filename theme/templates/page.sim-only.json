@@ -1,8 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "pv-hero": {
@@ -31,11 +26,18 @@
       }
     },
     "pv-compare": {
-      "type": "pvc2-tool",
+      "type": "dpv-bundels",
       "settings": {
+        "soort": "simonly",
         "worker_url": "https://awin.business-347.workers.dev",
-        "feed_endpoint": "/api/feed/simonly",
-        "zakelijk_url": "/pages/zakelijk-sim-only"
+        "eyebrow": "Sim only",
+        "kop": "Sim only vergelijken per datategoed",
+        "sub": "Kies hoeveel data je nodig hebt. Per bundel zie je de maandprijs, een tijdelijke actieprijs apart met de prijs daarna, en wat je in 24 maanden in totaal betaalt.",
+        "zakelijk_url": "/pages/zakelijk-sim-only",
+        "zakelijk_label": "Zakelijk sim only vergelijken",
+        "uitleg_kop": "Waar je op let bij sim only",
+        "uitleg": "<p><strong>Kijk naar het totaal.</strong> Een actieprijs geldt alleen de eerste maanden, daarna betaal je de gewone prijs. Het totaal over 24 maanden rekent beide mee.</p><p><strong>Vergelijk bij dezelfde looptijd.</strong> Een maandelijks opzegbare bundel kost vaak iets meer dan een bundel voor 1 of 2 jaar.</p><p><strong>Kijk naar het netwerk.</strong> Aanbieders zonder eigen netwerk gebruiken dat van KPN, Odido of Vodafone. Waar het in de feed staat, zetten we het erbij.</p>",
+        "fijn": "Alle bedragen zijn inclusief btw. Wij vergelijken op feitelijke productkenmerken en geven geen advies. Klik je door en sluit je iets af, dan ontvangen wij een vergoeding; jij betaalt hetzelfde."
       }
     },
     "dpv-mailhook": {

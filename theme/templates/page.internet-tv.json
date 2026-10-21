@@ -1,8 +1,3 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "pv-hero": {
@@ -31,11 +26,18 @@
       }
     },
     "pv-compare": {
-      "type": "pvc2-tool",
+      "type": "dpv-bundels",
       "settings": {
+        "soort": "internet",
         "worker_url": "https://awin.business-347.workers.dev",
-        "feed_endpoint": "/api/feed/internet",
-        "zakelijk_url": "/pages/zakelijk-internet"
+        "eyebrow": "Internet thuis",
+        "kop": "Internet thuis vergelijken per snelheid",
+        "sub": "Kies een snelheid. Per abonnement zie je de maandprijs, de eenmalige kosten en wat je het eerste jaar in totaal betaalt.",
+        "zakelijk_url": "/pages/zakelijk-internet",
+        "zakelijk_label": "Zakelijk internet vergelijken",
+        "uitleg_kop": "Waar je op let bij internet thuis",
+        "uitleg": "<p><strong>Beschikbaarheid verschilt per adres.</strong> Of glasvezel, kabel of 5G bij jou kan, zie je bij de aanbieder na het invullen van je postcode.</p><p><strong>Reken met het eerste jaar.</strong> Twaalf maandbedragen plus de eenmalige kosten, zoals aansluiting of installatie.</p><p><strong>Vergelijk bij dezelfde looptijd.</strong> Een contract van 2 jaar heeft soms een lagere maandprijs dan een contract van 1 jaar.</p>",
+        "fijn": "Alle bedragen zijn inclusief btw. Wij vergelijken op feitelijke productkenmerken en geven geen advies. Klik je door en sluit je iets af, dan ontvangen wij een vergoeding; jij betaalt hetzelfde."
       }
     },
     "dpv-zoekartikel": {

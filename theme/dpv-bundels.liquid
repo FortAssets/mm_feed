@@ -17,7 +17,7 @@
     ("6 maanden 34,95 p.m.") tonen we als actie; de prijs daarna staat dan niet in de feed.
   Alle bedragen inclusief btw. Wij vergelijken op feitelijke kenmerken en geven geen advies.
 {%- endcomment -%}
-<div class="dpb" data-id="{{ section.id }}" data-soort="{{ section.settings.soort }}" data-worker="{{ section.settings.worker_url }}">
+<div class="dpb" id="vergelijker" data-id="{{ section.id }}" data-soort="{{ section.settings.soort }}" data-worker="{{ section.settings.worker_url }}">
   <div class="dpb-kop">
     <div>
       {%- if section.settings.eyebrow != blank -%}<p class="dpb-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
@@ -131,7 +131,7 @@
     : [['s0', 'Tot 100 Mbit/s'], ['s1', '100 tot 500 Mbit/s'], ['s5', '500 tot 1000 Mbit/s'], ['g1', '1 Gbit/s of meer']];
   var STAP = 10;
   var ALLES = [], TIER = '', SORT = 'totaal', TOON = STAP;
-  var F = { bellen: false, net: '', mnd: 0, vast: false, tv: 'zonder', type: '' };
+  var F = { bellen: false, net: '', mnd: 0, vast: false, tv: 'zonder', type: '', max: 0 };
   try {
     var q = new URLSearchParams(location.search), qt = q.get(SIM ? 'bundel' : 'snelheid');
     if (qt && TIERS.some(function (t) { return t[0] === qt; })) TIER = qt;
@@ -240,6 +240,7 @@
     return ALLES.filter(function (r) {
       if (!inTier(r)) return false;
       if (F.vast && r.a) return false;
+      if (F.max && r.nu > F.max) return false;
       if (F.mnd && r.m !== F.mnd) return false;
       if (SIM) { if (F.bellen && !r.onb) return false; if (F.net && r.net !== F.net && r.prov.toLowerCase().indexOf(F.net.toLowerCase()) < 0) return false; }
       else { if (F.tv === 'zonder' && r.tv) return false; if (F.tv === 'met' && !r.tv) return false; if (F.type && r.type !== F.type) return false; }
@@ -295,6 +296,7 @@
     var mnden = {}; hier.forEach(function (r) { if (looptijd(r.m)) mnden[r.m] = 1; });
     var ml = Object.keys(mnden).map(Number).sort(function (a, b) { return a - b; });
     if (ml.length > 1) el.appendChild(select('Looptijd', [[0, 'Alle']].concat(ml.map(function (m) { return [m, looptijd(m)]; })), F.mnd, function (v) { F.mnd = Number(v); opnieuw(); }));
+    if (F.max) el.appendChild(knop('Tot ' + euro(F.max) + ' p/m  ×', true, function () { F.max = 0; opnieuw(); }));
     var sp = document.createElement('span'); sp.className = 'dpb-sp'; el.appendChild(sp);
     el.appendChild(select('Sorteer', [['totaal', SIM ? 'Laagste totaal 24 mnd' : 'Laagste eerste jaar'], ['maand', 'Laagste maandprijs'], ['meer', SIM ? 'Meeste data' : 'Snelste']], SORT, function (v) { SORT = v; opnieuw(); }));
   }
@@ -326,7 +328,7 @@
     tel.innerHTML = '<b>' + rijen.length + '</b> ' + (SIM ? (rijen.length === 1 ? 'bundel' : 'bundels') : (rijen.length === 1 ? 'abonnement' : 'abonnementen')) + ' in ' + esc(naam === 'Onbeperkt' ? 'onbeperkt data' : naam.charAt(0).toLowerCase() + naam.slice(1));
     if (!rijen.length) {
       lijst.innerHTML = '<li class="dpb-leeg">Geen aanbod met deze filters.<br></li>';
-      lijst.firstChild.appendChild(knop('Filters wissen', false, function () { F = { bellen: false, net: '', mnd: 0, vast: false, tv: '', type: '' }; opnieuw(); }));
+      lijst.firstChild.appendChild(knop('Filters wissen', false, function () { F = { bellen: false, net: '', mnd: 0, vast: false, tv: '', type: '', max: 0 }; opnieuw(); }));
       meer.innerHTML = ''; return;
     }
     lijst.innerHTML = rijen.slice(0, TOON).map(function (r, i) { return rij(r, i === 0 && SORT === 'totaal'); }).join('');
@@ -339,6 +341,15 @@
     }
   }
 
+  // De zoekbalk in de hero (dpv-hero) geeft zijn keuzes hieraan door.
+  window.pvxSetFilters = function (o) {
+    o = o || {};
+    var d = String(o.data || ''), kaart = SIM ? { '0-5': 't7', '5-20': 't8', '20-50': 't20', '999-': 'tob' } : { '0-100': 's0', '100-250': 's1', '250-500': 's1', '1000-': 'g1' };
+    if (kaart[d]) TIER = kaart[d];
+    if (SIM) F.bellen = o.calls === 'unlim';
+    F.max = o.maxMaand > 0 ? Number(o.maxMaand) : 0;
+    opnieuw();
+  };
   teken();
   fetch(WORKER + (SIM ? '/api/feed/simonly' : '/api/feed/internet')).then(function (r) { return r.json(); }).then(function (j) {
     var d = (j && j.data) || [];

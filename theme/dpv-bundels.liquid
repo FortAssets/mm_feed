@@ -28,6 +28,8 @@
   </div>
   <div class="bvg-tabs" role="group" aria-label="{% if section.settings.soort == 'internet' %}Snelheid{% else %}Datategoed{% endif %}"></div>
   <div class="bvg-fil"></div>
+  <div class="bvg-mbar"></div>
+  <div class="bvg-pills"></div>
   <p class="bvg-tel" aria-live="polite">Prijzen laden…</p>
   <ul class="bvg-lijst"></ul>
   <div class="bvg-meer"></div>
@@ -38,6 +40,7 @@
   </div>
   {%- endif -%}
   {%- if section.settings.fijn != blank -%}<p class="bvg-fijn">{{ section.settings.fijn }}</p>{%- endif -%}
+  <div class="bvg-sheet" hidden></div>
 </div>
 
 <style>
@@ -99,13 +102,42 @@
 .bvg-uitleg p{margin:0 0 8px}.bvg-uitleg p:last-child{margin:0}
 .bvg-fijn{font-size:12px;color:var(--soft);margin:14px 0 0;line-height:1.5}
 .bvg .dpvmb{display:none !important}
+/* 21 okt: op mobiel een knop Filters met een paneel van onderaf (desktop houdt de rij filters) */
+.bvg-mbar,.bvg-pills{display:none}
+.bvg-fk,.bvg-ms{flex:1 1 0;min-width:0;min-height:44px;border-radius:10px;font:inherit;font-size:14px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:8px}
+.bvg-fk{border:1.5px solid var(--ink);background:var(--ink);color:#fff;cursor:pointer}
+.bvg-ms{position:relative;border:1px solid var(--line);background:#fff;color:var(--ink)}
+.bvg-ms select{position:absolute;inset:0;opacity:0;width:100%;font-size:16px;cursor:pointer}
+.bvg-ms span:after{content:'';display:inline-block;width:7px;height:7px;border:solid var(--ink);border-width:0 2px 2px 0;transform:rotate(45deg);margin:0 0 3px 8px}
+.bvg-pill{display:inline-flex;align-items:center;gap:6px;min-height:32px;border:0;border-radius:99px;padding:0 11px;background:var(--blauwL);color:var(--blauw);font:inherit;font-size:12.5px;font-weight:700;cursor:pointer}
+.bvg-pill i{font-style:normal;font-size:15px;line-height:1}
+.bvg-sheet{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--blauw:#1B3FA0;position:fixed;inset:0;z-index:2147483000}
+.bvg-sheet *{box-sizing:border-box}
+.bvg-sheet :focus-visible{outline:3px solid #10b981;outline-offset:2px}
+.bvg-sheet[hidden]{display:none}
+.bvg-bd{position:absolute;inset:0;background:rgba(13,27,42,.45)}
+.bvg-pan{position:absolute;left:0;right:0;bottom:0;max-height:86vh;display:flex;flex-direction:column;background:#fff;border-radius:20px 20px 0 0;box-shadow:0 -8px 30px rgba(13,27,42,.18);font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink)}
+.bvg-grip{width:40px;height:4px;border-radius:4px;background:var(--line);margin:10px auto 0}
+.bvg-pk{display:flex;align-items:center;justify-content:space-between;padding:6px 16px 4px}
+.bvg-pk h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;margin:0}
+.bvg-pk button{min-height:44px;border:0;background:none;font:inherit;font-size:14px;font-weight:700;color:var(--blauw);cursor:pointer;padding:0 4px}
+.bvg-pb{overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 16px 8px;display:flex;flex-direction:column;gap:16px}
+.bvg-gr{display:flex;flex-direction:column;gap:8px}
+.bvg-gr>b{font-size:13.5px;font-weight:800}
+.bvg-gr div{display:flex;gap:6px;flex-wrap:wrap}
+.bvg-gr button{min-height:40px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:#fff;color:var(--ink);font:inherit;font-size:13.5px;font-weight:700;cursor:pointer}
+.bvg-gr button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
+.bvg-pv{padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.bvg-pv button{width:100%;min-height:50px;border:0;border-radius:12px;background:var(--blauw);color:#fff;font:inherit;font-size:15px;font-weight:800;cursor:pointer}
 @media(max-width:900px){
- .bvg-tabs{display:flex;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
- .bvg-tabs::-webkit-scrollbar{display:none}
- .bvg-tabs button{flex:none;min-height:52px;padding:6px 14px}
- .bvg-fil{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
- .bvg-fil::-webkit-scrollbar{display:none}
- .bvg-sp{display:none}
+ .bvg-tabs{grid-template-columns:repeat(var(--nm,3),minmax(0,1fr));gap:6px}
+ .bvg-tabs button{min-height:50px;padding:6px 4px}
+ .bvg-tabs button b{font-size:13.5px}
+ .bvg-tabs button small{font-size:11px}
+ .bvg-fil{display:none}
+ .bvg-mbar{display:flex;gap:8px;margin:0 0 10px}
+ .bvg-pills{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 12px}
+ .bvg-pills:empty{display:none}
  .bvg-r{grid-template-columns:40px minmax(0,1fr) auto;grid-template-areas:"l n k" "p p t";column-gap:12px;row-gap:10px;padding:14px}
  .bvg-c{gap:4px}.bvg-c span{font-size:11px;padding:2px 6px}
  .bvg-nt{gap:6px}
@@ -131,7 +163,8 @@
     : [['s0', 'Tot 100 Mbit/s'], ['s1', '100 tot 500 Mbit/s'], ['s5', '500 tot 1000 Mbit/s'], ['g1', '1 Gbit/s of meer']];
   var STAP = 10;
   var ALLES = [], TIER = '', SORT = 'totaal', TOON = STAP;
-  var F = { bellen: false, net: '', mnd: 0, vast: false, tv: 'zonder', type: '', max: 0 };
+  var F = { bellen: false, net: '', mnd: 0, vast: false, actie: false, tv: 'zonder', type: '', max: 0 };
+  var OPEN = false, FOCUS = '';
   try {
     var q = new URLSearchParams(location.search), qt = q.get(SIM ? 'bundel' : 'snelheid');
     if (qt && TIERS.some(function (t) { return t[0] === qt; })) TIER = qt;
@@ -157,7 +190,7 @@
     var d = 'https://icons.duckduckgo.com/ip3/' + dom + '.ico';
     return '<img class="bvg-logo" src="' + g + '" alt="" loading="lazy" width="44" height="44" onerror="if(this.dataset.fb){this.style.visibility=\'hidden\'}else{this.dataset.fb=1;this.src=\'' + d + '\'}">';
   }
-  function looptijd(m) { return m === 1 ? 'maandelijks opzegbaar' : m === 12 ? '1 jaar' : m === 24 ? '2 jaar' : m === 36 ? '3 jaar' : ''; }
+  function looptijd(m) { return m === 1 ? 'Maandelijks opzegbaar' : m === 12 ? '1 jaar' : m === 24 ? '2 jaar' : m === 36 ? '3 jaar' : ''; }
   function isZakelijk(d) {
     if (d.isZakelijk === true) return true;
     var h = ((d.merchantName || '') + ' ' + (d.name || '')).toLowerCase();
@@ -240,6 +273,7 @@
     return ALLES.filter(function (r) {
       if (!inTier(r)) return false;
       if (F.vast && r.a) return false;
+      if (F.actie && !r.a) return false;
       if (F.max && r.nu > F.max) return false;
       if (F.mnd && r.m !== F.mnd) return false;
       if (SIM) { if (F.bellen && !r.onb) return false; if (F.net && r.net !== F.net && r.prov.toLowerCase().indexOf(F.net.toLowerCase()) < 0) return false; }
@@ -319,8 +353,81 @@
       '<div class="bvg-p">' + prijs + '</div><div class="bvg-t">' + totaal + '</div>' +
       '<a class="bvg-go" href="' + esc(r.url) + '" target="_blank" rel="nofollow sponsored noopener" aria-label="Bekijk ' + esc(titel + ' bij ' + r.prov) + '">Bekijk</a></li>';
   }
+  // ---------------------------------------------------------------- mobiel: knop Filters + paneel
+  function groepen() {
+    var hier = ALLES.filter(inTier), g = [];
+    var mnden = {}; hier.forEach(function (r) { if (looptijd(r.m)) mnden[r.m] = 1; });
+    var ml = Object.keys(mnden).map(Number).sort(function (a, b) { return a - b; });
+    if (SIM) {
+      g.push({ k: 'bel', t: 'Bellen', o: [['', 'Maakt niet uit'], ['onb', 'Onbeperkt bellen']], v: F.bellen ? 'onb' : '', zet: function (v) { F.bellen = v === 'onb'; } });
+      var netten = NETTEN.filter(function (n) { return hier.some(function (r) { return r.net === n || r.prov.toLowerCase().indexOf(n.toLowerCase()) > -1; }); });
+      if (netten.length) g.push({ k: 'net', t: 'Netwerk', o: [['', 'Alle']].concat(netten.map(function (n) { return [n, n]; })), v: F.net, zet: function (v) { F.net = v; } });
+    } else {
+      g.push({ k: 'tv', t: 'Internet en tv', o: [['', 'Alles'], ['zonder', 'Alleen internet'], ['met', 'Internet + tv']], v: F.tv, zet: function (v) { F.tv = v; } });
+      var types = ['Glasvezel', 'Kabel', '5G', 'DSL'].filter(function (t) { return hier.some(function (r) { return r.type === t; }); });
+      if (types.length > 1) g.push({ k: 'type', t: 'Soort aansluiting', o: [['', 'Alle']].concat(types.map(function (t) { return [t, t]; })), v: F.type, zet: function (v) { F.type = v; } });
+    }
+    if (ml.length > 1) g.push({ k: 'mnd', t: 'Looptijd', o: [['0', 'Alle']].concat(ml.map(function (m) { return [String(m), looptijd(m)]; })), v: String(F.mnd), zet: function (v) { F.mnd = Number(v); } });
+    if (SIM || hier.some(function (r) { return r.a; })) g.push({ k: 'prijs', t: 'Prijs', o: [['', 'Alles'], ['vast', 'Alleen vaste prijs'], ['actie', 'Met actieprijs']], v: F.vast ? 'vast' : F.actie ? 'actie' : '', zet: function (v) { F.vast = v === 'vast'; F.actie = v === 'actie'; } });
+    if (F.max) g.push({ k: 'max', t: 'Maximaal per maand', o: [['0', 'Geen maximum'], [String(F.max), 'Tot ' + euro(F.max) + ' p/m']], v: String(F.max), zet: function (v) { F.max = Number(v); } });
+    g.forEach(function (x) { x.aan = x.v !== x.o[0][0]; x.label = ''; x.o.forEach(function (o) { if (o[0] === x.v) x.label = o[1]; }); });
+    return g;
+  }
+  function sluit() {
+    OPEN = false; FOCUS = ''; document.documentElement.style.overflow = '';
+    var sh = SH; sh.hidden = true; sh.innerHTML = '';
+    var fk = w.querySelector('.bvg-fk'); if (fk) fk.focus();
+  }
+  function tekenMobiel() {
+    var bar = w.querySelector('.bvg-mbar'), pills = w.querySelector('.bvg-pills'), sh = SH;
+    if (!ALLES.length) { bar.innerHTML = ''; pills.innerHTML = ''; return; }
+    var g = groepen(), n = g.filter(function (x) { return x.aan; }).length;
+    bar.innerHTML = '<button type="button" class="bvg-fk" aria-haspopup="dialog"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>Filters' + (n ? ' (' + n + ')' : '') + '</button>' +
+      '<label class="bvg-ms"><span>' + esc(SORT === 'maand' ? 'Laagste maandprijs' : SORT === 'meer' ? (SIM ? 'Meeste data' : 'Snelste') : (SIM ? 'Laagste totaal' : 'Laagste eerste jaar')) + '</span><select aria-label="Sorteer">' +
+      [['totaal', SIM ? 'Laagste totaal 24 mnd' : 'Laagste eerste jaar'], ['maand', 'Laagste maandprijs'], ['meer', SIM ? 'Meeste data' : 'Snelste']].map(function (o) { return '<option value="' + o[0] + '"' + (o[0] === SORT ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select></label>';
+    bar.querySelector('.bvg-fk').addEventListener('click', function () { OPEN = true; tekenMobiel(); });
+    bar.querySelector('select').addEventListener('change', function (e) { SORT = e.target.value; opnieuw(); });
+    pills.innerHTML = '';
+    g.filter(function (x) { return x.aan; }).forEach(function (x) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'bvg-pill';
+      b.innerHTML = esc(x.label) + '<i aria-hidden="true">×</i>'; b.setAttribute('aria-label', 'Filter ' + x.label + ' weghalen');
+      b.addEventListener('click', function () { x.zet(x.o[0][0]); opnieuw(); });
+      pills.appendChild(b);
+    });
+    if (!OPEN) { if (!sh.hidden) { sh.hidden = true; sh.innerHTML = ''; document.documentElement.style.overflow = ''; } return; }
+    var aantal = gefilterd().length, scroll = sh.querySelector('.bvg-pb') ? sh.querySelector('.bvg-pb').scrollTop : 0;
+    sh.innerHTML = '<div class="bvg-bd"></div><div class="bvg-pan" role="dialog" aria-modal="true" aria-labelledby="bvg-ft-' + w.getAttribute('data-id') + '">' +
+      '<div class="bvg-grip"></div><div class="bvg-pk"><h3 id="bvg-ft-' + w.getAttribute('data-id') + '" tabindex="-1">Filters</h3><button type="button" class="bvg-wis">Wis alles</button></div>' +
+      '<div class="bvg-pb">' + g.map(function (x) {
+        return '<div class="bvg-gr"><b>' + esc(x.t) + '</b><div>' + x.o.map(function (o) {
+          return '<button type="button" data-k="' + x.k + '" data-v="' + esc(o[0]) + '" aria-pressed="' + (o[0] === x.v) + '">' + esc(o[1]) + '</button>';
+        }).join('') + '</div></div>';
+      }).join('') + '</div>' +
+      '<div class="bvg-pv"><button type="button" class="bvg-toon">' + (aantal ? 'Toon ' + aantal + ' ' + (SIM ? (aantal === 1 ? 'bundel' : 'bundels') : (aantal === 1 ? 'abonnement' : 'abonnementen')) : 'Geen aanbod met deze filters') + '</button></div></div>';
+    sh.hidden = false; document.documentElement.style.overflow = 'hidden';
+    sh.querySelector('.bvg-pb').scrollTop = scroll;
+    sh.querySelector('.bvg-bd').addEventListener('click', sluit);
+    sh.querySelector('.bvg-toon').addEventListener('click', function () { sluit(); var t = w.querySelector('.bvg-tel'); if (t) t.scrollIntoView({ block: 'start' }); });
+    sh.querySelector('.bvg-wis').addEventListener('click', function () { FOCUS = 'wis'; F = { bellen: false, net: '', mnd: 0, vast: false, actie: false, tv: '', type: '', max: 0 }; opnieuw(); });
+    Array.prototype.forEach.call(sh.querySelectorAll('.bvg-gr button'), function (b) {
+      b.addEventListener('click', function () {
+        var k = b.getAttribute('data-k'), v = b.getAttribute('data-v');
+        g.forEach(function (x) { if (x.k === k) x.zet(v); });
+        FOCUS = k + '|' + v; opnieuw();
+      });
+    });
+    var f = FOCUS === 'wis' ? sh.querySelector('.bvg-wis') : FOCUS ? sh.querySelector('.bvg-gr button[data-k="' + FOCUS.split('|')[0] + '"][data-v="' + FOCUS.split('|').slice(1).join('|') + '"]') : null;
+    (f || sh.querySelector('h3')).focus({ preventScroll: true });
+  }
+  document.addEventListener('keydown', function (e) { if (OPEN && e.key === 'Escape') sluit(); });
+  // Het paneel hangt aan body, zodat een transform of overflow van een ouder het niet afsnijdt.
+  var SH = w.querySelector('.bvg-sheet');
+  if (!SH) { SH = document.createElement('div'); SH.className = 'bvg-sheet'; SH.hidden = true; }
+  document.body.appendChild(SH);
+  w.querySelector('.bvg-tabs').style.setProperty('--nm', SIM ? 3 : 2);
+
   function teken() {
-    tekenTabs(); tekenFilters();
+    tekenTabs(); tekenFilters(); tekenMobiel();
     var lijst = w.querySelector('.bvg-lijst'), tel = w.querySelector('.bvg-tel'), meer = w.querySelector('.bvg-meer');
     if (!ALLES.length) { lijst.innerHTML = ''; meer.innerHTML = ''; return; }
     var rijen = gefilterd(), naam = '';
@@ -328,7 +435,7 @@
     tel.innerHTML = '<b>' + rijen.length + '</b> ' + (SIM ? (rijen.length === 1 ? 'bundel' : 'bundels') : (rijen.length === 1 ? 'abonnement' : 'abonnementen')) + ' in ' + esc(naam === 'Onbeperkt' ? 'onbeperkt data' : naam.charAt(0).toLowerCase() + naam.slice(1));
     if (!rijen.length) {
       lijst.innerHTML = '<li class="bvg-leeg">Geen aanbod met deze filters.<br></li>';
-      lijst.firstChild.appendChild(knop('Filters wissen', false, function () { F = { bellen: false, net: '', mnd: 0, vast: false, tv: '', type: '', max: 0 }; opnieuw(); }));
+      lijst.firstChild.appendChild(knop('Filters wissen', false, function () { F = { bellen: false, net: '', mnd: 0, vast: false, actie: false, tv: '', type: '', max: 0 }; opnieuw(); }));
       meer.innerHTML = ''; return;
     }
     lijst.innerHTML = rijen.slice(0, TOON).map(function (r, i) { return rij(r, i === 0 && SORT === 'totaal'); }).join('');

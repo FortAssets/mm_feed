@@ -19,28 +19,28 @@ const VORIG = process.env.US_VORIG || '/tmp/tech-vorig.json'
 const UIT = process.env.US_UIT || 'out/us/tech.json'
 
 // q: zoekterm. moet: titel moet hierop passen. niet: titel mag hier niet op passen.
-// msrp: adviesprijs in dollars, voor de plausibiliteit (0,6x tot 1,5x) en "was".
+// msrp: adviesprijs in dollars (gecontroleerd 21 okt 2026, na de prijsverhogingen van 2026), voor de plausibiliteit (0,6x tot 1,5x) en "was".
 const PRODUCTEN = [
   { id: 'airpods-pro-3', rubriek: /headphone|headset/i, naam: 'AirPods Pro 3', cat: 'Audio', q: 'Apple AirPods Pro 3rd generation', moet: /airpods pro 3|airpods pro \(3rd|airpods pro 3rd/i, niet: /pro 2|2nd gen/i, msrp: 249 },
-  { id: 'airpods-4-anc', rubriek: /headphone|headset/i, naam: 'AirPods 4 with ANC', cat: 'Audio', q: 'Apple AirPods 4 Active Noise Cancellation', moet: /airpods 4/i, niet: /pro/i, msrp: 179 },
-  { id: 'sony-wh-1000xm6', rubriek: /headphone|headset/i, naam: 'Sony WH-1000XM6', cat: 'Audio', q: 'Sony WH-1000XM6', moet: /1000xm6/i, msrp: 449 },
+  { id: 'airpods-5', rubriek: /headphone|headset/i, naam: 'AirPods 5', cat: 'Audio', q: 'Apple AirPods 5', moet: /airpods 5|airpods \(5th/i, niet: /pro|airpods 4/i, msrp: 129 },
+  { id: 'sony-wh-1000xm6', rubriek: /headphone|headset/i, naam: 'Sony WH-1000XM6', cat: 'Audio', q: 'Sony WH-1000XM6', moet: /1000xm6/i, msrp: 449.99 },
   { id: 'bose-qc-ultra-2', rubriek: /headphone|headset/i, naam: 'Bose QuietComfort Ultra Headphones (2nd Gen)', cat: 'Audio', q: 'Bose QuietComfort Ultra Headphones 2nd Gen', moet: /quietcomfort ultra/i, niet: /earbuds/i, msrp: 449 },
-  { id: 'switch-2', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Nintendo Switch 2', cat: 'Gaming', q: 'Nintendo Switch 2 console', moet: /switch 2/i, niet: /\bgame only\b|controller only|pro controller|joy-?con (pair|only)|\bcase\b|dock only|amiibo/i, msrp: 449 },
-  { id: 'ps5-pro', rubriek: /video game consoles|mixed lots/i, naam: 'PlayStation 5 Pro', cat: 'Gaming', q: 'PlayStation 5 Pro console', moet: /ps5 pro|playstation 5 pro/i, niet: /controller|stand only|disc drive|cover|faceplate|plates|thrustmaster|ps4|ps3|wheel|\brw\b|bundle of|lot/i, msrp: 749 },
-  { id: 'xbox-series-x', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Xbox Series X', cat: 'Gaming', q: 'Xbox Series X console 1TB', moet: /series x/i, niet: /controller only|stand only|series s\b|x\/s|x \/ s|x or s/i, msrp: 599 },
-  { id: 'steam-deck-oled', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Steam Deck OLED', cat: 'Gaming', q: 'Steam Deck OLED 512GB', moet: /steam deck oled/i, msrp: 549 },
-  { id: 'meta-quest-3s', rubriek: /virtual reality|vr /i, naam: 'Meta Quest 3S', cat: 'Gaming', q: 'Meta Quest 3S 128GB', moet: /quest 3s/i, msrp: 299 },
-  { id: 'apple-watch-11', rubriek: /smart ?watch/i, naam: 'Apple Watch Series 11', cat: 'Wearables', q: 'Apple Watch Series 11 GPS', moet: /series 11/i, niet: /band only|strap only/i, msrp: 399 },
-  { id: 'galaxy-watch-8', rubriek: /smart ?watch/i, naam: 'Samsung Galaxy Watch 8', cat: 'Wearables', q: 'Samsung Galaxy Watch 8', moet: /galaxy watch ?8/i, niet: /classic|band only/i, msrp: 349 },
-  { id: 'ipad-a16', rubriek: /tablet/i, naam: 'iPad 11" (A16)', cat: 'Tablets', q: 'Apple iPad 11th generation A16 128GB', moet: /ipad/i, niet: /air|pro|mini|case|keyboard/i, msrp: 349 },
-  { id: 'ipad-air-m3', rubriek: /tablet/i, naam: 'iPad Air 11" (M3)', cat: 'Tablets', q: 'Apple iPad Air 11 M3 128GB', moet: /ipad air/i, niet: /case|keyboard|m2\b/i, msrp: 599 },
-  { id: 'macbook-air-m4', rubriek: /laptop/i, naam: 'MacBook Air 13" (M4)', cat: 'Laptops', q: 'Apple MacBook Air 13 M4 16GB 256GB', moet: /macbook air/i, niet: /m1\b|m2\b|m3\b|15"|15-inch|15 inch|case|skin/i, msrp: 999 },
-  { id: 'kindle-paperwhite', rubriek: /ebook|e-book|tablet/i, naam: 'Kindle Paperwhite (2024)', cat: 'E-readers', q: 'Kindle Paperwhite 2024 16GB', moet: /paperwhite/i, niet: /case|cover|signature|kids/i, msrp: 159 },
-  { id: 'pixel-10-pro', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Google Pixel 10 Pro (unlocked)', cat: 'Phones', q: 'Google Pixel 10 Pro unlocked 128GB', moet: /pixel 10 pro/i, niet: /xl|fold|case|screen/i, msrp: 999 },
-  { id: 'galaxy-s25-ultra', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Samsung Galaxy S25 Ultra (unlocked)', cat: 'Phones', q: 'Samsung Galaxy S25 Ultra unlocked 256GB', moet: /s25 ultra/i, niet: /case|screen|protector/i, msrp: 1299 },
-  { id: 'gopro-hero13', rubriek: /camera|camcorder/i, naam: 'GoPro HERO13 Black', cat: 'Cameras', q: 'GoPro HERO13 Black', moet: /hero ?13/i, niet: /battery only|mount only|housing/i, msrp: 399 },
+  { id: 'switch-2', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Nintendo Switch 2', cat: 'Gaming', q: 'Nintendo Switch 2 console', moet: /switch 2/i, niet: /\bgame only\b|controller only|pro controller|joy-?con (pair|only)|\bcase\b|dock only|amiibo/i, msrp: 499.99 },
+  { id: 'ps5-pro', rubriek: /video game consoles|mixed lots/i, naam: 'PlayStation 5 Pro', cat: 'Gaming', q: 'PlayStation 5 Pro console', moet: /ps5 pro|playstation 5 pro/i, niet: /controller|stand only|disc drive|cover|faceplate|plates|thrustmaster|ps4|ps3|wheel|\brw\b|bundle of|lot/i, msrp: 899.99 },
+  { id: 'xbox-series-x', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Xbox Series X', cat: 'Gaming', q: 'Xbox Series X console 1TB', moet: /series x/i, niet: /controller only|stand only|series s\b|x\/s|x \/ s|x or s/i, msrp: 749.99 },
+  { id: 'steam-deck-oled', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Steam Deck OLED', cat: 'Gaming', q: 'Steam Deck OLED 512GB', moet: /steam deck oled/i, msrp: 789 },
+  { id: 'meta-quest-3s', rubriek: /virtual reality|vr /i, naam: 'Meta Quest 3S', cat: 'Gaming', q: 'Meta Quest 3S 128GB', moet: /quest 3s/i, msrp: 349.99 },
+  { id: 'apple-watch-12', rubriek: /smart ?watch/i, naam: 'Apple Watch Series 12', cat: 'Wearables', q: 'Apple Watch Series 12 GPS', moet: /series 12/i, niet: /band only|strap only/i, msrp: 399 },
+  { id: 'galaxy-watch-9', rubriek: /smart ?watch/i, naam: 'Samsung Galaxy Watch 9', cat: 'Wearables', q: 'Samsung Galaxy Watch 9', moet: /galaxy watch ?9/i, niet: /classic|ultra|band only/i, msrp: 379 },
+  { id: 'ipad-a16', rubriek: /tablet/i, naam: 'iPad 11" (A16)', cat: 'Tablets', q: 'Apple iPad 11th generation A16 128GB', moet: /ipad/i, niet: /air|pro|mini|case|keyboard/i, msrp: 449 },
+  { id: 'ipad-air-m4', rubriek: /tablet/i, naam: 'iPad Air 11" (M4)', cat: 'Tablets', q: 'Apple iPad Air 11 M4 128GB', moet: /ipad air.*m4|m4.*ipad air/i, niet: /case|keyboard|13"|13-inch|13 inch/i, msrp: 749 },
+  { id: 'macbook-air-m5', rubriek: /laptop/i, naam: 'MacBook Air 13" (M5)', cat: 'Laptops', q: 'Apple MacBook Air 13 M5 16GB 512GB', moet: /macbook air.*m5|m5.*macbook air/i, niet: /15"|15-inch|15 inch|case|skin/i, msrp: 1299 },
+  { id: 'kindle-paperwhite', rubriek: /ebook|e-book|tablet/i, naam: 'Kindle Paperwhite (2024)', cat: 'E-readers', q: 'Kindle Paperwhite 2024 16GB', moet: /paperwhite/i, niet: /case|cover|signature|kids/i, msrp: 199 },
+  { id: 'pixel-11-pro', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Google Pixel 11 Pro (unlocked)', cat: 'Phones', q: 'Google Pixel 11 Pro unlocked 256GB', moet: /pixel 11 pro/i, niet: /xl|fold|case|screen/i, msrp: 1099 },
+  { id: 'galaxy-s26-ultra', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Samsung Galaxy S26 Ultra (unlocked)', cat: 'Phones', q: 'Samsung Galaxy S26 Ultra unlocked 256GB', moet: /s26 ultra/i, niet: /case|screen|protector/i, msrp: 1399.99 },
+  { id: 'gopro-hero13', rubriek: /camera|camcorder/i, naam: 'GoPro HERO13 Black', cat: 'Cameras', q: 'GoPro HERO13 Black', moet: /hero ?13/i, niet: /battery only|mount only|housing/i, msrp: 399.99 },
   { id: 'dji-mini-4-pro', rubriek: /drone/i, naam: 'DJI Mini 4 Pro', cat: 'Cameras', q: 'DJI Mini 4 Pro', moet: /mini 4 pro/i, niet: /battery only|propeller|controller|remote|\brc[ -]?(2|n\d)|goggles|charging hub|for (dji )?mini/i, msrp: 759 },
-  { id: 'airtag-4-pack', naam: 'Apple AirTag (4-pack)', cat: 'Accessories', q: 'Apple AirTag 4 pack', moet: /airtag/i, niet: /holder|case|keychain|cover|1 pack|single|2 pack|loop|wallet|\bjapan\b|lunar|year of|engrav|limited/i, msrp: 99 }
+  { id: 'airtag-4-pack', naam: 'Apple AirTag 2nd gen (4-pack)', cat: 'Accessories', q: 'Apple AirTag 2nd generation 4 pack', moet: /airtag/i, niet: /holder|case|keychain|cover|1 pack|single|2 pack|loop|wallet|\bjapan\b|lunar|year of|engrav|limited/i, msrp: 99 }
 ]
 
 // Wat als nieuw te koop staat maar het niet is, of geen los product.

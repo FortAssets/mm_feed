@@ -1,0 +1,382 @@
+{%- comment -%}
+  21 okt 2026: sim only en internet thuis in dezelfde stijl als de telefoonvergelijker.
+
+  Bovenaan tabs per datategoed (sim only) of per snelheid (internet). Daaronder per aanbieding een rij:
+  de maandprijs groot, een tijdelijke actieprijs apart met de prijs daarna, en het totaal
+  (sim only: over 24 maanden; internet: het eerste jaar, inclusief eenmalige kosten).
+
+  Wat we met de feeds doen:
+  - Sim only: aanbiedingen via Mobiel.nl tonen we onder het merk (Simpel, Lebara), niet onder Mobiel.nl.
+    Bij een actie is `price` in de feed het gemiddelde; wij tonen de actieprijs en de prijs daarna.
+    Regels met een toestel erbij of zonder bekende data laten we weg. Gelijke bundels van hetzelfde merk
+    (zelfde data, minuten en looptijd) tonen we een keer, met het laagste totaal.
+  - Internet: Odido staat twee keer in de feed (Odido Thuis via Awin met honderden varianten en
+    verkeerde snelheden, en Odido uit onze eigen lijst). Is de eigen lijst er, dan laten we Odido Thuis weg.
+    Snelheden als 1, 2 of 8 bij een Gbit-pakket rekenen we om naar Mbit/s. Pakketten met en zonder
+    "Bellen basis" voor dezelfde prijs tonen we een keer. Een actie die alleen in de omschrijving staat
+    ("6 maanden 34,95 p.m.") tonen we als actie; de prijs daarna staat dan niet in de feed.
+  Alle bedragen inclusief btw. Wij vergelijken op feitelijke kenmerken en geven geen advies.
+{%- endcomment -%}
+<div class="dpb" data-id="{{ section.id }}" data-soort="{{ section.settings.soort }}" data-worker="{{ section.settings.worker_url }}">
+  <div class="dpb-kop">
+    <div>
+      {%- if section.settings.eyebrow != blank -%}<p class="dpb-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="dpb-h">{{ section.settings.kop }}</h2>
+      {%- if section.settings.sub != blank -%}<p class="dpb-sub">{{ section.settings.sub }}</p>{%- endif -%}
+    </div>
+    {%- if section.settings.zakelijk_url != blank -%}<a class="dpb-zak" href="{{ section.settings.zakelijk_url }}">{{ section.settings.zakelijk_label }}</a>{%- endif -%}
+  </div>
+  <div class="dpb-tabs" role="group" aria-label="{% if section.settings.soort == 'internet' %}Snelheid{% else %}Datategoed{% endif %}"></div>
+  <div class="dpb-fil"></div>
+  <p class="dpb-tel" aria-live="polite">Prijzen laden…</p>
+  <ul class="dpb-lijst"></ul>
+  <div class="dpb-meer"></div>
+  {%- if section.settings.uitleg != blank -%}
+  <div class="dpb-uitleg">
+    {%- if section.settings.uitleg_kop != blank -%}<h3>{{ section.settings.uitleg_kop }}</h3>{%- endif -%}
+    {{ section.settings.uitleg }}
+  </div>
+  {%- endif -%}
+  {%- if section.settings.fijn != blank -%}<p class="dpb-fijn">{{ section.settings.fijn }}</p>{%- endif -%}
+</div>
+
+<style>
+.dpb{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#10b981;--groenD:#0b7d5c;--groenL:#E3F3EA;--blauw:#1B3FA0;--blauwL:#EEF2FB;--geel:#F9C31F;--oranje:#B45309;--oranjeL:#FFF8DD;
+ font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);max-width:1080px;margin:0 auto;padding:10px 16px 46px}
+.dpb *{box-sizing:border-box}
+.dpb :focus-visible{outline:3px solid var(--groen);outline-offset:2px}
+.dpb-kop{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin:0 0 18px}
+.dpb-eyebrow{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:var(--blauw);font-weight:800;margin:0 0 6px}
+.dpb .dpb-h{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:29px;line-height:1.08;letter-spacing:-.03em;font-weight:800;margin:0 0 8px}
+.dpb-sub{font-size:15.5px;line-height:1.6;color:var(--soft);margin:0;max-width:64ch}
+.dpb a.dpb-zak,.dpb a.dpb-zak:visited{font-size:14px;font-weight:700;color:var(--blauw) !important;text-decoration:underline}
+.dpb-tabs{display:grid;grid-template-columns:repeat(var(--n,5),minmax(0,1fr));gap:8px;margin:0 0 12px}
+.dpb-tabs button{min-height:58px;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:8px 10px;font:inherit;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;text-align:center}
+.dpb-tabs button b{font-size:15px;font-weight:700;line-height:1.2}
+.dpb-tabs button small{font-size:12px;color:var(--soft)}
+.dpb-tabs button[aria-pressed="true"]{border:2px solid var(--blauw);background:var(--blauw);color:#fff}
+.dpb-tabs button[aria-pressed="true"] small{color:#fff;opacity:.85}
+.dpb-tabs button:disabled{opacity:.45;cursor:default}
+.dpb-fil{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.dpb-chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:99px;padding:7px 13px;font:inherit;font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;min-height:36px;white-space:nowrap}
+.dpb-chip[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:#fff}
+.dpb-sp{flex-grow:1}
+.dpb-fl{font-size:13px;color:var(--soft);display:flex;align-items:center;gap:8px}
+.dpb-sel{min-height:36px;border:1px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-size:13px;font-weight:600;color:var(--ink);background:#fff;max-width:100%}
+.dpb-tel{font-size:14px;color:var(--soft);margin:0 0 12px}.dpb-tel b{color:var(--ink)}
+.dpb-lijst{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.dpb-r{display:grid;grid-template-columns:44px minmax(0,1fr) 200px 130px 104px;grid-template-areas:"l n p t k";gap:16px;align-items:center;padding:14px 18px;border:1px solid var(--line);border-radius:14px;background:#fff}
+.dpb-r.top{border:2px solid var(--groen);padding:13px 17px}
+.dpb-logo{grid-area:l;width:44px;height:44px;object-fit:contain;border-radius:11px;background:#fff;border:1px solid var(--line);padding:5px}
+.dpb-logo-tekst{display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;color:var(--blauw);background:var(--blauwL);border:0}
+.dpb-n{grid-area:n;min-width:0;display:flex;flex-direction:column;gap:6px}
+.dpb-nt{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.dpb-gb{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:20px;font-weight:800;line-height:1.1}
+.dpb-pv{font-size:15px;font-weight:600}
+.dpb-c{display:flex;gap:6px;flex-wrap:wrap}
+.dpb-c span{font-size:12px;font-weight:600;padding:3px 8px;border-radius:6px;background:var(--vlak);color:var(--soft)}
+.dpb-c span.tv{background:var(--blauwL);color:var(--blauw);font-weight:700}
+.dpb-p{grid-area:p;display:flex;flex-direction:column;gap:3px;align-items:flex-end;text-align:right}
+.dpb-pm{display:flex;align-items:baseline;gap:4px}
+.dpb-pm b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:28px;font-weight:800;line-height:1}
+.dpb-pm i{font-style:normal;font-size:13px;color:var(--soft)}
+.dpb-act{font-size:11px;font-weight:800;padding:2px 7px;border-radius:99px;background:var(--oranjeL);color:var(--oranje);align-self:center}
+.dpb-p small{font-size:12px;color:var(--soft);line-height:1.35}
+.dpb-p small.al{color:var(--oranje);font-weight:700}
+.dpb-p small.g0{color:var(--groenD);font-weight:700}
+.dpb-t{grid-area:t;display:flex;flex-direction:column;gap:3px;align-items:flex-end;text-align:right}
+.dpb-t small{font-size:12px;color:var(--soft)}
+.dpb-t b{font-size:16px;font-weight:700}
+.dpb-lab{font-size:11px;font-weight:800;padding:2px 7px;border-radius:99px;background:var(--groenL);color:var(--groenD)}
+.dpb a.dpb-go,.dpb a.dpb-go:visited{grid-area:k;display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 14px;background:var(--geel);color:var(--ink) !important;border:1.5px solid var(--ink);border-radius:10px;font-size:14px;font-weight:800;text-decoration:none !important;white-space:nowrap}
+.dpb a.dpb-go:hover{background:#EDB50C}
+.dpb-meer{display:flex;justify-content:center;margin:14px 0 0}
+.dpb-meer button{min-height:44px;padding:0 20px;border-radius:10px;border:1.5px solid var(--blauw);background:#fff;color:var(--blauw);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.dpb-leeg{border:1px dashed var(--line);border-radius:14px;padding:34px;text-align:center;color:var(--soft);font-size:14px}
+.dpb-leeg button{margin-top:10px}
+.dpb-uitleg{margin:26px 0 0;background:var(--vlak);border-radius:14px;padding:18px 20px;font-size:14.5px;line-height:1.6}
+.dpb-uitleg h3{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:18px;margin:0 0 6px}
+.dpb-uitleg p{margin:0 0 8px}.dpb-uitleg p:last-child{margin:0}
+.dpb-fijn{font-size:12px;color:var(--soft);margin:14px 0 0;line-height:1.5}
+.dpb .dpvmb{display:none !important}
+@media(max-width:900px){
+ .dpb-tabs{display:flex;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
+ .dpb-tabs::-webkit-scrollbar{display:none}
+ .dpb-tabs button{flex:none;min-height:52px;padding:6px 14px}
+ .dpb-fil{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
+ .dpb-fil::-webkit-scrollbar{display:none}
+ .dpb-sp{display:none}
+ .dpb-r{grid-template-columns:40px minmax(0,1fr) auto;grid-template-areas:"l n k" "p p t";column-gap:12px;row-gap:10px;padding:14px}
+ .dpb-c{gap:4px}.dpb-c span{font-size:11px;padding:2px 6px}
+ .dpb-nt{gap:6px}
+ .dpb-r.top{padding:13px}
+ .dpb-logo{width:40px;height:40px}
+ .dpb-p{align-items:flex-start;text-align:left;border-top:1px solid var(--line);padding-top:10px}
+ .dpb-t{border-top:1px solid var(--line);padding-top:10px;align-self:stretch;justify-content:flex-start}
+ .dpb-pm b{font-size:26px}
+ .dpb-gb{font-size:18px}
+ .dpb a.dpb-go{min-width:84px}
+}
+</style>
+
+<script>
+(function () {
+  var w = document.querySelector('.dpb[data-id="{{ section.id }}"]');
+  if (!w) return;
+  var SOORT = w.getAttribute('data-soort') === 'internet' ? 'internet' : 'simonly';
+  var SIM = SOORT === 'simonly';
+  var WORKER = w.getAttribute('data-worker') || 'https://awin.business-347.workers.dev';
+  var TIERS = SIM
+    ? [['t7', 'Tot 7 GB'], ['t8', '8 tot 19 GB'], ['t20', '20 tot 49 GB'], ['t50', '50 GB of meer'], ['tob', 'Onbeperkt']]
+    : [['s0', 'Tot 100 Mbit/s'], ['s1', '100 tot 500 Mbit/s'], ['s5', '500 tot 1000 Mbit/s'], ['g1', '1 Gbit/s of meer']];
+  var STAP = 10;
+  var ALLES = [], TIER = '', SORT = 'totaal', TOON = STAP;
+  var F = { bellen: false, net: '', mnd: 0, vast: false, tv: 'zonder', type: '' };
+  try {
+    var q = new URLSearchParams(location.search), qt = q.get(SIM ? 'bundel' : 'snelheid');
+    if (qt && TIERS.some(function (t) { return t[0] === qt; })) TIER = qt;
+  } catch (e) {}
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function euro(v) {
+    if (!v && v !== 0) return '';
+    var r = Math.round(v * 100) / 100;
+    return '€' + (r % 1 === 0 ? r.toFixed(0) : r.toFixed(2).replace('.', ','));
+  }
+  function num(v) { var n = parseFloat(v); return isFinite(n) ? n : 0; }
+
+  var DOM = [['kpn', 'kpn.com'], ['odido', 'odido.nl'], ['vodafone', 'vodafone.nl'], ['ziggo', 'ziggo.nl'], ['simyo', 'simyo.nl'],
+    ['hollandsnieuwe', 'hollandsnieuwe.nl'], ['youfone', 'youfone.nl'], ['simpel', 'simpel.nl'], ['50+', '50plusmobiel.nl'], ['50plus', '50plusmobiel.nl'],
+    ['lebara', 'lebara.nl'], ['lyca', 'lycamobile.nl'], ['budget', 'budgetthuis.nl'], ['online.nl', 'online.nl'], ['delta', 'delta.nl'], ['tele2', 'tele2.nl'],
+    ['robin', 'robinmobile.nl'], ['scarlet', 'scarlet.nl'], ['caiway', 'caiway.nl'], ['ben', 'ben.nl']];
+  function logo(prov) {
+    var p = String(prov || '').toLowerCase(), dom = '';
+    for (var i = 0; i < DOM.length; i++) if (DOM[i][0] === 'ben' ? /^ben\b/.test(p) : p.indexOf(DOM[i][0]) > -1) { dom = DOM[i][1]; break; }
+    if (!dom) return '<span class="dpb-logo dpb-logo-tekst" aria-hidden="true">' + esc(String(prov || '?').charAt(0).toUpperCase()) + '</span>';
+    var g = 'https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=64&url=https://' + dom;
+    var d = 'https://icons.duckduckgo.com/ip3/' + dom + '.ico';
+    return '<img class="dpb-logo" src="' + g + '" alt="" loading="lazy" width="44" height="44" onerror="if(this.dataset.fb){this.style.visibility=\'hidden\'}else{this.dataset.fb=1;this.src=\'' + d + '\'}">';
+  }
+  function looptijd(m) { return m === 1 ? 'maandelijks opzegbaar' : m === 12 ? '1 jaar' : m === 24 ? '2 jaar' : m === 36 ? '3 jaar' : ''; }
+  function isZakelijk(d) {
+    if (d.isZakelijk === true) return true;
+    var h = ((d.merchantName || '') + ' ' + (d.name || '')).toLowerCase();
+    return h.indexOf('zakelijk') > -1 || h.indexOf('business') > -1 || h.indexOf('b2b') > -1;
+  }
+  function actieUit(x) {
+    var ap = num(x.actiePrijs), am = parseInt(x.actieMaanden, 10) || 0, na = num(x.prijsNaActie);
+    if (ap > 0 && am > 0 && na > ap) return { p: ap, m: am, na: na };
+    return null;
+  }
+  // Naam van de aanbieder: bij Mobiel.nl het merk zelf.
+  function provVan(x) {
+    var m = String(x.merchantName || '').replace(/\s+NL$/, '').trim(), b = String(x.brand || '').trim();
+    if (/mobiel\.nl/i.test(m) && b) m = b;
+    if (/^hollandsnieuwe$/i.test(m)) m = 'hollandsnieuwe';
+    return m;
+  }
+
+  // ---------------------------------------------------------------- sim only
+  var GEEN = /tablet|\btab\b|\bpad\b|ipad|watch|hotspot|mifi|router|modem|data ?sim|laptop|dongle/i;
+  var NETTEN = ['KPN', 'Odido', 'Vodafone'];
+  function simRij(x) {
+    var naam = String(x.name || '');
+    if (isZakelijk(x) || GEEN.test(naam) || num(x.deviceTotalPrice) > 0 || num(x.deviceMonthlyCost) > 0) return null;
+    var gb = num(x.dataGB); if (!(gb > 0)) return null;
+    var a = actieUit(x), p = a ? a.na : num(x.price); if (!(p > 0)) return null;
+    var prov = provVan(x), m = parseInt(x.contractMonths, 10) || 0, een = num(x.initialCost);
+    if (!looptijd(m)) m = 0;
+    var net = ''; NETTEN.forEach(function (n) { if (String(x.network || '').toLowerCase() === n.toLowerCase() && prov.toLowerCase().indexOf(n.toLowerCase()) < 0) net = n; });
+    var min = String(x.minutesLabel || '').trim(), mn = parseInt(min, 10);
+    var onb = /onbeperkt/i.test(min) || mn >= 1000;
+    var tot = (a ? a.p * Math.min(a.m, 24) + a.na * Math.max(0, 24 - a.m) : p * 24) + een;
+    return {
+      prov: prov, gb: gb >= 999 ? 999 : gb, min: onb ? 'Onbeperkt bellen' : min, onb: onb, net: net, m: m, p: p, a: a, een: een,
+      tot: tot, nu: a ? a.p : p, url: x.affiliateUrl, tier: gb >= 999 ? 'tob' : gb >= 50 ? 't50' : gb >= 20 ? 't20' : gb >= 8 ? 't8' : 't7'
+    };
+  }
+
+  // ---------------------------------------------------------------- internet
+  function snelheid(x) {
+    var n = String(x.name || ''), sp = num(x.speedMbit);
+    var g = /(\d+(?:[.,]\d+)?)\s*Gbit/i.exec(n), mb = /(\d+)\s*Mb(?:it)?\/?s?/i.exec(n);
+    if (sp > 0 && sp < 20 && g) sp = sp * 1000;
+    if (!sp && g) sp = parseFloat(g[1].replace(',', '.')) * 1000;
+    if (!sp && mb) sp = parseInt(mb[1], 10);
+    if (sp >= 990 && sp < 1000) sp = 1000;
+    return sp;
+  }
+  function spTekst(sp) { return sp >= 1000 ? String(Math.round(sp / 100) / 10).replace('.', ',') + ' Gbit/s' : sp + ' Mbit/s'; }
+  function netRij(x) {
+    var naam = String(x.name || '').replace(/&amp;/g, '&');
+    if (isZakelijk(x)) return null;
+    var p = num(x.price); if (!(p > 0)) return null;
+    var sp = snelheid(x); if (!(sp > 0)) return null;
+    var prov = provVan(x), m = parseInt(x.contractMonths, 10) || 0, een = num(x.initialCost);
+    if (!looptijd(m)) m = 0;
+    // Resellers (online.nl) verkopen pakketten op verschillende netwerken: dat zetten we erbij.
+    var net = /delta/i.test(naam) ? 'DELTA Fiber' : /\bkpn\b/i.test(naam) && !/kpn/i.test(prov) ? 'KPN-netwerk' : '';
+    if (/delta/i.test(naam)) naam = naam.replace(/DELTA Fiber\s*/i, '');
+    var tv = !!x.hasTV || /\btv\b/i.test(naam), bellen = /bellen/i.test(naam);
+    var type = /glasvezel|fiber/i.test(naam) ? 'Glasvezel' : /\b5g\b/i.test(naam) ? '5G' : /dsl|standaard internet|maximaal internet|snel \d/i.test(naam) ? 'DSL' : /ziggo/i.test(prov) ? 'Kabel' : '';
+    var a = actieUit(x);
+    if (!a) {
+      var o = /(\d{1,2})\s*maanden?\s*(?:voor\s*)?€?\s*(\d+[.,]\d{2})/i.exec(String(x.description || ''));
+      if (o && Math.abs(parseFloat(o[2].replace(',', '.')) - p) < 0.01) a = { p: p, m: parseInt(o[1], 10), na: null };
+    }
+    var jaar, sorteer;
+    if (a && a.na) { jaar = a.p * Math.min(a.m, 12) + a.na * Math.max(0, 12 - a.m) + een; sorteer = jaar; }
+    else if (a) { jaar = null; sorteer = p * 12 + een; }
+    else { jaar = p * 12 + een; sorteer = jaar; }
+    return {
+      prov: prov, sp: sp, tv: tv, bellen: bellen, type: type, net: net, vijfg: type === '5G' && /thuis/i.test(naam), m: m, p: a && a.na ? a.na : p, a: a, een: een, jaar: jaar, tot: sorteer, nu: a ? a.p : p,
+      url: x.affiliateUrl, tier: sp >= 1000 ? 'g1' : sp >= 500 ? 's5' : sp >= 100 ? 's1' : 's0'
+    };
+  }
+
+  // ---------------------------------------------------------------- tekenen
+  function inTier(r) { return r.tier === TIER; }
+  function gefilterd() {
+    return ALLES.filter(function (r) {
+      if (!inTier(r)) return false;
+      if (F.vast && r.a) return false;
+      if (F.mnd && r.m !== F.mnd) return false;
+      if (SIM) { if (F.bellen && !r.onb) return false; if (F.net && r.net !== F.net && r.prov.toLowerCase().indexOf(F.net.toLowerCase()) < 0) return false; }
+      else { if (F.tv === 'zonder' && r.tv) return false; if (F.tv === 'met' && !r.tv) return false; if (F.type && r.type !== F.type) return false; }
+      return true;
+    }).sort(function (a, b) {
+      if (SORT === 'maand') return a.nu - b.nu || a.tot - b.tot;
+      if (SORT === 'meer') return (SIM ? b.gb - a.gb : b.sp - a.sp) || a.tot - b.tot;
+      return a.tot - b.tot || a.nu - b.nu;
+    });
+  }
+  function knop(tekst, aan, klik) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'dpb-chip'; b.setAttribute('aria-pressed', aan ? 'true' : 'false'); b.textContent = tekst;
+    b.addEventListener('click', klik);
+    return b;
+  }
+  function select(label, opties, waarde, kies) {
+    var l = document.createElement('label'); l.className = 'dpb-fl'; l.appendChild(document.createTextNode(label));
+    var s = document.createElement('select'); s.className = 'dpb-sel';
+    opties.forEach(function (o) { var e = document.createElement('option'); e.value = o[0]; e.textContent = o[1]; if (String(o[0]) === String(waarde)) e.selected = true; s.appendChild(e); });
+    s.addEventListener('change', function () { kies(s.value); });
+    l.appendChild(s); return l;
+  }
+  function opnieuw() { TOON = STAP; teken(); }
+  function tekenTabs() {
+    var el = w.querySelector('.dpb-tabs'); el.innerHTML = ''; el.style.setProperty('--n', TIERS.length);
+    TIERS.forEach(function (t) {
+      var rijen = ALLES.filter(function (r) { return r.tier === t[0] && (SIM || !F.tv || (F.tv === 'met') === r.tv); });
+      var b = document.createElement('button'); b.type = 'button';
+      b.setAttribute('aria-pressed', t[0] === TIER ? 'true' : 'false');
+      var sub = !ALLES.length ? '' : SIM ? rijen.length + ' bundels' : rijen.length ? 'vanaf ' + euro(Math.min.apply(null, rijen.map(function (r) { return r.nu; }))) + ' p/m' : 'geen aanbod';
+      b.innerHTML = '<b>' + esc(t[1]) + '</b><small>' + esc(sub) + '</small>';
+      if (ALLES.length && !rijen.length) b.disabled = true;
+      b.addEventListener('click', function () { TIER = t[0]; opnieuw(); });
+      el.appendChild(b);
+    });
+  }
+  function tekenFilters() {
+    var el = w.querySelector('.dpb-fil'); el.innerHTML = '';
+    var hier = ALLES.filter(inTier);
+    if (SIM) {
+      el.appendChild(knop('Onbeperkt bellen', F.bellen, function () { F.bellen = !F.bellen; opnieuw(); }));
+      el.appendChild(knop('Alleen vaste prijs', F.vast, function () { F.vast = !F.vast; opnieuw(); }));
+      var netten = NETTEN.filter(function (n) { return hier.some(function (r) { return r.net === n || r.prov.toLowerCase().indexOf(n.toLowerCase()) > -1; }); });
+      if (netten.length) el.appendChild(select('Netwerk', [['', 'Alle']].concat(netten.map(function (n) { return [n, n]; })), F.net, function (v) { F.net = v; opnieuw(); }));
+    } else {
+      [['', 'Alles'], ['zonder', 'Alleen internet'], ['met', 'Internet + tv']].forEach(function (o) {
+        el.appendChild(knop(o[1], F.tv === o[0], function () { F.tv = o[0]; opnieuw(); }));
+      });
+      var types = ['Glasvezel', 'Kabel', '5G', 'DSL'].filter(function (t) { return hier.some(function (r) { return r.type === t; }); });
+      if (types.length > 1) el.appendChild(select('Soort', [['', 'Alle']].concat(types.map(function (t) { return [t, t]; })), F.type, function (v) { F.type = v; opnieuw(); }));
+    }
+    var mnden = {}; hier.forEach(function (r) { if (looptijd(r.m)) mnden[r.m] = 1; });
+    var ml = Object.keys(mnden).map(Number).sort(function (a, b) { return a - b; });
+    if (ml.length > 1) el.appendChild(select('Looptijd', [[0, 'Alle']].concat(ml.map(function (m) { return [m, looptijd(m)]; })), F.mnd, function (v) { F.mnd = Number(v); opnieuw(); }));
+    var sp = document.createElement('span'); sp.className = 'dpb-sp'; el.appendChild(sp);
+    el.appendChild(select('Sorteer', [['totaal', SIM ? 'Laagste totaal 24 mnd' : 'Laagste eerste jaar'], ['maand', 'Laagste maandprijs'], ['meer', SIM ? 'Meeste data' : 'Snelste']], SORT, function (v) { SORT = v; opnieuw(); }));
+  }
+  function rij(r, top) {
+    var titel = SIM ? (r.gb >= 999 ? 'Onbeperkt' : r.gb + ' GB') : r.vijfg ? '5G Thuis' : spTekst(r.sp);
+    var c = [];
+    if (SIM) { if (r.min) c.push(r.min); if (r.net) c.push(r.net + '-netwerk'); }
+    else { if (r.type) c.push(r.vijfg ? '5G, tot ' + spTekst(r.sp) : r.type); if (r.net) c.push(r.net); if (r.bellen) c.push('met bellen'); }
+    if (looptijd(r.m)) c.push(looptijd(r.m));
+    var chips = c.map(function (x) { return '<span>' + esc(x) + '</span>'; }).join('') + (!SIM && r.tv ? '<span class="tv">+ tv</span>' : '');
+    var prijs = '<div class="dpb-pm">' + (r.a ? '<span class="dpb-act">Actie</span>' : '') + '<b>' + euro(r.nu) + '</b><i>p/m</i></div>';
+    if (r.a) prijs += '<small class="al">' + (r.a.na ? 'eerste ' + r.a.m + ' mnd, daarna ' + euro(r.a.na) + ' p/m' : 'eerste ' + r.a.m + ' mnd, prijs daarna bij de aanbieder') + '</small>';
+    else if (SIM) prijs += '<small>vaste prijs</small>';
+    if (!SIM || r.een) prijs += r.een ? '<small>+ ' + euro(r.een) + ' eenmalig</small>' : '<small class="g0">geen eenmalige kosten</small>';
+    var totaal = SIM ? '<small>Totaal 24 mnd</small><b>' + euro(r.tot) + '</b>'
+      : '<small>Eerste jaar</small><b>' + (r.jaar != null ? euro(r.jaar) : 'zie aanbieder') + '</b>';
+    if (top) totaal += '<span class="dpb-lab">' + (SIM ? 'Laagste totaal' : 'Laagste eerste jaar') + '</span>';
+    return '<li class="dpb-r' + (top ? ' top' : '') + '">' + logo(r.prov) +
+      '<div class="dpb-n"><div class="dpb-nt"><span class="dpb-gb">' + esc(titel) + '</span><span class="dpb-pv">' + esc(r.prov) + '</span></div><div class="dpb-c">' + chips + '</div></div>' +
+      '<div class="dpb-p">' + prijs + '</div><div class="dpb-t">' + totaal + '</div>' +
+      '<a class="dpb-go" href="' + esc(r.url) + '" target="_blank" rel="nofollow sponsored noopener" aria-label="Bekijk ' + esc(titel + ' bij ' + r.prov) + '">Bekijk</a></li>';
+  }
+  function teken() {
+    tekenTabs(); tekenFilters();
+    var lijst = w.querySelector('.dpb-lijst'), tel = w.querySelector('.dpb-tel'), meer = w.querySelector('.dpb-meer');
+    if (!ALLES.length) { lijst.innerHTML = ''; meer.innerHTML = ''; return; }
+    var rijen = gefilterd(), naam = '';
+    TIERS.forEach(function (t) { if (t[0] === TIER) naam = t[1]; });
+    tel.innerHTML = '<b>' + rijen.length + '</b> ' + (SIM ? (rijen.length === 1 ? 'bundel' : 'bundels') : (rijen.length === 1 ? 'abonnement' : 'abonnementen')) + ' in ' + esc(naam === 'Onbeperkt' ? 'onbeperkt data' : naam.charAt(0).toLowerCase() + naam.slice(1));
+    if (!rijen.length) {
+      lijst.innerHTML = '<li class="dpb-leeg">Geen aanbod met deze filters.<br></li>';
+      lijst.firstChild.appendChild(knop('Filters wissen', false, function () { F = { bellen: false, net: '', mnd: 0, vast: false, tv: '', type: '' }; opnieuw(); }));
+      meer.innerHTML = ''; return;
+    }
+    lijst.innerHTML = rijen.slice(0, TOON).map(function (r, i) { return rij(r, i === 0 && SORT === 'totaal'); }).join('');
+    meer.innerHTML = '';
+    if (rijen.length > TOON) {
+      var b = document.createElement('button'); b.type = 'button';
+      b.textContent = 'Toon meer (' + (rijen.length - TOON) + ' over)';
+      b.addEventListener('click', function () { TOON += STAP; teken(); });
+      meer.appendChild(b);
+    }
+  }
+
+  teken();
+  fetch(WORKER + (SIM ? '/api/feed/simonly' : '/api/feed/internet')).then(function (r) { return r.json(); }).then(function (j) {
+    var d = (j && j.data) || [];
+    if (!SIM && d.some(function (x) { return x.merchantName === 'Odido' && x.source === 'odido-thuis'; })) d = d.filter(function (x) { return x.merchantName !== 'Odido Thuis'; });
+    var beste = {};
+    d.forEach(function (x) {
+      var r = SIM ? simRij(x) : netRij(x); if (!r) return;
+      var k = SIM ? [r.prov.toLowerCase(), r.gb, r.min, r.m].join('|') : [r.prov.toLowerCase(), r.sp, r.tv, r.type, r.net, r.m].join('|');
+      if (!beste[k] || r.tot < beste[k].tot || (r.tot === beste[k].tot && r.bellen && !beste[k].bellen)) beste[k] = r;
+    });
+    ALLES = Object.keys(beste).map(function (k) { return beste[k]; });
+    if (!TIER || !ALLES.some(inTier)) {
+      // Standaard: de middelste groep die aanbod heeft (sim only 20 tot 49 GB, internet 100 tot 500 Mbit/s).
+      var voorkeur = SIM ? ['t20', 't8', 't50', 't7', 'tob'] : ['s1', 'g1', 's5', 's0'];
+      for (var i = 0; i < voorkeur.length; i++) if (ALLES.some(function (r) { return r.tier === voorkeur[i]; })) { TIER = voorkeur[i]; break; }
+    }
+    teken();
+  }).catch(function () {
+    w.querySelector('.dpb-tel').textContent = 'De prijzen konden niet geladen worden. Probeer het later opnieuw.';
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Bundels vergelijken",
+  "settings": [
+    { "type": "select", "id": "soort", "label": "Soort", "default": "simonly", "options": [ { "value": "simonly", "label": "Sim only" }, { "value": "internet", "label": "Internet thuis" } ] },
+    { "type": "text", "id": "worker_url", "label": "Worker", "default": "https://awin.business-347.workers.dev" },
+    { "type": "text", "id": "eyebrow", "label": "Bovenregel", "default": "Sim only" },
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Sim only vergelijken" },
+    { "type": "textarea", "id": "sub", "label": "Inleiding", "default": "Kies hoeveel data je nodig hebt. Per bundel zie je de maandprijs, een tijdelijke actieprijs apart en wat je in 24 maanden in totaal betaalt." },
+    { "type": "text", "id": "zakelijk_url", "label": "Link zakelijk", "default": "/pages/zakelijk-sim-only" },
+    { "type": "text", "id": "zakelijk_label", "label": "Tekst link zakelijk", "default": "Zakelijk sim only vergelijken" },
+    { "type": "text", "id": "uitleg_kop", "label": "Kop uitleg", "default": "" },
+    { "type": "richtext", "id": "uitleg", "label": "Uitleg onder de lijst" },
+    { "type": "textarea", "id": "fijn", "label": "Kleine letters", "default": "Alle bedragen zijn inclusief btw. Wij vergelijken op feitelijke productkenmerken en geven geen advies. Klik je door en sluit je iets af, dan ontvangen wij een vergoeding; jij betaalt hetzelfde." }
+  ],
+  "presets": [ { "name": "Bundels vergelijken" } ]
+}
+{% endschema %}

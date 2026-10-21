@@ -21,14 +21,14 @@ const UIT = process.env.US_UIT || 'out/us/tech.json'
 // q: zoekterm. moet: titel moet hierop passen. niet: titel mag hier niet op passen.
 // msrp: adviesprijs in dollars, voor de plausibiliteit (0,6x tot 1,5x) en "was".
 const PRODUCTEN = [
-  { id: 'airpods-pro-3', rubriek: /headphone/i, naam: 'AirPods Pro 3', cat: 'Audio', q: 'Apple AirPods Pro 3', moet: /airpods pro 3|airpods pro \(3rd|airpods pro 3rd/i, niet: /pro 2|2nd gen/i, msrp: 249 },
-  { id: 'airpods-4-anc', rubriek: /headphone/i, naam: 'AirPods 4 with ANC', cat: 'Audio', q: 'Apple AirPods 4 Active Noise Cancellation', moet: /airpods 4/i, niet: /pro/i, msrp: 179 },
-  { id: 'sony-wh-1000xm6', rubriek: /headphone/i, naam: 'Sony WH-1000XM6', cat: 'Audio', q: 'Sony WH-1000XM6', moet: /1000xm6/i, msrp: 449 },
-  { id: 'bose-qc-ultra-2', rubriek: /headphone/i, naam: 'Bose QuietComfort Ultra Headphones (2nd Gen)', cat: 'Audio', q: 'Bose QuietComfort Ultra Headphones 2nd Gen', moet: /quietcomfort ultra/i, niet: /earbuds/i, msrp: 449 },
-  { id: 'switch-2', rubriek: /video game consoles/i, naam: 'Nintendo Switch 2', cat: 'Gaming', q: 'Nintendo Switch 2 console', moet: /switch 2/i, niet: /\bgame only\b|controller only|pro controller|joy-?con (pair|only)|\bcase\b|dock only|amiibo/i, msrp: 449 },
-  { id: 'ps5-pro', rubriek: /video game consoles/i, naam: 'PlayStation 5 Pro', cat: 'Gaming', q: 'PlayStation 5 Pro console', moet: /ps5 pro|playstation 5 pro/i, niet: /controller only|stand only|disc drive only|cover|faceplate/i, msrp: 749 },
-  { id: 'xbox-series-x', rubriek: /video game consoles/i, naam: 'Xbox Series X', cat: 'Gaming', q: 'Xbox Series X console 1TB', moet: /series x/i, niet: /controller only|stand only|series s/i, msrp: 599 },
-  { id: 'steam-deck-oled', rubriek: /video game consoles/i, naam: 'Steam Deck OLED', cat: 'Gaming', q: 'Steam Deck OLED 512GB', moet: /steam deck oled/i, msrp: 549 },
+  { id: 'airpods-pro-3', rubriek: /headphone|headset/i, naam: 'AirPods Pro 3', cat: 'Audio', q: 'Apple AirPods Pro 3', moet: /airpods pro 3|airpods pro \(3rd|airpods pro 3rd/i, niet: /pro 2|2nd gen/i, msrp: 249 },
+  { id: 'airpods-4-anc', rubriek: /headphone|headset/i, naam: 'AirPods 4 with ANC', cat: 'Audio', q: 'Apple AirPods 4 Active Noise Cancellation', moet: /airpods 4/i, niet: /pro/i, msrp: 179 },
+  { id: 'sony-wh-1000xm6', rubriek: /headphone|headset/i, naam: 'Sony WH-1000XM6', cat: 'Audio', q: 'Sony WH-1000XM6', moet: /1000xm6/i, msrp: 449 },
+  { id: 'bose-qc-ultra-2', rubriek: /headphone|headset/i, naam: 'Bose QuietComfort Ultra Headphones (2nd Gen)', cat: 'Audio', q: 'Bose QuietComfort Ultra Headphones 2nd Gen', moet: /quietcomfort ultra/i, niet: /earbuds/i, msrp: 449 },
+  { id: 'switch-2', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Nintendo Switch 2', cat: 'Gaming', q: 'Nintendo Switch 2 console', moet: /switch 2/i, niet: /\bgame only\b|controller only|pro controller|joy-?con (pair|only)|\bcase\b|dock only|amiibo/i, msrp: 449 },
+  { id: 'ps5-pro', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'PlayStation 5 Pro', cat: 'Gaming', q: 'PlayStation 5 Pro console', moet: /ps5 pro|playstation 5 pro/i, niet: /controller only|stand only|disc drive only|cover|faceplate/i, msrp: 749 },
+  { id: 'xbox-series-x', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Xbox Series X', cat: 'Gaming', q: 'Xbox Series X console 1TB', moet: /series x/i, niet: /controller only|stand only|series s/i, msrp: 599 },
+  { id: 'steam-deck-oled', cid: '139971', rubriek: /video game consoles|mixed lots/i, naam: 'Steam Deck OLED', cat: 'Gaming', q: 'Steam Deck OLED 512GB', moet: /steam deck oled/i, msrp: 549 },
   { id: 'meta-quest-3s', rubriek: /virtual reality|vr /i, naam: 'Meta Quest 3S', cat: 'Gaming', q: 'Meta Quest 3S 128GB', moet: /quest 3s/i, msrp: 299 },
   { id: 'apple-watch-11', rubriek: /smart ?watch/i, naam: 'Apple Watch Series 11', cat: 'Wearables', q: 'Apple Watch Series 11 GPS', moet: /series 11/i, niet: /band only|strap only/i, msrp: 399 },
   { id: 'galaxy-watch-8', rubriek: /smart ?watch/i, naam: 'Samsung Galaxy Watch 8', cat: 'Wearables', q: 'Samsung Galaxy Watch 8', moet: /galaxy watch ?8/i, niet: /classic|band only/i, msrp: 349 },
@@ -36,24 +36,33 @@ const PRODUCTEN = [
   { id: 'ipad-air-m3', rubriek: /tablet/i, naam: 'iPad Air 11" (M3)', cat: 'Tablets', q: 'Apple iPad Air 11 M3 128GB', moet: /ipad air/i, niet: /case|keyboard|m2\b/i, msrp: 599 },
   { id: 'macbook-air-m4', rubriek: /laptop/i, naam: 'MacBook Air 13" (M4)', cat: 'Laptops', q: 'Apple MacBook Air 13 M4 16GB 256GB', moet: /macbook air/i, niet: /m1\b|m2\b|m3\b|15"|15-inch|15 inch|case|skin/i, msrp: 999 },
   { id: 'kindle-paperwhite', rubriek: /ebook|e-book|tablet/i, naam: 'Kindle Paperwhite (2024)', cat: 'E-readers', q: 'Kindle Paperwhite 2024 16GB', moet: /paperwhite/i, niet: /case|cover|signature|kids/i, msrp: 159 },
-  { id: 'pixel-10-pro', rubriek: /cell phones|smartphone/i, naam: 'Google Pixel 10 Pro (unlocked)', cat: 'Phones', q: 'Google Pixel 10 Pro unlocked 128GB', moet: /pixel 10 pro/i, niet: /xl|fold|case|screen/i, msrp: 999 },
-  { id: 'galaxy-s25-ultra', rubriek: /cell phones|smartphone/i, naam: 'Samsung Galaxy S25 Ultra (unlocked)', cat: 'Phones', q: 'Samsung Galaxy S25 Ultra unlocked 256GB', moet: /s25 ultra/i, niet: /case|screen|protector/i, msrp: 1299 },
+  { id: 'pixel-10-pro', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Google Pixel 10 Pro (unlocked)', cat: 'Phones', q: 'Google Pixel 10 Pro unlocked 128GB', moet: /pixel 10 pro/i, niet: /xl|fold|case|screen/i, msrp: 999 },
+  { id: 'galaxy-s25-ultra', cid: '9355', rubriek: /cell phones|smartphone/i, naam: 'Samsung Galaxy S25 Ultra (unlocked)', cat: 'Phones', q: 'Samsung Galaxy S25 Ultra unlocked 256GB', moet: /s25 ultra/i, niet: /case|screen|protector/i, msrp: 1299 },
   { id: 'gopro-hero13', rubriek: /camera|camcorder/i, naam: 'GoPro HERO13 Black', cat: 'Cameras', q: 'GoPro HERO13 Black', moet: /hero ?13/i, niet: /battery only|mount only|housing/i, msrp: 399 },
-  { id: 'dji-mini-4-pro', rubriek: /drone/i, naam: 'DJI Mini 4 Pro', cat: 'Cameras', q: 'DJI Mini 4 Pro', moet: /mini 4 pro/i, niet: /battery only|propeller|controller only|remote only/i, msrp: 759 },
+  { id: 'dji-mini-4-pro', rubriek: /drone/i, naam: 'DJI Mini 4 Pro', cat: 'Cameras', q: 'DJI Mini 4 Pro', moet: /mini 4 pro/i, niet: /battery only|propeller|controller|remote|\brc[ -]?(2|n\d)|goggles|charging hub|for (dji )?mini/i, msrp: 759 },
   { id: 'samsung-t7-shield-2tb', rubriek: /drive|ssd|storage/i, naam: 'Samsung T7 Shield 2TB SSD', cat: 'Storage', q: 'Samsung T7 Shield 2TB', moet: /t7 shield/i, niet: /1tb|4tb/i, msrp: 199 }
 ]
 
 // Wat als nieuw te koop staat maar het niet is, of geen los product.
-const WEG = /refurb|renewed|\bused\b|pre-?owned|open box|for parts|not working|read description|box only|empty box|\bdemo\b|display model|replacement|compatible|\bcase only\b|\bskin\b|screen protector|\bdecal\b|\blot of\b|\b\d+ ?x |\bcharging case only\b|\bleft\b.*\bonly\b|\bright\b.*\bonly\b|\bsticker\b|\bcopy\b|\bclone\b|\breplica\b|\bdummy\b|\bmanual only\b|\bbox and\b|\bshell\b|\bwheel\b|expansion card|goggles|headset only|no controllers?|very good|\bgood\b|excellent|\bfair\b|grade [abc]|\bstand\b|faceplate|\bcharger\b|\bcable\b|\bfor ps5\b|\bfor xbox\b|\bfor switch\b/i
+const WEG = /refurb|renewed|\bused\b|pre-?owned|open box|for parts|not working|read description|box only|empty box|\bdemo\b|display model|replacement|compatible|\bcase only\b|\bskin\b|screen protector|\bdecal\b|\blot of\b|\b\d+ ?x |\bcharging case only\b|\bleft\b.*\bonly\b|\bright\b.*\bonly\b|\bsticker\b|\bcopy\b|\bclone\b|\breplica\b|\bdummy\b|\bmanual only\b|\bbox and\b|\bshell\b|\bwheel\b|expansion card|goggles|headset only|no controllers?|very good|\bgood\b|excellent|\bfair\b|grade [abc]|\bstand\b|faceplate|\bcharger\b|\bcable\b|\bfor ps5\b|\bfor xbox\b|\bfor switch\b|condition|battery health|\d+% ?batt|unlocked.*\bgood\b/i
 
 const vandaag = () => new Date().toISOString().slice(0, 10)
+
+// Een oude prijs alleen bewaren als hij hooguit 3 dagen oud is en de titel nog door de huidige regels komt.
+function nogGoed (oud, p) {
+  if (!oud || !oud.d || Date.now() - Date.parse(oud.d) > 3 * 864e5) return null
+  const t = String(oud.titel || '')
+  if (WEG.test(t) || !p.moet.test(t) || (p.niet && p.niet.test(t))) return null
+  return oud
+}
 
 function leesVorig () {
   try { const d = JSON.parse(fs.readFileSync(VORIG, 'utf8')); return d && d.hist ? d : { hist: {}, sinds: {} } } catch (e) { return { hist: {}, sinds: {} } }
 }
 
-async function zoek (q, prijsVan, prijsTot) {
+async function zoek (q, prijsVan, prijsTot, cid) {
   const param = new URLSearchParams({
+    ...(cid ? { category_ids: cid } : {}),
     q,
     limit: '50',
     sort: 'price',
@@ -131,15 +140,15 @@ async function main () {
   const items = []
   let gestopt = ''
   for (const p of PRODUCTEN) {
-    if (gestopt) { if (oudItems.has(p.id)) items.push(oudItems.get(p.id)); continue }
+    if (gestopt) { { const o = nogGoed(oudItems.get(p.id), p); if (o) items.push(o) }; continue }
     try {
-      const d = await zoek(p.q, Math.floor(p.msrp * 0.6), Math.ceil(p.msrp * 1.5))
+      const d = await zoek(p.q, Math.floor(p.msrp * 0.6), Math.ceil(p.msrp * 1.5), p.cid)
       const waarom = {}
       const goed = (d.itemSummaries || []).map(i => aanbod(i, p, waarom)).filter(Boolean).sort((a, b) => a.totaal - b.totaal)
       if (!goed.length) {
         console.log(p.id + ': niets bruikbaars (' + (d.total || 0) + ' resultaten) ' + JSON.stringify(waarom))
         for (const i of (d.itemSummaries || []).slice(0, 4)) console.log('   - ' + String(i.title).slice(0, 80) + ' [' + (i.categories || []).map(c => c.categoryName).join('/') + ']')
-        if (oudItems.has(p.id)) items.push(oudItems.get(p.id))
+        { const o = nogGoed(oudItems.get(p.id), p); if (o) items.push(o) }
         continue
       }
       const b = goed[0]
@@ -154,7 +163,7 @@ async function main () {
       console.log(p.id + ': $' + b.totaal + ' (' + goed.length + ' bruikbaar van ' + (d.itemSummaries || []).length + ') ' + b.titel.slice(0, 70) + ' ' + JSON.stringify(waarom))
     } catch (e) {
       if (e instanceof Limiet) { gestopt = e.message; console.log('gestopt: ' + e.message) } else console.log(p.id + ': ' + e.message)
-      if (oudItems.has(p.id)) items.push(oudItems.get(p.id))
+      { const o = nogGoed(oudItems.get(p.id), p); if (o) items.push(o) }
     }
   }
   // Geschiedenis niet eindeloos laten groeien.

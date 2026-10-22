@@ -792,7 +792,7 @@
     if (b.hasAttribute('data-zus')) {
       var j = +b.getAttribute('data-zus'), y = GROEPEN[j]; if (!y || y === x) return;
       // wissel de twee van plek, zodat het gekozen geheugen hier opengeklapt staat
-      GROEPEN[i] = y; GROEPEN[j] = x; y.uit = true; x.uit = false; y.rang = x.rang; y.ook = x.ook; y.eerste = x.eerste; x.rang = 0;
+      GROEPEN[i] = y; GROEPEN[j] = x; y.uit = true; x.uit = false; y.rang = x.rang; y.eerste = x.eerste; x.rang = 0; x.eerste = false; x.ook = []; y.ook = GROEPEN.filter(function (z) { return z.fam === y.fam && z !== y; }).map(function (z) { return z.opslag; }).sort(function (a, b) { return gbVan(a) - gbVan(b); });
       if (x.kleurF !== y.kleurF) { y.kleurF = x.kleurF; tiersVan(y); }
       var oud = document.querySelector('.zkv-tr[data-i="' + j + '"]');
       if (oud) { var t2 = document.createElement('div'); t2.innerHTML = toestelRij(x, j); oud.parentNode.replaceChild(t2.firstChild, oud); }

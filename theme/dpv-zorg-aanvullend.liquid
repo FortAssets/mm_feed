@@ -1,0 +1,309 @@
+{%- comment -%}
+  Aanvullende verzekeringen en tandartsverzekeringen vergelijken (22 okt 2026).
+
+  Hoort bij de zorgvergelijker (dpv-zorg-vergelijker). Het script zet bovenaan
+  de vergelijker twee tabbladen, Basisverzekering en Aanvullend en tandarts, en
+  verplaatst dit blok naar de plek van de lijst. Zonder script staat het blok
+  gewoon onder de vergelijker.
+
+  Uitgangspunten, gelijk aan de basisvergelijker:
+  - Geen advies. De volgorde is de premie, van laag naar hoog.
+  - Wat we niet in een bron hebben gezien, laten we leeg ("zie polis").
+
+  Eén regel per pakket in de instellingen:
+    verzekeraar | pakket | soort | premie | fysio | tandarts | bril | buitenland | alternatief | extra | partner | url | jaar
+  soort: aanvullend, tand of module. fysio: aantal behandelingen, 0, onbeperkt of leeg.
+  Alle classes beginnen met za-.
+{%- endcomment -%}
+
+{%- assign regels = section.settings.pakketten | newline_to_br | split: '<br />' -%}
+
+<style>
+.za{--ink:#0D1B2A;--soft:#5B6B80;--line:#E6EBF2;--vlak:#F6F8FB;--groen:#0b7d5c;--groen-l:#10b981;--groen-t:#F0FDF4;--blauw:#1B3FA0;
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);padding:14px 0 6px}
+.za *{box-sizing:border-box}
+.za-wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+.za h2{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:24px;letter-spacing:-.02em;font-weight:800;margin:0 0 6px;color:var(--ink)}
+.za-lead{font-size:15px;color:var(--soft);margin:0 0 6px;line-height:1.55}
+.za-jaar{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:700;background:#FFF7E0;color:#7A5200;border-radius:999px;padding:5px 12px;margin:4px 0 14px}
+.za :focus-visible{outline:3px solid var(--groen-l);outline-offset:2px}
+
+.za-filters{display:flex;flex-direction:column;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.za-groep{display:flex;flex-direction:column;gap:7px}
+.za-label{font-size:12.5px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.04em}
+.za-chips{display:flex;gap:7px;flex-wrap:wrap}
+.za-chip{min-height:38px;border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:0 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.za-chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
+.za-sel{min-height:40px;border:1.5px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-weight:600;background:#fff;color:var(--ink);max-width:280px}
+@media(min-width:900px){.za-filters{display:grid;grid-template-columns:auto auto;column-gap:28px}.za-breed{grid-column:1/-1}}
+
+.za-telling{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 10px;font-size:14px;color:var(--soft)}
+.za-telling b{color:var(--ink)}
+.za-wis{border:0;background:none;color:var(--blauw);font:inherit;font-weight:700;cursor:pointer;padding:6px 0}
+
+.za-lijst{display:grid;gap:12px}
+@media(min-width:700px){.za-lijst{grid-template-columns:1fr 1fr}}
+@media(min-width:1000px){.za-lijst{grid-template-columns:1fr 1fr 1fr}}
+.za-k{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.za-k-kop{display:grid;grid-template-columns:38px minmax(0,1fr) auto;gap:10px;align-items:center}
+.za-logo{width:38px;height:38px;border-radius:9px;border:1px solid var(--line);background:#fff;object-fit:contain;padding:4px}
+.za-ini{width:38px;height:38px;border-radius:9px;background:#EEF2FB;color:var(--blauw);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px}
+.za-naam{min-width:0}.za-naam small{display:block;font-size:12.5px;color:var(--soft);font-weight:600}.za-naam b{display:block;font-size:15.5px;line-height:1.25}
+.za-prijs{text-align:right;white-space:nowrap}.za-prijs b{font-family:'Bricolage Grotesque','Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.02em}.za-prijs small{display:block;font-size:12px;color:var(--soft)}
+.za-soort{align-self:flex-start;font-size:11.5px;font-weight:800;border-radius:6px;padding:2px 8px;background:#EEF2FB;color:var(--blauw)}
+.za-soort.tand{background:#F3EEFE;color:#5B3CC4}
+.za-dek{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.za-dek li{display:grid;grid-template-columns:22px minmax(0,1fr);gap:8px;font-size:14px;line-height:1.35}
+.za-dek li span{color:var(--soft)}.za-dek li b{color:var(--ink);font-weight:700}
+.za-dek svg{width:20px;height:20px;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.za-dek .ja svg{stroke:var(--groen)}.za-dek .nee svg{stroke:#B7C0CC}.za-dek .nee{color:#8A97A8}.za-dek .nee b{color:#8A97A8;font-weight:600}
+.za-extra{font-size:12.5px;color:var(--soft);margin:0}
+.za-knop{margin-top:auto;display:flex;align-items:center;justify-content:center;min-height:46px;border-radius:12px;background:#F9C31F;color:var(--ink);font-weight:800;font-size:15px;text-decoration:none;border:1.5px solid var(--ink)}
+.za-knop:hover{background:#EDB50C;color:var(--ink)}
+.za-via{font-size:12px;color:var(--soft);text-align:center;margin:-6px 0 0}
+.za-meer{grid-column:1/-1;justify-self:center;min-height:46px;border:1.5px solid var(--ink);background:#fff;border-radius:12px;padding:0 22px;font:inherit;font-weight:800;cursor:pointer}
+.za-leeg{grid-column:1/-1;background:var(--vlak);border-radius:14px;padding:18px;color:var(--soft);margin:0}
+.za-fijn{font-size:12.5px;color:var(--soft);line-height:1.55;margin:14px 0 0}
+.za-uitleg{display:grid;gap:10px;margin:18px 0 0}
+@media(min-width:860px){.za-uitleg{grid-template-columns:1fr 1fr 1fr}}
+.za-uitleg div{background:var(--vlak);border-radius:14px;padding:14px 16px;font-size:14px;line-height:1.5;color:var(--soft)}
+.za-uitleg b{display:block;color:var(--ink);font-size:15px;margin-bottom:4px}
+
+/* Tabbladen bovenaan de zorgvergelijker */
+.zt-tabs{background:#fff;border-bottom:1px solid #E6EBF2}
+.zt-tabs .zt-in{max-width:1080px;margin:0 auto;padding:0 16px;display:flex;gap:4px}
+.zt-tab{flex:1 1 0;max-width:260px;min-height:50px;border:0;background:none;font:inherit;font-weight:800;font-size:15px;color:#5B6B80;cursor:pointer;border-bottom:3px solid transparent;padding:0 6px}
+.zt-tab[aria-selected=true]{color:#0D1B2A;border-bottom-color:#F9C31F}
+#zc.za-aan .zc-samen,#zc.za-aan .zc-balk,#zc.za-aan #zc-lijstblok,#zc.za-aan .zc-dok{display:none !important}
+#zc:not(.za-aan) .za-in-zc{display:none}
+</style>
+
+<div class="za" id="za">
+  <div class="za-wrap">
+    <h2>{{ section.settings.kop }}</h2>
+    <p class="za-lead">{{ section.settings.sub }}</p>
+    <span class="za-jaar" id="za-jaar">{{ section.settings.jaar_tekst }}</span>
+
+    <div class="za-filters">
+      <div class="za-groep">
+        <span class="za-label" id="za-l-soort">Soort</span>
+        <div class="za-chips" role="group" aria-labelledby="za-l-soort" data-f="soort">
+          <button type="button" class="za-chip" aria-pressed="true" data-w="">Alles</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="aanvullend">Aanvullend</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="tand">Tandarts</button>
+        </div>
+      </div>
+      <div class="za-groep">
+        <span class="za-label" id="za-l-fysio">Fysiotherapie per jaar</span>
+        <div class="za-chips" role="group" aria-labelledby="za-l-fysio" data-f="fysio">
+          <button type="button" class="za-chip" aria-pressed="true" data-w="0">Maakt niet uit</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="6">6+</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="9">9+</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="12">12+</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="18">18+</button>
+        </div>
+      </div>
+      <div class="za-groep">
+        <span class="za-label" id="za-l-met">Moet vergoeden</span>
+        <div class="za-chips" role="group" aria-labelledby="za-l-met" data-f="met" data-multi="1">
+          <button type="button" class="za-chip" aria-pressed="false" data-w="tandarts">Tandarts</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="bril">Bril of lenzen</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="buitenland">Buitenland</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="alternatief">Alternatief</button>
+        </div>
+      </div>
+      <div class="za-groep">
+        <label class="za-label" for="za-verz">Verzekeraar</label>
+        <select class="za-sel" id="za-verz"><option value="">Alle verzekeraars</option></select>
+      </div>
+    </div>
+
+    <div class="za-telling">
+      <p style="margin:0"><b id="za-aantal">0</b> <span id="za-woord">pakketten</span>, op premie per maand</p>
+      <button type="button" class="za-wis" id="za-wis" hidden>Filters wissen</button>
+    </div>
+
+    <div class="za-lijst" id="za-lijst" aria-live="polite"></div>
+
+    <p class="za-fijn">{{ section.settings.fijn }}</p>
+
+    <div class="za-uitleg">
+      <div><b>Meestal bij dezelfde verzekeraar</b>Een aanvullende verzekering sluit je bijna altijd af bij de verzekeraar van je basisverzekering. Kijk dus naar het totaal van beide.</div>
+      <div><b>Wachttijd en acceptatie</b>Voor de basisverzekering word je altijd geaccepteerd. Voor een uitgebreid aanvullend of tandartspakket kan een verzekeraar een vragenlijst of wachttijd hebben.</div>
+      <div><b>Geen eigen risico</b>Wat je uit een aanvullende verzekering vergoed krijgt, gaat niet van je eigen risico af. Het eigen risico hoort alleen bij de basisverzekering.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var za = document.getElementById('za');
+  if (!za) return;
+
+  var RUW = [
+    {%- for r in regels -%}
+      {%- assign d = r | strip | split: '|' -%}
+      {%- if d.size >= 12 -%}
+    { verz: {{ d[0] | strip | json }}, pakket: {{ d[1] | strip | json }}, soort: {{ d[2] | strip | downcase | json }}, premie: {{ d[3] | strip | json }},
+      fysio: {{ d[4] | strip | json }}, tandarts: {{ d[5] | strip | json }}, bril: {{ d[6] | strip | json }}, buitenland: {{ d[7] | strip | json }},
+      alternatief: {{ d[8] | strip | json }}, extra: {{ d[9] | strip | json }}, partner: {{ d[10] | strip | json }}, url: {{ d[11] | strip | json }}, jaar: {{ d[12] | default: '' | strip | json }} },
+      {%- endif -%}
+    {%- endfor -%}
+  ];
+  RUW.forEach(function (p) {
+    p.premie = p.premie === '' ? null : Number(String(p.premie).replace(',', '.'));
+    var f = String(p.fysio || '').toLowerCase();
+    p.fysioN = f === 'onbeperkt' ? 999 : (f === '' ? null : Number(f));
+  });
+
+  var keuze = { soort: '', fysio: 0, met: [], verz: '' };
+  var allesTonen = false, EERST = 9;
+
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function euro(v) { return '€' + Number(v).toLocaleString('nl-NL', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
+  function heeft(x) { x = String(x || '').trim().toLowerCase(); return !!x && !/^(geen|nee|niet|alleen (na |bij )?(tand)?ongeval)/.test(x) && x !== '0' && x !== '€0'; }
+  function leeg(x) { return !String(x || '').trim(); }
+
+  var LOGO = [
+    ['vgzbewu', 'vgzbewuzt.nl'], ['vinkvink', 'vinkvink.nl'], ['univ', 'unive.nl'], ['nationale-nederlanden', 'nn.nl'], ['fbto', 'fbto.nl'],
+    ['a.s.r', 'asr.nl'], ['asr', 'asr.nl'], ['zilveren kruis', 'zilverenkruis.nl'], ['menzis', 'menzis.nl'], ['czdirect', 'czdirect.nl'], ['cz', 'cz.nl'],
+    ['dsw', 'dsw.nl'], ['vgz', 'vgz.nl'], ['ohra', 'ohra.nl'], ['interpolis', 'interpolis.nl'], ['anderzorg', 'anderzorg.nl'],
+    ['zorg en zekerheid', 'zorgenzekerheid.nl'], ['de friesland', 'defriesland.nl'], ['onvz', 'onvz.nl'], ['stad holland', 'shzk.nl']
+  ];
+  function logo(p) {
+    var s = String(p.verz).toLowerCase();
+    for (var i = 0; i < LOGO.length; i++) if (s.indexOf(LOGO[i][0]) > -1)
+      return '<img class="za-logo" alt="" loading="lazy" width="38" height="38" src="https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&size=128&url=https://' + LOGO[i][1] + '">';
+    return '<span class="za-ini" aria-hidden="true">' + esc(String(p.verz).slice(0, 3).toUpperCase()) + '</span>';
+  }
+  var IC = {
+    fysio: '<path d="M12 4a2 2 0 1 0 0 .1M8 21l2-7 2 2 2-2 2 7M7 10l5-2 5 2"/>',
+    tandarts: '<path d="M7 3c-2.5 0-4 2-4 4.5 0 3 1.5 4.5 2 7.5.4 2.5 1 6 2.5 6 1.6 0 1.5-5 4.5-5s2.9 5 4.5 5c1.5 0 2.1-3.5 2.5-6 .5-3 2-4.5 2-7.5C21 5 19.5 3 17 3c-2 0-3 1-5 1S9 3 7 3z"/>',
+    bril: '<circle cx="6.5" cy="14" r="3.5"/><circle cx="17.5" cy="14" r="3.5"/><path d="M10 14h4M3 13l2-6M21 13l-2-6"/>',
+    buitenland: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.5 3 14.5 0 18M12 3c-3 3.5-3 14.5 0 18"/>',
+    alternatief: '<path d="M12 21c-5-3-8-7-8-11a8 8 0 0 1 8-6 8 8 0 0 1 8 6c0 4-3 8-8 11zM12 8v8M8 12h8"/>'
+  };
+  function rij(k, titel, waarde) {
+    var onb = leeg(waarde), ja = !onb && heeft(waarde);
+    var tekst = onb ? 'zie polis' : (ja ? waarde : (/^(geen|nee|niet)$/i.test(String(waarde).trim()) ? 'niet vergoed' : waarde));
+    return '<li class="' + (ja ? 'ja' : 'nee') + '"><svg viewBox="0 0 24 24" aria-hidden="true">' + IC[k] + '</svg><span>' + titel + ': <b>' + esc(tekst) + '</b></span></li>';
+  }
+  function fysioTekst(p) {
+    if (p.fysioN === null) return '';
+    if (p.fysioN === 999) return 'onbeperkt';
+    if (p.fysioN === 0) return 'geen';
+    return p.fysioN + (p.fysioN === 1 ? ' behandeling' : ' behandelingen');
+  }
+  function via(p) { return (p.partner === 'Zorgkiezer' || p.partner === 'Poliswijzer') ? 'via ' + p.partner : 'rechtstreeks bij ' + p.partner; }
+
+  function passend() {
+    return RUW.filter(function (p) {
+      if (keuze.soort === 'tand' && p.soort !== 'tand') return false;
+      if (keuze.soort === 'aanvullend' && p.soort === 'tand') return false;
+      if (keuze.fysio && !(p.fysioN >= keuze.fysio)) return false;
+      for (var i = 0; i < keuze.met.length; i++) if (!heeft(p[keuze.met[i]])) return false;
+      if (keuze.verz && p.verz !== keuze.verz) return false;
+      return true;
+    }).sort(function (a, b) { return (a.premie == null ? 9999 : a.premie) - (b.premie == null ? 9999 : b.premie); });
+  }
+
+  function kaart(p) {
+    var tand = p.soort === 'tand', mod = p.soort === 'module';
+    if (mod) {
+      var r = (p.fysioN > 0 ? rij('fysio', 'Fysiotherapie', fysioTekst(p)) : '') + (heeft(p.tandarts) ? rij('tandarts', 'Tandarts', p.tandarts) : '') +
+        (heeft(p.bril) ? rij('bril', 'Bril en lenzen', p.bril) : '') + (heeft(p.buitenland) ? rij('buitenland', 'Buitenland', p.buitenland) : '') +
+        (heeft(p.alternatief) ? rij('alternatief', 'Alternatief', p.alternatief) : '');
+    }
+    return '<article class="za-k">' +
+      '<div class="za-k-kop">' + logo(p) + '<div class="za-naam"><small>' + esc(p.verz) + '</small><b>' + esc(p.pakket) + '</b></div>' +
+      '<div class="za-prijs">' + (p.premie != null ? '<b>' + euro(p.premie) + '</b><small>per maand</small>' : '<small>premie: zie site</small>') + '</div></div>' +
+      '<span class="za-soort' + (tand ? ' tand' : '') + '">' + (tand ? 'Tandartsverzekering' : p.soort === 'module' ? 'Module' : 'Aanvullende verzekering') + (p.jaar ? ' · ' + esc(p.jaar) : '') + '</span>' +
+      '<ul class="za-dek">' + (mod ? r : (
+        (tand ? '' : rij('fysio', 'Fysiotherapie', fysioTekst(p))) +
+        rij('tandarts', 'Tandarts', p.tandarts) +
+        (tand ? '' : rij('bril', 'Bril en lenzen', p.bril) + rij('buitenland', 'Buitenland', p.buitenland)) +
+        (!tand && !leeg(p.alternatief) && heeft(p.alternatief) ? rij('alternatief', 'Alternatief', p.alternatief) : ''))) +
+      '</ul>' +
+      (p.extra ? '<p class="za-extra">' + esc(p.extra) + '</p>' : '') +
+      '<a class="za-knop" href="' + esc(p.url) + '" target="_blank" rel="nofollow sponsored noopener">Bekijk bij ' + esc(p.verz) + '</a>' +
+      '<p class="za-via">' + esc(via(p)) + '</p>' +
+      '</article>';
+  }
+
+  function teken() {
+    var l = passend();
+    document.getElementById('za-aantal').textContent = l.length;
+    document.getElementById('za-woord').textContent = l.length === 1 ? 'pakket' : 'pakketten';
+    document.getElementById('za-wis').hidden = !(keuze.soort || keuze.fysio || keuze.met.length || keuze.verz);
+    var vak = document.getElementById('za-lijst');
+    if (!l.length) { vak.innerHTML = '<p class="za-leeg">Geen pakket met deze combinatie. Zet een filter uit.</p>'; return; }
+    var t = allesTonen ? l : l.slice(0, EERST);
+    vak.innerHTML = t.map(kaart).join('') + (l.length > t.length ? '<button type="button" class="za-meer" id="za-meer">Toon alle ' + l.length + ' pakketten</button>' : '');
+    var m = document.getElementById('za-meer'); if (m) m.addEventListener('click', function () { allesTonen = true; teken(); });
+  }
+
+  // Verzekeraars in de keuzelijst
+  var vz = {}; RUW.forEach(function (p) { vz[p.verz] = 1; });
+  var sel = document.getElementById('za-verz');
+  sel.innerHTML += Object.keys(vz).sort().map(function (v) { return '<option>' + esc(v) + '</option>'; }).join('');
+  sel.addEventListener('change', function () { keuze.verz = sel.value; allesTonen = false; teken(); });
+
+  za.querySelectorAll('.za-chips').forEach(function (g) {
+    var f = g.getAttribute('data-f'), multi = g.getAttribute('data-multi');
+    g.addEventListener('click', function (e) {
+      var b = e.target.closest('.za-chip'); if (!b) return;
+      if (multi) {
+        var aan = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', aan ? 'true' : 'false');
+        keuze.met = Array.prototype.map.call(g.querySelectorAll('[aria-pressed=true]'), function (x) { return x.getAttribute('data-w'); });
+      } else {
+        g.querySelectorAll('.za-chip').forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+        keuze[f] = f === 'fysio' ? Number(b.getAttribute('data-w')) : b.getAttribute('data-w');
+      }
+      allesTonen = false; teken();
+    });
+  });
+  document.getElementById('za-wis').addEventListener('click', function () {
+    keuze = { soort: '', fysio: 0, met: [], verz: '' }; sel.value = '';
+    za.querySelectorAll('.za-chips').forEach(function (g) { g.querySelectorAll('.za-chip').forEach(function (x, i) { x.setAttribute('aria-pressed', !g.getAttribute('data-multi') && i === 0 ? 'true' : 'false'); }); });
+    teken();
+  });
+  teken();
+
+  // Tabbladen in de basisvergelijker, en dit blok op de plek van de lijst.
+  var zc = document.getElementById('zc');
+  var hero = zc && zc.querySelector('.zc-hero'), lijst = zc && document.getElementById('zc-lijstblok');
+  if (zc && hero && lijst) {
+    var tabs = document.createElement('div');
+    tabs.className = 'zt-tabs';
+    tabs.innerHTML = '<div class="zt-in" role="tablist" aria-label="Soort verzekering">' +
+      '<button type="button" class="zt-tab" role="tab" id="zt-basis" aria-selected="true">Basisverzekering</button>' +
+      '<button type="button" class="zt-tab" role="tab" id="zt-aanv" aria-selected="false">Aanvullend en tandarts</button></div>';
+    hero.parentNode.insertBefore(tabs, hero.nextSibling);
+    za.classList.add('za-in-zc');
+    lijst.parentNode.insertBefore(za, lijst.nextSibling);
+    var kies = function (aanv, push) {
+      zc.classList.toggle('za-aan', aanv);
+      document.getElementById('zt-basis').setAttribute('aria-selected', aanv ? 'false' : 'true');
+      document.getElementById('zt-aanv').setAttribute('aria-selected', aanv ? 'true' : 'false');
+      if (push) try { history.replaceState(null, '', aanv ? '#aanvullend' : location.pathname + location.search); } catch (e) {}
+    };
+    document.getElementById('zt-basis').addEventListener('click', function () { kies(false, true); });
+    document.getElementById('zt-aanv').addEventListener('click', function () { kies(true, true); });
+    if (/^#(aanvullend|tandarts)/.test(location.hash)) kies(true, false);
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Zorg: aanvullend",
+  "settings": [
+    { "type": "text", "id": "kop", "label": "Kop", "default": "Aanvullende verzekering en tandarts vergelijken" },
+    { "type": "textarea", "id": "sub", "label": "Tekst onder de kop", "default": "Wat elk pakket vergoedt voor fysiotherapie, tandarts, bril en buitenland, gesorteerd op premie. Wij geven geen advies." },
+    { "type": "text", "id": "jaar_tekst", "label": "Regel over het jaar", "default": "Premies en vergoedingen van 2026. De pakketten van 2027 volgen uiterlijk 12 november." },
+    { "type": "textarea", "id": "pakketten", "label": "Pakketten", "info": "Eén regel per pakket: verzekeraar|pakket|soort|premie|fysio|tandarts|bril|buitenland|alternatief|extra|partner|url|jaar. Soort is aanvullend, tand of module." },
+    { "type": "textarea", "id": "fijn", "label": "Kleine lettertjes", "default": "Premie per maand voor volwassenen in de oudste leeftijdsgroep, zonder korting. Jongeren betalen soms minder; dat staat dan bij het pakket. Bedragen zijn maxima per kalenderjaar tenzij anders vermeld. Controleer de voorwaarden altijd bij de verzekeraar. Klik je door en sluit je iets af, dan ontvangen wij soms een vergoeding. Jij betaalt hetzelfde." }
+  ],
+  "presets": [{ "name": "Zorg: aanvullend" }]
+}
+{% endschema %}

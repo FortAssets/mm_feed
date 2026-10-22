@@ -35,6 +35,7 @@
 .za-chip{min-height:38px;border:1.5px solid var(--line);background:#fff;color:var(--ink);border-radius:999px;padding:0 14px;font:inherit;font-size:14px;font-weight:700;cursor:pointer}
 .za-chip[aria-pressed=true]{background:var(--ink);border-color:var(--ink);color:#fff}
 .za-sel{min-height:40px;border:1.5px solid var(--line);border-radius:10px;padding:0 10px;font:inherit;font-weight:600;background:#fff;color:var(--ink);max-width:280px}
+@media(max-width:699px){.za-chips{flex-wrap:nowrap;overflow-x:auto;margin:0 -16px;padding:0 16px 2px;scrollbar-width:none}.za-chips::-webkit-scrollbar{display:none}.za-chip{flex:none}.za-filters{border:0;padding:0;background:none}}
 @media(min-width:900px){.za-filters{display:grid;grid-template-columns:auto auto;column-gap:28px}.za-breed{grid-column:1/-1}}
 
 .za-telling{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:4px 0 10px;font-size:14px;color:var(--soft)}
@@ -88,9 +89,9 @@
       <div class="za-groep">
         <span class="za-label" id="za-l-soort">Soort</span>
         <div class="za-chips" role="group" aria-labelledby="za-l-soort" data-f="soort">
-          <button type="button" class="za-chip" aria-pressed="true" data-w="">Alles</button>
-          <button type="button" class="za-chip" aria-pressed="false" data-w="aanvullend">Aanvullend</button>
+          <button type="button" class="za-chip" aria-pressed="true" data-w="aanvullend">Aanvullend</button>
           <button type="button" class="za-chip" aria-pressed="false" data-w="tand">Tandarts</button>
+          <button type="button" class="za-chip" aria-pressed="false" data-w="module">Losse modules</button>
         </div>
       </div>
       <div class="za-groep">
@@ -156,7 +157,7 @@
     p.fysioN = f === 'onbeperkt' ? 999 : (f === '' ? null : Number(f));
   });
 
-  var keuze = { soort: '', fysio: 0, met: [], verz: '' };
+  var keuze = { soort: 'aanvullend', fysio: 0, met: [], verz: '' };
   var allesTonen = false, EERST = 9;
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
@@ -198,8 +199,7 @@
 
   function passend() {
     return RUW.filter(function (p) {
-      if (keuze.soort === 'tand' && p.soort !== 'tand') return false;
-      if (keuze.soort === 'aanvullend' && p.soort === 'tand') return false;
+      if (keuze.soort && p.soort !== keuze.soort) return false;
       if (keuze.fysio && !(p.fysioN >= keuze.fysio)) return false;
       for (var i = 0; i < keuze.met.length; i++) if (!heeft(p[keuze.met[i]])) return false;
       if (keuze.verz && p.verz !== keuze.verz) return false;
@@ -234,7 +234,7 @@
     var l = passend();
     document.getElementById('za-aantal').textContent = l.length;
     document.getElementById('za-woord').textContent = l.length === 1 ? 'pakket' : 'pakketten';
-    document.getElementById('za-wis').hidden = !(keuze.soort || keuze.fysio || keuze.met.length || keuze.verz);
+    document.getElementById('za-wis').hidden = !(keuze.soort !== 'aanvullend' || keuze.fysio || keuze.met.length || keuze.verz);
     var vak = document.getElementById('za-lijst');
     if (!l.length) { vak.innerHTML = '<p class="za-leeg">Geen pakket met deze combinatie. Zet een filter uit.</p>'; return; }
     var t = allesTonen ? l : l.slice(0, EERST);
@@ -263,7 +263,7 @@
     });
   });
   document.getElementById('za-wis').addEventListener('click', function () {
-    keuze = { soort: '', fysio: 0, met: [], verz: '' }; sel.value = '';
+    keuze = { soort: 'aanvullend', fysio: 0, met: [], verz: '' }; sel.value = '';
     za.querySelectorAll('.za-chips').forEach(function (g) { g.querySelectorAll('.za-chip').forEach(function (x, i) { x.setAttribute('aria-pressed', !g.getAttribute('data-multi') && i === 0 ? 'true' : 'false'); }); });
     teken();
   });

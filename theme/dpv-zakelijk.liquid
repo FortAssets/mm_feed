@@ -213,6 +213,13 @@
 .zkv-uit:hover{background:#F5F6F8}
 .zkv-trd{border-top:1px solid var(--line);padding:14px 18px 16px}
 .zkv-trd .zkv-vt{display:block;margin:0 0 10px;font-size:12.5px;color:var(--soft)}
+.zkv-dot{display:inline-block;width:12px;height:12px;border-radius:50%;border:1px solid rgba(13,27,42,.25);flex:none;margin-right:6px;vertical-align:-1px}
+.zkv-kz{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.zkv-kz .zkv-fl{min-width:70px}
+.zkv-kzb{display:inline-flex;align-items:center;gap:2px;flex-direction:row;border:1px solid var(--line);border-radius:10px;padding:6px 10px;background:#fff;font:inherit;color:var(--ink);cursor:pointer}
+.zkv-kzb b{font-size:13.5px;font-weight:800}.zkv-kzb small{font-size:11.5px;color:var(--soft);margin-left:6px}
+.zkv-kzb[aria-pressed="true"]{border:2px solid var(--ink);padding:5px 9px;background:#FFF8DD}
+@media(max-width:760px){.zkv-kz{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}.zkv-kz::-webkit-scrollbar{display:none}.zkv-kzb{flex:none}.zkv-kz .zkv-fl{min-width:0}}
 .zkv-sortl{display:inline-flex;align-items:center;gap:8px;margin-left:12px;font-size:13px;font-weight:700;color:var(--soft)}
 .zkv-sortl select{height:38px;border:1.5px solid #CBD3DF;border-radius:10px;padding:0 10px;font:inherit;font-weight:700;color:var(--ink);background:#fff}
 @media(min-width:761px){
@@ -280,7 +287,7 @@
   };
 
   var EIND = { internet: '/api/feed/internet', simonly: '/api/feed/simonly', toestel: '/api/feed/telefoon' };
-  var ALLES = [], TOON = TAB === 'toestel' ? 12 : 15, FILTER = '', MERKF = '', MODELF = '', DATAF = 0, MNDF = 0, TEAM = 1, TIERF = '';
+  var ALLES = [], TOON = TAB === 'toestel' ? 12 : 15, FILTER = '', MERKF = '', MODELF = '', DATAF = 0, MNDF = 0, TEAM = 1, TIERF = '', OPSLAGF = '', KLEURF = '';
   try { TEAM = Math.max(1, Math.min(50, parseInt(localStorage.getItem('zkvTeam'), 10) || 1)); } catch (e) {}
 
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -343,6 +350,23 @@
     return p || 'Zakelijk';
   }
 
+  // 22 okt: kleur en geheugen kiezen. De feeds noemen kleuren in het Nederlands en Engels en met merknamen
+  // (Cosmic Orange, Obsidian); wij brengen ze terug tot een handvol basiskleuren om op te filteren.
+  var KLEUREN = [
+    ['zwart', 'Zwart', '#1d1f22', /zwart|black|obsidian|graphite|grafiet|onyx|midnight|space|jet|phantom|carbon|charcoal|titanium black/],
+    ['wit', 'Wit', '#f4f4f1', /\bwit\b|white|cream|creme|porcelain|starlight|ivory|pearl|snow|cloud/],
+    ['zilver', 'Zilver en grijs', '#b9bec6', /zilver|silver|grijs|grey|gray|fog|mist|natural|titanium|platinum|steel|stone/],
+    ['blauw', 'Blauw', '#3b6fd8', /blauw|blue|navy|glacier|ice|teal|ultramarijn|ultramarine|cyan|aqua|ocean|denim|sky/],
+    ['groen', 'Groen', '#3f9a62', /groen|green|olive|pistachio|mint|sage|jade|lime|emerald|aloe|forest/],
+    ['paars', 'Paars', '#7d5bd0', /paars|purple|violet|lavender|lavendel|lilac|iris|plum/],
+    ['roze', 'Roze', '#e98bb0', /roze|pink|rose|peony|blush|coral/],
+    ['rood', 'Rood', '#c2322f', /rood|red|burgundy|bordeaux|wine|crimson/],
+    ['oranje', 'Oranje', '#e7792b', /oranje|orange|canyon|copper|koper|amber/],
+    ['goud', 'Goud en beige', '#d4b77a', /goud|gold|desert|beige|sand|champagne|bronze|brons|geel|yellow|lemon/]
+  ];
+  function kleurVan(t) { t = String(t || '').toLowerCase(); for (var i = 0; i < KLEUREN.length; i++) if (KLEUREN[i][3].test(t)) return KLEUREN[i][0]; return ''; }
+  function kleurInfo(k) { for (var i = 0; i < KLEUREN.length; i++) if (KLEUREN[i][0] === k) return KLEUREN[i]; return null; }
+  function gbVan(o) { var m = /(\d+)\s?(GB|TB)/i.exec(o || ''); return m ? (+m[1]) * (/tb/i.test(m[2]) ? 1024 : 1) : 0; }
   function uitFeed(d) {
     var naam = (d.name || '').trim();
     var mnd = d.contractMonths || 24;
@@ -357,7 +381,7 @@
       totaal: totaal, gemiddeld: totaal / mnd, maanden: mnd, m: d.contractMonths || (TAB === 'toestel' ? 24 : 0),
       gb: d.dataGB || 0, mbit: d.speedMbit || 0, min: d.minutesLabel || '', net: d.network || '',
       abo: parseFloat(d.baseMonthlyCost) || 0, tm: parseFloat(d.deviceMonthlyCost) || 0,
-      img: d.image || '', merknaam: merkVan(naam), model: mv.kern, opslag: mv.opslag,
+      img: d.image || '', merknaam: merkVan(naam), model: mv.kern, opslag: mv.opslag, kleur: kleurVan(d.colour || naam), kleurNaam: String(d.colour || '').trim(),
       merk: [], url: d.affiliateUrl, live: true, los: los, toestel: parseFloat(d.deviceTotalPrice) || 0
     };
   }
@@ -453,6 +477,20 @@
         [0].concat(tl).forEach(function (m) { r4.appendChild(chip(m ? m + ' maanden' : 'Alle', MNDF === m, function () { MNDF = m; reset(); })); });
         vak.appendChild(r4);
       }
+      var ops = {}, kls = {}; ALLES.forEach(function (r) { if (r.opslag && gbVan(r.opslag) >= 32) ops[r.opslag] = gbVan(r.opslag); if (r.kleur) kls[r.kleur] = 1; });
+      var ol = Object.keys(ops).sort(function (a, b) { return ops[a] - ops[b]; });
+      if (ol.length > 1) {
+        var r6 = rij('Geheugen');
+        [''].concat(ol).forEach(function (o) { r6.appendChild(chip(o || 'Alle', OPSLAGF === o, function () { OPSLAGF = o; reset(); })); });
+        vak.appendChild(r6);
+      }
+      var kl = KLEUREN.filter(function (k) { return kls[k[0]]; });
+      if (kl.length > 1) {
+        var r7 = rij('Kleur');
+        r7.appendChild(chip('Alle', !KLEURF, function () { KLEURF = ''; reset(); }));
+        kl.forEach(function (k) { r7.appendChild(chip(k[1], KLEURF === k[0], function () { KLEURF = k[0]; reset(); }, '<i class="zkv-dot" style="background:' + k[2] + '"></i>')); });
+        vak.appendChild(r7);
+      }
       var merken = {}; ALLES.forEach(function (r) { if (r.merknaam && (!FILTER || r.prov === FILTER)) merken[r.merknaam] = 1; });
       var m = Object.keys(merken).sort();
       if (m.length) {
@@ -475,6 +513,8 @@
       if (MODELF && r.model !== MODELF) return false;
       if (DATAF && !(r.gb >= DATAF)) return false;
       if (MNDF && r.m !== MNDF && !r.los) return false;
+      if (OPSLAGF && r.opslag !== OPSLAGF) return false;
+      if (KLEURF && r.kleur !== KLEURF) return false;
       return true;
     });
   }
@@ -561,33 +601,51 @@
     var g = {}, volg = [];
     rijen.forEach(function (r) {
       var k = toestelSleutel(r);
-      if (!g[k]) { g[k] = { model: r.model, opslag: r.opslag, img: r.img, merk: r.merknaam, rijen: [] }; volg.push(g[k]); }
-      if (!g[k].img && r.img) g[k].img = r.img;
+      if (!g[k]) { g[k] = { model: r.model, opslag: r.opslag, img: r.img, img0: r.img, merk: r.merknaam, rijen: [] }; volg.push(g[k]); }
+      if (!g[k].img && r.img) g[k].img = g[k].img0 = r.img;
       if (String(r.model).length < String(g[k].model).length) g[k].model = r.model;
       g[k].rijen.push(r);
     });
     volg.forEach(function (x) {
-      // per bundelsoort en aanbieder de goedkoopste over de looptijd
+      x.kleurF = KLEURF;
+      var kc = {}; x.rijen.forEach(function (r) { if (r.kleur) { kc[r.kleur] = kc[r.kleur] || { n: 0, img: '', naam: r.kleurNaam }; kc[r.kleur].n++; if (!kc[r.kleur].img && r.img) kc[r.kleur].img = r.img; } });
+      x.kleuren = kc;
+      tiersVan(x);
+    });
+    return volg.filter(function (x) { return x.beste && (!TIERF || x.tiers[TIERF] || (x.los.length && !Object.keys(x.tiers).length)); }).sort(function (a, b) { return (a.beste.los - b.beste.los) || (a.beste.totaal - b.beste.totaal); });
+  }
+  // 22 okt: de meeste mensen willen het toestel per maand afbetalen en zo weinig mogelijk vooraf. Daarom kiezen we
+  // per aanbieder de variant met de laagste aanbetaling (in stappen van €50) en pas daarbinnen de laagste totaalprijs.
+  // Sorteer je op "Laagste totaal", dan telt alleen het totaal, ook als dat een hoge aanbetaling betekent.
+  function volgorde(a, b) {
+    if (SORTT !== 'totaal') { var d = Math.floor((a.eenmalig || 0) / 50) - Math.floor((b.eenmalig || 0) / 50); if (d) return d; }
+    return a.totaal - b.totaal;
+  }
+  // Per bundelsoort en aanbieder de goedkoopste over de looptijd, eventueel alleen in de gekozen kleur.
+  function tiersVan(x) {
+    (function () {
       var per = {}, provs = {};
       x.los = [];
-      x.rijen.forEach(function (r) {
+      var bron = x.kleurF ? x.rijen.filter(function (r) { return r.kleur === x.kleurF; }) : x.rijen;
+      if (!bron.length) bron = x.rijen;
+      x.img = (x.kleurF && x.kleuren[x.kleurF] && x.kleuren[x.kleurF].img) || x.img0 || x.img;
+      bron.forEach(function (r) {
         provs[r.prov] = 1;
         if (r.los) { var o = x.los.filter(function (y) { return y.prov === r.prov; })[0]; if (!o) x.los.push(r); else if (r.prijs < o.prijs) x.los[x.los.indexOf(o)] = r; return; }
         var t = tierVan(r), k = t + '|' + r.prov;
-        if (!per[k] || (r.los ? r.prijs < per[k].prijs : r.totaal < per[k].totaal)) per[k] = r;
+        if (!per[k] || (r.los ? r.prijs < per[k].prijs : volgorde(r, per[k]) < 0)) per[k] = r;
       });
       x.tiers = {};
       Object.keys(per).forEach(function (k) { var t = k.split('|')[0]; (x.tiers[t] = x.tiers[t] || []).push(per[k]); });
-      Object.keys(x.tiers).forEach(function (t) { x.tiers[t].sort(function (a, b) { return a.los ? a.prijs - b.prijs : a.totaal - b.totaal; }); });
+      Object.keys(x.tiers).forEach(function (t) { x.tiers[t].sort(function (a, b) { return a.los ? a.prijs - b.prijs : volgorde(a, b); }); });
       x.aanbieders = Object.keys(provs).length;
-      var echt = x.rijen.filter(function (r) { return !r.los; }).sort(function (a, b) { return a.totaal - b.totaal; });
-      x.beste = echt[0] || x.rijen[0];
+      var echt = bron.filter(function (r) { return !r.los; }).sort(volgorde);
+      x.beste = echt[0] || bron[0];
       // Standaard de bundel met de meeste aanbieders (bij gelijk: de goedkoopste); "naar keuze" alleen als er niets anders is.
       var keuzes = Object.keys(x.tiers);
       keuzes.sort(function (a, b) { return (x.tiers[b].length - x.tiers[a].length) || (x.tiers[a][0].totaal - x.tiers[b][0].totaal); });
-      x.keuze = TIERF && x.tiers[TIERF] ? TIERF : keuzes[0] || '';
-    });
-    return volg.filter(function (x) { return x.beste && (!TIERF || x.tiers[TIERF] || (x.los.length && !Object.keys(x.tiers).length)); }).sort(function (a, b) { return (a.beste.los - b.beste.los) || (a.beste.totaal - b.beste.totaal); });
+      x.keuze = TIERF && x.tiers[TIERF] ? TIERF : (x.keuze && x.tiers[x.keuze] ? x.keuze : keuzes[0] || '');
+    })();
   }
   // Wat het toestel los kost: bij MediaMarkt als die hem heeft, anders de toestelprijs die aanbieders rekenen bij betalen in termijnen.
   function losRegel(x) {
@@ -602,7 +660,7 @@
     if (r.los) sub = 'Toestel op afbetaling, het abonnement kies je bij ' + esc(provNaam(r.prov).replace(/\s*Zakelijk$/i, ''));
     var prijs = r.los ? '<b>' + euro(r.prijs) + '</b><small>p/m voor het toestel</small>'
       : '<b>' + euro(r.prijs) + '<i> p/m</i></b>' + (r.actie ? '<small class="zkv-act">eerste ' + r.actie.maanden + ' mnd, daarna ' + euro(r.actie.na) + ' p/m</small>' : '') + (r.eenmalig ? '<small class="zkv-em">+ ' + euro(r.eenmalig) + ' eenmalig</small>' : '<small class="zkv-g0">geen eenmalige kosten</small>') + '<small>totaal ' + r.maanden + ' mnd: ' + euro(r.totaal) + '</small>';
-    return '<li class="zkv-ar' + (top ? ' top' : '') + '">' + logo(r.prov) + '<div class="zkv-an"><b>' + esc(provNaam(r.prov)) + (top ? '<span class="zkv-lab">Goedkoopst</span>' : '') + '</b><small>' + sub + '</small></div><div class="zkv-ap">' + prijs + '</div>' + go(r) + '</li>';
+    return '<li class="zkv-ar' + (top ? ' top' : '') + '">' + logo(r.prov) + '<div class="zkv-an"><b>' + esc(provNaam(r.prov)) + (top ? '<span class="zkv-lab">' + (SORTT === 'totaal' ? 'Goedkoopst' : 'Minste vooraf') + '</span>' : '') + '</b><small>' + sub + '</small></div><div class="zkv-ap">' + prijs + '</div>' + go(r) + '</li>';
   }
   function toestelKaart(x, i, goedkoopst) {
     var t = x.keuze, lijst = x.tiers[t] || [], open = !!x.open, max = 5;
@@ -676,7 +734,7 @@
       '<div><h3>' + esc(naamToon(x)) + label + '</h3><div class="zkv-tsub">' + esc(x.opslag) + (x.opslag ? ' · ' : '') + n + (n === 1 ? ' aanbieder' : ' aanbieders') + (b && b.m ? ' · ' + b.m + ' maanden' : '') + (x.ook && x.ook.length ? ' · ook ' + esc(x.ook.slice(0, 3).join(', ')) : '') + '</div></div>' +
       '<div class="zkv-trp">' + (n > 1 ? '<small>vanaf</small>' : '') + prijs + '</div>' +
       '<div class="zkv-tra">' + (b ? go(b, 'Bekijk deal') : '') + (n > 1 || x.los.length ? '<button type="button" class="zkv-uit" aria-expanded="' + !!x.uit + '">' + (x.uit ? 'Verberg' : 'Vergelijk ' + n) + '</button>' : '') + '</div></div>' +
-      (x.uit ? '<div class="zkv-trd">' + losRegel(x) +
+      (x.uit ? '<div class="zkv-trd">' + losRegel(x) + keuzeRij(x) +
         '<div class="zkv-bun2" role="group" aria-label="Kies een bundel">' + knoppen + '</div>' +
         (lijst.length ? '<ul class="zkv-al">' + lijst.slice(0, open ? 99 : max).map(function (r, j) { return aanbodRij(r, j === 0 && lijst.length > 1); }).join('') + '</ul>' : '') +
         (x.los.length ? '<p class="zkv-ookl">' + (lijst.length ? 'Ook te koop, abonnement naar keuze' : 'Abonnement naar keuze') + '</p><ul class="zkv-al">' + x.los.map(function (r) { return aanbodRij(r, false); }).join('') + '</ul>' : '') +
@@ -685,7 +743,21 @@
         '</div>' : '') +
       '</article>';
   }
-  var SORTKEUZE = '<label class="zkv-sortl">Sorteren <select id="zkv-sort"><option value="pop">Populairste eerst</option><option value="maand">Laagste prijs per maand</option><option value="totaal">Laagste totaal</option></select></label>';
+  // Geheugen en kleur kiezen binnen een toestel. Geheugen wisselt naar dezelfde telefoon met meer opslag.
+  function keuzeRij(x) {
+    var zus = GROEPEN.filter(function (y) { return y.fam === x.fam; }).sort(function (a, b) { return gbVan(a.opslag) - gbVan(b.opslag); });
+    var h = '';
+    if (zus.length > 1) h += '<div class="zkv-kz"><span class="zkv-fl">Geheugen</span>' + zus.map(function (y) {
+      return '<button type="button" class="zkv-kzb" data-zus="' + GROEPEN.indexOf(y) + '" aria-pressed="' + (y === x) + '"><b>' + esc(y.opslag) + '</b>' + (y.beste && !y.beste.los ? '<small>vanaf ' + euro(y.beste.prijs) + ' p/m</small>' : '') + '</button>';
+    }).join('') + '</div>';
+    var ks = KLEUREN.filter(function (k) { return x.kleuren && x.kleuren[k[0]]; });
+    if (ks.length > 1) h += '<div class="zkv-kz"><span class="zkv-fl">Kleur</span><button type="button" class="zkv-kzb" data-kl="" aria-pressed="' + !x.kleurF + '"><b>Alle</b></button>' + ks.map(function (k) {
+      var nm = x.kleuren[k[0]].naam && kleurVan(x.kleuren[k[0]].naam) === k[0] ? x.kleuren[k[0]].naam : k[1];
+      return '<button type="button" class="zkv-kzb" data-kl="' + k[0] + '" aria-pressed="' + (x.kleurF === k[0]) + '"><i class="zkv-dot" style="background:' + k[2] + '"></i><b>' + esc(nm.charAt(0).toUpperCase() + nm.slice(1)) + '</b></button>';
+    }).join('') + '</div>';
+    return h;
+  }
+  var SORTKEUZE = '<label class="zkv-sortl">Sorteren <select id="zkv-sort"><option value="pop">Populairste eerst</option><option value="maand">Laagste prijs per maand</option><option value="totaal">Laagste totaal (ook met aanbetaling)</option></select></label>';
   function teken() {
     var rijen = gefilterd().sort(opPrijs);
     var lijst = document.getElementById('zkv-lijst'), kz = document.getElementById('zkv-keuzes');
@@ -715,9 +787,20 @@
   }
 
   document.getElementById('zkv-lijst').addEventListener('click', function (e) {
-    var b = e.target.closest('.zkv-bun2 button, .zkv-alle, .zkv-uit'); if (!b) return;
+    var b = e.target.closest('.zkv-bun2 button, .zkv-alle, .zkv-uit, .zkv-kzb'); if (!b) return;
     var k = b.closest('.zkv-tk, .zkv-tr'), i = +k.getAttribute('data-i'), x = GROEPEN[i]; if (!x) return;
-    if (b.classList.contains('zkv-uit')) x.uit = !x.uit;
+    if (b.hasAttribute('data-zus')) {
+      var j = +b.getAttribute('data-zus'), y = GROEPEN[j]; if (!y || y === x) return;
+      // wissel de twee van plek, zodat het gekozen geheugen hier opengeklapt staat
+      GROEPEN[i] = y; GROEPEN[j] = x; y.uit = true; x.uit = false; y.rang = x.rang; y.ook = x.ook; y.eerste = x.eerste; x.rang = 0;
+      if (x.kleurF !== y.kleurF) { y.kleurF = x.kleurF; tiersVan(y); }
+      var oud = document.querySelector('.zkv-tr[data-i="' + j + '"]');
+      if (oud) { var t2 = document.createElement('div'); t2.innerHTML = toestelRij(x, j); oud.parentNode.replaceChild(t2.firstChild, oud); }
+      var t3 = document.createElement('div'); t3.innerHTML = toestelRij(y, i); k.parentNode.replaceChild(t3.firstChild, k);
+      return;
+    }
+    if (b.hasAttribute('data-kl')) { x.kleurF = b.getAttribute('data-kl'); x.open = false; tiersVan(x); }
+    else if (b.classList.contains('zkv-uit')) x.uit = !x.uit;
     else if (b.classList.contains('zkv-alle')) x.open = b.getAttribute('data-open') === '1';
     else { x.keuze = b.getAttribute('data-t'); x.open = false; }
     var tmp = document.createElement('div'); tmp.innerHTML = k.classList.contains('zkv-tr') ? toestelRij(x, i) : toestelKaart(x, i, i === 0);

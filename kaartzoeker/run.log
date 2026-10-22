@@ -9,11 +9,11 @@ namen es 3 sets
 namen pt 3 sets
 Japan sets 184 kaarten 12781 details nodig 113
 Korea sets 95 kaarten 239 details nodig 0
-prijsgids 80013 producten 2026-10-21T02:48:17+0200
+prijsgids 80026 producten 2026-10-22T02:45:11+0200
 prijs weggelaten (onbetrouwbaar): 1875
 klaar: 320 sets, 34276 kaarten, 28558 met prijs, 5.7 MB, 0 min 
-namen te vertalen: 697
-vertaald: 647
+namen te vertalen: 50
+vertaald: 50
 ptcg geen set voor miscp Miscellaneous Promos
 ptcg geen set voor ex5.5 Poké Card Creator Pack
 ptcg geen set voor exu Unseen Forces Unown Collection
@@ -41,7 +41,7 @@ ptcg geen set voor mee Mega Evolution Energy
 ptcg geen set voor mep MEP Black Star Promos
 beelden via pokemontcg.io: 846
 beelden via Cardmarket: 0 ( 0 verzoeken)
-eBay: zonder beeld 9882 nu maximaal 1500
+eBay: zonder beeld 8382 nu maximaal 1500
 nakijken geen JSON (max_tokens): 
 nakijken geen JSON (max_tokens): 
 nakijken geen JSON (max_tokens): 
@@ -61,22 +61,5 @@ nakijken geen JSON (max_tokens):
 nakijken geen JSON (max_tokens): 
 nakijken geen JSON (max_tokens): 
 nakijken geen JSON (max_tokens): 
-eBay: zoekopdrachten 1500 foto gevonden 1125 afgekeurd door Haiku 0
-klaar: namen vertaald 2880 | beelden pokemontcg.io 846 Cardmarket 0 eBay 1125 | nog zonder beeld 8757 van 34276
-koers 1 USD = 0.8917 EUR
-kaarten om te meten: 450
-klaar: 337 kaarten met graded prijzen, 900 zoekopdrachten, 241 keer nagekeken met Claude
-model claude-sonnet-5-5 taken 1528 maximaal 300
-25 klaar, tokens in/uit 14899 27956
-50 klaar, tokens in/uit 32437 64418
-75 klaar, tokens in/uit 52369 101553
-100 klaar, tokens in/uit 72277 138857
-125 klaar, tokens in/uit 91064 174690
-150 klaar, tokens in/uit 109272 211855
-175 klaar, tokens in/uit 127520 248521
-200 klaar, tokens in/uit 147017 285930
-225 klaar, tokens in/uit 166097 321971
-250 klaar, tokens in/uit 185606 358838
-275 klaar, tokens in/uit 204198 394793
-300 klaar, tokens in/uit 223009 430841
-teksten geschreven: 300 fouten: 0 tokens in/uit: 223009 430841 totaal sets 320 kaarten 272
+eBay: zoekopdrachten 1500 foto gevonden 1146 afgekeurd door Haiku 1
+klaar: namen vertaald 2997 | beelden pokemontcg.io 846 Cardmarket 0 eBay 2271 | nog zonder beeld 7611 van 34276

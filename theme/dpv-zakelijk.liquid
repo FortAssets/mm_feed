@@ -315,7 +315,7 @@
     var n = String(d.model || d.name || '');
     n = n.replace(/\b(zwart|wit|blauw|groen|grijs|zilver|goud|paars|roze|rood|oranje|titanium|black|white|blue|green|grey|gray|silver|gold|purple|pink|red)\b/ig, '');
     var op = /(\d{1,4})\s?(GB|TB)\b/i.exec(n) || /(\d{1,4})\s?(GB|TB)\b/i.exec(String(d.name || ''));
-    var kern = n.replace(/\b\d{2,4}\s?(GB|TB)\b.*$/i, '').replace(/\s{2,}/g, ' ').trim();
+    var kern = n.replace(/\b\d{1,4}\s?(GB|TB)\b.*$/i, '').replace(/\s{2,}/g, ' ').trim();
     return { kern: kern, opslag: op ? op[1] + ' ' + op[2].toUpperCase() : (d.storage || '') };
   }
 
@@ -637,20 +637,35 @@
   }
   function popVan(x) { return (POPM[familie(x.merk + ' ' + x.model)] || 0); }
   function sorteerGroepen(l) {
-    l.forEach(function (x) { x.pop = popVan(x); });
-    return l.sort(function (a, b) {
+    var fam = {};
+    l.forEach(function (x) { x.pop = popVan(x); x.fam = familie(x.merk + ' ' + x.model); (fam[x.fam] = fam[x.fam] || []).push(x.opslag); });
+    function vgl(a, b) {
       if (a.beste.los !== b.beste.los) return a.beste.los - b.beste.los;
-      if (SORTT === 'pop') return (b.pop - a.pop) || (b.aanbieders - a.aanbieders) || (a.beste.totaal - b.beste.totaal);
+      if (SORTT === 'pop') return (b.popE - a.popE) || (b.aanbieders - a.aanbieders) || (a.beste.totaal - b.beste.totaal);
       if (SORTT === 'maand') return a.beste.prijs - b.beste.prijs;
       return a.beste.totaal - b.beste.totaal;
+    }
+    l.forEach(function (x) { x.popE = x.pop; });
+    l.sort(vgl);
+    // Hetzelfde toestel met meer opslag zakt naar achteren: anders staat de top vol met drie keer de iPhone 17.
+    var gezien = {}, nr = 0;
+    l.forEach(function (x) {
+      x.eerste = !gezien[x.fam]; gezien[x.fam] = 1;
+      if (!x.eerste) x.popE = x.pop - 100000;
+      x.ook = x.eerste ? fam[x.fam].filter(function (o, j, a) { return o && o !== x.opslag && a.indexOf(o) === j; }) : [];
     });
+    l.sort(vgl);
+    l.forEach(function (x) { x.rang = SORTT === 'pop' && x.eerste && x.pop > 0 ? ++nr : 0; });
+    return l;
   }
+  var MERKVOOR = /^(apple|samsung|google|motorola|xiaomi|oppo|oneplus|nokia|fairphone|honor)\s+/i;
+  function naamToon(x) { var m = String(x.model).replace(MERKVOOR, '').replace(/\s+5G\b/i, '').trim(); return m; }
   function toestelRij(x, i) {
     var b = x.beste, n = x.aanbieders;
     var prijs = b && !b.los
       ? '<b>' + euro(b.prijs) + '<i> p/m</i></b><small>' + (b.eenmalig ? '+ ' + euro(b.eenmalig) + ' eenmalig · ' : 'geen eenmalige kosten · ') + 'totaal ' + b.maanden + ' mnd ' + euro(b.totaal) + '</small>' + (b.actie ? '<small class="zkv-act">eerste ' + b.actie.maanden + ' mnd, daarna ' + euro(b.actie.na) + ' p/m</small>' : '')
       : (b ? '<b>' + euro(b.prijs) + '<i> p/m</i></b><small>voor het toestel</small>' : '');
-    var label = SORTT === 'pop' && x.pop > 0 && i < 5 && !MERKF && !FILTER ? '<span class="zkv-pop">#' + (i + 1) + ' populair</span>' : '';
+    var label = x.rang && x.rang <= 5 && !MERKF && !FILTER ? '<span class="zkv-pop">#' + x.rang + ' populair</span>' : '';
     var t = x.keuze, lijst = x.tiers[t] || [], open = !!x.open, max = 6;
     var knoppen = TIERS.filter(function (k) { return x.tiers[k[0]]; }).map(function (k) {
       return '<button type="button" data-t="' + k[0] + '" aria-pressed="' + (k[0] === t) + '"><b>' + esc(k[1]) + '</b><small>' + x.tiers[k[0]].length + ' ' + (x.tiers[k[0]].length === 1 ? 'aanbieder' : 'aanbieders') + '</small></button>';
@@ -658,7 +673,7 @@
     var r0 = lijst[0];
     return '<article class="zkv-tr' + (x.uit ? ' open' : '') + '" data-i="' + i + '">' +
       '<div class="zkv-trk"><div class="zkv-tim">' + (x.img ? '<img src="' + esc(x.img) + '" alt="' + esc(x.model) + '" loading="lazy">' : '') + '</div>' +
-      '<div><h3>' + esc(x.model) + label + '</h3><div class="zkv-tsub">' + esc(x.opslag) + (x.opslag ? ' · ' : '') + n + (n === 1 ? ' aanbieder' : ' aanbieders') + (b && b.m ? ' · ' + b.m + ' maanden' : '') + '</div></div>' +
+      '<div><h3>' + esc(naamToon(x)) + label + '</h3><div class="zkv-tsub">' + esc(x.opslag) + (x.opslag ? ' · ' : '') + n + (n === 1 ? ' aanbieder' : ' aanbieders') + (b && b.m ? ' · ' + b.m + ' maanden' : '') + (x.ook && x.ook.length ? ' · ook ' + esc(x.ook.slice(0, 3).join(', ')) : '') + '</div></div>' +
       '<div class="zkv-trp">' + (n > 1 ? '<small>vanaf</small>' : '') + prijs + '</div>' +
       '<div class="zkv-tra">' + (b ? go(b, 'Bekijk deal') : '') + (n > 1 || x.los.length ? '<button type="button" class="zkv-uit" aria-expanded="' + !!x.uit + '">' + (x.uit ? 'Verberg' : 'Vergelijk ' + n) + '</button>' : '') + '</div></div>' +
       (x.uit ? '<div class="zkv-trd">' + losRegel(x) +

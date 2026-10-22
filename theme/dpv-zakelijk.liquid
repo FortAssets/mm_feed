@@ -699,7 +699,7 @@
     }
     if (TAB === 'toestel') {
       GROEPEN = sorteerGroepen(toestelGroepen(rijen));
-      if (GROEPEN[0]) GROEPEN[0].uit = true;
+      if (GROEPEN[0] && window.innerWidth > 760) GROEPEN[0].uit = true;
       var pv = {}; rijen.forEach(function (r) { pv[r.prov] = 1; });
       document.getElementById('zkv-telling').innerHTML = '<b>' + GROEPEN.length + '</b> toestellen, <b>' + rijen.length + '</b> aanbiedingen van <b>' + Object.keys(pv).length + '</b> aanbieders' + SORTKEUZE;
       var ss = document.getElementById('zkv-sort'); if (ss) ss.value = SORTT;

@@ -66,3 +66,17 @@ klaar: namen vertaald 2997 | beelden pokemontcg.io 846 Cardmarket 0 eBay 2271 | 
 koers 1 USD = 0.8902 EUR
 kaarten om te meten: 450
 klaar: 629 kaarten met graded prijzen, 900 zoekopdrachten, 207 keer nagekeken met Claude
+model claude-sonnet-5-5 taken 1228 maximaal 300
+25 klaar, tokens in/uit 18851 36393
+50 klaar, tokens in/uit 38084 71665
+75 klaar, tokens in/uit 57801 107811
+100 klaar, tokens in/uit 76210 145002
+125 klaar, tokens in/uit 95167 181215
+150 klaar, tokens in/uit 113813 217065
+175 klaar, tokens in/uit 132069 251720
+200 klaar, tokens in/uit 150648 287899
+225 klaar, tokens in/uit 168871 322753
+250 klaar, tokens in/uit 187694 358967
+275 klaar, tokens in/uit 205802 395327
+300 klaar, tokens in/uit 223798 431115
+teksten geschreven: 300 fouten: 0 tokens in/uit: 223798 431115 totaal sets 320 kaarten 572

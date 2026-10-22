@@ -355,14 +355,14 @@
   var KLEUREN = [
     ['zwart', 'Zwart', '#1d1f22', /zwart|black|obsidian|graphite|grafiet|onyx|midnight|space|jet|phantom|carbon|charcoal|titanium black/],
     ['wit', 'Wit', '#f4f4f1', /\bwit\b|white|cream|creme|porcelain|starlight|ivory|pearl|snow|cloud/],
-    ['zilver', 'Zilver en grijs', '#b9bec6', /zilver|silver|grijs|grey|gray|fog|mist|natural|titanium|platinum|steel|stone/],
+    ['zilver', 'Grijs', '#b9bec6', /zilver|silver|grijs|grey|gray|fog|mist|natural|titanium|platinum|steel|stone/],
     ['blauw', 'Blauw', '#3b6fd8', /blauw|blue|navy|glacier|ice|teal|ultramarijn|ultramarine|cyan|aqua|ocean|denim|sky/],
     ['groen', 'Groen', '#3f9a62', /groen|green|olive|pistachio|mint|sage|jade|lime|emerald|aloe|forest/],
     ['paars', 'Paars', '#7d5bd0', /paars|purple|violet|lavender|lavendel|lilac|iris|plum/],
     ['roze', 'Roze', '#e98bb0', /roze|pink|rose|peony|blush|coral/],
     ['rood', 'Rood', '#c2322f', /rood|red|burgundy|bordeaux|wine|crimson/],
     ['oranje', 'Oranje', '#e7792b', /oranje|orange|canyon|copper|koper|amber/],
-    ['goud', 'Goud en beige', '#d4b77a', /goud|gold|desert|beige|sand|champagne|bronze|brons|geel|yellow|lemon/]
+    ['goud', 'Goud', '#d4b77a', /goud|gold|desert|beige|sand|champagne|bronze|brons|geel|yellow|lemon/]
   ];
   function kleurVan(t) { t = String(t || '').toLowerCase(); for (var i = 0; i < KLEUREN.length; i++) if (KLEUREN[i][3].test(t)) return KLEUREN[i][0]; return ''; }
   function kleurInfo(k) { for (var i = 0; i < KLEUREN.length; i++) if (KLEUREN[i][0] === k) return KLEUREN[i]; return null; }

@@ -12,8 +12,8 @@ Korea sets 95 kaarten 239 details nodig 0
 prijsgids 80026 producten 2026-10-22T02:45:11+0200
 prijs weggelaten (onbetrouwbaar): 1875
 klaar: 320 sets, 34276 kaarten, 28558 met prijs, 5.7 MB, 0 min 
-namen te vertalen: 50
-vertaald: 50
+namen te vertalen: 0
+vertaald: 0
 ptcg geen set voor miscp Miscellaneous Promos
 ptcg geen set voor ex5.5 Poké Card Creator Pack
 ptcg geen set voor exu Unseen Forces Unown Collection
@@ -41,7 +41,7 @@ ptcg geen set voor mee Mega Evolution Energy
 ptcg geen set voor mep MEP Black Star Promos
 beelden via pokemontcg.io: 846
 beelden via Cardmarket: 0 ( 0 verzoeken)
-eBay: zonder beeld 8382 nu maximaal 1500
+eBay: zonder beeld 6882 nu maximaal 1500
 nakijken geen JSON (max_tokens): 
 nakijken geen JSON (max_tokens): 
 nakijken geen JSON (max_tokens): 
@@ -61,22 +61,5 @@ nakijken geen JSON (max_tokens):
 nakijken geen JSON (max_tokens): 
 nakijken geen JSON (max_tokens): 
 nakijken geen JSON (max_tokens): 
-eBay: zoekopdrachten 1500 foto gevonden 1146 afgekeurd door Haiku 1
-klaar: namen vertaald 2997 | beelden pokemontcg.io 846 Cardmarket 0 eBay 2271 | nog zonder beeld 7611 van 34276
-koers 1 USD = 0.8902 EUR
-kaarten om te meten: 450
-klaar: 629 kaarten met graded prijzen, 900 zoekopdrachten, 207 keer nagekeken met Claude
-model claude-sonnet-5-5 taken 1228 maximaal 300
-25 klaar, tokens in/uit 18851 36393
-50 klaar, tokens in/uit 38084 71665
-75 klaar, tokens in/uit 57801 107811
-100 klaar, tokens in/uit 76210 145002
-125 klaar, tokens in/uit 95167 181215
-150 klaar, tokens in/uit 113813 217065
-175 klaar, tokens in/uit 132069 251720
-200 klaar, tokens in/uit 150648 287899
-225 klaar, tokens in/uit 168871 322753
-250 klaar, tokens in/uit 187694 358967
-275 klaar, tokens in/uit 205802 395327
-300 klaar, tokens in/uit 223798 431115
-teksten geschreven: 300 fouten: 0 tokens in/uit: 223798 431115 totaal sets 320 kaarten 572
+eBay: zoekopdrachten 1500 foto gevonden 1122 afgekeurd door Haiku 0
+klaar: namen vertaald 2997 | beelden pokemontcg.io 846 Cardmarket 0 eBay 3393 | nog zonder beeld 6489 van 34276
